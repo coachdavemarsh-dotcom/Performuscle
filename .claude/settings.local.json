@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(xargs sed:*)",
+      "Bash(supabase --version)",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:0y79lhmw8z5.typeform.com)",
+      "Bash(pip3 install:*)",
+      "Bash(python3 -c \":*)",
+      "Bash(head -20 find /Users/coachdavemarsh -name *Stress* -name *.pdf)",
+      "Bash(grep -v .Trash find /Users/coachdavemarsh/Downloads -name *.pdf)",
+      "Bash(npx vite:*)",
+      "Bash(node --check \"/Users/coachdavemarsh/Claude Performuscle/src/lib/calculators.js\")",
+      "WebSearch"
+    ]
+  }
+}
