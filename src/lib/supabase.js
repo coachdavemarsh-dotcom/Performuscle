@@ -1,9 +1,22 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder'
+const rawUrl = import.meta.env.VITE_SUPABASE_URL || ''
+const rawKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 
-if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+// Ensure URL is valid — fall back to placeholder so app can at least render
+let supabaseUrl = 'https://placeholder.supabase.co'
+try {
+  if (rawUrl) {
+    const u = new URL(rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`)
+    supabaseUrl = u.href.replace(/\/$/, '')
+  }
+} catch {
+  console.warn('[Performuscle] VITE_SUPABASE_URL is not a valid URL:', rawUrl)
+}
+
+const supabaseAnonKey = rawKey || 'placeholder-key'
+
+if (!rawUrl || !rawKey) {
   console.warn('[Performuscle] Supabase env vars missing — check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel settings.')
 }
 
