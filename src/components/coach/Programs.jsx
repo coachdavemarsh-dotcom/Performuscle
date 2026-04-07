@@ -2086,8 +2086,11 @@ function TemplateLibrary({ clients, onClose, onCreated }) {
 
   const difficultyColor = {
     beginner: 'var(--accent)',
+    Beginner: 'var(--accent)',
     intermediate: 'var(--warn)',
+    Intermediate: 'var(--warn)',
     advanced: 'var(--danger)',
+    Advanced: 'var(--danger)',
   }
 
   async function handleCreate() {
@@ -2098,14 +2101,14 @@ function TemplateLibrary({ clients, onClose, onCreated }) {
     setCreating(true)
     setError(null)
 
-    const sessions = selectedTemplate.generateSessions(selectedTemplate.default_weeks)
+    const sessions = selectedTemplate.generateSessions(selectedTemplate.weeks)
     const programData = {
       client_id: clientId,
       coach_id: user.id,
       name: selectedTemplate.name,
       phase: selectedTemplate.phase,
       goal_type: selectedTemplate.goal_type,
-      total_weeks: selectedTemplate.default_weeks,
+      total_weeks: selectedTemplate.weeks,
       current_week: 1,
       start_date: startDate,
       is_active: true,
@@ -2175,8 +2178,8 @@ function TemplateLibrary({ clients, onClose, onCreated }) {
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--white)', marginBottom: 6, lineHeight: 1.3 }}>{t.name}</div>
                 <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 10, lineHeight: 1.5 }}>{t.description}</div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  <span className="tag tag-muted" style={{ fontSize: 9 }}>{t.default_weeks}W</span>
-                  <span className="tag tag-muted" style={{ fontSize: 9 }}>{t.days_per_week}D/WK</span>
+                  <span className="tag tag-muted" style={{ fontSize: 9 }}>{t.weeks}W</span>
+                  <span className="tag tag-muted" style={{ fontSize: 9 }}>{t.days}D/WK</span>
                   <span style={{
                     fontSize: 9, fontFamily: 'var(--font-display)', letterSpacing: 0.5,
                     padding: '2px 6px', borderRadius: 3,
@@ -2205,8 +2208,8 @@ function TemplateLibrary({ clients, onClose, onCreated }) {
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--white)' }}>{selectedTemplate.name}</div>
                 <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>{selectedTemplate.description}</div>
                 <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-                  <span className="tag tag-muted">{selectedTemplate.default_weeks} weeks</span>
-                  <span className="tag tag-muted">{selectedTemplate.days_per_week} days/week</span>
+                  <span className="tag tag-muted">{selectedTemplate.weeks} weeks</span>
+                  <span className="tag tag-muted">{selectedTemplate.days} days/week</span>
                   <span className="tag tag-muted">{selectedTemplate.phase}</span>
                   <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', padding: '2px 6px', borderRadius: 3, background: `${difficultyColor[selectedTemplate.difficulty]}22`, color: difficultyColor[selectedTemplate.difficulty] }}>{selectedTemplate.difficulty.toUpperCase()}</span>
                 </div>

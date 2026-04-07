@@ -842,3 +842,35 @@ export async function getNutritionLogsRange(clientId, startDate, endDate) {
     .order('logged_date', { ascending: false })
   return { data, error }
 }
+
+// ─── Cycle Logs ───────────────────────────────────────────────────────────────
+
+export async function getCycleLogsRange(clientId, startDate, endDate) {
+  const { data, error } = await supabase
+    .from('cycle_logs')
+    .select('*')
+    .eq('client_id', clientId)
+    .gte('log_date', startDate)
+    .lte('log_date', endDate)
+    .order('log_date', { ascending: true })
+  if (error) throw error
+  return data || []
+}
+
+export async function upsertCycleLog(log) {
+  const { data, error } = await supabase
+    .from('cycle_logs')
+    .upsert(log, { onConflict: 'client_id,log_date' })
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function enableCycleTracking(userId, { cycleLength = 28, periodLength = 5, gender } = {}) {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ cycle_tracking_enabled: true, cycle_length: cycleLength, period_length: periodLength, gender })
+    .eq('id', userId)
+  if (error) throw error
+}

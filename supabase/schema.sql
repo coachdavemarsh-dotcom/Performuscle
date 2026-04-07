@@ -335,3 +335,41 @@ create index if not exists idx_check_ins_coach on check_ins(coach_id);
 create index if not exists idx_nutrition_logs_client_date on nutrition_logs(client_id, logged_date);
 create index if not exists idx_habit_logs_client_date on habit_logs(client_id, logged_date);
 create index if not exists idx_measurements_client_date on measurements(client_id, measured_date);
+
+-- ============================================================
+-- CYCLE TRACKING — profile columns + daily log table
+-- ============================================================
+
+-- Add cycle tracking columns to profiles
+alter table profiles
+  add column if not exists cycle_tracking_enabled boolean default false,
+  add column if not exists cycle_length integer default 28,
+  add column if not exists period_length integer default 5;
+
+-- Daily cycle log (one row per client per day)
+create table if not exists cycle_logs (
+  id            uuid primary key default uuid_generate_v4(),
+  client_id     uuid references profiles(id) on delete cascade,
+  log_date      date not null,
+  is_period_day boolean default false,
+  period_start  date,
+  symptoms      jsonb default '{}'::jsonb,
+  notes         text,
+  created_at    timestamptz default now(),
+  unique (client_id, log_date)
+);
+
+alter table cycle_logs enable row level security;
+
+create policy "Clients can manage own cycle logs"
+  on cycle_logs for all using (auth.uid() = client_id);
+
+create policy "Coaches can view client cycle logs"
+  on cycle_logs for select using (
+    exists (
+      select 1 from clients
+      where clients.coach_id = auth.uid() and clients.client_id = cycle_logs.client_id
+    )
+  );
+
+create index if not exists idx_cycle_logs_client_date on cycle_logs(client_id, log_date desc);

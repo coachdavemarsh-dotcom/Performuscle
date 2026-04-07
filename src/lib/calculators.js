@@ -349,3 +349,68 @@ export function relativeStrengthLevel(lift, orm, bodyweight, gender = 'male') {
     nextRatio: nextThresh && nextThresh > ratio ? nextThresh : null,
   }
 }
+
+// ─── Menstrual Cycle Phase Calculator ─────────────────────────────────────────
+// Used by CycleTracker.jsx and coach client profile views.
+
+export function computeCyclePhase(periodStart, cycleLength = 28, periodLength = 5) {
+  const start = new Date(periodStart)
+  const today = new Date()
+  start.setHours(0, 0, 0, 0)
+  today.setHours(0, 0, 0, 0)
+
+  const totalDays = Math.floor((today - start) / 86400000)
+  const dayOfCycle = (totalDays % cycleLength) + 1
+  const daysUntilNext = cycleLength - (totalDays % cycleLength)
+  const progressPct = Math.round((dayOfCycle / cycleLength) * 100)
+
+  let phase, color, emoji, tagline, training, nutrition, carbAdjust
+
+  if (dayOfCycle <= periodLength) {
+    phase      = 'Menstrual'
+    color      = '#ef4444'
+    emoji      = '🌑'
+    tagline    = 'Rest & restore — honour your body'
+    training   = 'Reduce intensity. Focus on walks, yoga and light mobility. Avoid heavy loading on days 1–2. Listen to your body — some clients perform well, others need full rest.'
+    nutrition  = 'Prioritise iron-rich foods (red meat, leafy greens, legumes), omega-3s to reduce inflammation, and magnesium for cramp relief. Avoid excessive caffeine and alcohol.'
+    carbAdjust = '+10–20g carbs — serotonin and mood support'
+  } else if (dayOfCycle <= 13) {
+    phase      = 'Follicular'
+    color      = '#10b981'
+    emoji      = '🌒'
+    tagline    = 'Energy rising — build momentum'
+    training   = 'Oestrogen is climbing — strength, endurance and mood improve daily. Great phase for progressive overload, learning new skills and pushing training volume. Recovery is faster.'
+    nutrition  = 'Normal macro targets. Oestrogen supports muscle protein synthesis — keep protein high. Carbohydrate tolerance is good; fuel training sessions well.'
+    carbAdjust = 'Normal targets'
+  } else if (dayOfCycle <= 15) {
+    phase      = 'Ovulatory'
+    color      = '#f59e0b'
+    emoji      = '🌕'
+    tagline    = 'Peak power — your strongest window'
+    training   = 'Oestrogen peaks — this is your strongest, most coordinated phase. Ideal for PB attempts, high-intensity conditioning, and maximal effort sessions. Pain tolerance is highest.'
+    nutrition  = 'Normal macro targets. Fuel well around training. Some clients experience reduced appetite — ensure you\'re eating enough to support performance.'
+    carbAdjust = 'Normal targets — fuel for performance'
+  } else {
+    phase      = 'Luteal'
+    color      = '#8b5cf6'
+    emoji      = '🌖'
+    tagline    = 'Progesterone phase — train smart'
+    training   = 'Progesterone raises core temperature and BMR. Fatigue and cravings are common in late luteal. Moderate intensity — reduce volume by 10–20% in the final week. Technique and steady-state work respond well.'
+    nutrition  = 'BMR rises ~100–200 kcal — don\'t under-eat. Increase healthy fats and complex carbs to manage cravings. Reduce sodium to minimise bloating. Magnesium before bed helps sleep and PMS symptoms.'
+    carbAdjust = '+20–30g carbs — higher BMR and cravings'
+  }
+
+  return {
+    phase,
+    color,
+    emoji,
+    tagline,
+    training,
+    nutrition,
+    carbAdjust,
+    dayOfCycle,
+    cycleLength,
+    daysUntilNext,
+    progressPct,
+  }
+}

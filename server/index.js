@@ -1,6 +1,8 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
+import helmet from 'helmet'
+import { rateLimit } from 'express-rate-limit'
 import stripeRouter from './routes/stripe.js'
 import webhooksRouter from './routes/webhooks.js'
 import emailRouter from './routes/emails.js'
@@ -10,15 +12,37 @@ import { startBirthdayCron } from './lib/birthdayCron.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
+const isProd = process.env.NODE_ENV === 'production'
 
 // ============================================================
 // MIDDLEWARE
 // ============================================================
 
-// CORS — allow Vite dev server
+// Secure HTTP headers
+app.use(helmet())
+
+// CORS — allow Vite dev server or production frontend only
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
+}))
+
+// Rate limiting — 100 requests per 15 minutes per IP
+app.use('/api/', rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests — please try again later' },
+}))
+
+// Stricter limit on auth-adjacent routes
+app.use('/api/stripe', rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests — please try again later' },
 }))
 
 // Stripe webhooks need raw body — register BEFORE express.json()
@@ -45,10 +69,12 @@ app.use((req, res) => {
   res.status(404).json({ error: `Route not found: ${req.method} ${req.path}` })
 })
 
-// Error handler
+// Error handler — never expose stack traces or internal messages in production
 app.use((err, req, res, next) => {
   console.error('[Server Error]', err)
-  res.status(500).json({ error: err.message || 'Internal server error' })
+  res.status(err.status || 500).json({
+    error: isProd ? 'Internal server error' : (err.message || 'Internal server error'),
+  })
 })
 
 // ============================================================
