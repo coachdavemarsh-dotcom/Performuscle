@@ -5,7 +5,9 @@ import {
   sendCheckInNotification,
   sendCoachReplyNotification,
   sendWelcomeEmail,
+  sendClientInviteEmail,
 } from '../lib/email.js'
+import { requireCoach } from '../middleware/auth.js'
 
 const router = Router()
 
@@ -128,6 +130,61 @@ router.post('/welcome', requireAuth, async (req, res) => {
     res.json({ sent: true })
   } catch (err) {
     console.error('[Email Route] welcome:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ─── POST /api/emails/invite-client ─────────────────────────────────────────
+// Called by coach to invite a new client by email
+// Body: { email, fullName }
+router.post('/invite-client', requireAuth, requireCoach, async (req, res) => {
+  try {
+    const { email, fullName } = req.body
+    if (!email || !fullName) {
+      return res.status(400).json({ error: 'email and fullName are required' })
+    }
+
+    // Get coach's name for the email
+    const { data: coachProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('full_name')
+      .eq('id', req.user.id)
+      .single()
+
+    const coachName = coachProfile?.full_name || 'Your coach'
+    const redirectTo = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/onboarding`
+
+    // Generate a Supabase invite link — sends no email itself, gives us the magic URL
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'invite',
+      email,
+      options: {
+        data: { coach_id: req.user.id, full_name: fullName, invited: true },
+        redirectTo,
+      },
+    })
+
+    if (linkError) {
+      console.error('[Invite] generateLink error:', linkError)
+      return res.status(500).json({ error: linkError.message })
+    }
+
+    const inviteUrl = linkData?.properties?.action_link
+    if (!inviteUrl) {
+      return res.status(500).json({ error: 'Failed to generate invite link' })
+    }
+
+    // Send our branded invite email
+    await sendClientInviteEmail({
+      clientEmail: email,
+      clientName: fullName,
+      coachName,
+      inviteUrl,
+    })
+
+    res.json({ sent: true, email })
+  } catch (err) {
+    console.error('[Email Route] invite-client:', err)
     res.status(500).json({ error: err.message })
   }
 })

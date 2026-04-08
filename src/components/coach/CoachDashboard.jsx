@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth.jsx'
 import { useCoach } from '../../hooks/useCoach.js'
 import { supabase } from '../../lib/supabase.js'
 import { navalBF } from '../../lib/calculators.js'
-import { sendWelcome } from '../../lib/emailApi.js'
+import { sendWelcome, inviteClient } from '../../lib/emailApi.js'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -328,6 +328,99 @@ function ClientCard({ client, programme, lastCheckIn, assessment, testResult, na
 
 // ─── main dashboard ───────────────────────────────────────────────────────────
 
+// ─── invite modal ─────────────────────────────────────────────────────────────
+
+function InviteClientModal({ onClose }) {
+  const [fullName, setFullName] = useState('')
+  const [email,    setEmail]    = useState('')
+  const [sending,  setSending]  = useState(false)
+  const [sent,     setSent]     = useState(false)
+  const [error,    setError]    = useState(null)
+
+  async function handleSend() {
+    if (!fullName.trim() || !email.trim()) { setError('Please fill in both fields.'); return }
+    setSending(true)
+    setError(null)
+    const result = await inviteClient({ email: email.trim(), fullName: fullName.trim() })
+    setSending(false)
+    if (result.ok) {
+      setSent(true)
+    } else {
+      setError(result.error || 'Failed to send invite. Check the server is running.')
+    }
+  }
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9000,
+      background: 'rgba(6,6,8,0.8)', backdropFilter: 'blur(4px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
+    }} onClick={onClose}>
+      <div style={{
+        background: 'var(--s2)', border: '1px solid var(--border)',
+        borderRadius: 12, padding: 32, width: '100%', maxWidth: 440,
+      }} onClick={e => e.stopPropagation()}>
+
+        {sent ? (
+          <div style={{ textAlign: 'center', padding: '16px 0' }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>✅</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, letterSpacing: 2, color: 'var(--accent)', marginBottom: 8 }}>INVITE SENT</div>
+            <p style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 24, lineHeight: 1.6 }}>
+              <strong style={{ color: 'var(--white)' }}>{fullName}</strong> will receive an email at <strong style={{ color: 'var(--white)' }}>{email}</strong> with a link to set up their account and complete onboarding.
+            </p>
+            <button className="btn btn-primary" onClick={onClose}>Done</button>
+          </div>
+        ) : (
+          <>
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, letterSpacing: 2, color: 'var(--white)', marginBottom: 4 }}>ADD NEW CLIENT</div>
+              <div style={{ fontSize: 12, color: 'var(--muted)' }}>They'll receive an invite email with a link to set up their account and start onboarding.</div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 20 }}>
+              <div>
+                <label style={{ display: 'block', fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1.5, color: 'var(--muted)', marginBottom: 6 }}>FULL NAME</label>
+                <input
+                  className="input"
+                  placeholder="e.g. Sarah Johnson"
+                  value={fullName}
+                  onChange={e => setFullName(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSend()}
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1.5, color: 'var(--muted)', marginBottom: 6 }}>EMAIL ADDRESS</label>
+                <input
+                  className="input"
+                  type="email"
+                  placeholder="sarah@example.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSend()}
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div style={{ background: 'var(--danger-dim)', border: '1px solid var(--danger)', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: 'var(--danger)', marginBottom: 16 }}>
+                {error}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={onClose} disabled={sending}>Cancel</button>
+              <button className="btn btn-primary" style={{ flex: 2 }} onClick={handleSend} disabled={sending || !fullName || !email}>
+                {sending ? 'Sending…' : 'Send Invite'}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function CoachDashboard() {
   const { user } = useAuth()
   const { clients, activeClients, pendingCheckIns, overdueCheckIns, loading } = useCoach()
@@ -339,6 +432,7 @@ export default function CoachDashboard() {
   const [testResults,  setTestResults]  = useState([])
   const [dataLoading,  setDataLoading]  = useState(true)
   const [filter,       setFilter]       = useState('all') // all | needs_reply | week1 | no_programme
+  const [showInvite,   setShowInvite]   = useState(false)
 
   useEffect(() => {
     if (!clients?.length) { setDataLoading(false); return }
@@ -405,18 +499,29 @@ export default function CoachDashboard() {
 
   return (
     <div>
+      {showInvite && <InviteClientModal onClose={() => setShowInvite(false)} />}
+
       {/* Header */}
       <div className="page-header">
         <div>
           <div className="page-title">Coach Dashboard</div>
           <div className="page-subtitle">{today}</div>
         </div>
-        <div style={{
-          fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: 1.5,
-          color: 'var(--accent)', background: 'var(--accent-dim)',
-          border: '1px solid var(--border-accent)', borderRadius: 6, padding: '6px 14px',
-        }}>
-          £{mrr.toLocaleString()} MRR
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <button
+            className="btn btn-primary"
+            style={{ fontSize: 11, padding: '7px 16px', letterSpacing: 1 }}
+            onClick={() => setShowInvite(true)}
+          >
+            + Add Client
+          </button>
+          <div style={{
+            fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: 1.5,
+            color: 'var(--accent)', background: 'var(--accent-dim)',
+            border: '1px solid var(--border-accent)', borderRadius: 6, padding: '6px 14px',
+          }}>
+            £{mrr.toLocaleString()} MRR
+          </div>
         </div>
       </div>
 

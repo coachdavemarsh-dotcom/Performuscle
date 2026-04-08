@@ -1459,6 +1459,15 @@ export default function Onboarding() {
 
       if (profileError) throw profileError
 
+      // 4b — auto-link to coach if invited via coach invite
+      const coachId = user.user_metadata?.coach_id
+      if (coachId) {
+        await supabase.from('clients').upsert(
+          { coach_id: coachId, client_id: user.id },
+          { onConflict: 'coach_id,client_id' }
+        )
+      }
+
       // 5 — save assessment
       await supabase.from('client_assessments').insert({
         client_id: user.id,

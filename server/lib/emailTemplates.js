@@ -269,6 +269,64 @@ export function weeklyReminder({
   return { subject, html }
 }
 
+// ─── Template 4a: Client Invite ──────────────────────────────────────────────
+export function clientInvite({
+  clientName,
+  coachName,
+  inviteUrl,
+}) {
+  const firstName = clientName?.split(' ')[0] || 'there'
+  const subject = `🏋️ ${coachName} has invited you to Performuscle`
+
+  const steps = [
+    { num: 1, text: 'Click the button below to set your password' },
+    { num: 2, text: 'Complete a quick onboarding — your goals, stats and training history' },
+    { num: 3, text: 'Your coach will assign your personalised programme' },
+  ]
+
+  const stepCards = steps.map(s => `
+    <tr>
+      <td style="padding:6px 0;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+               style="background:#f8f9fb;border-radius:10px;">
+          <tr>
+            <td style="padding:14px 18px;">
+              <table role="presentation" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td style="width:32px;height:32px;background:${BRAND.accent};border-radius:50%;text-align:center;vertical-align:middle;font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:15px;color:#060608;font-weight:bold;">${s.num}</td>
+                  <td style="padding-left:14px;font-size:14px;color:${BRAND.text};line-height:1.5;">${s.text}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>`).join('')
+
+  const html = wrap(`
+    <h1 style="margin:0 0 6px;font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:26px;letter-spacing:0.08em;color:${BRAND.text};">
+      You've been invited, ${firstName}!
+    </h1>
+    <p style="margin:0 0 24px;font-size:15px;color:${BRAND.muted};line-height:1.6;">
+      <strong style="color:${BRAND.text};">${coachName}</strong> has set up a coaching account for you on Performuscle &mdash; your personal training hub for programming, nutrition, check-ins and progress tracking.
+    </p>
+
+    <p style="margin:0 0 16px;font-size:14px;color:${BRAND.text};font-weight:600;">Here's how to get started:</p>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 8px;">
+      ${stepCards}
+    </table>
+
+    ${ctaButton('ACCEPT INVITE &amp; SET UP ACCOUNT →', inviteUrl)}
+
+    <p style="margin:24px 0 8px;font-size:12px;color:${BRAND.muted};text-align:center;line-height:1.6;">
+      This invite link expires in 24 hours. If you didn't expect this email, you can safely ignore it.
+    </p>
+  `)
+
+  return { subject, html }
+}
+
 // ─── Template 4: Welcome Client ───────────────────────────────────────────────
 export function welcomeClient({
   clientName,

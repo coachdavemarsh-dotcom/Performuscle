@@ -86,6 +86,11 @@ export async function sendWelcomeEmail({
   return send({ to: clientEmail, subject, html })
 }
 
+export async function sendClientInviteEmail({ clientEmail, clientName, coachName, inviteUrl }) {
+  const { subject, html } = templates.clientInvite({ clientName, coachName, inviteUrl })
+  return send({ to: clientEmail, subject, html })
+}
+
 export async function sendBirthdayEmail({ clientEmail, clientName }) {
   const firstName = clientName?.split(' ')[0] || 'there'
   const subject = `🎂 Happy Birthday, ${firstName}!`

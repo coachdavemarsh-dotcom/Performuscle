@@ -1,16 +1,25 @@
+import { supabase } from './supabase.js'
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 async function post(path, body) {
   try {
+    const { data: { session } } = await supabase.auth.getSession()
+    const headers = { 'Content-Type': 'application/json' }
+    if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`
     const res = await fetch(`${API_URL}/api/emails/${path}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       credentials: 'include',
       body: JSON.stringify(body),
     })
-    return res.ok
-  } catch {
-    return false
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      return { ok: false, error: body.error || `HTTP ${res.status}` }
+    }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err.message }
   }
 }
 
@@ -38,4 +47,8 @@ export function notifyClientReply({ clientId, coachId, weekNumber, replyText }) 
 
 export function sendWelcome({ clientId, coachId }) {
   return post('welcome', { clientId, coachId })
+}
+
+export function inviteClient({ email, fullName }) {
+  return post('invite-client', { email, fullName })
 }
