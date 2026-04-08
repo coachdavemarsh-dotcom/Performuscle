@@ -1,13 +1,12 @@
 import { Router } from 'express'
 import { createClient } from '@supabase/supabase-js'
-import { requireAuth } from '../middleware/auth.js'
+import { requireAuth, requireCoach } from '../middleware/auth.js'
 import {
   sendCheckInNotification,
   sendCoachReplyNotification,
   sendWelcomeEmail,
   sendClientInviteEmail,
 } from '../lib/email.js'
-import { requireCoach } from '../middleware/auth.js'
 
 const router = Router()
 
