@@ -373,3 +373,13 @@ create policy "Coaches can view client cycle logs"
   );
 
 create index if not exists idx_cycle_logs_client_date on cycle_logs(client_id, log_date desc);
+
+-- ============================================================
+-- PROGRAMME & SESSION NOTES
+-- ============================================================
+
+alter table programs
+  add column if not exists coach_notes text;
+
+alter table sessions
+  add column if not exists coach_notes text;

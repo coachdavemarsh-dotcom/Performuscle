@@ -63,4 +63,63 @@ Write the summary now:`
   }
 })
 
+// ─── POST /api/ai/parse-session ──────────────────────────────────────────────
+// Takes a voice transcript and returns structured exercise objects
+router.post('/ai/parse-session', async (req, res) => {
+  const { transcript } = req.body
+  if (!transcript?.trim()) return res.status(400).json({ error: 'transcript required' })
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return res.status(503).json({ error: 'AI not configured — set ANTHROPIC_API_KEY' })
+  }
+
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+  const systemPrompt = `You are a personal training assistant that converts spoken exercise programming into structured data.
+
+Parse the transcript and return a JSON array of exercise objects. Each object must have these exact fields:
+- name (string): full exercise name, capitalised properly
+- set_count (integer): number of sets, default 3 if not mentioned
+- rep_scheme (string): reps or range e.g. "8", "6-8", "10-12", "AMRAP", "30s"
+- tempo (string): 4-digit tempo code e.g. "4010", "3010", "2011" — empty string if not mentioned
+- rest_seconds (integer): rest in seconds, default 60 if not mentioned. Convert "90 seconds" to 90, "2 minutes" to 120
+- set_type (string): one of "standard", "amrap", "drop", "rest_pause", "failure" — default "standard"
+- pairing (string): superset group letter e.g. "A1", "A2", "B1", "B2" — empty string if solo. If two exercises are described as a superset, pair them A1/A2, next pair B1/B2 etc.
+- coach_note (string): any technique cues or notes mentioned — empty string if none
+- video_url (string): always empty string
+
+Return ONLY valid JSON — a raw array with no extra text, no markdown, no code fences.
+
+Example input: "Four sets of back squat eight to ten reps tempo four zero one zero ninety seconds rest superset with Romanian deadlift same sets and reps"
+Example output: [{"name":"Barbell Back Squat","set_count":4,"rep_scheme":"8-10","tempo":"4010","rest_seconds":90,"set_type":"standard","pairing":"A1","coach_note":"","video_url":""},{"name":"Romanian Deadlift","set_count":4,"rep_scheme":"8-10","tempo":"4010","rest_seconds":90,"set_type":"standard","pairing":"A2","coach_note":"","video_url":""}]`
+
+  try {
+    const message = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1500,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: `Parse this exercise transcript into JSON:\n\n${transcript}` }],
+    })
+
+    const raw = message.content[0]?.text?.trim() || '[]'
+    const cleaned = raw.replace(/^```json?\n?/i, '').replace(/\n?```$/i, '').trim()
+
+    let exercises
+    try {
+      exercises = JSON.parse(cleaned)
+    } catch {
+      return res.status(500).json({ error: 'AI returned invalid JSON', raw })
+    }
+
+    if (!Array.isArray(exercises)) {
+      return res.status(500).json({ error: 'AI returned non-array', raw })
+    }
+
+    res.json({ exercises })
+  } catch (err) {
+    console.error('[AI] parse-session error:', err.message)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 export default router

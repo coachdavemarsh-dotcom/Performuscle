@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCoach } from '../../hooks/useCoach.js'
 import { supabase } from '../../lib/supabase.js'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { PROGRAM_TEMPLATES } from '../../data/programTemplates.js'
 import { createProgramFromTemplate } from '../../lib/supabase.js'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -127,6 +129,182 @@ function FieldRow({ label, children }) {
 }
 
 // ─── exercise editor row ──────────────────────────────────────────────────────
+
+async function addExercisesBatch(exercises) {
+  const results = []
+  for (const ex of exercises) {
+    const { data } = await saveExercise(ex)
+    if (data) results.push(data)
+  }
+  return results
+}
+
+// ─── voice dictate ────────────────────────────────────────────────────────────
+
+function VoiceDictate({ sessionId, onExercisesAdded }) {
+  const [state, setState]       = useState('idle') // idle|recording|done|parsing|preview|error
+  const [transcript, setTranscript] = useState('')
+  const [parsed, setParsed]     = useState([])
+  const [error, setError]       = useState('')
+  const recognitionRef          = useRef(null)
+  const finalRef                = useRef('')
+
+  function startRecording() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SR) {
+      setError('Speech recognition not supported — use Chrome or Edge.')
+      setState('error')
+      return
+    }
+    finalRef.current = ''
+    setTranscript('')
+    const r = new SR()
+    r.continuous = true
+    r.interimResults = true
+    r.lang = 'en-GB'
+    r.onresult = (e) => {
+      let interim = ''
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript
+        if (e.results[i].isFinal) finalRef.current += t + ' '
+        else interim = t
+      }
+      setTranscript(finalRef.current + interim)
+    }
+    r.onerror = (e) => { setError(`Mic error: ${e.error}`); setState('error') }
+    r.start()
+    recognitionRef.current = r
+    setState('recording')
+  }
+
+  function stopRecording() {
+    recognitionRef.current?.stop()
+    setState('done')
+  }
+
+  async function parseTranscript() {
+    const text = finalRef.current.trim() || transcript.trim()
+    if (!text) return
+    setState('parsing')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`${API_URL}/api/ai/parse-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ transcript: text }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Parse failed')
+      setParsed(json.exercises || [])
+      setState('preview')
+    } catch (err) {
+      setError(err.message)
+      setState('error')
+    }
+  }
+
+  async function addAll() {
+    const withSession = parsed.map((ex, i) => ({ ...ex, session_id: sessionId, order_index: i }))
+    const saved = await addExercisesBatch(withSession)
+    onExercisesAdded(saved)
+    reset()
+  }
+
+  function reset() {
+    recognitionRef.current?.stop()
+    setState('idle')
+    setTranscript('')
+    setParsed([])
+    setError('')
+    finalRef.current = ''
+  }
+
+  if (state === 'idle') return (
+    <button className="btn btn-ghost btn-sm" onClick={startRecording}
+      style={{ borderStyle: 'dashed', color: 'var(--accent)', width: '100%', marginBottom: 6 }}>
+      🎤 Dictate Session with AI
+    </button>
+  )
+
+  if (state === 'recording') return (
+    <div style={{ background: 'var(--s3)', borderRadius: 8, padding: 14, border: '1px solid var(--danger)', marginBottom: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+        <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--danger)', display: 'inline-block' }} />
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: 10, color: 'var(--danger)', letterSpacing: 1.5 }}>RECORDING</span>
+        <button className="btn btn-ghost btn-sm" onClick={stopRecording} style={{ marginLeft: 'auto' }}>■ Stop</button>
+      </div>
+      <div style={{ fontSize: 12, color: 'var(--muted)', fontStyle: 'italic', minHeight: 36, lineHeight: 1.7 }}>
+        {transcript || 'Start speaking your session…'}
+      </div>
+    </div>
+  )
+
+  if (state === 'done') return (
+    <div style={{ background: 'var(--s3)', borderRadius: 8, padding: 14, border: '1px solid var(--border)', marginBottom: 8 }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1.5, color: 'var(--muted)', marginBottom: 8 }}>TRANSCRIPT</div>
+      <div style={{ fontSize: 12, color: 'var(--white)', marginBottom: 14, lineHeight: 1.7 }}>{transcript || '(no speech detected)'}</div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button className="btn btn-ghost btn-sm" onClick={reset}>Cancel</button>
+        <button className="btn btn-ghost btn-sm" onClick={startRecording}>Re-record</button>
+        <button className="btn btn-primary btn-sm" style={{ marginLeft: 'auto' }} onClick={parseTranscript} disabled={!transcript.trim()}>
+          Parse with AI →
+        </button>
+      </div>
+    </div>
+  )
+
+  if (state === 'parsing') return (
+    <div style={{ padding: '14px', textAlign: 'center', color: 'var(--muted)', fontSize: 12, background: 'var(--s3)', borderRadius: 8, marginBottom: 8 }}>
+      <div style={{ marginBottom: 6 }}>🤖 Parsing transcript…</div>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1.5, color: 'var(--accent)' }}>CLAUDE IS READING YOUR SESSION</div>
+    </div>
+  )
+
+  if (state === 'preview') return (
+    <div style={{ background: 'var(--s3)', borderRadius: 8, padding: 14, border: '1px solid var(--border-accent)', marginBottom: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1.5, color: 'var(--accent)' }}>
+          AI PARSED — {parsed.length} EXERCISE{parsed.length !== 1 ? 'S' : ''}
+        </div>
+        <button onClick={reset} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>×</button>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
+        {parsed.map((ex, i) => (
+          <div key={i} style={{
+            background: 'var(--s4)', borderRadius: 6, padding: '8px 12px',
+            borderLeft: ex.pairing ? '3px solid var(--accent)' : '3px solid var(--border)',
+            display: 'flex', flexWrap: 'wrap', gap: '4px 12px', alignItems: 'baseline',
+          }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--white)', flex: '1 1 100%' }}>{ex.name}</span>
+            {ex.pairing && <span style={{ fontSize: 9, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>{ex.pairing}</span>}
+            <span style={{ fontSize: 11, color: 'var(--muted)' }}>{ex.set_count} sets × {ex.rep_scheme}</span>
+            {ex.tempo && <span style={{ fontSize: 11, color: 'var(--muted)' }}>@ {ex.tempo}</span>}
+            {ex.rest_seconds > 0 && <span style={{ fontSize: 11, color: 'var(--muted)' }}>{ex.rest_seconds}s rest</span>}
+            {ex.coach_note && <span style={{ fontSize: 11, color: 'var(--sub)', fontStyle: 'italic', flex: '1 1 100%' }}>{ex.coach_note}</span>}
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button className="btn btn-ghost btn-sm" onClick={reset}>Discard</button>
+        <button className="btn btn-ghost btn-sm" onClick={() => setState('done')}>← Edit</button>
+        <button className="btn btn-primary btn-sm" style={{ marginLeft: 'auto' }} onClick={addAll}>
+          Add {parsed.length} Exercise{parsed.length !== 1 ? 's' : ''} →
+        </button>
+      </div>
+    </div>
+  )
+
+  // error
+  return (
+    <div style={{ background: 'rgba(229,53,53,.08)', borderRadius: 8, padding: 12, border: '1px solid var(--danger)', marginBottom: 8 }}>
+      <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8 }}>{error}</div>
+      <button className="btn btn-ghost btn-sm" onClick={reset}>Dismiss</button>
+    </div>
+  )
+}
 
 function ExerciseRow({ exercise, sessionId, onSaved, onDeleted, orderIndex, totalExercises }) {
   const isNew = !exercise.id
@@ -1154,6 +1332,9 @@ function SessionBuilder({ session, onDelete }) {
   const [tab, setTab] = useState('workout')
   const [addingNew, setAddingNew] = useState(false)
   const [typeChanging, setTypeChanging] = useState(false)
+  const [sessionNotes, setSessionNotes] = useState(session.coach_notes || '')
+  const [notesSaving, setNotesSaving] = useState(false)
+  const [notesSaved, setNotesSaved] = useState(false)
 
   const typeInfo = SESSION_TYPES.find(t => t.value === sessionType) || SESSION_TYPES[0]
 
@@ -1178,6 +1359,18 @@ function SessionBuilder({ session, onDelete }) {
   function handleExerciseDeleted(id) {
     if (!id) { setAddingNew(false); return }
     setExercises(prev => prev.filter(e => e.id !== id))
+  }
+
+  function handleExercisesBatchAdded(newExercises) {
+    setExercises(prev => [...prev.filter(e => e.id), ...newExercises])
+  }
+
+  async function saveSessionNotes() {
+    setNotesSaving(true)
+    await saveSessionField(session.id, { coach_notes: sessionNotes })
+    setNotesSaving(false)
+    setNotesSaved(true)
+    setTimeout(() => setNotesSaved(false), 2000)
   }
 
   const sessionExercises = exercises.filter(e => e.id)
@@ -1216,9 +1409,9 @@ function SessionBuilder({ session, onDelete }) {
           ))}
         </div>
 
-        {/* Workout / Prep tabs */}
+        {/* Workout / Prep / Notes tabs */}
         <div style={{ display: 'flex', gap: 2, background: 'var(--s4)', borderRadius: 6, padding: 2, flexShrink: 0 }}>
-          {['workout', 'movement prep'].map(t => (
+          {['workout', 'movement prep', 'notes'].map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               fontFamily: 'var(--font-display)', fontSize: 8, letterSpacing: 1.2,
               padding: '4px 10px', borderRadius: 4, border: 'none', cursor: 'pointer',
@@ -1254,6 +1447,7 @@ function SessionBuilder({ session, onDelete }) {
                     orderIndex={sessionExercises.length} totalExercises={sessionExercises.length + 1}
                     onSaved={handleExerciseSaved} onDeleted={handleExerciseDeleted} />
                 )}
+                <VoiceDictate sessionId={session.id} onExercisesAdded={handleExercisesBatchAdded} />
                 <button className="btn btn-ghost btn-sm" onClick={() => setAddingNew(true)} disabled={addingNew}
                   style={{ width: '100%', marginTop: 4, borderStyle: 'dashed' }}>
                   + Add Exercise
@@ -1278,6 +1472,27 @@ function SessionBuilder({ session, onDelete }) {
         {tab === 'movement prep' && (
           <MovementPrepEditor sessionId={session.id} initial={session.movement_prep || []} />
         )}
+
+        {tab === 'notes' && (
+          <div>
+            <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 10, lineHeight: 1.6 }}>
+              Session notes are visible to the client in their Training view. Use this for warm-up instructions, session focus, coaching cues, or anything they need to know before starting.
+            </div>
+            <textarea
+              className="input"
+              rows={6}
+              placeholder="e.g. Focus on depth in the squat today — drive knees out and keep chest tall. Rest fully between working sets. Warm up thoroughly before the heavy sets…"
+              style={{ resize: 'vertical', lineHeight: 1.7, fontSize: 13 }}
+              value={sessionNotes}
+              onChange={e => setSessionNotes(e.target.value)}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+              <button className="btn btn-primary btn-sm" onClick={saveSessionNotes} disabled={notesSaving}>
+                {notesSaving ? 'Saving…' : notesSaved ? '✓ Saved' : 'Save Notes'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -1294,6 +1509,7 @@ function GoalSettingsTab({ program, onSaved }) {
     end_date:      program.end_date || '',
     phase:         program.phase || '',
     current_week:  program.current_week || 1,
+    coach_notes:   program.coach_notes || '',
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -1427,6 +1643,22 @@ function GoalSettingsTab({ program, onSaved }) {
             <input className="input" placeholder="e.g. Hypertrophy" {...f('phase')} />
           </FieldRow>
         </div>
+      </div>
+
+      {/* Programme notes */}
+      <div className="card" style={{ padding: '18px 20px', marginBottom: 16 }}>
+        <div className="label" style={{ marginBottom: 6 }}>Programme Notes</div>
+        <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 10, lineHeight: 1.6 }}>
+          Visible to the client in their Training view. Use for programme overview, key focus areas, lifestyle guidelines, or anything they should keep in mind throughout.
+        </div>
+        <textarea
+          className="input"
+          rows={5}
+          placeholder="e.g. This 8-week hypertrophy block focuses on progressive overload. Sleep and nutrition are critical — aim for 8h sleep and hit your protein target every day. Training days are non-negotiable, rest days are active recovery…"
+          style={{ resize: 'vertical', lineHeight: 1.7, fontSize: 13 }}
+          value={form.coach_notes ?? ''}
+          onChange={e => setForm(p => ({ ...p, coach_notes: e.target.value }))}
+        />
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
