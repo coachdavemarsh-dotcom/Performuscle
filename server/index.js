@@ -22,16 +22,22 @@ const isProd = process.env.NODE_ENV === 'production'
 // Secure HTTP headers
 app.use(helmet())
 
-// CORS — allow Vite dev server, standalone meal planner, or production frontends
+// CORS — comma-separated ALLOWED_ORIGINS env var covers all frontends
+// e.g. "https://performuscle.vercel.app,https://coachdavemarsh.net"
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:5173',
-  process.env.MEAL_PLANNER_URL || 'http://localhost:5175',
-].filter(Boolean)
+  // Dev defaults
+  'http://localhost:5173',
+  'http://localhost:5175',
+  'http://localhost:8080',
+  // Production — set ALLOWED_ORIGINS in Railway with all your live domains
+  ...(process.env.ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean),
+]
 
 app.use(cors({
   origin: (origin, cb) => {
-    // Allow requests with no origin (curl, mobile apps, same-origin)
+    // Allow requests with no origin (curl, Netlify proxy, same-origin)
     if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+    console.warn('[CORS] Blocked origin:', origin)
     cb(new Error('Not allowed by CORS'))
   },
   credentials: true,
