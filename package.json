@@ -9,9 +9,17 @@
     "preview": "vite preview",
     "server": "node server/index.js",
     "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
-    "landing": "node serve-landing.js"
+    "dev:meal-planner": "concurrently \"npm run server\" \"cd meal-planner && npm run dev\"",
+    "dev:everything": "concurrently \"npm run dev\" \"npm run server\" \"cd meal-planner && npm run dev\"",
+    "install:meal-planner": "cd meal-planner && npm install",
+    "landing": "node serve-landing.cjs",
+    "build:meal-planner": "cd meal-planner && npm run build",
+    "build:netlify": "bash scripts/build-site.sh",
+    "start:landing": "npm run build:meal-planner && node serve-landing.cjs",
+    "dev:landing": "concurrently \"npm run server\" \"cd meal-planner && npm run dev\" \"node serve-landing.cjs\""
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0",
     "@supabase/supabase-js": "^2.39.0",
     "concurrently": "^8.2.2",
     "cors": "^2.8.5",

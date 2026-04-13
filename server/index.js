@@ -7,6 +7,7 @@ import stripeRouter from './routes/stripe.js'
 import webhooksRouter from './routes/webhooks.js'
 import emailRouter from './routes/emails.js'
 import aiRouter from './routes/ai.js'
+import mealPlannerRouter from './routes/mealPlanner.js'
 import { startReminderCron } from './lib/reminderCron.js'
 import { startBirthdayCron } from './lib/birthdayCron.js'
 
@@ -21,9 +22,18 @@ const isProd = process.env.NODE_ENV === 'production'
 // Secure HTTP headers
 app.use(helmet())
 
-// CORS — allow Vite dev server or production frontend only
+// CORS — allow Vite dev server, standalone meal planner, or production frontends
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:5173',
+  process.env.MEAL_PLANNER_URL || 'http://localhost:5175',
+].filter(Boolean)
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, cb) => {
+    // Allow requests with no origin (curl, mobile apps, same-origin)
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+    cb(new Error('Not allowed by CORS'))
+  },
   credentials: true,
 }))
 
@@ -63,6 +73,7 @@ app.use('/api/stripe', stripeRouter)
 app.use('/api/webhooks', webhooksRouter)
 app.use('/api/emails', emailRouter)
 app.use('/api', aiRouter)
+app.use('/api', mealPlannerRouter)
 
 // 404 handler
 app.use((req, res) => {

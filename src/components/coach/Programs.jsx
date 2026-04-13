@@ -2112,7 +2112,7 @@ function CreateProgramModal({ clients, onClose, onCreated, preselectedClientId =
         target_weight: form.target_weight || null,
         is_active: true,
       }
-      const sessions = selectedFullTemplate.generateSessions(selectedFullTemplate.default_weeks)
+      const sessions = selectedFullTemplate.generateSessions(selectedFullTemplate.weeks)
       const result = await createProgramFromTemplate(programData, sessions)
       setSaving(false)
       if (result.error) {
@@ -2362,14 +2362,18 @@ function TemplateLibrary({ clients, onClose, onCreated }) {
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
       zIndex: 100, display: 'flex', alignItems: 'flex-start',
-      justifyContent: 'center', padding: '20px 16px', overflowY: 'auto',
+      justifyContent: 'center', padding: '20px 16px',
     }}>
-      <div className="card" style={{ width: '100%', maxWidth: 800, position: 'relative' }}>
+      <div className="card" style={{
+        width: '100%', maxWidth: 800, position: 'relative',
+        maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden',
+        WebkitOverflowScrolling: 'touch',
+      }}>
         <div className="flex-between" style={{ marginBottom: 20 }}>
           <div>
             <div className="card-title" style={{ fontSize: 20 }}>Template Library</div>
             <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4 }}>
-              Pre-built programmes from Training Methods — select one to auto-generate all sessions and exercises
+              {PROGRAM_TEMPLATES.length} programmes — select one to auto-generate all sessions and exercises
             </div>
           </div>
           <button className="btn btn-ghost btn-sm" onClick={onClose}>✕ CLOSE</button>

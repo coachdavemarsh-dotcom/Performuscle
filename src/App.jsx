@@ -35,6 +35,7 @@ import Protocols from './components/client/Protocols.jsx'
 import Mobility from './components/client/Mobility.jsx'
 import PSMF from './components/client/PSMF.jsx'
 import MealPlanTemplates from './components/coach/MealPlanTemplates.jsx'
+import MealPlannerWizard from './components/client/MealPlannerWizard.jsx'
 
 // Auth pages
 import Auth from './components/Auth.jsx'
@@ -116,6 +117,7 @@ function AppRoutes() {
         <Route path="protocols" element={<Protocols />} />
         <Route path="mobility" element={<Mobility />} />
         <Route path="psmf" element={<PSMF />} />
+        <Route path="meal-planner" element={<MealPlannerWizard />} />
 
         {/* Coach routes */}
         <Route

@@ -1,0 +1,18 @@
+[build]
+  command   = "npm run build:netlify"
+  publish   = "dist"
+
+# ── Proxy /api/* to your Railway Express server ───────────────────────────────
+# After deploying Railway, set RAILWAY_API_URL in Netlify → Site settings → Env vars
+# e.g. https://performuscle-api.up.railway.app
+[[redirects]]
+  from    = "/api/*"
+  to      = ":RAILWAY_API_URL/api/:splat"
+  status  = 200
+  force   = true
+
+# ── SPA fallback for React Router inside /meal-planner ───────────────────────
+[[redirects]]
+  from   = "/meal-planner/*"
+  to     = "/meal-planner/index.html"
+  status = 200

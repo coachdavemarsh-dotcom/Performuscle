@@ -3,9 +3,21 @@
   "configurations": [
     {
       "name": "performuscle",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 5173
+      "runtimeExecutable": "/usr/local/bin/node",
+      "runtimeArgs": ["node_modules/.bin/vite", "--port", "5174"],
+      "port": 5174
+    },
+    {
+      "name": "express",
+      "runtimeExecutable": "/usr/local/bin/node",
+      "runtimeArgs": ["server/index.js"],
+      "port": 3001
+    },
+    {
+      "name": "meal-planner",
+      "runtimeExecutable": "/usr/local/bin/node",
+      "runtimeArgs": ["meal-planner/node_modules/.bin/vite", "--config", "meal-planner/vite.config.js", "--port", "5175"],
+      "port": 5175
     },
     {
       "name": "landing",

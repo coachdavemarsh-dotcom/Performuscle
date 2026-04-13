@@ -543,7 +543,7 @@ function TemplateDetail({ template, onBack, onAssign }) {
     (m) => m.id === template.conditioning?.recommended
   )
   const week1Sessions = template.generateSessions(1)
-  const schedule = computeSchedule(template.days_per_week)
+  const schedule = computeSchedule(template.days)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

@@ -12,7 +12,9 @@
       "Bash(grep -v .Trash find /Users/coachdavemarsh/Downloads -name *.pdf)",
       "Bash(npx vite:*)",
       "Bash(node --check \"/Users/coachdavemarsh/Claude Performuscle/src/lib/calculators.js\")",
-      "WebSearch"
+      "WebSearch",
+      "Bash(curl -s http://localhost:3001/api/meal-planner/recipes)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\)\\); const ok=d.recipes.filter\\(r=>r.kcal\\); console.log\\('Total:', d.recipes.length, '| With macros:', ok.length\\)\")"
     ]
   }
 }

@@ -2354,7 +2354,7 @@ const RAW_PROGRAM_TEMPLATES = [
     days_per_week: 4,
     difficulty: 'advanced',
     icon: '🏋️',
-    color: 'from-rose-700 to-orange-500',
+    color: '#b91c1c',
     tags: ['powerbuild', 'hinge', 'squat', 'press', 'arms', '4-day', 'advanced'],
     generateSessions(weeks = this.default_weeks) {
       const sessions = []
@@ -2480,7 +2480,7 @@ const RAW_PROGRAM_TEMPLATES = [
     days_per_week: 6,
     difficulty: 'intermediate',
     icon: '⚡',
-    color: 'from-violet-700 to-cyan-500',
+    color: '#6d28d9',
     tags: ['anterior', 'posterior', 'HICT', 'conditioning', '6-day', 'hybrid', 'superset'],
     generateSessions(weeks = this.default_weeks) {
       const sessions = []
@@ -2603,7 +2603,7 @@ const RAW_PROGRAM_TEMPLATES = [
     days_per_week: 5,
     difficulty: 'intermediate',
     icon: '💪',
-    color: 'from-blue-600 to-purple-600',
+    color: '#2563eb',
     tags: ['anterior', 'posterior', 'shoulders', 'arms', 'contrast', 'poliquin', '5-day'],
     generateSessions(weeks = this.default_weeks) {
       const sessions = []
@@ -2736,7 +2736,7 @@ const RAW_PROGRAM_TEMPLATES = [
     days_per_week: 6,
     difficulty: 'intermediate',
     icon: '🏃',
-    color: 'from-green-600 to-teal-500',
+    color: '#16a34a',
     tags: ['athletic', 'strength', 'conditioning', 'sled', 'full-body', '6-day'],
     generateSessions(weeks = this.default_weeks) {
       const sessions = []
@@ -2878,7 +2878,7 @@ const RAW_PROGRAM_TEMPLATES = [
     days_per_week: 2,
     difficulty: 'intermediate',
     icon: '🏈',
-    color: 'from-green-700 to-yellow-500',
+    color: '#15803d',
     tags: ['athletic', 'football', 'strength', 'neck', 'grip', '2-day'],
     generateSessions(weeks = this.default_weeks) {
       const sessions = []
@@ -2960,7 +2960,7 @@ const RAW_PROGRAM_TEMPLATES = [
     days_per_week: 3,
     difficulty: 'intermediate',
     icon: '⚡',
-    color: 'from-teal-600 to-green-500',
+    color: '#0d9488',
     tags: ['athletic', 's+c', 'strength', 'conditioning', 'sled', '3-day'],
     generateSessions(weeks = this.default_weeks) {
       const sessions = []
@@ -3070,7 +3070,7 @@ const RAW_PROGRAM_TEMPLATES = [
     days_per_week: 6,
     difficulty: 'intermediate',
     icon: '🏃',
-    color: 'from-sky-600 to-emerald-500',
+    color: '#0284c7',
     tags: ['base', 'accumulation', 'running', 'strength', 'gpp', 'aerobic', '6-day'],
     generateSessions(weeks = this.default_weeks) {
       const sessions = []
@@ -3210,7 +3210,7 @@ const RAW_PROGRAM_TEMPLATES = [
     days_per_week: 4,
     difficulty: 'intermediate',
     icon: '✨',
-    color: 'from-pink-500 to-rose-400',
+    color: '#ec4899',
     tags: ['bikini', 'glutes', 'delts', 'upper-lower', 'female', '4-day'],
     generateSessions(weeks = this.default_weeks) {
       const sessions = []
@@ -3312,6 +3312,8 @@ const RAW_PROGRAM_TEMPLATES = [
     id: 'bodyweight-travel',
     name: 'Bodyweight Travel',
     description: 'Minimal-equipment full-body programme built around bodyweight and light dumbbells. Three circuit-style resistance days plus one active recovery run day.',
+    icon: '🧳',
+    color: 'var(--accent)',
     goal: 'recomp',
     difficulty: 'intermediate',
     days_per_week: 4,
@@ -3423,6 +3425,8 @@ const RAW_PROGRAM_TEMPLATES = [
     id: 'built-powerful',
     name: 'Built Powerful',
     description: '5-session power-focused programme: Lower Power, Upper Power, Plyometrics, Full Body, and HIIT. Every session opens with a CNS-priming giant set and builds to explosive or heavy compound work.',
+    icon: '⚡',
+    color: '#dc2626',
     goal: 'strength',
     difficulty: 'advanced',
     days_per_week: 5,
@@ -3554,6 +3558,8 @@ const RAW_PROGRAM_TEMPLATES = [
     id: 'condition',
     name: 'Condition',
     description: '4-day upper/lower conditioning split using giant sets with isometric integration. Each giant set pairs two dynamic exercises with a third isometric hold to deepen neuromuscular conditioning.',
+    icon: '🔥',
+    color: '#d97706',
     goal: 'recomp',
     difficulty: 'intermediate',
     days_per_week: 4,
@@ -3693,6 +3699,8 @@ const RAW_PROGRAM_TEMPLATES = [
     id: 'contrast-training',
     name: 'Contrast Training',
     description: '5-day upper/lower contrast programme pairing heavy strength lifts with explosive plyometric or Olympic-lift variations to maximise post-activation potentiation. Finishes with a mixed power/conditioning day.',
+    icon: '⚡',
+    color: '#7c3aed',
     goal: 'strength',
     difficulty: 'advanced',
     days_per_week: 5,
@@ -3841,6 +3849,8 @@ const RAW_PROGRAM_TEMPLATES = [
     id: 'contrast-2',
     name: 'Contrast 2.0',
     description: '4-session full body contrast programme. Each session pairs a heavy compound lift with a plyometric/explosive counterpart, surrounded by superset accessories. More hypertrophy volume than the original Contrast Training.',
+    icon: '💥',
+    color: '#7c3aed',
     goal: 'strength',
     difficulty: 'advanced',
     days_per_week: 4,
@@ -3976,6 +3986,9 @@ const RAW_PROGRAM_TEMPLATES = [
   {
     id: 'contrast-block',
     name: 'Contrast Block',
+    description: '5-day PAP contrast programme: tri-sets pairing a heavy compound lift with an explosive plyometric and an anti-gravity core hold to exploit post-activation potentiation. Includes a dedicated sprint interval day.',
+    icon: '⚡',
+    color: '#0891b2',
     sessions_per_week: 5,
     goals: ['lean_gain', 'strength'],
     difficulty: 'advanced',
@@ -4124,6 +4137,9 @@ const RAW_PROGRAM_TEMPLATES = [
   {
     id: 'depletion',
     name: 'Depletion',
+    description: 'Glycogen depletion giant sets on Monday and Wednesday (3-round giant sets, 45–60s rest) exhaust muscle glycogen for fat loss, followed by a heavier Saturday "Tension Day" to preserve muscle with 6–10 rep strength work.',
+    icon: '🔥',
+    color: '#dc2626',
     sessions_per_week: 3,
     goals: ['cut', 'recomp', 'lean_gain'],
     difficulty: 'intermediate',
@@ -4211,6 +4227,9 @@ const RAW_PROGRAM_TEMPLATES = [
   {
     id: 'female-531',
     name: 'Female 531 Strength Programme',
+    description: "Jim Wendler's 5/3/1 adapted for women across three lower-back-friendly sessions. Trap Bar Deadlift, Hack Squat and Chin-Up are the main lifts, cycling through 3×5, 3×3 and 5/3/1 waves with a deload week every 4th week.",
+    icon: '🏋️',
+    color: '#7c3aed',
     sessions_per_week: 3,
     goals: ['strength', 'lean_gain'],
     difficulty: 'intermediate',
@@ -4308,6 +4327,9 @@ const RAW_PROGRAM_TEMPLATES = [
   {
     id: 'female-physique-5day',
     name: 'Female Physique 5 Day',
+    description: 'Five-session upper/lower split with arm supersets woven into every session. Arms are finished as superset pairs on each day to maximise volume without dedicated arm days. High time under tension and controlled tempos throughout.',
+    icon: '✨',
+    color: '#ec4899',
     sessions_per_week: 5,
     goals: ['lean_gain', 'recomp'],
     difficulty: 'intermediate',
@@ -4473,6 +4495,9 @@ const RAW_PROGRAM_TEMPLATES = [
   {
     id: 'full-body',
     name: 'Full Body',
+    description: 'Four rotating full-body sessions hitting every major movement pattern across the week. Each day pairs compound supersets with accessory work and opens with a CNS-activating giant set warmup.',
+    icon: '🔄',
+    color: 'var(--accent)',
     sessions_per_week: 4,
     goals: ['lean_gain', 'recomp'],
     difficulty: 'intermediate',
@@ -4587,6 +4612,9 @@ const RAW_PROGRAM_TEMPLATES = [
   {
     id: 'fb-upper-lower-accessories',
     name: 'Full Body / Upper / Lower / Accessories',
+    description: 'Four-day programme cycling through Full Body, Upper, Lower and Accessories sessions. Each day opens with a CNS-activating warmup, then moves to heavy compound supersets before finishing with targeted accessory volume.',
+    icon: '💪',
+    color: '#b45309',
     sessions_per_week: 4,
     goals: ['lean_gain', 'strength'],
     difficulty: 'advanced',
@@ -5189,6 +5217,1179 @@ const RAW_PROGRAM_TEMPLATES = [
           ],
         },
       ]
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Foundational Strength Phase 1 ──────────────────────────────────────────
+  {
+    id: 'foundational-strength-p1',
+    name: 'Foundational Strength Phase 1',
+    description: 'Three-day full-body strength foundation. Each session pairs a main compound lift (Back Squat, Deadlift, Bench Press) with a complementary movement and accessories. Progressively overloads across 8 weeks building a base for further phases.',
+    icon: '🏗️',
+    color: 'var(--info)',
+    goal_type: 'gain',
+    phase: 'Foundational Strength',
+    difficulty: 'beginner',
+    days_per_week: 3,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Squat Focus',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',          set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 120, notes: 'Main lift — progress load each week', order_index: 0, superset_group: null },
+            { name: 'Romanian Deadlift',   set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: null },
+            { name: 'Chest Supported Row', set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'A1' },
+            { name: 'Incline DB Press',    set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Plank Hold',          set_count: 3, rep_range: '30-45s', tempo: 'hold', rest_seconds: 45,  notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Hinge Focus',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Trap Bar Deadlift',   set_count: 4, rep_range: '5-6',   tempo: '3010', rest_seconds: 120, notes: 'Main lift — control the eccentric', order_index: 0, superset_group: null },
+            { name: 'Front Squat',         set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: null },
+            { name: 'Seated Cable Row',    set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'A1' },
+            { name: 'DB Shoulder Press',   set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Dead Bug',            set_count: 3, rep_range: '8 each', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Press Focus',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Flat Barbell Bench Press', set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 120, notes: 'Main lift — spotter or safety bars', order_index: 0, superset_group: null },
+            { name: 'Chin-Up',                  set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90,  notes: 'Add weight when 8 reps achieved', order_index: 1, superset_group: null },
+            { name: 'Walking Lunge',            set_count: 3, rep_range: '10-12', tempo: '2010', rest_seconds: 60,  notes: 'Per side', order_index: 2, superset_group: 'A1' },
+            { name: 'Lying Leg Curl',           set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Pallof Press',             set_count: 3, rep_range: '12 each', tempo: '2020', rest_seconds: 45,  notes: 'Anti-rotation core', order_index: 4, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Foundational Strength Phase 2 ──────────────────────────────────────────
+  {
+    id: 'foundational-strength-p2',
+    name: 'Foundational Strength Phase 2',
+    description: 'Progression from Phase 1 — loads increase, rep ranges tighten. Introduces pause squats, deficit deadlifts and close-grip bench to build sticking-point strength and reinforce technique under heavier load.',
+    icon: '🏗️',
+    color: '#0891b2',
+    goal_type: 'gain',
+    phase: 'Foundational Strength',
+    difficulty: 'intermediate',
+    days_per_week: 3,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Squat Focus',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Pause Back Squat',    set_count: 4, rep_range: '4-6',   tempo: '3212', rest_seconds: 120, notes: '2s pause at bottom', order_index: 0, superset_group: null },
+            { name: 'Romanian Deadlift',   set_count: 3, rep_range: '6-8',   tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: null },
+            { name: 'Pull-Up',             set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'A1' },
+            { name: 'Flat DB Press',       set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Copenhagen Plank',    set_count: 3, rep_range: '20s each', tempo: 'hold', rest_seconds: 45,  notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Hinge Focus',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Deficit Deadlift',    set_count: 4, rep_range: '4-5',   tempo: '3010', rest_seconds: 120, notes: '5cm deficit — drive floor away', order_index: 0, superset_group: null },
+            { name: 'Bulgarian Split Squat', set_count: 3, rep_range: '8-10', tempo: '3010', rest_seconds: 90,  notes: 'Per side', order_index: 1, superset_group: null },
+            { name: 'Barbell Row',         set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'A1' },
+            { name: 'Standing Press',      set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Hollow Body Hold',    set_count: 3, rep_range: '30s',   tempo: 'hold',  rest_seconds: 45,  notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Press Focus',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Close Grip Bench Press', set_count: 4, rep_range: '4-6', tempo: '3010', rest_seconds: 120, notes: null, order_index: 0, superset_group: null },
+            { name: 'Weighted Chin-Up',       set_count: 4, rep_range: '4-6', tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: null },
+            { name: 'Leg Press',              set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'A1' },
+            { name: 'Leg Curl',               set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60, notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Ab Wheel Rollout',       set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 45, notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Foundational Strength Phase 3 ──────────────────────────────────────────
+  {
+    id: 'foundational-strength-p3',
+    name: 'Foundational Strength Phase 3',
+    description: 'Final intensification phase — rep ranges drop to 3-5, loads peak. Introduces 1-2 AMRAP sets per session for max strength assessment. Prepares for a 1RM test or transition to a powerbuilding block.',
+    icon: '🏗️',
+    color: '#1d4ed8',
+    goal_type: 'strength',
+    phase: 'Intensification',
+    difficulty: 'intermediate',
+    days_per_week: 3,
+    default_weeks: 6,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Squat + Press',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',           set_count: 5, rep_range: '3-5',  tempo: '3010', rest_seconds: 180, notes: 'Last set AMRAP @ 85%', order_index: 0, superset_group: null },
+            { name: 'Flat Barbell Bench',   set_count: 5, rep_range: '3-5',  tempo: '3010', rest_seconds: 120, notes: null, order_index: 1, superset_group: null },
+            { name: 'Bent Over Row',        set_count: 3, rep_range: '6-8',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 2, superset_group: null },
+            { name: 'Single Leg RDL',       set_count: 3, rep_range: '8-10', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Hinge + Pull',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Deadlift',             set_count: 5, rep_range: '2-4',  tempo: '3010', rest_seconds: 180, notes: 'Last set AMRAP @ 87%', order_index: 0, superset_group: null },
+            { name: 'Weighted Pull-Up',     set_count: 5, rep_range: '3-5',  tempo: '3010', rest_seconds: 120, notes: null, order_index: 1, superset_group: null },
+            { name: 'Standing Press',       set_count: 3, rep_range: '6-8',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 2, superset_group: null },
+            { name: 'Bulgarian Split Squat',set_count: 3, rep_range: '6-8',  tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Full Body Intensification',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Front Squat',          set_count: 4, rep_range: '3-5',  tempo: '3010', rest_seconds: 150, notes: null, order_index: 0, superset_group: null },
+            { name: 'Close Grip Bench',     set_count: 4, rep_range: '3-5',  tempo: '3010', rest_seconds: 120, notes: null, order_index: 1, superset_group: null },
+            { name: 'Chin-Up',              set_count: 4, rep_range: '4-6',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 2, superset_group: null },
+            { name: 'Hip Thrust',           set_count: 3, rep_range: '8-10', tempo: '2010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Hyrox Prep — Base ──────────────────────────────────────────────────────
+  {
+    id: 'hyrox-prep-base',
+    name: 'Hyrox Prep — Base',
+    description: 'Eight-week base phase for Hyrox competitors. Pairs strength sessions (squat, hinge, push, pull) with sled, ski erg and running conditioning. Builds the aerobic engine and functional strength needed for event-day performance.',
+    icon: '🏃',
+    color: '#f97316',
+    goal_type: 'maintain',
+    phase: 'Hyrox Base',
+    difficulty: 'intermediate',
+    days_per_week: 4,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Lower Strength',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',           set_count: 4, rep_range: '6-8',  tempo: '3010', rest_seconds: 120, notes: null, order_index: 0, superset_group: null },
+            { name: 'Romanian Deadlift',    set_count: 3, rep_range: '8-10', tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: null },
+            { name: 'Walking Lunge',        set_count: 3, rep_range: '12 each', tempo: '2010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'A1' },
+            { name: 'Leg Curl',             set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60, notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Sled Push — Heavy',    set_count: 4, rep_range: '20m',  tempo: null,   rest_seconds: 90,  notes: 'Max effort each rep', order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Upper Strength + Rowing',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Flat Barbell Bench',   set_count: 4, rep_range: '6-8',  tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Barbell Row',          set_count: 4, rep_range: '6-8',  tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'DB Shoulder Press',    set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Pull-Up',              set_count: 3, rep_range: '8-10', tempo: '3010', rest_seconds: 60, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Ski Erg',              set_count: 4, rep_range: '250m', tempo: null,   rest_seconds: 60, notes: 'Aerobic pace — 2:00/500m', order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Aerobic Conditioning',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Sled Pull',            set_count: 4, rep_range: '20m',  tempo: null,   rest_seconds: 60, notes: 'Moderate weight — upright torso', order_index: 0, superset_group: null },
+            { name: 'Ski Erg',              set_count: 4, rep_range: '500m', tempo: null,   rest_seconds: 60, notes: 'Steady aerobic effort', order_index: 1, superset_group: null },
+            { name: 'Burpee Broad Jump',    set_count: 3, rep_range: '10',   tempo: null,   rest_seconds: 60, notes: null, order_index: 2, superset_group: null },
+            { name: 'Wall Ball',            set_count: 3, rep_range: '20',   tempo: null,   rest_seconds: 60, notes: '9kg ball', order_index: 3, superset_group: null },
+            { name: 'Run / Jog',            set_count: 1, rep_range: '15min', tempo: null,  rest_seconds: 0,  notes: 'Easy aerobic pace Z2', order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 4 — Full Body + Event Simulation',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Deadlift',             set_count: 4, rep_range: '5-6',  tempo: '3010', rest_seconds: 120, notes: null, order_index: 0, superset_group: null },
+            { name: 'Farmer Carry',         set_count: 4, rep_range: '30m',  tempo: null,   rest_seconds: 60,  notes: 'Heavy — maintain upright posture', order_index: 1, superset_group: null },
+            { name: 'Sandbag Lunge',        set_count: 3, rep_range: '10 each', tempo: null, rest_seconds: 60,  notes: '20kg bag', order_index: 2, superset_group: null },
+            { name: 'Row Ergometer',        set_count: 3, rep_range: '500m', tempo: null,   rest_seconds: 90,  notes: 'Moderate effort — 2:05/500m', order_index: 3, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Hyrox Prep — Phase 2 ────────────────────────────────────────────────────
+  {
+    id: 'hyrox-prep-phase2',
+    name: 'Hyrox Prep — Phase 2',
+    description: 'Threshold phase following the Hyrox base block. Introduces lactate threshold intervals on the ski erg and sled, increases strength intensity, and adds race-pace event simulations. Prepares the body for the specific demands of Hyrox competition.',
+    icon: '🏃',
+    color: '#ea580c',
+    goal_type: 'maintain',
+    phase: 'Hyrox Threshold',
+    difficulty: 'advanced',
+    days_per_week: 4,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Heavy Lower + Sled',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Back Squat',           set_count: 5, rep_range: '4-5',  tempo: '3010', rest_seconds: 150, notes: null, order_index: 0, superset_group: null },
+            { name: 'Sled Push — Race Pace', set_count: 6, rep_range: '30m', tempo: null,   rest_seconds: 90,  notes: 'Match competition weight', order_index: 1, superset_group: null },
+            { name: 'Romanian Deadlift',    set_count: 3, rep_range: '8-10', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: null },
+            { name: 'Walking Lunge',        set_count: 3, rep_range: '12 each', tempo: '2010', rest_seconds: 60, notes: null, order_index: 3, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Upper Strength + Ski Threshold',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Barbell Row',          set_count: 5, rep_range: '4-5',  tempo: '3010', rest_seconds: 120, notes: null, order_index: 0, superset_group: null },
+            { name: 'Flat Bench Press',     set_count: 5, rep_range: '4-5',  tempo: '3010', rest_seconds: 120, notes: null, order_index: 1, superset_group: null },
+            { name: 'Ski Erg Intervals',    set_count: 6, rep_range: '250m', tempo: null,   rest_seconds: 60,  notes: 'Threshold effort — 1:50/500m target', order_index: 2, superset_group: null },
+            { name: 'Pull-Up',              set_count: 3, rep_range: '8-10', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Event Simulation',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Ski Erg',              set_count: 1, rep_range: '1000m', tempo: null,  rest_seconds: 120, notes: 'Race pace', order_index: 0, superset_group: null },
+            { name: 'Sled Push',            set_count: 1, rep_range: '50m',  tempo: null,   rest_seconds: 120, notes: 'Race weight', order_index: 1, superset_group: null },
+            { name: 'Burpee Broad Jump',    set_count: 1, rep_range: '10',   tempo: null,   rest_seconds: 120, notes: null, order_index: 2, superset_group: null },
+            { name: 'Row Ergometer',        set_count: 1, rep_range: '1000m', tempo: null,  rest_seconds: 120, notes: 'Race pace', order_index: 3, superset_group: null },
+            { name: 'Farmer Carry',         set_count: 1, rep_range: '200m', tempo: null,   rest_seconds: 120, notes: '2×24kg', order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 4 — Full Body Strength',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Deadlift',             set_count: 4, rep_range: '4-5',  tempo: '3010', rest_seconds: 150, notes: null, order_index: 0, superset_group: null },
+            { name: 'Standing Press',       set_count: 4, rep_range: '6-8',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: null },
+            { name: 'Chin-Up',              set_count: 3, rep_range: '8-10', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: null },
+            { name: 'Wall Ball',            set_count: 3, rep_range: '20',   tempo: null,   rest_seconds: 60,  notes: '9kg ball to 10ft target', order_index: 3, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Male Functional Hypertrophy 5 Day ──────────────────────────────────────
+  {
+    id: 'male-functional-hypertrophy-5day',
+    name: 'Male Functional Hypertrophy 5 Day',
+    description: 'Five-session upper/lower/full-body split blending functional movement patterns with hypertrophy volume. Unilateral work, carries and loaded carries feature alongside classic compound supersets. Built for athletic men targeting size and function simultaneously.',
+    icon: '💪',
+    color: '#7c3aed',
+    goal_type: 'lean_gain',
+    phase: 'Functional Hypertrophy',
+    difficulty: 'intermediate',
+    days_per_week: 5,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Lower (Quad & Glute)',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',           set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Hip Thrust',           set_count: 4, rep_range: '8-10',  tempo: '2010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Leg Press',            set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Leg Curl',             set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Farmer Carry',         set_count: 3, rep_range: '30m',   tempo: null,   rest_seconds: 60,  notes: 'Heavy', order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Upper (Push Focus)',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Flat DB Press',        set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 75,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Barbell Row',          set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 75,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Incline DB Press',     set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Cable Row',            set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Lateral Raise',        set_count: 3, rep_range: '12-15', tempo: '2020', rest_seconds: 45,  notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Lower (Hinge & Single Leg)',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Romanian Deadlift',    set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Bulgarian Split Squat',set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: 'Per side', order_index: 1, superset_group: 'A2' },
+            { name: 'Leg Extension',        set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Nordic Curl',          set_count: 3, rep_range: '6-8',   tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Sled Push',            set_count: 3, rep_range: '20m',   tempo: null,   rest_seconds: 60,  notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 4 — Upper (Pull Focus)',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Weighted Pull-Up',     set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Standing Press',       set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Cable Pulldown',       set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'DB Lateral Raise',     set_count: 3, rep_range: '12-15', tempo: '2020', rest_seconds: 45,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Scott Curl',           set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Tricep Pushdown',      set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 5 — Full Body Functional',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Power Clean',          set_count: 4, rep_range: '4-5',   tempo: '1010', rest_seconds: 90,  notes: null, order_index: 0, superset_group: null },
+            { name: 'Front Squat',          set_count: 3, rep_range: '6-8',   tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A1' },
+            { name: 'Chest Supported Row',  set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'A2' },
+            { name: 'Sandbag Carry',        set_count: 3, rep_range: '30m',   tempo: null,   rest_seconds: 60,  notes: null, order_index: 3, superset_group: null },
+            { name: 'Ab Rollout',           set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 45,  notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Men's Physique PPUL ─────────────────────────────────────────────────────
+  {
+    id: 'mens-physique-ppul',
+    name: "Men's Physique PPUL",
+    description: "Push / Pull / Upper / Lower four-day split designed for men's physique aesthetics — wide shoulders, full lats, capped delts, defined arms and V-taper. Every session targets a different emphasis with supersets throughout for maximum pump and volume.",
+    icon: '💪',
+    color: '#6d28d9',
+    goal_type: 'lean_gain',
+    phase: 'Hypertrophy',
+    difficulty: 'intermediate',
+    days_per_week: 4,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Push',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Incline Barbell Press', set_count: 4, rep_range: '8-10', tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Seated DB Press',       set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Cable Fly',             set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Lateral Raise',         set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Rope Pushdown',         set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 45, notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Overhead DB Extension', set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 45, notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Pull',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Weighted Pull-Up',      set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Seated Cable Row',      set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Lat Pulldown',          set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Face Pull',             set_count: 3, rep_range: '15-20', tempo: '2012', rest_seconds: 45, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Incline DB Curl',       set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 45, notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Hammer Curl',           set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 45, notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Upper',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Flat DB Press',         set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Barbell Row',           set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Cable Lateral Raise',   set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Rear Delt Fly',         set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'EZ Bar Curl',           set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45, notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Skullcrushers',         set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45, notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 4 — Lower',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',            set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Romanian Deadlift',     set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Leg Extension',         set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Leg Curl',              set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Hip Thrust',            set_count: 3, rep_range: '12-15', tempo: '2010', rest_seconds: 60, notes: null, order_index: 4, superset_group: null },
+            { name: 'Standing Calf Raise',   set_count: 4, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 5, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Posterior / Delt Development ────────────────────────────────────────────
+  {
+    id: 'posterior-delt-development',
+    name: 'Posterior / Delt Development',
+    description: 'Upper/lower split with a specific bias toward posterior chain (hamstrings, glutes, back) and shoulder width. Every upper session includes at least two delt-focused movements. Lower sessions are hinge-dominant with single-leg work for glute development.',
+    icon: '🎯',
+    color: '#0891b2',
+    goal_type: 'lean_gain',
+    phase: 'Hypertrophy',
+    difficulty: 'intermediate',
+    days_per_week: 4,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Upper (Posterior Bias)',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Weighted Pull-Up',      set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Seated DB Press',        set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Chest Supported Row',    set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Cable Lateral Raise',    set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Face Pull',              set_count: 3, rep_range: '15-20', tempo: '2012', rest_seconds: 45, notes: null, order_index: 4, superset_group: 'C1' },
+            { name: '60° Prone Rear Delt Fly',set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Lower (Hinge & Glute)',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Romanian Deadlift',      set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Hip Thrust',             set_count: 4, rep_range: '10-12', tempo: '2010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Single Leg RDL',         set_count: 3, rep_range: '10 each', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Nordic Curl',            set_count: 3, rep_range: '6-8',   tempo: '3010', rest_seconds: 60, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Abductor Machine',       set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Upper (Delt Focus)',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Standing Barbell Press', set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Barbell Row',            set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Seated Lateral Raise',   set_count: 4, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Rear Delt Cable Fly',    set_count: 4, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Incline Curl',           set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45, notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Rope Pushdown',          set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45, notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 4 — Lower (Quad & Posterior)',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',             set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Bulgarian Split Squat',  set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 90, notes: 'Per side', order_index: 1, superset_group: 'A2' },
+            { name: 'Leg Press',              set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Leg Curl',               set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Hip Thrust',             set_count: 3, rep_range: '15-20', tempo: '2010', rest_seconds: 45, notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Powerbuild ──────────────────────────────────────────────────────────────
+  {
+    id: 'powerbuild',
+    name: 'Powerbuild',
+    description: 'Classic four-day powerbuilding split pairing heavy compound work (3-5 reps) with hypertrophy accessories (8-12 reps) in every session. Squat, deadlift, bench and row anchor each day. A simple, effective template for simultaneous strength and size.',
+    icon: '🏋️',
+    color: '#b45309',
+    goal_type: 'lean_gain',
+    phase: 'Powerbuilding',
+    difficulty: 'intermediate',
+    days_per_week: 4,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Squat + Accessories',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',           set_count: 5, rep_range: '3-5',   tempo: '3010', rest_seconds: 180, notes: 'Main lift', order_index: 0, superset_group: null },
+            { name: 'Leg Press',            set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A1' },
+            { name: 'Leg Curl',             set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 90,  notes: null, order_index: 2, superset_group: 'A2' },
+            { name: 'Lateral Raise',        set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 45,  notes: null, order_index: 3, superset_group: 'B1' },
+            { name: 'Tricep Pushdown',      set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 4, superset_group: 'B2' },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Bench + Accessories',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Flat Barbell Bench',   set_count: 5, rep_range: '3-5',   tempo: '3010', rest_seconds: 180, notes: 'Main lift', order_index: 0, superset_group: null },
+            { name: 'Incline DB Press',     set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A1' },
+            { name: 'Cable Row',            set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 90,  notes: null, order_index: 2, superset_group: 'A2' },
+            { name: 'Scott Curl',           set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 3, superset_group: 'B1' },
+            { name: 'Skullcrushers',        set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 4, superset_group: 'B2' },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Deadlift + Accessories',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Deadlift',             set_count: 5, rep_range: '2-4',   tempo: '3010', rest_seconds: 180, notes: 'Main lift', order_index: 0, superset_group: null },
+            { name: 'Romanian Deadlift',    set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A1' },
+            { name: 'Bulgarian Split Squat',set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 90,  notes: 'Per side', order_index: 2, superset_group: 'A2' },
+            { name: 'Lat Pulldown',         set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'B1' },
+            { name: 'Face Pull',            set_count: 3, rep_range: '15-20', tempo: '2012', rest_seconds: 45,  notes: null, order_index: 4, superset_group: 'B2' },
+          ],
+        },
+        {
+          day_label: 'Day 4 — Row + Accessories',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Barbell Row',          set_count: 5, rep_range: '4-6',   tempo: '3010', rest_seconds: 120, notes: 'Main lift', order_index: 0, superset_group: null },
+            { name: 'Weighted Pull-Up',     set_count: 3, rep_range: '6-8',   tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A1' },
+            { name: 'Standing Press',       set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 2, superset_group: 'A2' },
+            { name: 'Incline Curl',         set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 3, superset_group: 'B1' },
+            { name: 'Close Grip Bench',     set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 4, superset_group: 'B2' },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Upper / Lower ───────────────────────────────────────────────────────────
+  {
+    id: 'upper-lower',
+    name: 'Upper / Lower',
+    description: 'Classic four-day upper/lower split — two upper sessions and two lower sessions per week. Alternates between strength-rep ranges (4-6) on session A and hypertrophy rep ranges (8-12) on session B. Efficient and proven for simultaneous strength and size.',
+    icon: '⚖️',
+    color: 'var(--accent)',
+    goal_type: 'lean_gain',
+    phase: 'Strength / Hypertrophy',
+    difficulty: 'intermediate',
+    days_per_week: 4,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Upper A — Strength',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Flat Barbell Bench',   set_count: 4, rep_range: '4-6',   tempo: '3010', rest_seconds: 120, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Barbell Row',          set_count: 4, rep_range: '4-6',   tempo: '3010', rest_seconds: 120, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Incline DB Press',     set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 75,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Cable Row',            set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 75,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Lateral Raise',        set_count: 3, rep_range: '12-15', tempo: '2020', rest_seconds: 45,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Face Pull',            set_count: 3, rep_range: '15-20', tempo: '2012', rest_seconds: 45,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Lower A — Strength',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',           set_count: 4, rep_range: '4-6',   tempo: '3010', rest_seconds: 120, notes: null, order_index: 0, superset_group: null },
+            { name: 'Romanian Deadlift',    set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: null },
+            { name: 'Leg Press',            set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 75,  notes: null, order_index: 2, superset_group: 'A1' },
+            { name: 'Leg Curl',             set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 75,  notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Plank',                set_count: 3, rep_range: '45s',   tempo: 'hold',  rest_seconds: 45,  notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Upper B — Hypertrophy',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Incline Barbell Press',set_count: 4, rep_range: '8-12',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Lat Pulldown',         set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Cable Fly',            set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Seated DB Row',        set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'EZ Bar Curl',          set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Tricep Pushdown',      set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Lower B — Hypertrophy',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Deadlift',             set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 120, notes: null, order_index: 0, superset_group: null },
+            { name: 'Bulgarian Split Squat',set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 90,  notes: 'Per side', order_index: 1, superset_group: 'A1' },
+            { name: 'Leg Extension',        set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 2, superset_group: 'A2' },
+            { name: 'Hip Thrust',           set_count: 4, rep_range: '12-15', tempo: '2010', rest_seconds: 75,  notes: null, order_index: 3, superset_group: 'B1' },
+            { name: 'Nordic Curl',          set_count: 3, rep_range: '6-8',   tempo: '3010', rest_seconds: 60,  notes: null, order_index: 4, superset_group: 'B2' },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Upper / Lower Supersets ──────────────────────────────────────────────────
+  {
+    id: 'upper-lower-supersets',
+    name: 'Upper / Lower Supersets',
+    description: 'Four-day upper/lower split structured entirely in antagonist supersets — every exercise is paired with its opposite movement. Short rest periods between exercises in the pair, full rest after. High density, high volume, efficient sessions under 60 minutes.',
+    icon: '🔄',
+    color: '#2563eb',
+    goal_type: 'lean_gain',
+    phase: 'Hypertrophy',
+    difficulty: 'intermediate',
+    days_per_week: 4,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Upper A — Supersets',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Flat Barbell Bench',   set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 30,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Barbell Row',          set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Incline DB Press',     set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Lat Pulldown',         set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 75,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Lateral Raise',        set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 30,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Face Pull',            set_count: 3, rep_range: '15-20', tempo: '2012', rest_seconds: 60,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Lower A — Supersets',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',           set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 30,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Romanian Deadlift',    set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Leg Press',            set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Leg Curl',             set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 75,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Hip Thrust',           set_count: 3, rep_range: '12-15', tempo: '2010', rest_seconds: 30,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Plank',                set_count: 3, rep_range: '45s',   tempo: 'hold',  rest_seconds: 60,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Upper B — Supersets',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Standing Press',       set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 30,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Pull-Up',              set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Cable Fly',            set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Seated Cable Row',     set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 75,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Incline DB Curl',      set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Rope Pushdown',        set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Lower B — Supersets',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Deadlift',             set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 30,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Hip Thrust',           set_count: 4, rep_range: '10-12', tempo: '2010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Bulgarian Split Squat',set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 30,  notes: 'Per side', order_index: 2, superset_group: 'B1' },
+            { name: 'Nordic Curl',          set_count: 3, rep_range: '6-8',   tempo: '3010', rest_seconds: 75,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Leg Extension',        set_count: 3, rep_range: '15-20', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Abductor Machine',     set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 60,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Upper / Lower Movement Optimisation ─────────────────────────────────────
+  {
+    id: 'upper-lower-movement-optimisation',
+    name: 'Upper / Lower Movement Optimisation',
+    description: 'Four-day upper/lower split combining movement quality and hypertrophy. Each session opens with a CNS activation giant set, then moves into antagonist supersets with controlled tempos. Designed to improve movement patterns while building muscle.',
+    icon: '⚡',
+    color: '#0d9488',
+    goal_type: 'lean_gain',
+    phase: 'Movement Optimisation',
+    difficulty: 'intermediate',
+    days_per_week: 4,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Upper A — Movement + Strength',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Band Pull-Apart',       set_count: 2, rep_range: '20',    tempo: '1010', rest_seconds: 0,   notes: 'Warmup', order_index: 0, superset_group: 'W1' },
+            { name: 'Face Pull',             set_count: 2, rep_range: '15',    tempo: '2012', rest_seconds: 0,   notes: 'Warmup', order_index: 1, superset_group: 'W2' },
+            { name: 'Scapular Push-Up',      set_count: 2, rep_range: '10',    tempo: '2020', rest_seconds: 60,  notes: 'Warmup', order_index: 2, superset_group: 'W3' },
+            { name: 'Flat DB Press',         set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 30,  notes: null, order_index: 3, superset_group: 'A1' },
+            { name: 'Barbell Row',           set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 4, superset_group: 'A2' },
+            { name: 'Lateral Raise',         set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 30,  notes: null, order_index: 5, superset_group: 'B1' },
+            { name: 'Rear Delt Fly',         set_count: 3, rep_range: '15-20', tempo: '2020', rest_seconds: 60,  notes: null, order_index: 6, superset_group: 'B2' },
+          ],
+        },
+        {
+          day_label: 'Lower A — Movement + Strength',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Single Leg Bridge',     set_count: 2, rep_range: '10 each', tempo: '2010', rest_seconds: 0,  notes: 'Warmup', order_index: 0, superset_group: 'W1' },
+            { name: 'Cossack Squat',         set_count: 2, rep_range: '8 each',  tempo: '2010', rest_seconds: 0,  notes: 'Warmup', order_index: 1, superset_group: 'W2' },
+            { name: 'Copenhagen Plank',      set_count: 2, rep_range: '20s each', tempo: 'hold', rest_seconds: 60, notes: 'Warmup', order_index: 2, superset_group: 'W3' },
+            { name: 'Back Squat',            set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 30,  notes: null, order_index: 3, superset_group: 'A1' },
+            { name: 'Romanian Deadlift',     set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 4, superset_group: 'A2' },
+            { name: 'Single Leg RDL',        set_count: 3, rep_range: '10 each', tempo: '3010', rest_seconds: 60, notes: null, order_index: 5, superset_group: 'B1' },
+            { name: 'Plank',                 set_count: 3, rep_range: '45s',   tempo: 'hold',  rest_seconds: 45,  notes: null, order_index: 6, superset_group: 'B2' },
+          ],
+        },
+        {
+          day_label: 'Upper B — Movement + Hypertrophy',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Band Dislocate',        set_count: 2, rep_range: '10',    tempo: '1010', rest_seconds: 0,   notes: 'Warmup — shoulder mobility', order_index: 0, superset_group: 'W1' },
+            { name: 'Prone Y-W-T',           set_count: 2, rep_range: '10',    tempo: '1010', rest_seconds: 60,  notes: 'Warmup', order_index: 1, superset_group: 'W2' },
+            { name: 'Weighted Pull-Up',      set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 30,  notes: null, order_index: 2, superset_group: 'A1' },
+            { name: 'Standing Press',        set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90,  notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Incline Curl',          set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 4, superset_group: 'B1' },
+            { name: 'Tricep Pushdown',       set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 5, superset_group: 'B2' },
+          ],
+        },
+        {
+          day_label: 'Lower B — Movement + Hypertrophy',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Hip 90/90 Stretch',     set_count: 2, rep_range: '5 each', tempo: '1010', rest_seconds: 0,  notes: 'Warmup', order_index: 0, superset_group: 'W1' },
+            { name: 'Glute Bridge Hold',     set_count: 2, rep_range: '30s',   tempo: 'hold',  rest_seconds: 60, notes: 'Warmup', order_index: 1, superset_group: 'W2' },
+            { name: 'Bulgarian Split Squat', set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 30,  notes: 'Per side', order_index: 2, superset_group: 'A1' },
+            { name: 'Hip Thrust',            set_count: 4, rep_range: '12-15', tempo: '2010', rest_seconds: 90,  notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Leg Extension',         set_count: 3, rep_range: '15-20', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 4, superset_group: 'B1' },
+            { name: 'Nordic Curl',           set_count: 3, rep_range: '6-8',   tempo: '3010', rest_seconds: 60,  notes: null, order_index: 5, superset_group: 'B2' },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Push / Pull ─────────────────────────────────────────────────────────────
+  {
+    id: 'push-pull',
+    name: 'Push / Pull',
+    description: 'Four-day push/pull split with a deliberate upper back and trap bias. Pull days feature extra rear delt, face pull and shrug volume. Push days focus on incline pressing and lateral raise variations for shoulder width. Arms are trained as a superset finisher on each session.',
+    icon: '🔁',
+    color: '#1d4ed8',
+    goal_type: 'lean_gain',
+    phase: 'Hypertrophy',
+    difficulty: 'intermediate',
+    days_per_week: 4,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Push A',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Incline Barbell Press', set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Seated DB Press',       set_count: 4, rep_range: '8-10',  tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Cable Fly',             set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Cable Lateral Raise',   set_count: 4, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Overhead Extension',    set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45, notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Rope Pushdown',         set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 45, notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Pull A — Upper Back Bias',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Weighted Pull-Up',      set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Barbell Row',           set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Chest Supported Row',   set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Face Pull',             set_count: 3, rep_range: '20',    tempo: '2012', rest_seconds: 45, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Shrug',                 set_count: 3, rep_range: '12-15', tempo: '2020', rest_seconds: 45, notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Incline DB Curl',       set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45, notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Push B',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Flat Barbell Bench',    set_count: 4, rep_range: '6-8',   tempo: '3010', rest_seconds: 90, notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Incline DB Press',      set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Seated Lateral Raise',  set_count: 4, rep_range: '15-20', tempo: '2020', rest_seconds: 45, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Front Raise',           set_count: 3, rep_range: '12-15', tempo: '2010', rest_seconds: 45, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Skullcrushers',         set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45, notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Close Grip Bench',      set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45, notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Pull B — Trap & Rear Delt',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Rack Pull',             set_count: 4, rep_range: '5-6',   tempo: '3010', rest_seconds: 120, notes: 'Knee height — heavy', order_index: 0, superset_group: 'A1' },
+            { name: 'Lat Pulldown',          set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 90,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Rear Delt Fly',         set_count: 4, rep_range: '15-20', tempo: '2020', rest_seconds: 45,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Barbell Shrug',         set_count: 4, rep_range: '15-20', tempo: '2020', rest_seconds: 45,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Hammer Curl',           set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Scott Curl',            set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Strength Block Upper / Lower ────────────────────────────────────────────
+  {
+    id: 'strength-block-upper-lower',
+    name: 'Strength Block Upper / Lower',
+    description: 'Six-week peaking block for upper/lower splits. Loads climb weekly from 80% to 95%+ across the four main lifts. Rep ranges tighten from 5s to singles in weeks 5-6. Designed to peak compound strength before a deload or 1RM test.',
+    icon: '🏆',
+    color: '#b91c1c',
+    goal_type: 'strength',
+    phase: 'Intensification',
+    difficulty: 'advanced',
+    days_per_week: 4,
+    default_weeks: 6,
+    generateSessions: (weeks) => {
+      const phaseReps = ['6-8', '5-6', '4-5', '3-4', '2-3', '1-2']
+      const phaseSets = [5, 5, 5, 4, 4, 3]
+      const DAYS = [
+        {
+          day_label: 'Upper A — Bench + Row',
+          session_type: 'strength',
+          baseExercises: [
+            { name: 'Flat Barbell Bench Press', main: true, order_index: 0 },
+            { name: 'Barbell Row',              main: true, order_index: 1 },
+            { name: 'Incline DB Press',         sets: 3, reps: '8-10', order_index: 2 },
+            { name: 'Lat Pulldown',             sets: 3, reps: '8-10', order_index: 3 },
+          ],
+        },
+        {
+          day_label: 'Lower A — Squat',
+          session_type: 'strength',
+          baseExercises: [
+            { name: 'Back Squat',               main: true, order_index: 0 },
+            { name: 'Romanian Deadlift',         sets: 4, reps: '6-8', order_index: 1 },
+            { name: 'Leg Press',                 sets: 3, reps: '8-10', order_index: 2 },
+          ],
+        },
+        {
+          day_label: 'Upper B — Press + Pull',
+          session_type: 'strength',
+          baseExercises: [
+            { name: 'Standing Barbell Press',   main: true, order_index: 0 },
+            { name: 'Weighted Pull-Up',         main: true, order_index: 1 },
+            { name: 'Close Grip Bench',         sets: 3, reps: '8-10', order_index: 2 },
+            { name: 'Cable Row',                sets: 3, reps: '10-12', order_index: 3 },
+          ],
+        },
+        {
+          day_label: 'Lower B — Deadlift',
+          session_type: 'strength',
+          baseExercises: [
+            { name: 'Deadlift',                 main: true, order_index: 0 },
+            { name: 'Bulgarian Split Squat',    sets: 3, reps: '6-8', order_index: 1 },
+            { name: 'Hip Thrust',               sets: 3, reps: '8-10', order_index: 2 },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        const phaseIdx = week - 1
+        const mainReps = phaseReps[phaseIdx] || '3-5'
+        const mainSets = phaseSets[phaseIdx] || 4
+        DAYS.forEach(day => {
+          const exercises = day.baseExercises.map(ex => ({
+            name: ex.name,
+            set_count: ex.main ? mainSets : (ex.sets || 3),
+            rep_range: ex.main ? mainReps : (ex.reps || '8-10'),
+            tempo: '3010',
+            rest_seconds: ex.main ? 180 : 90,
+            notes: ex.main ? `Week ${week} — ${mainReps} reps @ max effort` : null,
+            order_index: ex.order_index,
+            superset_group: null,
+          }))
+          sessions.push({ day_label: day.day_label, week_number: week, session_type: day.session_type, exercises })
+        })
+      }
+      return sessions
+    },
+  },
+
+  // ─── Structural Balance — GBC ─────────────────────────────────────────────────
+  {
+    id: 'structural-balance-gbc',
+    name: 'Structural Balance — GBC',
+    description: 'Combines Poliquin structural balance assessment work with German Body Composition training. Sessions alternate between structural balance corrective supersets (focused on weak links and imbalances) and full-body GBC circuits for fat loss and conditioning.',
+    icon: '⚖️',
+    color: 'var(--warn)',
+    goal_type: 'recomp',
+    phase: 'Structural Balance / GBC',
+    difficulty: 'intermediate',
+    days_per_week: 3,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Structural Balance Lower',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Back Squat',           set_count: 4, rep_range: '8-10',  tempo: '4010', rest_seconds: 90,  notes: 'Test baseline — note weight', order_index: 0, superset_group: 'A1' },
+            { name: 'Lying Leg Curl',        set_count: 4, rep_range: '8-10',  tempo: '4010', rest_seconds: 90,  notes: 'Should be ~55% of squat weight', order_index: 1, superset_group: 'A2' },
+            { name: 'Split Squat',           set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60,  notes: 'Per side — assess left/right balance', order_index: 2, superset_group: 'B1' },
+            { name: 'Nordic Curl',           set_count: 3, rep_range: '6-8',   tempo: '3010', rest_seconds: 60,  notes: 'Hamstring strength marker', order_index: 3, superset_group: 'B2' },
+            { name: 'Standing Calf Raise',   set_count: 4, rep_range: '12-15', tempo: '2020', rest_seconds: 45,  notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 2 — GBC Full Body',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Back Squat',            set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Pull-Up',               set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Romanian Deadlift',     set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Flat DB Press',         set_count: 4, rep_range: '10-12', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Scott Curl',            set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 30,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Tricep Pushdown',       set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Structural Balance Upper',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Flat Barbell Bench',    set_count: 4, rep_range: '8-10',  tempo: '4010', rest_seconds: 90,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Chin-Up',               set_count: 4, rep_range: '8-10',  tempo: '4010', rest_seconds: 90,  notes: 'Should equal bench weight', order_index: 1, superset_group: 'A2' },
+            { name: 'Close Grip Bench',      set_count: 3, rep_range: '10-12', tempo: '4010', rest_seconds: 60,  notes: 'Should be ~65% of bench', order_index: 2, superset_group: 'B1' },
+            { name: 'Scott Hammer Curl',     set_count: 3, rep_range: '10-12', tempo: '4010', rest_seconds: 60,  notes: 'Should equal CG bench weight', order_index: 3, superset_group: 'B2' },
+            { name: 'Seated Lateral Raise',  set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: '60° Prone Lateral Raise',set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 45,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── The Resilience Project ───────────────────────────────────────────────────
+  {
+    id: 'resilience-project',
+    name: 'The Resilience Project',
+    description: 'Hip function, stability and strength programme for clients with hip pain, injury history or movement restrictions. Each session targets hip mobility, deep hip stabilisers and loaded hip patterns — progressing from bodyweight to barbell over 8 weeks.',
+    icon: '🛡️',
+    color: '#0d9488',
+    goal_type: 'maintain',
+    phase: 'Rehab / Prehab',
+    difficulty: 'beginner',
+    days_per_week: 3,
+    default_weeks: 8,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Hip Mobility + Stability',
+          session_type: 'strength',
+          exercises: [
+            { name: '90/90 Hip Stretch',         set_count: 3, rep_range: '60s each', tempo: 'hold', rest_seconds: 30,  notes: 'Active rotation — hold bottom position', order_index: 0, superset_group: 'A1' },
+            { name: 'Hip CARs',                  set_count: 3, rep_range: '5 each',   tempo: '1010', rest_seconds: 30,  notes: 'Full circle — control through range', order_index: 1, superset_group: 'A2' },
+            { name: 'Single Leg Bridge',          set_count: 3, rep_range: '12 each',  tempo: '2010', rest_seconds: 30,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Copenhagen Plank',           set_count: 3, rep_range: '20s each', tempo: 'hold', rest_seconds: 45,  notes: 'Adductor stability', order_index: 3, superset_group: 'B2' },
+            { name: 'Cossack Squat',              set_count: 3, rep_range: '8 each',   tempo: '2010', rest_seconds: 45,  notes: 'Hip mobility + single leg strength', order_index: 4, superset_group: 'C1' },
+            { name: 'Dead Bug',                   set_count: 3, rep_range: '8 each',   tempo: '3010', rest_seconds: 45,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Loaded Hip Patterns',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Hip Flexor Stretch',         set_count: 2, rep_range: '60s each', tempo: 'hold', rest_seconds: 30,  notes: 'Warmup', order_index: 0, superset_group: 'W1' },
+            { name: 'Glute Bridge Iso Hold',      set_count: 2, rep_range: '30s',      tempo: 'hold', rest_seconds: 30,  notes: 'Warmup', order_index: 1, superset_group: 'W2' },
+            { name: 'Trap Bar Deadlift',          set_count: 4, rep_range: '8-10',     tempo: '3010', rest_seconds: 90,  notes: 'Hip-dominant pattern', order_index: 2, superset_group: 'A1' },
+            { name: 'Hip Thrust',                 set_count: 4, rep_range: '12-15',    tempo: '2010', rest_seconds: 90,  notes: null, order_index: 3, superset_group: 'A2' },
+            { name: 'Split Squat',                set_count: 3, rep_range: '10 each',  tempo: '3010', rest_seconds: 60,  notes: null, order_index: 4, superset_group: 'B1' },
+            { name: 'Side Lying Hip Abduction',   set_count: 3, rep_range: '15 each',  tempo: '2020', rest_seconds: 45,  notes: 'Glute med activation', order_index: 5, superset_group: 'B2' },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Functional Integration',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Lateral Lunge',              set_count: 3, rep_range: '10 each',  tempo: '2010', rest_seconds: 30,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Single Leg RDL',             set_count: 3, rep_range: '10 each',  tempo: '3010', rest_seconds: 30,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Back Squat',                 set_count: 4, rep_range: '8-10',     tempo: '3010', rest_seconds: 90,  notes: 'Focus on full ROM and hip hinge pattern', order_index: 2, superset_group: 'B1' },
+            { name: 'Nordic Curl',                set_count: 3, rep_range: '5-8',      tempo: '3010', rest_seconds: 60,  notes: 'Slow eccentric — key', order_index: 3, superset_group: 'B2' },
+            { name: 'Farmer Carry',               set_count: 3, rep_range: '30m',      tempo: null,   rest_seconds: 60,  notes: 'Upright posture — hip stability', order_index: 4, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Movement Fundamentals ────────────────────────────────────────────────────
+  {
+    id: 'movement-fundamentals',
+    name: 'Movement Fundamentals',
+    description: 'Foundation programme for new starters or those returning from injury. Teaches the six fundamental movement patterns — squat, hinge, push, pull, carry, rotate — using bodyweight and light loads. Prioritises technique and movement quality over load.',
+    icon: '🏃',
+    color: 'var(--accent)',
+    goal_type: 'maintain',
+    phase: 'Movement Foundation',
+    difficulty: 'beginner',
+    days_per_week: 3,
+    default_weeks: 4,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Squat & Push',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Goblet Squat',           set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60, notes: 'Light KB — focus on full depth', order_index: 0, superset_group: 'A1' },
+            { name: 'Push-Up',                set_count: 3, rep_range: '8-12',  tempo: '3010', rest_seconds: 60, notes: 'Body straight — full ROM', order_index: 1, superset_group: 'A2' },
+            { name: 'Step-Up',                set_count: 3, rep_range: '10 each', tempo: '2010', rest_seconds: 45, notes: 'Drive through heel', order_index: 2, superset_group: 'B1' },
+            { name: 'DB Shoulder Press',      set_count: 3, rep_range: '10-12', tempo: '2010', rest_seconds: 45, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Plank',                  set_count: 3, rep_range: '20-30s', tempo: 'hold', rest_seconds: 45, notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Hinge & Pull',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Romanian Deadlift',      set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 60, notes: 'Light DB — hip hinge pattern', order_index: 0, superset_group: 'A1' },
+            { name: 'Inverted Row',           set_count: 3, rep_range: '8-12',  tempo: '3010', rest_seconds: 60, notes: 'TRX or Smith machine', order_index: 1, superset_group: 'A2' },
+            { name: 'Single Leg Bridge',      set_count: 3, rep_range: '10 each', tempo: '2010', rest_seconds: 45, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Lat Pulldown',           set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 45, notes: 'Light — focus on scapular depression', order_index: 3, superset_group: 'B2' },
+            { name: 'Dead Bug',               set_count: 3, rep_range: '8 each', tempo: '3010', rest_seconds: 45, notes: null, order_index: 4, superset_group: null },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Full Body Integration',
+          session_type: 'strength',
+          exercises: [
+            { name: 'Trap Bar Deadlift',      set_count: 3, rep_range: '8-10',  tempo: '3010', rest_seconds: 90, notes: 'First loaded hinge — light', order_index: 0, superset_group: 'A1' },
+            { name: 'Seated Row',             set_count: 3, rep_range: '10-12', tempo: '3010', rest_seconds: 90, notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Goblet Squat',           set_count: 3, rep_range: '12-15', tempo: '3010', rest_seconds: 60, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Push-Up',                set_count: 3, rep_range: '10-15', tempo: '2010', rest_seconds: 60, notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Farmer Carry',           set_count: 3, rep_range: '20m',   tempo: null,   rest_seconds: 60, notes: 'Light — posture and bracing focus', order_index: 4, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── Metabolic ───────────────────────────────────────────────────────────────
+  {
+    id: 'metabolic',
+    name: 'Metabolic',
+    description: 'Three-day metabolic conditioning programme combining aerobic capacity work with compound strength movements. Sessions use circuit-style pairing with minimal rest to maintain elevated heart rate throughout. Improves work capacity, body composition and cardiovascular fitness simultaneously.',
+    icon: '🔥',
+    color: '#dc2626',
+    goal_type: 'cut',
+    phase: 'Metabolic Conditioning',
+    difficulty: 'intermediate',
+    days_per_week: 3,
+    default_weeks: 6,
+    generateSessions: (weeks) => {
+      const DAYS = [
+        {
+          day_label: 'Day 1 — Lower Metabolic',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Goblet Squat',          set_count: 4, rep_range: '15',    tempo: '2010', rest_seconds: 30,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Row Ergometer',          set_count: 4, rep_range: '250m',  tempo: null,   rest_seconds: 30,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'Walking Lunge',          set_count: 4, rep_range: '20',    tempo: '2010', rest_seconds: 30,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Burpee',                 set_count: 4, rep_range: '10',    tempo: null,   rest_seconds: 30,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Hip Thrust',             set_count: 4, rep_range: '15-20', tempo: '2010', rest_seconds: 90,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Mountain Climber',       set_count: 4, rep_range: '20',    tempo: null,   rest_seconds: 90,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 2 — Upper Metabolic',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Push-Up',               set_count: 4, rep_range: '15-20', tempo: '2010', rest_seconds: 30,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Ski Erg',               set_count: 4, rep_range: '250m',  tempo: null,   rest_seconds: 30,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'DB Row',                set_count: 4, rep_range: '15 each', tempo: '2010', rest_seconds: 30, notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Battle Ropes',          set_count: 4, rep_range: '30s',   tempo: null,   rest_seconds: 30,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'DB Shoulder Press',     set_count: 4, rep_range: '12-15', tempo: '2010', rest_seconds: 90,  notes: null, order_index: 4, superset_group: 'C1' },
+            { name: 'Kettlebell Swing',       set_count: 4, rep_range: '20',    tempo: null,   rest_seconds: 90,  notes: null, order_index: 5, superset_group: 'C2' },
+          ],
+        },
+        {
+          day_label: 'Day 3 — Full Body Metabolic',
+          session_type: 'mixed',
+          exercises: [
+            { name: 'Deadlift',              set_count: 4, rep_range: '8-10',  tempo: '2010', rest_seconds: 30,  notes: null, order_index: 0, superset_group: 'A1' },
+            { name: 'Box Jump',              set_count: 4, rep_range: '8',     tempo: null,   rest_seconds: 30,  notes: null, order_index: 1, superset_group: 'A2' },
+            { name: 'DB Thruster',           set_count: 4, rep_range: '12',    tempo: '2010', rest_seconds: 30,  notes: null, order_index: 2, superset_group: 'B1' },
+            { name: 'Pull-Up',               set_count: 4, rep_range: 'max',   tempo: '3010', rest_seconds: 30,  notes: null, order_index: 3, superset_group: 'B2' },
+            { name: 'Farmer Carry',          set_count: 3, rep_range: '40m',   tempo: null,   rest_seconds: 90,  notes: 'Heavy', order_index: 4, superset_group: null },
+          ],
+        },
+      ]
+      const sessions = []
       for (let week = 1; week <= weeks; week++) {
         DAYS.forEach(d => sessions.push({ ...d, week_number: week, exercises: d.exercises.map(e => ({ ...e })) }))
       }

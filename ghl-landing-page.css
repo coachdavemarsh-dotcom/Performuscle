@@ -1,0 +1,729 @@
+/* ============================================================
+   PERFORMUSCLE — GHL Landing Page CSS
+   Design reference: OCS Performance (ocsperformance.com)
+
+   HOW TO USE:
+   In GHL Page Builder → Settings → Custom CSS → paste all of this
+   ============================================================ */
+
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+/* --- Design Tokens --- */
+:root {
+  --pm-black:       #000000;
+  --pm-surface:     #0a0a0a;
+  --pm-surface-2:   #111111;
+  --pm-accent:      #00C896;
+  --pm-accent-hi:   #00FFB8;
+  --pm-white:       #F2EEE8;
+  --pm-muted:       #948F88;
+  --pm-subtle:      #5A5550;
+  --pm-nav-bg:      rgba(0, 0, 0, 0.92);
+  --pm-font-display: 'Bebas Neue', sans-serif;
+  --pm-font-body:    'Montserrat', sans-serif;
+  --pm-pad-v:        130px;
+  --pm-pad-h:        56px;
+  --pm-radius:       0px;
+  --pm-transition:   0.2s ease;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+.page-wrapper,
+#page-wrapper {
+  background-color: var(--pm-black) !important;
+  color: var(--pm-white) !important;
+  font-family: var(--pm-font-body) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* ============================================================
+   NAVIGATION / HEADER
+   ============================================================ */
+
+nav,
+.nav,
+.navbar,
+header,
+.header,
+#header,
+.navigation,
+.hl_header,
+[data-element="nav"] {
+  background-color: var(--pm-nav-bg) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding: 18px var(--pm-pad-h) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 999 !important;
+  width: 100% !important;
+}
+
+nav a,
+.nav a,
+.navbar a,
+header a,
+.navigation a {
+  font-family: var(--pm-font-body) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--pm-muted) !important;
+  text-decoration: none !important;
+  transition: color var(--pm-transition) !important;
+}
+
+nav a:hover,
+.nav a:hover,
+header a:hover {
+  color: var(--pm-white) !important;
+  text-decoration: none !important;
+}
+
+/* Nav CTA button (the outlined one top-right) */
+nav .btn,
+nav a.btn,
+header .btn,
+header a.btn,
+.nav-cta,
+.header-cta,
+nav [class*="cta"],
+header [class*="cta"] {
+  background-color: transparent !important;
+  color: var(--pm-accent) !important;
+  border: 1.5px solid var(--pm-accent) !important;
+  padding: 10px 22px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  transition: background var(--pm-transition), color var(--pm-transition) !important;
+}
+
+nav .btn:hover,
+header .btn:hover,
+.nav-cta:hover {
+  background-color: var(--pm-accent) !important;
+  color: var(--pm-black) !important;
+}
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+
+section,
+.section,
+.hl_page-section,
+[data-section],
+.container-fluid {
+  background-color: var(--pm-black) !important;
+  padding-top: var(--pm-pad-v) !important;
+  padding-bottom: var(--pm-pad-v) !important;
+  padding-left: var(--pm-pad-h) !important;
+  padding-right: var(--pm-pad-h) !important;
+  position: relative !important;
+}
+
+/* Every other section gets the slightly lighter surface */
+section:nth-child(even),
+.section:nth-child(even) {
+  background-color: var(--pm-surface) !important;
+}
+
+/* Hero section — first section, full viewport height */
+section:first-of-type,
+.hero,
+.section-hero,
+[data-section="hero"],
+.hl_page-section:first-child {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  padding-bottom: 100px !important;
+  background-color: var(--pm-black) !important;
+}
+
+/* Section containers / inner wrappers */
+.container,
+.row,
+.inner,
+.content-wrap,
+.hl_wrapper {
+  max-width: 1280px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+
+/* Eyebrow / Label above headline */
+.label,
+.eyebrow,
+.overline,
+[class*="eyebrow"],
+[class*="label-text"],
+[class*="overline"],
+.hl_eyebrow {
+  font-family: var(--pm-font-body) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: var(--pm-subtle) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 20px !important;
+}
+
+/* The little line before the eyebrow */
+.label::before,
+.eyebrow::before,
+[class*="eyebrow"]::before {
+  content: '' !important;
+  display: inline-block !important;
+  width: 32px !important;
+  height: 1.5px !important;
+  background-color: var(--pm-accent) !important;
+  flex-shrink: 0 !important;
+}
+
+/* H1 — Big hero headline */
+h1,
+.h1,
+.headline-1 {
+  font-family: var(--pm-font-display) !important;
+  font-size: clamp(64px, 8vw, 96px) !important;
+  font-weight: 400 !important;
+  line-height: 0.88 !important;
+  letter-spacing: -0.01em !important;
+  text-transform: uppercase !important;
+  color: var(--pm-white) !important;
+  margin: 0 0 32px !important;
+}
+
+/* Accent word inside H1 — wrap in <span> or <em> in GHL */
+h1 span,
+h1 em,
+h1 strong,
+h1 .accent,
+.h1 em,
+.h1 span {
+  color: var(--pm-accent) !important;
+  font-style: normal !important;
+}
+
+/* H2 */
+h2,
+.h2,
+.headline-2 {
+  font-family: var(--pm-font-display) !important;
+  font-size: clamp(42px, 5vw, 64px) !important;
+  font-weight: 400 !important;
+  line-height: 0.92 !important;
+  letter-spacing: -0.01em !important;
+  text-transform: uppercase !important;
+  color: var(--pm-white) !important;
+  margin: 0 0 24px !important;
+}
+
+/* H3 */
+h3,
+.h3,
+.headline-3 {
+  font-family: var(--pm-font-display) !important;
+  font-size: clamp(30px, 3.5vw, 44px) !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  color: var(--pm-white) !important;
+  margin: 0 0 16px !important;
+}
+
+/* H4 — small section label-style heading */
+h4,
+.h4 {
+  font-family: var(--pm-font-body) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  color: var(--pm-accent) !important;
+  margin: 0 0 12px !important;
+}
+
+/* H5, H6 */
+h5, h6, .h5, .h6 {
+  font-family: var(--pm-font-body) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  color: var(--pm-muted) !important;
+  margin: 0 0 8px !important;
+}
+
+/* Body paragraph */
+p,
+.body-text,
+.description {
+  font-family: var(--pm-font-body) !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  line-height: 1.72 !important;
+  color: var(--pm-muted) !important;
+  margin: 0 0 20px !important;
+  max-width: 560px !important;
+}
+
+/* List items */
+li {
+  font-family: var(--pm-font-body) !important;
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+  color: var(--pm-muted) !important;
+  margin-bottom: 8px !important;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+/* Primary CTA — filled teal */
+a.btn,
+button,
+.btn,
+input[type="submit"],
+input[type="button"],
+.hl_cta-button,
+[class*="btn-primary"],
+[class*="cta-button"],
+[class*="submit-btn"] {
+  font-family: var(--pm-font-body) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  background-color: var(--pm-accent) !important;
+  color: var(--pm-black) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 16px 36px !important;
+  display: inline-block !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: background-color var(--pm-transition), transform 0.15s ease !important;
+  line-height: 1 !important;
+}
+
+a.btn:hover,
+button:hover,
+.btn:hover,
+input[type="submit"]:hover {
+  background-color: var(--pm-accent-hi) !important;
+  color: var(--pm-black) !important;
+  transform: translateY(-1px) !important;
+  text-decoration: none !important;
+}
+
+/* Secondary / Ghost CTA — text with arrow, no fill */
+.btn-ghost,
+.btn-secondary,
+a.ghost,
+[class*="btn-ghost"],
+[class*="btn-outline"],
+[class*="secondary-cta"],
+.explore-btn {
+  background-color: transparent !important;
+  color: var(--pm-muted) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-family: var(--pm-font-body) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  padding: 16px 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: color var(--pm-transition) !important;
+}
+
+.btn-ghost:hover,
+.btn-secondary:hover {
+  color: var(--pm-white) !important;
+  text-decoration: none !important;
+}
+
+/* CTA row — space between primary + ghost */
+.cta-group,
+.btn-group,
+[class*="cta-row"],
+[class*="button-group"] {
+  display: flex !important;
+  align-items: center !important;
+  gap: 36px !important;
+  flex-wrap: wrap !important;
+  margin-top: 40px !important;
+}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="password"],
+textarea,
+select,
+.hl_input,
+.form-control {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0 !important;
+  color: var(--pm-white) !important;
+  font-family: var(--pm-font-body) !important;
+  font-size: 14px !important;
+  letter-spacing: 0.03em !important;
+  padding: 14px 20px !important;
+  outline: none !important;
+  width: 100% !important;
+  transition: border-color var(--pm-transition) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--pm-accent) !important;
+  background-color: rgba(0, 200, 150, 0.04) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--pm-subtle) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+label,
+.form-label,
+.hl_label {
+  font-family: var(--pm-font-body) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--pm-subtle) !important;
+  display: block !important;
+  margin-bottom: 8px !important;
+}
+
+/* ============================================================
+   STATS / NUMBERS
+   ============================================================ */
+
+.stat,
+.metric,
+.number,
+[class*="stat-number"],
+[class*="metric-number"],
+[class*="counter"] {
+  font-family: var(--pm-font-display) !important;
+  font-size: clamp(52px, 7vw, 80px) !important;
+  font-weight: 400 !important;
+  color: var(--pm-white) !important;
+  line-height: 1 !important;
+  display: block !important;
+}
+
+.stat-label,
+.metric-label,
+[class*="stat-label"],
+[class*="metric-label"] {
+  font-family: var(--pm-font-body) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  color: var(--pm-subtle) !important;
+  display: block !important;
+  margin-top: 6px !important;
+}
+
+/* ============================================================
+   CARDS / PANELS
+   ============================================================ */
+
+.card,
+.panel,
+.feature,
+.service,
+[class*="card"],
+[class*="panel"],
+[class*="feature-item"] {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-radius: 0 !important;
+  padding: 40px !important;
+  transition: border-color var(--pm-transition) !important;
+}
+
+.card:hover,
+.panel:hover,
+.feature:hover {
+  border-color: rgba(0, 200, 150, 0.2) !important;
+}
+
+/* Card heading */
+.card h3,
+.card h4,
+.panel h3 {
+  margin-top: 0 !important;
+}
+
+/* ============================================================
+   TESTIMONIALS
+   ============================================================ */
+
+blockquote,
+.testimonial,
+.review,
+[class*="testimonial"] {
+  border-left: 2px solid var(--pm-accent) !important;
+  padding: 4px 0 4px 28px !important;
+  margin: 0 !important;
+  font-style: normal !important;
+  background: transparent !important;
+}
+
+blockquote p,
+.testimonial p,
+.review p {
+  font-size: 16px !important;
+  font-style: italic !important;
+  color: var(--pm-white) !important;
+  line-height: 1.65 !important;
+  max-width: none !important;
+}
+
+.testimonial-author,
+blockquote cite,
+[class*="author-name"] {
+  font-family: var(--pm-font-body) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  color: var(--pm-accent) !important;
+  margin-top: 16px !important;
+  display: block !important;
+  font-style: normal !important;
+}
+
+/* ============================================================
+   DIVIDERS
+   ============================================================ */
+
+hr,
+.divider,
+.separator {
+  border: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  margin: 80px 0 !important;
+  background: none !important;
+}
+
+/* Teal accent bar — add class="accent-bar" to any div */
+.accent-bar {
+  width: 40px !important;
+  height: 2px !important;
+  background-color: var(--pm-accent) !important;
+  margin-bottom: 24px !important;
+}
+
+/* ============================================================
+   IMAGES
+   ============================================================ */
+
+img {
+  max-width: 100% !important;
+  display: block !important;
+}
+
+/* Darken hero / background images */
+.hero img,
+.section-hero img,
+[data-section="hero"] img,
+.bg-image img,
+.cover-image {
+  filter: brightness(0.45) contrast(1.1) !important;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+footer,
+.footer,
+.hl_footer,
+#footer {
+  background-color: var(--pm-surface) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  padding: 60px var(--pm-pad-h) !important;
+}
+
+footer p,
+.footer p {
+  font-size: 12px !important;
+  color: var(--pm-subtle) !important;
+  max-width: none !important;
+}
+
+footer a,
+.footer a {
+  color: var(--pm-muted) !important;
+  text-decoration: none !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  transition: color var(--pm-transition) !important;
+}
+
+footer a:hover,
+.footer a:hover {
+  color: var(--pm-accent) !important;
+}
+
+/* ============================================================
+   UTILITY CLASSES
+   (add these class names directly in GHL to sections/elements)
+   ============================================================ */
+
+/* Dark surface background */
+.bg-surface  { background-color: var(--pm-surface) !important; }
+.bg-surface-2 { background-color: var(--pm-surface-2) !important; }
+.bg-black    { background-color: var(--pm-black) !important; }
+
+/* Teal accent text */
+.text-accent { color: var(--pm-accent) !important; }
+.text-muted  { color: var(--pm-muted) !important; }
+.text-white  { color: var(--pm-white) !important; }
+
+/* Full-width teal divider */
+.teal-rule {
+  width: 100% !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, var(--pm-accent), transparent) !important;
+  margin: 60px 0 !important;
+  border: none !important;
+}
+
+/* Tight section padding variant */
+.section-tight {
+  padding-top: 80px !important;
+  padding-bottom: 80px !important;
+}
+
+/* No padding section (e.g. video blocks) */
+.section-flush {
+  padding: 0 !important;
+}
+
+/* Full-viewport-height section */
+.section-full {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  :root {
+    --pm-pad-v: 80px;
+    --pm-pad-h: 24px;
+  }
+
+  h1, .h1 {
+    font-size: clamp(52px, 13vw, 72px) !important;
+    line-height: 0.9 !important;
+  }
+
+  h2, .h2 {
+    font-size: clamp(38px, 10vw, 52px) !important;
+  }
+
+  h3, .h3 {
+    font-size: clamp(28px, 8vw, 38px) !important;
+  }
+
+  nav,
+  .nav,
+  header {
+    padding: 16px 24px !important;
+  }
+
+  footer,
+  .footer {
+    padding: 48px 24px !important;
+  }
+
+  .card,
+  .panel,
+  .feature {
+    padding: 28px !important;
+  }
+
+  .cta-group,
+  .btn-group {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 20px !important;
+  }
+
+  p {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  h1, .h1 {
+    font-size: clamp(44px, 14vw, 60px) !important;
+  }
+
+  a.btn, button, .btn, input[type="submit"] {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 18px 24px !important;
+  }
+}

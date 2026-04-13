@@ -1,0 +1,3257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performuscle — Health | Function | Performance</title>
+  <meta name="description" content="Performuscle — elite online coaching built on three pillars: Health, Function, and Performance. Transform your body and your life." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --black:       #060608;
+      --surface:     #0d0d0f;
+      --surface-2:   #131316;
+      --surface-3:   #1a1a1e;
+      --accent:      #00C896;
+      --accent-hi:   #00FFB8;
+      --accent-dim:  rgba(0, 200, 150, 0.12);
+      --white:       #F5F6FA;
+      --off-white:   #E8E9EE;
+      --muted:       #6b6b7e;
+      --subtle:      #4a4a58;
+      --border:      rgba(255,255,255,0.07);
+      --border-hi:   rgba(0,200,150,0.25);
+
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+
+      --max-w:  1280px;
+      --pad-h:  clamp(24px, 5vw, 80px);
+      --pad-v:  clamp(72px, 10vw, 140px);
+      --radius: 0px;
+      --ease:   0.22s ease;
+    }
+
+    /* ============================================================
+       RESET + BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background-color: var(--black);
+      color: var(--white);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; display: block; }
+    a   { color: inherit; text-decoration: none; }
+
+    /* ============================================================
+       LAYOUT
+    ============================================================ */
+    .container {
+      width: 100%;
+      max-width: var(--max-w);
+      margin-inline: auto;
+      padding-inline: var(--pad-h);
+    }
+
+    /* ============================================================
+       TYPOGRAPHY HELPERS
+    ============================================================ */
+    .eyebrow {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 32px;
+      height: 1.5px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .display-1 {
+      font-family: var(--font-display);
+      font-size: clamp(72px, 9.5vw, 128px);
+      font-weight: 400;
+      line-height: 0.87;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+    .display-2 {
+      font-family: var(--font-display);
+      font-size: clamp(44px, 5.5vw, 72px);
+      font-weight: 400;
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+    .display-3 {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3.5vw, 48px);
+      font-weight: 400;
+      line-height: 1;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .accent-text { color: var(--accent); }
+
+    .body-lg {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+    .body-sm {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: var(--black);
+      border: none;
+      border-radius: var(--radius);
+      padding: 18px 40px;
+      cursor: pointer;
+      transition: background var(--ease), transform 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hi);
+      transform: translateY(-2px);
+    }
+    .btn-primary .arrow {
+      font-size: 14px;
+      transition: transform 0.15s ease;
+    }
+    .btn-primary:hover .arrow { transform: translateX(4px); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      border-radius: var(--radius);
+      padding: 18px 0;
+      cursor: pointer;
+      transition: color var(--ease);
+    }
+    .btn-ghost:hover { color: var(--white); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 16px 32px;
+      cursor: pointer;
+      transition: background var(--ease), color var(--ease);
+      white-space: nowrap;
+    }
+    .btn-outline:hover {
+      background: var(--accent);
+      color: var(--black);
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(6, 6, 8, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: background var(--ease);
+    }
+    .nav__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+    .nav__logo {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.06em;
+      color: var(--white);
+    }
+    .nav__logo span { color: var(--accent); }
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav__links a {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color var(--ease);
+    }
+    .nav__links a:hover { color: var(--white); }
+    .nav__cta { margin-left: 24px; }
+
+    .nav__hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav__hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--white);
+      transition: var(--ease);
+    }
+
+    /* Mobile nav */
+    .nav__mobile {
+      display: none;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 24px var(--pad-h) 32px;
+    }
+    .nav__mobile.open { display: block; }
+    .nav__mobile ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .nav__mobile a {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: clamp(72px, 8vw, 120px);
+      overflow: hidden;
+    }
+
+    /* ---- HERO BACKGROUND IMAGE SLOT ----
+       Replace the background-color below with:
+       background-image: url('YOUR-HERO-PHOTO.jpg');
+       background-size: cover;
+       background-position: center top;
+    */
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      background-color: var(--surface);
+      /* PLACEHOLDER — swap for your hero photo */
+      background-image:
+        linear-gradient(
+          to bottom,
+          rgba(6,6,8,0.2) 0%,
+          rgba(6,6,8,0.1) 40%,
+          rgba(6,6,8,0.75) 75%,
+          rgba(6,6,8,1) 100%
+        );
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* Dark overlay for legibility */
+    .hero__bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1;
+    }
+
+    /* Teal accent glow — top left */
+    .hero__bg::after {
+      content: '';
+      position: absolute;
+      top: -10%;
+      right: -5%;
+      width: 55%;
+      height: 80%;
+      background: radial-gradient(ellipse at center, rgba(0,200,150,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Large background text */
+    .hero__watermark {
+      position: absolute;
+      bottom: -2%;
+      right: -1%;
+      font-family: var(--font-display);
+      font-size: clamp(100px, 16vw, 220px);
+      color: rgba(255,255,255,0.025);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 2;
+    }
+    .hero__pillars {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .hero__pillar {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+    }
+    .hero__pillar-sep {
+      width: 1px;
+      height: 12px;
+      background: rgba(255,255,255,0.5);
+    }
+    .hero__headline {
+      margin-bottom: 28px;
+    }
+    .hero__headline .line-2 {
+      color: var(--accent);
+    }
+    .hero__sub {
+      max-width: 480px;
+      margin-bottom: 44px;
+      color: #ffffff;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+    }
+
+    /* Scroll indicator */
+    .hero__scroll {
+      position: absolute;
+      bottom: 36px;
+      right: var(--pad-h);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero__scroll span {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      writing-mode: vertical-rl;
+    }
+    .hero__scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.1); }
+    }
+
+    /* ============================================================
+       TICKER / MARQUEE
+    ============================================================ */
+    .ticker {
+      background: var(--accent);
+      padding: 14px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker__track {
+      display: inline-flex;
+      gap: 0;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker__item {
+      font-family: var(--font-display);
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      color: var(--black);
+      padding: 0 36px;
+    }
+    .ticker__sep {
+      font-size: 10px;
+      color: rgba(0,0,0,0.35);
+      margin: 0;
+      align-self: center;
+    }
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ============================================================
+       ABOUT
+    ============================================================ */
+    .about {
+      padding-block: var(--pad-v);
+      background: var(--black);
+    }
+    .about__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 8vw, 100px);
+      align-items: center;
+    }
+
+    /* ---- ABOUT PHOTO SLOT ----
+       Replace background-color with your headshot:
+       background-image: url('YOUR-HEADSHOT.jpg');
+       background-size: cover; background-position: center top;
+    */
+    .about__image-wrap {
+      position: relative;
+      aspect-ratio: 4 / 5;
+    }
+    .about__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background-color: var(--surface-2);
+      /* PLACEHOLDER — replace with <img src="your-photo.jpg" /> */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .about__image-placeholder {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+    .about__image-accent {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      width: 120px;
+      height: 120px;
+      border: 1.5px solid var(--accent);
+      z-index: -1;
+    }
+    .about__tag {
+      position: absolute;
+      bottom: 28px;
+      left: -20px;
+      background: var(--accent);
+      color: var(--black);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 10px 18px;
+    }
+
+    .about__text { max-width: 520px; }
+    .about__text p { margin-bottom: 20px; }
+    .about__name {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 4vw, 52px);
+      color: var(--white);
+      line-height: 0.9;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .about__title {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+
+    .credentials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 32px;
+    }
+    .credential {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      transition: border-color var(--ease), color var(--ease);
+    }
+    .credential:hover {
+      border-color: var(--border-hi);
+      color: var(--accent);
+    }
+
+    /* ============================================================
+       PILLARS
+    ============================================================ */
+    .pillars {
+      padding-block: var(--pad-v);
+      background: var(--surface);
+    }
+    .pillars__header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+    .pillars__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .pillar-card {
+      background: var(--surface);
+      padding: clamp(32px, 4vw, 56px);
+      position: relative;
+      overflow: hidden;
+      transition: background var(--ease);
+    }
+    .pillar-card:hover { background: var(--surface-2); }
+    .pillar-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: transparent;
+      transition: background var(--ease);
+    }
+    .pillar-card:hover::before { background: var(--accent); }
+
+    .pillar-card__number {
+      font-family: var(--font-display);
+      font-size: 80px;
+      line-height: 1;
+      color: rgba(255,255,255,0.04);
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      user-select: none;
+    }
+    .pillar-card__icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 28px;
+    }
+    .pillar-card__title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3vw, 42px);
+      line-height: 0.95;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .pillar-card__body {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.72;
+      color: var(--muted);
+    }
+
+    /* ============================================================
+       PROGRAMS
+    ============================================================ */
+    .programs {
+      padding-block: var(--pad-v);
+      background: var(--black);
+    }
+    .programs__header {
+      max-width: 600px;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+    .programs__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .program-card {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    /* ---- PROGRAM CARD PHOTO SLOTS ----
+       Replace background-color per card with your program images.
+    */
+    .program-card__bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.5s ease;
+    }
+    .program-card:nth-child(1) .program-card__bg { background-color: #111318; }
+    .program-card:nth-child(2) .program-card__bg { background-color: #0f1613; }
+    .program-card:nth-child(3) .program-card__bg { background-color: #131118; }
+
+    /* Photo placeholder text */
+    .program-card__bg::before {
+      content: attr(data-label);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+
+    .program-card:hover .program-card__bg { transform: scale(1.04); }
+    .program-card__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(6,6,8,0.92) 0%, rgba(6,6,8,0.15) 55%);
+    }
+    .program-card__content {
+      position: absolute;
+      inset: 0;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .program-card__tag {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .program-card__title {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 2.5vw, 36px);
+      line-height: 0.95;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .program-card__body {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 20px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+    }
+    .program-card:hover .program-card__body {
+      max-height: 100px;
+      opacity: 1;
+    }
+    .program-card__link {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap var(--ease);
+    }
+    .program-card:hover .program-card__link { gap: 14px; }
+
+    /* ============================================================
+       STATS
+    ============================================================ */
+    .stats {
+      padding-block: var(--pad-v);
+      background: var(--accent);
+    }
+    .stats__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(0,0,0,0.1);
+    }
+    .stat-item {
+      background: var(--accent);
+      padding: clamp(32px, 4vw, 56px);
+      text-align: center;
+    }
+    .stat-item__number {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 6vw, 80px);
+      line-height: 1;
+      color: var(--black);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .stat-item__label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.5);
+    }
+
+    /* ============================================================
+       PROCESS
+    ============================================================ */
+    .process {
+      padding-block: var(--pad-v);
+      background: var(--surface);
+    }
+    .process__header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+    .process__steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .step {
+      background: var(--surface);
+      padding: clamp(28px, 3.5vw, 48px);
+      position: relative;
+      overflow: hidden;
+    }
+    .step__num {
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: block;
+    }
+    .step__title {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 2.2vw, 30px);
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 14px;
+      line-height: 1;
+    }
+    .step__body {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+    .step__bg-num {
+      position: absolute;
+      bottom: -10px;
+      right: 12px;
+      font-family: var(--font-display);
+      font-size: 100px;
+      color: rgba(255,255,255,0.03);
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       TESTIMONIALS
+    ============================================================ */
+    .testimonials {
+      padding-block: var(--pad-v);
+      background: var(--black);
+    }
+    .testimonials__header {
+      max-width: 520px;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+    .testimonials__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testimonial-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: clamp(28px, 3vw, 44px);
+      transition: border-color var(--ease);
+      display: flex;
+      flex-direction: column;
+    }
+    .testimonial-card:hover { border-color: var(--border-hi); }
+    .testimonial-card__stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+    .star {
+      color: var(--accent);
+      font-size: 13px;
+    }
+    .testimonial-card__quote {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--off-white);
+      flex: 1;
+      margin-bottom: 28px;
+    }
+    .testimonial-card__author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    /* ---- TESTIMONIAL AVATAR SLOT ----
+       Replace background-color with client photos
+    */
+    .testimonial-card__avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background-color: var(--surface-3);
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+    .testimonial-card__name {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+    .testimonial-card__meta {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       RESULTS / TRANSFORMATION
+    ============================================================ */
+    .results {
+      padding-block: var(--pad-v);
+      background: var(--surface);
+    }
+    .results__header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+    .results__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .result-card {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+    }
+    /* ---- RESULT PHOTO SLOTS ----
+       Replace with before/after or transformation photos
+    */
+    .result-card__img {
+      width: 100%;
+      height: 100%;
+      background-color: var(--surface-3);
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .result-card__img-placeholder {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+    .result-card__caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(6,6,8,0.9), transparent);
+      padding: 24px 20px 16px;
+    }
+    .result-card__name {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+    .result-card__stat {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    /* ============================================================
+       CTA SECTION
+    ============================================================ */
+    .cta-section {
+      position: relative;
+      padding-block: var(--pad-v);
+      background: var(--black);
+      overflow: hidden;
+    }
+    .cta-section__bg-text {
+      position: absolute;
+      bottom: -5%;
+      left: -2%;
+      font-family: var(--font-display);
+      font-size: clamp(80px, 14vw, 200px);
+      color: rgba(255,255,255,0.02);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .cta-section__inner {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .cta-section__label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .cta-section__text p { margin-bottom: 16px; }
+
+    /* Form */
+    .apply-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: clamp(32px, 4vw, 52px);
+    }
+    .apply-form__title {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 2.5vw, 36px);
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 28px;
+      line-height: 1;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-label {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      margin-bottom: 8px;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 14px 18px;
+      outline: none;
+      border-radius: 0;
+      transition: border-color var(--ease);
+    }
+    .form-input:focus { border-color: var(--accent); background: rgba(0,200,150,0.04); }
+    .form-input::placeholder { color: var(--subtle); font-size: 12px; letter-spacing: 0.06em; }
+    select.form-input { appearance: none; cursor: pointer; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding-block: 60px;
+    }
+    .footer__inner {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer__brand-name {
+      font-family: var(--font-display);
+      font-size: 24px;
+      letter-spacing: 0.06em;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .footer__brand-name span { color: var(--accent); }
+    .footer__tagline {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .footer__bio {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--subtle);
+      max-width: 280px;
+    }
+    .footer__heading {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      margin-bottom: 20px;
+    }
+    .footer__links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer__links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--muted);
+      transition: color var(--ease);
+    }
+    .footer__links a:hover { color: var(--accent); }
+    .footer__social {
+      display: flex;
+      gap: 16px;
+      margin-top: 28px;
+    }
+    .footer__social a {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--muted);
+      transition: border-color var(--ease), color var(--ease);
+    }
+    .footer__social a:hover { border-color: var(--accent); color: var(--accent); }
+    .footer__bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer__copy {
+      font-size: 11px;
+      color: var(--subtle);
+    }
+    .footer__bottom-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer__bottom-links a {
+      font-size: 11px;
+      color: var(--subtle);
+      transition: color var(--ease);
+    }
+    .footer__bottom-links a:hover { color: var(--muted); }
+
+    /* ============================================================
+       DIVIDER
+    ============================================================ */
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ============================================================
+       SCROLL FADE-IN ANIMATION
+    ============================================================ */
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    [data-reveal].revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    [data-reveal-delay="1"] { transition-delay: 0.1s; }
+    [data-reveal-delay="2"] { transition-delay: 0.2s; }
+    [data-reveal-delay="3"] { transition-delay: 0.3s; }
+    [data-reveal-delay="4"] { transition-delay: 0.4s; }
+
+    /* ============================================================
+       90 DAY HUMAN RESET — FEATURE SECTION
+    ============================================================ */
+    .reset-feature {
+      padding-block: var(--pad-v);
+      background: var(--black);
+      position: relative;
+      overflow: hidden;
+    }
+    .reset-feature__bg-text {
+      position: absolute;
+      top: 50%;
+      right: -3%;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-size: clamp(100px, 16vw, 220px);
+      color: rgba(0,200,150,0.04);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .reset-feature__inner {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 8vw, 100px);
+      align-items: center;
+    }
+    .reset-feature__hook {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 4.5vw, 60px);
+      line-height: 0.92;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 32px;
+    }
+    .reset-feature__hook em {
+      color: var(--accent);
+      font-style: normal;
+    }
+    .reset-feature__body p {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .reset-feature__body p strong {
+      color: var(--off-white);
+      font-weight: 500;
+    }
+    .reset-feature__days {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin-top: 48px;
+    }
+    .reset-day {
+      background: var(--surface);
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .reset-day__num {
+      font-family: var(--font-display);
+      font-size: 44px;
+      color: var(--accent);
+      line-height: 1;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .reset-day__label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+
+    /* ============================================================
+       BLOG
+    ============================================================ */
+    .blog {
+      padding-block: var(--pad-v);
+      background: var(--surface);
+    }
+    .blog__header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+    .blog__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .blog-card {
+      background: var(--black);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color var(--ease);
+      display: flex;
+      flex-direction: column;
+    }
+    .blog-card:hover { border-color: var(--border-hi); }
+    /* ---- BLOG CARD IMAGE SLOT ----
+       Add style="background-image:url('post.jpg')" to .blog-card__img
+    */
+    .blog-card__img {
+      aspect-ratio: 16 / 9;
+      background-color: var(--surface-3);
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .blog-card__img-placeholder {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+    .blog-card__body {
+      padding: 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .blog-card__cat {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .blog-card__title {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2vw, 26px);
+      line-height: 1;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .blog-card__excerpt {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--muted);
+      flex: 1;
+      margin-bottom: 20px;
+    }
+    .blog-card__meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .blog-card__date {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+    .blog-card__read {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap var(--ease);
+    }
+    .blog-card:hover .blog-card__read { gap: 10px; }
+
+    /* ============================================================
+       MEAL PLANNER PROMO
+    ============================================================ */
+    .meal-planner-promo {
+      padding-block: var(--pad-v);
+      background: var(--black);
+      position: relative;
+      overflow: hidden;
+    }
+    .meal-planner-promo::before {
+      content: '';
+      position: absolute;
+      top: -10%;
+      right: -10%;
+      width: 55%;
+      height: 120%;
+      background: radial-gradient(ellipse at center, rgba(0,200,150,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .meal-planner-promo__inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 7vw, 100px);
+      align-items: center;
+    }
+    .meal-planner-promo__features {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-block: 32px;
+    }
+    .meal-planner-promo__feature {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--off-white);
+    }
+    .meal-planner-promo__feature::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .meal-planner-promo__panel {
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      padding: 32px;
+      position: relative;
+    }
+    .meal-planner-promo__panel-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--black);
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      padding: 5px 12px;
+      margin-bottom: 24px;
+    }
+    .meal-planner-promo__day {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .meal-planner-promo__day-name {
+      font-family: var(--font-display);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      color: var(--white);
+    }
+    .meal-planner-promo__day-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+    .meal-planner-promo__day-macros {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .meal-planner-promo__panel-cta {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      .meal-planner-promo__inner { grid-template-columns: 1fr; }
+      .meal-planner-promo__panel { display: none; }
+    }
+
+    /* ============================================================
+       PERFORMANCE AUDIT
+    ============================================================ */
+    .audit {
+      padding-block: var(--pad-v);
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .audit::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -10%;
+      width: 60%;
+      height: 140%;
+      background: radial-gradient(ellipse at center, rgba(0,200,150,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* Step wrapper */
+    .audit__step { position: relative; z-index: 2; }
+
+    /* INTRO */
+    .audit__intro-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 8vw, 100px);
+      align-items: center;
+    }
+    .audit__intro-graphic {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .audit__intro-pillar {
+      background: var(--black);
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .audit__intro-pillar-score {
+      font-family: var(--font-display);
+      font-size: 48px;
+      color: var(--white);
+      line-height: 1;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .audit__intro-pillar-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+    .audit__intro-total {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1px;
+      background: var(--black);
+      padding: 20px;
+      grid-column: span 3;
+    }
+    .audit__intro-total-num {
+      font-family: var(--font-display);
+      font-size: 36px;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .audit__intro-total-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+    .audit__sub-note {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      margin-top: 16px;
+      display: block;
+    }
+
+    /* QUIZ */
+    .audit__quiz-inner {
+      max-width: 680px;
+      margin-inline: auto;
+    }
+    .audit__meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .audit__pillar-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(0,200,150,0.1);
+      border: 1px solid rgba(0,200,150,0.2);
+      padding: 6px 14px;
+    }
+    .audit__count {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: var(--subtle);
+    }
+    .audit__progress {
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+      margin-bottom: 40px;
+    }
+    .audit__progress-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.4s ease;
+    }
+    .audit__question-text {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 3vw, 36px);
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1.05;
+      margin-bottom: 32px;
+    }
+    .audit__options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .audit__option {
+      background: var(--black);
+      border: 1px solid var(--border);
+      padding: 18px 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: border-color var(--ease), background var(--ease);
+      text-align: left;
+    }
+    .audit__option:hover {
+      border-color: rgba(0,200,150,0.3);
+      background: rgba(0,200,150,0.04);
+    }
+    .audit__option.selected {
+      border-color: var(--accent);
+      background: rgba(0,200,150,0.08);
+    }
+    .audit__option-dot {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--subtle);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color var(--ease);
+    }
+    .audit__option.selected .audit__option-dot {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+    .audit__option.selected .audit__option-dot::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--black);
+      border-radius: 50%;
+    }
+    .audit__option-text {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .audit__option.selected .audit__option-text { color: var(--white); }
+
+    /* EMAIL GATE */
+    .audit__email-inner {
+      max-width: 520px;
+      margin-inline: auto;
+      text-align: center;
+    }
+    .audit__score-preview {
+      font-family: var(--font-display);
+      font-size: 80px;
+      line-height: 1;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+    }
+    .audit__score-preview .audit__score-denom {
+      font-size: 32px;
+      color: var(--subtle);
+    }
+    .audit__email-form {
+      text-align: left;
+      margin-top: 32px;
+    }
+
+    /* RESULTS */
+    .audit__results-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: clamp(48px, 6vw, 80px);
+      align-items: start;
+    }
+    .audit__score-ring {
+      position: relative;
+      width: 200px;
+      margin-inline: auto;
+      margin-bottom: 28px;
+    }
+    .audit__score-ring svg { width: 100%; height: auto; display: block; }
+    .audit__ring-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .audit__ring-num {
+      font-family: var(--font-display);
+      font-size: 52px;
+      color: var(--white);
+      line-height: 1;
+    }
+    .audit__ring-denom {
+      font-size: 13px;
+      color: var(--subtle);
+      font-weight: 500;
+    }
+    .audit__band-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      text-transform: uppercase;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .audit__band-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+      text-align: center;
+    }
+    .audit__pillar-results {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .audit__pillar-row { display: flex; flex-direction: column; gap: 8px; }
+    .audit__pillar-row-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .audit__pillar-row-name {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .audit__pillar-row-score {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--white);
+    }
+    .audit__pillar-track {
+      width: 100%;
+      height: 4px;
+      background: var(--border);
+    }
+    .audit__pillar-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 1s ease 0.3s;
+    }
+    .audit__insight-box {
+      background: var(--black);
+      border: 1px solid var(--border-hi);
+      border-left: 3px solid var(--accent);
+      padding: 20px 24px;
+    }
+    .audit__insight-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .audit__insight-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--off-white);
+    }
+
+    /* Transitions */
+    .audit__step {
+      animation: auditFadeIn 0.4s ease;
+    }
+    @keyframes auditFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================================
+       CALENDLY CTA — REPLACE APPLY FORM
+    ============================================================ */
+    .calendly-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: clamp(40px, 5vw, 60px);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+    .calendly-panel__title {
+      font-family: var(--font-display);
+      font-size: clamp(30px, 3vw, 42px);
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .calendly-panel__sub {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+    .calendly-panel__trust {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+      width: 100%;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--muted);
+    }
+    .trust-item::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .calendly-panel__btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: var(--black);
+      border: none;
+      padding: 20px 40px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background var(--ease), transform 0.15s ease;
+    }
+    .calendly-panel__btn:hover {
+      background: var(--accent-hi);
+      transform: translateY(-2px);
+    }
+    .calendly-panel__note {
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+      color: var(--subtle);
+      margin-top: 14px;
+    }
+
+    /* ============================================================
+       INSTAGRAM SECTION
+    ============================================================ */
+    .instagram {
+      padding-block: var(--pad-v);
+      background: var(--black);
+    }
+    .instagram__header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-bottom: clamp(40px, 5vw, 64px);
+    }
+    .instagram__handle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      transition: color var(--ease);
+    }
+    .instagram__handle:hover { color: var(--accent-hi); }
+    .instagram__handle svg { flex-shrink: 0; }
+
+    /* Static grid (manual screenshots) */
+    .instagram__grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+    }
+    .ig-post {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--surface-2);
+      cursor: pointer;
+    }
+    .ig-post__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background-color: var(--surface-3);
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.5s ease;
+    }
+    .ig-post:hover .ig-post__img { transform: scale(1.06); }
+    .ig-post__placeholder {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--subtle);
+    }
+    .ig-post__overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,200,150,0.12);
+      opacity: 0;
+      transition: opacity var(--ease);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ig-post:hover .ig-post__overlay { opacity: 1; }
+    .ig-post__overlay svg { color: var(--white); opacity: 0.9; }
+
+    /* Live widget slot (LightWidget / Behold embed) */
+    .instagram__widget-slot {
+      width: 100%;
+      min-height: 280px;
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 40px;
+      text-align: center;
+    }
+    .instagram__widget-slot p {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--subtle);
+      max-width: 360px;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .about__grid          { grid-template-columns: 1fr; gap: 48px; }
+      .about__image-wrap    { max-width: 480px; }
+      .pillars__header      { grid-template-columns: 1fr; }
+      .programs__grid       { grid-template-columns: 1fr 1fr; }
+      .stats__grid          { grid-template-columns: repeat(2, 1fr); }
+      .process__header      { grid-template-columns: 1fr; }
+      .process__steps       { grid-template-columns: 1fr 1fr; }
+      .testimonials__grid   { grid-template-columns: 1fr 1fr; }
+      .results__header      { grid-template-columns: 1fr; }
+      .results__grid        { grid-template-columns: 1fr 1fr; }
+      .cta-section__inner   { grid-template-columns: 1fr; gap: 48px; }
+      .footer__inner        { grid-template-columns: 1fr 1fr; }
+      .reset-feature__inner   { grid-template-columns: 1fr; gap: 48px; }
+      .blog__header           { grid-template-columns: 1fr; }
+      .blog__grid             { grid-template-columns: 1fr 1fr; }
+      .audit__intro-inner     { grid-template-columns: 1fr; }
+      .audit__results-inner   { grid-template-columns: 1fr; }
+      .reset-feature__days  { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .nav__links           { display: none; }
+      .nav__cta             { display: none; }
+      .nav__hamburger       { display: flex; }
+      .pillars__grid        { grid-template-columns: 1fr; }
+      .programs__grid       { grid-template-columns: 1fr; }
+      .testimonials__grid   { grid-template-columns: 1fr; }
+      .results__grid        { grid-template-columns: 1fr 1fr; }
+      .process__steps       { grid-template-columns: 1fr; }
+      .form-row             { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .stats__grid          { grid-template-columns: 1fr 1fr; }
+      .results__grid        { grid-template-columns: 1fr; }
+      .footer__inner        { grid-template-columns: 1fr; }
+      .footer__bottom       { flex-direction: column; align-items: flex-start; }
+      .hero__scroll         { display: none; }
+      .blog__grid           { grid-template-columns: 1fr; }
+      .reset-feature__days  { grid-template-columns: repeat(3, 1fr); }
+      .instagram__grid      { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav class="nav" id="nav">
+    <div class="container">
+      <div class="nav__inner">
+        <a href="#" class="nav__logo">Perfor<span>muscle</span></a>
+        <ul class="nav__links">
+          <li><a href="#about">Peak Human Performance</a></li>
+          <li><a href="#audit">Performance Audit</a></li>
+          <li><a href="#process">90 Day Human Reset</a></li>
+          <li><a href="#results">Results</a></li>
+          <li><a href="#blog">Blog</a></li>
+          <li><a href="/meal-planner/" target="_blank" rel="noopener" style="color:var(--accent);">Free Meal Planner ✨</a></li>
+        </ul>
+        <a href="#apply" class="btn-outline nav__cta">Apply</a>
+        <div class="nav__hamburger" id="hamburger" onclick="toggleMenu()">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+    <div class="nav__mobile" id="mobileMenu">
+      <ul>
+        <li><a href="#about" onclick="toggleMenu()">Peak Human Performance</a></li>
+        <li><a href="#audit" onclick="toggleMenu()">Performance Audit</a></li>
+        <li><a href="#process" onclick="toggleMenu()">90 Day Human Reset</a></li>
+        <li><a href="#results" onclick="toggleMenu()">Results</a></li>
+        <li><a href="#blog" onclick="toggleMenu()">Blog</a></li>
+        <li><a href="/meal-planner/" target="_blank" rel="noopener" style="color:var(--accent);" onclick="toggleMenu()">Free Meal Planner ✨</a></li>
+      </ul>
+      <a href="#apply" class="btn-primary" style="width:100%;justify-content:center;" onclick="toggleMenu()">Apply <span class="arrow">→</span></a>
+    </div>
+  </nav>
+
+
+  <!-- ============================================================
+       HERO
+       HOW TO ADD YOUR PHOTO:
+       1. Add your image file to the project (e.g. hero.jpg)
+       2. On .hero__bg, add: style="background-image:url('hero.jpg')"
+  ============================================================ -->
+  <section class="hero" id="hero">
+    <div class="hero__bg" style="background-image:url('top.jpg'); background-size:cover; background-position:center 30%;"></div>
+    <div class="hero__watermark">PM</div>
+    <div class="container">
+      <div class="hero__content">
+        <div class="hero__pillars">
+          <span class="hero__pillar">Health</span>
+          <div class="hero__pillar-sep"></div>
+          <span class="hero__pillar">Function</span>
+          <div class="hero__pillar-sep"></div>
+          <span class="hero__pillar">Performance</span>
+        </div>
+        <div class="hero__headline display-1">
+          Peak<br>
+          <span class="line-2">Human</span><br>
+          Performance
+        </div>
+        <p class="body-lg hero__sub">
+          Elite Performance Coaching that enables you to operate at your highest potential, that doesn't sacrifice your health for aesthetics. Real results through evidence-based training and nutrition.
+        </p>
+        <div class="cta-row">
+          <a href="#audit" class="btn-primary">Take Audit <span class="arrow">→</span></a>
+          <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="btn-ghost" style="color:#ffffff;border:1px solid rgba(255,255,255,0.5);padding:14px 28px;border-radius:4px;text-shadow:0 1px 6px rgba(0,0,0,0.8);">Book Call →</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero__scroll">
+      <span>Scroll</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       TICKER
+  ============================================================ -->
+  <div class="ticker">
+    <div class="ticker__track" id="tickerTrack">
+      <!-- items duplicated in JS for seamless loop -->
+      <span class="ticker__item">Health</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Function</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Performance</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Strength</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Longevity</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Body Composition</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Metabolic Health</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Peak Performance</span>
+      <span class="ticker__sep">·</span>
+      <!-- duplicate -->
+      <span class="ticker__item">Health</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Function</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Performance</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Strength</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Longevity</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Body Composition</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Metabolic Health</span>
+      <span class="ticker__sep">·</span>
+      <span class="ticker__item">Peak Performance</span>
+      <span class="ticker__sep">·</span>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       ABOUT
+       HOW TO ADD YOUR PHOTO:
+       Replace the .about__image div with:
+       <img src="your-headshot.jpg" alt="Coach Name" style="width:100%;height:100%;object-fit:cover;object-position:top;" />
+  ============================================================ -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about__grid">
+        <div class="about__image-wrap" data-reveal>
+          <div class="about__image" style="background:none;padding:0;">
+            <img src="about.jpg" alt="Dave Marsh — Performance Coach" style="width:100%;height:100%;object-fit:cover;object-position:top;" />
+          </div>
+          <div class="about__image-accent"></div>
+        </div>
+        <div class="about__text" data-reveal data-reveal-delay="2">
+          <div class="eyebrow">The Coach</div>
+          <div class="about__name">Dave<br>Marsh</div>
+          <div class="about__title">Coach. Educator. Athlete.</div>
+          <p class="body-lg">
+            I built Performuscle because I was tired of seeing people destroy their health in pursuit of aesthetics. True transformation only happens when your health, function, and performance all move forward together.
+          </p>
+          <p class="body-sm">
+            With 15 years of real-life coaching experience working with athletes, CEOs, high performers and everyday people, I've developed a system that delivers visible results without sacrificing your hormones, metabolism, or longevity. No crash diets. No junk volume. Just smart, sustainable progress.
+          </p>
+          <a href="#apply" class="btn-primary" style="margin-top:32px;">Work With Me <span class="arrow">→</span></a>
+          <div class="credentials">
+            <span class="credential">Certified Personal Trainer</span>
+            <span class="credential">Nutrition Coach</span>
+            <span class="credential">Strength &amp; Conditioning</span>
+            <span class="credential">Evidence-Based Methods</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       THREE PILLARS
+  ============================================================ -->
+  <section class="pillars" id="pillars">
+    <div class="container">
+      <div class="pillars__header">
+        <div data-reveal>
+          <div class="eyebrow">The Foundation</div>
+          <div class="display-2">Three Pillars<br>of Every Plan</div>
+        </div>
+        <div data-reveal data-reveal-delay="2">
+          <p class="body-lg">
+            Most coaches optimise for one thing. We build all three simultaneously — because they're inseparable.
+          </p>
+        </div>
+      </div>
+      <div class="pillars__grid">
+
+        <div class="pillar-card" data-reveal>
+          <span class="pillar-card__number">01</span>
+          <!-- Health Icon -->
+          <svg class="pillar-card__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 35C20 35 5 26 5 15C5 10.6 8.1 7 12.5 7C15.2 7 17.6 8.5 19 10.7C20.4 8.5 22.8 7 25.5 7C29.9 7 33 10.6 33 15C33 26 20 35 20 35Z" stroke="#00C896" stroke-width="1.5" fill="none"/>
+          </svg>
+          <div class="pillar-card__title">Health</div>
+          <p class="pillar-card__body">
+            Metabolic health, hormonal balance, sleep quality, and longevity markers come first. If your health is declining, no amount of visible progress is worth it.
+          </p>
+        </div>
+
+        <div class="pillar-card" data-reveal data-reveal-delay="2">
+          <span class="pillar-card__number">02</span>
+          <!-- Function Icon -->
+          <svg class="pillar-card__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 32L20 8L32 32" stroke="#00C896" stroke-width="1.5"/>
+            <path d="M11.5 25H28.5" stroke="#00C896" stroke-width="1.5"/>
+          </svg>
+          <div class="pillar-card__title">Function</div>
+          <p class="pillar-card__body">
+            Movement quality, mobility, and structural balance keep your body resilient. We train you to move well for life — not just to look good standing still.
+          </p>
+        </div>
+
+        <div class="pillar-card" data-reveal data-reveal-delay="3">
+          <span class="pillar-card__number">03</span>
+          <!-- Performance Icon -->
+          <svg class="pillar-card__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="6,34 14,20 22,27 30,10 38,18" stroke="#00C896" stroke-width="1.5" fill="none"/>
+            <circle cx="38" cy="18" r="2.5" fill="#00C896"/>
+          </svg>
+          <div class="pillar-card__title">Performance</div>
+          <p class="pillar-card__body">
+            Strength, muscle, body composition, and endurance. The metrics that get you in front of the mirror and drive every session. This is the output of the first two pillars done right.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PROGRAMS
+       HOW TO ADD PHOTOS:
+       On each .program-card__bg, add: style="background-image:url('program1.jpg')"
+       And remove the data-label attribute.
+  ============================================================ -->
+  <section class="programs" id="programs">
+    <div class="container">
+      <div class="programs__header" data-reveal>
+        <div class="eyebrow">What I Offer</div>
+        <div class="display-2">What I<br>Offer</div>
+        <p class="body-lg" style="margin-top:20px;">
+          Every coaching partnership is fully personalised. No templates. No guesswork.
+        </p>
+      </div>
+      <div class="programs__grid">
+
+        <div class="program-card" data-reveal>
+          <div class="program-card__bg" style="background-image:url('coaching.jpg'); background-size:cover; background-position:center;"></div>
+          <div class="program-card__overlay"></div>
+          <div class="program-card__content">
+            <div class="program-card__tag">1-on-1 Coaching</div>
+            <div class="program-card__title">Coach<br>Mentoring</div>
+            <p class="program-card__body">For coaches who want to upskill and learn how to solve your clients' problems and get better results. We build a bespoke mentoring plan based on where you're at to help you excel.</p>
+            <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="program-card__link">Discover More <span>→</span></a>
+          </div>
+        </div>
+
+        <div class="program-card" data-reveal data-reveal-delay="2">
+          <div class="program-card__bg" style="background-image:url('hero.jpg'); background-size:cover; background-position:center top;"></div>
+          <div class="program-card__overlay"></div>
+          <div class="program-card__content">
+            <div class="program-card__tag">Full Access</div>
+            <div class="program-card__title">Elite Performance<br>Coaching</div>
+            <p class="program-card__body">Access to educational hub, personalised programming, nutrition, weekly check-ins, technique review and direct one-to-one coach access. For those who want to perform at their highest potential.</p>
+            <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="program-card__link">Discover More <span>→</span></a>
+          </div>
+        </div>
+
+        <div class="program-card" data-reveal data-reveal-delay="3">
+          <div class="program-card__bg" style="background-image:url('clients.jpg'); background-size:cover; background-position:center top;"></div>
+          <div class="program-card__overlay"></div>
+          <div class="program-card__content">
+            <div class="program-card__tag">Structured Protocol</div>
+            <div class="program-card__title">90 Day Human<br>Reset</div>
+            <p class="program-card__body">A defined 90-day protocol targeting health, function and performance simultaneously — building the foundations of a high-performing body and mind.</p>
+            <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="program-card__link">Discover More <span>→</span></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       90 DAY HUMAN RESET — FEATURE SECTION
+  ============================================================ -->
+  <section class="reset-feature" id="reset">
+    <div class="reset-feature__bg-text">90</div>
+    <div class="container">
+      <div class="reset-feature__inner">
+        <div data-reveal>
+          <div class="eyebrow">The Protocol</div>
+          <div class="reset-feature__hook">
+            Don't want to<br>
+            recognise yourself<br>
+            in <em>90 days?</em>
+          </div>
+          <div class="reset-feature__days">
+            <div class="reset-day">
+              <span class="reset-day__num">30</span>
+              <span class="reset-day__label">Audit &amp; Reset</span>
+            </div>
+            <div class="reset-day">
+              <span class="reset-day__num">60</span>
+              <span class="reset-day__label">Build &amp; Adapt</span>
+            </div>
+            <div class="reset-day">
+              <span class="reset-day__num">90</span>
+              <span class="reset-day__label">Perform &amp; Own</span>
+            </div>
+          </div>
+        </div>
+        <div class="reset-feature__body" data-reveal data-reveal-delay="2">
+          <p>Imagine waking up full of energy, feeling ten years younger — mind clear, ready to perform. You've just come out of a deep sleep. The sun hasn't risen yet and you're ready to start your day with a programmed workout.</p>
+          <p>You're <strong>leaner, stronger, sharper</strong> — but most of all you feel a new sense of purpose. Instead of reacting to life, you move with intent and clarity. <strong>Present and ready to perform.</strong></p>
+          <p>The 90 Day Human Reset is a complete overhaul of your physiology and psychology. We audit your sleep, nutrition, movement, stress, and recovery — then rebuild you from the ground up.</p>
+          <p>This isn't a crash course. It's a permanent upgrade.</p>
+          <div class="cta-row" style="margin-top:36px;">
+            <a href="#apply" class="btn-primary">Start Your Reset <span class="arrow">→</span></a>
+            <a href="#apply" class="btn-ghost">Book a Free Audit →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       STATS
+  ============================================================ -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats__grid">
+        <div class="stat-item" data-reveal>
+          <span class="stat-item__number">1000+</span>
+          <span class="stat-item__label">Clients Coached</span>
+        </div>
+        <div class="stat-item" data-reveal data-reveal-delay="1">
+          <span class="stat-item__number">94%</span>
+          <span class="stat-item__label">Client Retention Rate</span>
+        </div>
+        <div class="stat-item" data-reveal data-reveal-delay="2">
+          <span class="stat-item__number">15+</span>
+          <span class="stat-item__label">Years Coaching</span>
+        </div>
+        <div class="stat-item" data-reveal data-reveal-delay="3">
+          <span class="stat-item__number">100%</span>
+          <span class="stat-item__label">Evidence-Based</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PROCESS
+  ============================================================ -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="process__header">
+        <div data-reveal>
+          <div class="eyebrow">How It Works</div>
+          <div class="display-2">Your Roadmap<br>to Results</div>
+        </div>
+        <div data-reveal data-reveal-delay="2">
+          <p class="body-lg">
+            A clear, structured process from first contact to long-term results. No confusion. No guesswork.
+          </p>
+          <a href="#apply" class="btn-primary" style="margin-top:28px;">Apply Now <span class="arrow">→</span></a>
+        </div>
+      </div>
+      <div class="process__steps">
+        <div class="step" data-reveal>
+          <span class="step__num">01</span>
+          <div class="step__title">Apply</div>
+          <p class="step__body">Complete a short application so I can understand your goals, history, and readiness. I only take on clients I know I can deliver results for.</p>
+          <span class="step__bg-num">1</span>
+        </div>
+        <div class="step" data-reveal data-reveal-delay="1">
+          <span class="step__num">02</span>
+          <div class="step__title">Assess</div>
+          <p class="step__body">Comprehensive intake — movement screening, nutrition audit, lifestyle factors, and goal mapping. The foundation of your personalised plan.</p>
+          <span class="step__bg-num">2</span>
+        </div>
+        <div class="step" data-reveal data-reveal-delay="2">
+          <span class="step__num">03</span>
+          <div class="step__title">Execute</div>
+          <p class="step__body">Your custom training and nutrition plan, delivered week by week with ongoing check-ins, adjustments, and direct coach access.</p>
+          <span class="step__bg-num">3</span>
+        </div>
+        <div class="step" data-reveal data-reveal-delay="3">
+          <span class="step__num">04</span>
+          <div class="step__title">Evolve</div>
+          <p class="step__body">Your plan evolves as you do. Data-driven adjustments every week ensure you keep progressing and never plateau.</p>
+          <span class="step__bg-num">4</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       TESTIMONIALS
+  ============================================================ -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="testimonials__header" data-reveal>
+        <div class="eyebrow">Client Results</div>
+        <div class="display-2">What They're<br>Saying</div>
+      </div>
+      <div class="testimonials__grid">
+
+        <div class="testimonial-card" data-reveal>
+          <div class="testimonial-card__stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testimonial-card__quote">"I'd been to physios and chiros for over a year and couldn't fix my movement issues. In 12 weeks with Dave I went from a 20kg front squat in pain to 40kg pain free — and I'm now prepping for a half marathon PB."</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar" style="background-color:#1a1a1e;"></div>
+            <div>
+              <div class="testimonial-card__name">Kara Gibbons</div>
+              <div class="testimonial-card__meta">12 Weeks · Mum · Coach · Business Owner</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card" data-reveal data-reveal-delay="2">
+          <div class="testimonial-card__stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testimonial-card__quote">"I've been training for over a decade and never looked or performed like this. 7 months in — 5.4kg of muscle added, leaner than ever, and hitting numbers I thought were years away."</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar" style="background-color:#1a1a1e;"></div>
+            <div>
+              <div class="testimonial-card__name">Joe Robinson</div>
+              <div class="testimonial-card__meta">7 Months · +5.4kg Muscle · Body Recomp</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card" data-reveal data-reveal-delay="3">
+          <div class="testimonial-card__stars">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <p class="testimonial-card__quote">"8 weeks, 5.8kg down, and I actually performed better in the gym throughout. No peptides, no gimmicks. Just Dave's process and showing up. First photoshoot is booked."</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar" style="background-color:#1a1a1e;"></div>
+            <div>
+              <div class="testimonial-card__name">Josh</div>
+              <div class="testimonial-card__meta">8 Weeks · -5.8kg · Photoshoot Prep</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       RESULTS / TRANSFORMATIONS
+       HOW TO ADD PHOTOS:
+       On each .result-card__img, add: style="background-image:url('client1.jpg')"
+       And remove the .result-card__img-placeholder span.
+  ============================================================ -->
+  <section class="results" id="results">
+    <div class="container">
+      <div class="results__header">
+        <div data-reveal>
+          <div class="eyebrow">Transformations</div>
+          <div class="display-2">Real People.<br>Real Results.</div>
+        </div>
+        <div data-reveal data-reveal-delay="2">
+          <p class="body-lg">
+            No filters, no misleading lighting. Just what happens when smart coaching meets consistent effort.
+          </p>
+          <a href="#apply" class="btn-primary" style="margin-top:28px;">Get Your Results <span class="arrow">→</span></a>
+        </div>
+      </div>
+      <div class="results__grid">
+
+        <div class="result-card" data-reveal>
+          <div class="result-card__img" style="background-image:url('Kara.PNG'); background-size:cover; background-position:center top;">
+          </div>
+          <div class="result-card__caption">
+            <div class="result-card__name">Kara G. · 12 Weeks</div>
+            <div class="result-card__stat">20kg → 40kg Squat</div>
+          </div>
+        </div>
+
+        <div class="result-card" data-reveal data-reveal-delay="1">
+          <div class="result-card__img" style="background-image:url('josh.PNG'); background-size:cover; background-position:center top;">
+          </div>
+          <div class="result-card__caption">
+            <div class="result-card__name">Josh · 8 Weeks</div>
+            <div class="result-card__stat">-5.8kg</div>
+          </div>
+        </div>
+
+        <div class="result-card" data-reveal data-reveal-delay="2">
+          <div class="result-card__img" style="background-image:url('joe.PNG'); background-size:cover; background-position:center top;">
+          </div>
+          <div class="result-card__caption">
+            <div class="result-card__name">Joe R. · 7 Months</div>
+            <div class="result-card__stat">+5.4kg Muscle</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FREE MEAL PLANNER TOOL
+  ============================================================ -->
+  <section class="meal-planner-promo" id="meal-planner">
+    <div class="container">
+      <div class="meal-planner-promo__inner">
+
+        <!-- Left: copy -->
+        <div data-reveal>
+          <div class="eyebrow">Free Tool</div>
+          <div class="display-2">Build Your<br>Perfect<br><span style="color:var(--accent)">7-Day Plan</span></div>
+          <p class="body-lg" style="margin-top:20px;">
+            Enter your macros, set your training days and dietary preferences. Our AI builds you a complete weekly meal plan with a full shopping list — instantly, for free.
+          </p>
+          <div class="meal-planner-promo__features">
+            <div class="meal-planner-promo__feature">Macro-precise meals matched to your targets</div>
+            <div class="meal-planner-promo__feature">Training day carb timing built in</div>
+            <div class="meal-planner-promo__feature">Dairy-free, vegan, gluten-free &amp; more</div>
+            <div class="meal-planner-promo__feature">Full categorised shopping list included</div>
+            <div class="meal-planner-promo__feature">Plan delivered straight to your inbox</div>
+          </div>
+          <div class="cta-row">
+            <a href="/meal-planner/" class="btn-primary" target="_blank" rel="noopener">
+              Build My Plan Free <span class="arrow">→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: mock UI panel -->
+        <div class="meal-planner-promo__panel" data-reveal data-reveal-delay="2">
+          <div class="meal-planner-promo__panel-badge">✨ AI-GENERATED · RECIPE LIBRARY POWERED</div>
+          <div style="font-family:var(--font-display);font-size:11px;letter-spacing:0.1em;color:var(--muted);margin-bottom:12px;">SAMPLE WEEKLY PLAN</div>
+
+          <div class="meal-planner-promo__day">
+            <div>
+              <div class="meal-planner-promo__day-name">MONDAY</div>
+              <div class="meal-planner-promo__day-tag">⚡ TRAINING</div>
+            </div>
+            <div class="meal-planner-promo__day-macros">2,400 kcal · P180g C220g F75g</div>
+          </div>
+          <div class="meal-planner-promo__day">
+            <div>
+              <div class="meal-planner-promo__day-name">TUESDAY</div>
+              <div class="meal-planner-promo__day-tag" style="color:var(--muted);">REST</div>
+            </div>
+            <div class="meal-planner-promo__day-macros">2,200 kcal · P180g C180g F80g</div>
+          </div>
+          <div class="meal-planner-promo__day">
+            <div>
+              <div class="meal-planner-promo__day-name">WEDNESDAY</div>
+              <div class="meal-planner-promo__day-tag">⚡ TRAINING</div>
+            </div>
+            <div class="meal-planner-promo__day-macros">2,400 kcal · P180g C220g F75g</div>
+          </div>
+          <div class="meal-planner-promo__day" style="opacity:0.5;">
+            <div>
+              <div class="meal-planner-promo__day-name">THURSDAY …</div>
+            </div>
+            <div class="meal-planner-promo__day-macros">+ 4 more days</div>
+          </div>
+
+          <div class="meal-planner-promo__panel-cta">
+            Free · No sign-up required · Results in 30 seconds
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       BLOG
+       HOW TO ADD: Replace each .blog-card__img background-color with
+       style="background-image:url('post.jpg')" and remove the placeholder span.
+  ============================================================ -->
+  <section class="blog" id="blog">
+    <div class="container">
+      <div class="blog__header">
+        <div data-reveal>
+          <div class="eyebrow">From The Coach</div>
+          <div class="display-2">Education &amp;<br>Insights</div>
+        </div>
+        <div data-reveal data-reveal-delay="2">
+          <p class="body-lg">
+            Evidence-based articles on training, nutrition, recovery, and what it really means to perform at a human level.
+          </p>
+        </div>
+      </div>
+      <div class="blog__grid">
+
+        <div class="blog-card" data-reveal>
+          <div class="blog-card__img">
+            <!-- REPLACE WITH: <img src="post1.jpg" alt="" style="width:100%;height:100%;object-fit:cover;"> -->
+            <span class="blog-card__img-placeholder">Post Image Here</span>
+          </div>
+          <div class="blog-card__body">
+            <div class="blog-card__cat">Training</div>
+            <div class="blog-card__title">Why Most Training<br>Programs Fail</div>
+            <p class="blog-card__excerpt">The real reason people plateau isn't lack of effort — it's lack of structure. Here's the framework that changes everything.</p>
+            <div class="blog-card__meta">
+              <span class="blog-card__date">Coming Soon</span>
+              <span class="blog-card__read">Read <span>→</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="blog-card" data-reveal data-reveal-delay="2">
+          <div class="blog-card__img">
+            <span class="blog-card__img-placeholder">Post Image Here</span>
+          </div>
+          <div class="blog-card__body">
+            <div class="blog-card__cat">Nutrition</div>
+            <div class="blog-card__title">Fuelling Performance<br>Without Restriction</div>
+            <p class="blog-card__excerpt">How to eat for energy, body composition and cognitive output simultaneously — without tracking every gram.</p>
+            <div class="blog-card__meta">
+              <span class="blog-card__date">Coming Soon</span>
+              <span class="blog-card__read">Read <span>→</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="blog-card" data-reveal data-reveal-delay="3">
+          <div class="blog-card__img">
+            <span class="blog-card__img-placeholder">Post Image Here</span>
+          </div>
+          <div class="blog-card__body">
+            <div class="blog-card__cat">Mindset</div>
+            <div class="blog-card__title">Operating With Intent<br>Not Reaction</div>
+            <p class="blog-card__excerpt">Peak performers don't react to their day — they design it. The morning protocols and mental frameworks that separate the best from the rest.</p>
+            <div class="blog-card__meta">
+              <span class="blog-card__date">Coming Soon</span>
+              <span class="blog-card__read">Read <span>→</span></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PERFORMANCE AUDIT
+  ============================================================ -->
+  <section class="audit" id="audit">
+    <div class="container">
+
+      <!-- STEP 1: INTRO -->
+      <div class="audit__step" id="audit-intro">
+        <div class="audit__intro-inner">
+          <div data-reveal>
+            <div class="eyebrow">Free · 60 Seconds</div>
+            <div class="display-2">What's Your<br>Performance<br>Score?</div>
+            <p class="body-lg" style="margin-top:20px;">Answer 9 questions across Health, Function and Performance. Get an instant breakdown of where you're leaving the most gains on the table — and what to fix first.</p>
+            <button class="btn-primary" onclick="auditStart()" style="margin-top:32px;">
+              Start Your Audit <span class="arrow">→</span>
+            </button>
+            <span class="audit__sub-note">No signup required to start</span>
+          </div>
+          <div data-reveal data-reveal-delay="2">
+            <div class="audit__intro-graphic">
+              <div class="audit__intro-pillar">
+                <span class="audit__intro-pillar-score">?</span>
+                <span class="audit__intro-pillar-label">Health</span>
+              </div>
+              <div class="audit__intro-pillar">
+                <span class="audit__intro-pillar-score">?</span>
+                <span class="audit__intro-pillar-label">Function</span>
+              </div>
+              <div class="audit__intro-pillar">
+                <span class="audit__intro-pillar-score">?</span>
+                <span class="audit__intro-pillar-label">Performance</span>
+              </div>
+              <div class="audit__intro-total">
+                <span class="audit__intro-total-num">??</span>
+                <span class="audit__intro-total-label">/ 45 — Your Score</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: QUESTIONS -->
+      <div class="audit__step" id="audit-quiz" style="display:none">
+        <div class="audit__quiz-inner">
+          <div class="audit__meta">
+            <div class="audit__pillar-tag" id="audit-pillar-tag">Health</div>
+            <div class="audit__count" id="audit-count">1 / 6</div>
+          </div>
+          <div class="audit__progress">
+            <div class="audit__progress-fill" id="audit-progress-fill" style="width:0%"></div>
+          </div>
+          <div class="audit__question-text" id="audit-question-text"></div>
+          <div class="audit__options" id="audit-options"></div>
+          <button class="btn-primary" id="audit-next-btn" onclick="auditNext()" disabled style="opacity:0.4;cursor:not-allowed;">
+            Next <span class="arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: EMAIL GATE -->
+      <div class="audit__step" id="audit-email" style="display:none">
+        <div class="audit__email-inner">
+          <div class="audit__score-preview">
+            <span id="audit-preview-num">--</span>
+            <span class="audit__score-denom">/ 45</span>
+          </div>
+          <div class="display-3" style="margin-bottom:12px;">Your Score is Ready</div>
+          <p class="body-lg">Drop your details to unlock your full personalised breakdown and find out exactly what to fix first.</p>
+          <div class="audit__email-form">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-input" id="audit-name" placeholder="Your first name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-input" id="audit-email-input" placeholder="you@example.com" />
+            </div>
+            <button class="btn-primary" onclick="auditReveal()" style="width:100%;justify-content:center;margin-top:8px;">
+              Reveal My Score <span class="arrow">→</span>
+            </button>
+            <p style="font-size:11px;color:var(--subtle);text-align:center;margin-top:12px;margin-bottom:0;">No spam. Unsubscribe anytime.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: RESULTS -->
+      <div class="audit__step" id="audit-results" style="display:none">
+        <div class="audit__results-inner">
+          <div style="text-align:center;">
+            <div class="audit__score-ring">
+              <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#00C896" stroke-width="8"
+                  stroke-dasharray="326.7" stroke-dashoffset="326.7"
+                  stroke-linecap="round"
+                  transform="rotate(-90 60 60)"
+                  id="audit-ring-circle"/>
+              </svg>
+              <div class="audit__ring-text">
+                <span class="audit__ring-num" id="audit-ring-num">0</span>
+                <span class="audit__ring-denom">/ 45</span>
+              </div>
+            </div>
+            <div class="audit__band-title" id="audit-band-title"></div>
+            <div class="audit__band-desc" id="audit-band-desc" style="margin-top:8px;"></div>
+          </div>
+          <div>
+            <div class="audit__pillar-results" id="audit-pillar-results"></div>
+            <div class="audit__insight-box" id="audit-insight-box"></div>
+            <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="btn-primary" style="margin-top:28px;display:inline-flex;">
+              Book Your Consult Call <span class="arrow">→</span>
+            </a>
+            <p style="font-size:11px;color:var(--subtle);margin-top:12px;">30-minute call · No obligation · Walk away with a clear plan</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       APPLY — CALENDLY BOOKING
+  ============================================================ -->
+  <section class="cta-section" id="apply">
+    <div class="cta-section__bg-text">APPLY</div>
+    <div class="container">
+      <div class="cta-section__inner">
+        <div class="cta-section__text" data-reveal>
+          <div class="cta-section__label">Limited Spots Available</div>
+          <div class="display-2">Ready to<br>Operate at Your<br>Highest Potential?</div>
+          <p class="body-lg" style="margin-top:24px;max-width:440px;">
+            I work with a select number of clients to ensure every person gets the full attention they deserve. One call is all it takes to know if we're the right fit.
+          </p>
+          <p class="body-sm" style="margin-top:12px;max-width:400px;">
+            No hard sell. No pressure. Just a direct conversation about where you are, where you want to go, and how we get there.
+          </p>
+        </div>
+        <div class="calendly-panel" data-reveal data-reveal-delay="2">
+          <div class="calendly-panel__title">Book Your<br>Free Audit Call</div>
+          <p class="calendly-panel__sub">A 30-minute no-obligation call to audit your current situation and map out exactly what your next 90 days could look like.</p>
+          <div class="calendly-panel__trust">
+            <div class="trust-item">30-minute strategy call — completely free</div>
+            <div class="trust-item">No forms, no waiting — instant booking</div>
+            <div class="trust-item">Walk away with a clear action plan regardless</div>
+            <div class="trust-item">Limited spots — book before they're gone</div>
+          </div>
+          <!-- REPLACE href with your Calendly link e.g. https://calendly.com/yourname/audit -->
+          <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="calendly-panel__btn">
+            Book Your Free Call
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <p class="calendly-panel__note">Opens in Calendly — pick a time that works for you</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       INSTAGRAM
+       TO GO LIVE: Replace the .instagram__widget-slot div with your
+       LightWidget or Behold embed snippet.
+       OR: Replace each .ig-post__img background-color with
+       style="background-image:url('post.jpg')" and wrap in <a href="POST_URL">
+  ============================================================ -->
+  <section class="instagram" id="instagram">
+    <div class="container">
+      <div class="instagram__header">
+        <div data-reveal>
+          <div class="eyebrow">Stay Connected</div>
+          <div class="display-2">Follow the<br>Journey</div>
+        </div>
+        <a href="https://www.instagram.com/coachdavemarsh/" target="_blank" rel="noopener" class="instagram__handle" data-reveal data-reveal-delay="2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          @coachdavemarsh
+          <span style="font-size:14px;">→</span>
+        </a>
+      </div>
+
+      <div data-reveal>
+        <behold-widget feed-id="zCOyIsMtnTg4OG0Cdl4c"></behold-widget>
+        <script>
+          (() => {
+            const d=document,s=d.createElement("script");s.type="module";
+            s.src="https://w.behold.so/widget.js";d.head.append(s);
+          })();
+        </script>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__inner">
+        <div>
+          <div class="footer__brand-name">Perfor<span>muscle</span></div>
+          <div class="footer__tagline">Health · Function · Performance</div>
+          <p class="footer__bio">
+            Elite online personal coaching built on three non-negotiable pillars. Changing bodies and lives through evidence, not extremes.
+          </p>
+          <div class="footer__social">
+            <a href="#" aria-label="Instagram">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="#" aria-label="TikTok">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+            </a>
+            <a href="#" aria-label="YouTube">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="13" rx="2"/><polygon points="10,9 16,12.5 10,16" fill="currentColor" stroke="none"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <div class="footer__heading">Navigate</div>
+          <ul class="footer__links">
+            <li><a href="#about">Peak Human Performance</a></li>
+            <li><a href="#audit">Performance Audit</a></li>
+            <li><a href="#reset">90 Day Human Reset</a></li>
+            <li><a href="#results">Results</a></li>
+            <li><a href="#blog">Blog</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer__heading">Coaching</div>
+          <ul class="footer__links">
+            <li><a href="#programs">1-on-1 Mentoring</a></li>
+            <li><a href="#programs">Coach Mentoring</a></li>
+            <li><a href="#reset">90 Day Human Reset</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer__heading">Contact</div>
+          <ul class="footer__links">
+            <li><a href="mailto:coach@performuscle.com">coach@performuscle.com</a></li>
+            <li><a href="#apply">Book a Free Audit</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span class="footer__copy">&copy; 2024 Performuscle. All rights reserved.</span>
+        <div class="footer__bottom-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    // Mobile menu toggle
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('open');
+    }
+
+    // Scroll-reveal
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+    // Sticky nav background shift
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.style.background = window.scrollY > 60
+        ? 'rgba(6,6,8,0.97)'
+        : 'rgba(6,6,8,0.88)';
+    });
+
+    // Form submit placeholder
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.textContent = 'Application Sent!';
+      btn.style.background = '#00FFB8';
+      btn.disabled = true;
+    }
+
+    // ============================================================
+    // PERFORMANCE AUDIT
+    // ============================================================
+
+    const auditQuestions = [
+      {
+        pillar: 'Health', pillarIndex: 0,
+        text: 'How would you rate your energy levels throughout a typical day?',
+        options: [
+          { text: 'Constantly fatigued — running on caffeine and willpower', score: 1 },
+          { text: 'Inconsistent — some good days, many crashes', score: 2 },
+          { text: 'Mostly okay but I hit an afternoon wall most days', score: 3 },
+          { text: 'High and consistent from morning through evening', score: 5 },
+        ]
+      },
+      {
+        pillar: 'Health', pillarIndex: 0,
+        text: 'How is your sleep quality and ability to recover?',
+        options: [
+          { text: 'Poor — I rarely feel rested or physically recovered', score: 1 },
+          { text: 'Hit and miss — good nights are the exception', score: 2 },
+          { text: 'Generally decent but I know it\'s not optimised', score: 3 },
+          { text: 'Deep, consistent sleep — I wake up genuinely ready to go', score: 5 },
+        ]
+      },
+      {
+        pillar: 'Health', pillarIndex: 0,
+        text: 'How well do you manage stress and mentally switch off?',
+        options: [
+          { text: 'Chronically stressed — I can\'t remember the last time I felt calm', score: 1 },
+          { text: 'High stress most of the time with only occasional relief', score: 2 },
+          { text: 'Manageable — I have strategies but don\'t always use them', score: 3 },
+          { text: 'Low and controlled — I decompress well and stay level-headed', score: 5 },
+        ]
+      },
+      {
+        pillar: 'Function', pillarIndex: 1,
+        text: 'Are you dealing with any pain, injury or movement restrictions?',
+        options: [
+          { text: 'Chronic pain or injury that limits my training significantly', score: 1 },
+          { text: 'Recurring niggles that keep coming back', score: 2 },
+          { text: 'Minor restrictions but nothing that stops me training', score: 3 },
+          { text: 'Completely pain free with full range of movement', score: 5 },
+        ]
+      },
+      {
+        pillar: 'Function', pillarIndex: 1,
+        text: 'How would you describe your movement quality and mobility?',
+        options: [
+          { text: 'Significant restrictions — I avoid or modify many movements', score: 1 },
+          { text: 'Some limitations, I work around them', score: 2 },
+          { text: 'Decent, but I know there\'s room to improve', score: 3 },
+          { text: 'Full range, high quality movement — I move well', score: 5 },
+        ]
+      },
+      {
+        pillar: 'Function', pillarIndex: 1,
+        text: 'How is your breathing and cardiovascular capacity day to day?',
+        options: [
+          { text: 'Breathless easily — stairs, short walks or light effort wind me', score: 1 },
+          { text: 'Gets the job done but I feel limited in conditioning work', score: 2 },
+          { text: 'Decent base fitness, I could push harder with the right structure', score: 3 },
+          { text: 'Strong capacity, controlled breathing, high work output', score: 5 },
+        ]
+      },
+      {
+        pillar: 'Performance', pillarIndex: 2,
+        text: 'How consistent is your progress in the gym right now?',
+        options: [
+          { text: 'Stuck — no real strength or muscle progress in months', score: 1 },
+          { text: 'Slow and inconsistent — occasional wins but no real trend', score: 2 },
+          { text: 'Making some progress but I can feel a plateau coming', score: 3 },
+          { text: 'Consistent, measurable improvements every training block', score: 5 },
+        ]
+      },
+      {
+        pillar: 'Performance', pillarIndex: 2,
+        text: 'How intentional and structured is your nutrition?',
+        options: [
+          { text: 'No structure at all — eating based on mood and convenience', score: 1 },
+          { text: 'Some awareness but no real plan guiding my food', score: 2 },
+          { text: 'Generally on track, but not specifically fuelling performance', score: 3 },
+          { text: 'Deliberate and periodised — my nutrition drives my training', score: 5 },
+        ]
+      },
+      {
+        pillar: 'Performance', pillarIndex: 2,
+        text: 'How clear and focused are you on your goals right now?',
+        options: [
+          { text: 'No clear direction — just going through the motions', score: 1 },
+          { text: 'Some idea of what I want but no structured plan to get there', score: 2 },
+          { text: 'I have goals but struggle with consistency and accountability', score: 3 },
+          { text: 'Crystal clear — defined plan, executing it with purpose every week', score: 5 },
+        ]
+      },
+    ];
+
+    const auditPillarColors = ['#00C896', '#00C896', '#00C896'];
+    const auditPillarNames = ['Health', 'Function', 'Performance'];
+
+    let auditCurrent = 0;
+    let auditSelected = null;
+    let auditScores = [0, 0, 0]; // per pillar
+
+    const auditBands = [
+      {
+        min: 0, max: 15,
+        title: 'Foundation Stage',
+        desc: 'Multiple fundamentals need rebuilding before real performance can follow.',
+        color: '#ff6b6b'
+      },
+      {
+        min: 16, max: 26,
+        title: 'Untapped Performer',
+        desc: 'You have potential but clear identifiable gaps are capping your results.',
+        color: '#ffd93d'
+      },
+      {
+        min: 27, max: 36,
+        title: 'High Performer',
+        desc: 'Solid foundation in place. Time to close the gaps and express your ceiling.',
+        color: '#6bcb77'
+      },
+      {
+        min: 37, max: 45,
+        title: 'Peak Operator',
+        desc: 'Strong across all pillars. Fine-tuning and periodisation will take you to the next level.',
+        color: '#00C896'
+      },
+    ];
+
+    const auditInsights = {
+      0: { // Health is lowest
+        label: 'Your Biggest Opportunity: Health',
+        text: 'Your health markers are the foundation everything else is built on. Low energy and poor recovery are silently capping your strength, body composition and cognitive output. Until we fix this layer, no training programme or diet will deliver its full potential.'
+      },
+      1: { // Function is lowest
+        label: 'Your Biggest Opportunity: Function',
+        text: 'Movement quality and pain are costing you more than you realise. When your body can\'t produce force efficiently, your performance ceiling drops regardless of how hard you train. Addressing your functional deficits will unlock progress you didn\'t know you were missing.'
+      },
+      2: { // Performance is lowest
+        label: 'Your Biggest Opportunity: Performance',
+        text: 'Your health and movement foundations are in place — now it\'s time to apply deliberate structure. Periodised training and precision nutrition are the next lever. With the right framework, your results will compound quickly from here.'
+      },
+    };
+
+    function auditStart() {
+      document.getElementById('audit-intro').style.display = 'none';
+      document.getElementById('audit-quiz').style.display = 'block';
+      auditRenderQuestion();
+    }
+
+    function auditRenderQuestion() {
+      const q = auditQuestions[auditCurrent];
+      document.getElementById('audit-pillar-tag').textContent = q.pillar;
+      document.getElementById('audit-count').textContent = `${auditCurrent + 1} / ${auditQuestions.length}`;
+      document.getElementById('audit-progress-fill').style.width = `${(auditCurrent / auditQuestions.length) * 100}%`;
+      document.getElementById('audit-question-text').textContent = q.text;
+      auditSelected = null;
+      const nextBtn = document.getElementById('audit-next-btn');
+      nextBtn.disabled = true;
+      nextBtn.style.opacity = '0.4';
+      nextBtn.style.cursor = 'not-allowed';
+      const optionsEl = document.getElementById('audit-options');
+      optionsEl.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'audit__option';
+        btn.innerHTML = `<div class="audit__option-dot"></div><span class="audit__option-text">${opt.text}</span>`;
+        btn.onclick = () => auditSelectOption(i, opt.score, btn);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function auditSelectOption(index, score, el) {
+      document.querySelectorAll('.audit__option').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      auditSelected = score;
+      const nextBtn = document.getElementById('audit-next-btn');
+      nextBtn.disabled = false;
+      nextBtn.style.opacity = '1';
+      nextBtn.style.cursor = 'pointer';
+    }
+
+    function auditNext() {
+      if (auditSelected === null) return;
+      const q = auditQuestions[auditCurrent];
+      auditScores[q.pillarIndex] += auditSelected;
+      auditCurrent++;
+      if (auditCurrent < auditQuestions.length) {
+        auditRenderQuestion();
+      } else {
+        // Skip email gate — go straight to results
+        document.getElementById('audit-quiz').style.display = 'none';
+        document.getElementById('audit-results').style.display = 'block';
+        auditRenderResults();
+      }
+    }
+
+    function auditReveal() {
+      const name  = document.getElementById('audit-name').value.trim();
+      const email = document.getElementById('audit-email-input').value.trim();
+      // Submit to Formspree (replace endpoint with your own)
+      // https://formspree.io — free plan, 50 submissions/month
+      if (email) {
+        fetch('https://formspree.io/f/YOUR_FORMSPREE_ID', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            name, email,
+            health_score: auditScores[0],
+            function_score: auditScores[1],
+            performance_score: auditScores[2],
+            total_score: auditScores.reduce((a, b) => a + b, 0),
+            _subject: `New Performance Audit — ${name || 'Anonymous'} scored ${auditScores.reduce((a,b)=>a+b,0)}/45`
+          })
+        }).catch(() => {}); // Fail silently — results show regardless
+      }
+      document.getElementById('audit-email').style.display = 'none';
+      document.getElementById('audit-results').style.display = 'block';
+      auditRenderResults();
+    }
+
+    function auditRenderResults() {
+      const total = auditScores.reduce((a, b) => a + b, 0);
+
+      // Animate ring
+      const circumference = 326.7;
+      const offset = circumference - (total / 45) * circumference;
+      setTimeout(() => {
+        const circle = document.getElementById('audit-ring-circle');
+        circle.style.transition = 'stroke-dashoffset 1.2s ease';
+        circle.style.strokeDashoffset = offset;
+      }, 100);
+
+      // Animate number
+      let count = 0;
+      const numEl = document.getElementById('audit-ring-num');
+      const counter = setInterval(() => {
+        count++;
+        numEl.textContent = count;
+        if (count >= total) clearInterval(counter);
+      }, 1200 / total);
+
+      // Band
+      const band = auditBands.find(b => total >= b.min && total <= b.max) || auditBands[0];
+      document.getElementById('audit-band-title').textContent = band.title;
+      document.getElementById('audit-band-desc').textContent = band.desc;
+
+      // Pillar bars
+      const barsEl = document.getElementById('audit-pillar-results');
+      barsEl.innerHTML = auditPillarNames.map((name, i) => {
+        const pct = (auditScores[i] / 15) * 100;
+        return `
+          <div class="audit__pillar-row">
+            <div class="audit__pillar-row-header">
+              <span class="audit__pillar-row-name">${name}</span>
+              <span class="audit__pillar-row-score">${auditScores[i]} / 15</span>
+            </div>
+            <div class="audit__pillar-track">
+              <div class="audit__pillar-fill" style="width:0%" data-target="${pct}%"></div>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Animate bars
+      setTimeout(() => {
+        document.querySelectorAll('.audit__pillar-fill').forEach(el => {
+          el.style.width = el.getAttribute('data-target');
+        });
+      }, 300);
+
+      // Insight — based on lowest pillar
+      const lowestIndex = auditScores.indexOf(Math.min(...auditScores));
+      const insight = auditInsights[lowestIndex];
+      document.getElementById('audit-insight-box').innerHTML = `
+        <div class="audit__insight-label">${insight.label}</div>
+        <p class="audit__insight-text">${insight.text}</p>
+      `;
+
+    }
+  </script>
+
+  <!-- Typeform popup embed -->
+  <script src="//embed.typeform.com/next/embed.js"></script>
+
+</body>
+</html>
