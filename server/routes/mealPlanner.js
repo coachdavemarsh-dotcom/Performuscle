@@ -326,11 +326,11 @@ Return exactly this JSON structure (no markdown, no code fences):
 })
 
 // ─── Build meal plan HTML email ───────────────────────────────────────────────
-function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay, trainingDays, dietaryFilters }) {
-  const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-  const firstName = name?.split(' ')[0] || 'there'
+function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay, trainingDays, dietaryFilters, recipeMap = {} }) {
+  const DAYS      = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+  const firstName = (name?.split(' ')[0] || 'there').replace(/[<>]/g, '')
   const trainingSet = new Set((trainingDays || []).map(d => d.toLowerCase()))
-  const filters = (dietaryFilters || []).join(', ')
+  const filters   = (dietaryFilters || []).join(', ')
 
   const mealTypeColour = {
     'pre-workout':  '#f59e0b',
@@ -341,159 +341,231 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
     'snack':        '#ec4899',
   }
 
-  // Render one day section
-  function renderDay(day) {
-    const plan = weekPlan?.[day]
-    if (!plan) return ''
-    const isTraining = trainingSet.has(day.toLowerCase())
-    const t = plan.dayTotals || {}
-    const dayBorder = isTraining ? '#00C896' : '#2a2a3a'
-    const meals = (plan.meals || []).map(meal => {
-      const mt = meal.mealTotals || {}
-      const colour = mealTypeColour[meal.mealType] || '#00C896'
-      const foods = (meal.foods || []).map(f =>
-        `<tr>
-          <td style="padding:5px 8px 5px 0;font-size:13px;color:#e5e7eb;">${f.name}</td>
-          <td style="padding:5px 0 5px 8px;font-size:12px;color:#9ca3af;text-align:right;white-space:nowrap;">${f.amount}</td>
-          <td style="padding:5px 0 5px 8px;font-size:12px;color:#e5e7eb;text-align:right;">${f.kcal}</td>
-          <td style="padding:5px 0 5px 8px;font-size:12px;color:#818cf8;text-align:right;">${f.protein_g}g</td>
-          <td style="padding:5px 0 5px 8px;font-size:12px;color:#f59e0b;text-align:right;">${f.carbs_g}g</td>
-          <td style="padding:5px 0 5px 8px;font-size:12px;color:#34d399;text-align:right;">${f.fat_g}g</td>
-        </tr>`
-      ).join('')
-      const recipeTag = meal.recipe_name
-        ? `<div style="font-size:11px;color:#00C896;font-weight:700;letter-spacing:0.04em;margin-bottom:6px;">FROM LIBRARY: ${meal.recipe_name}</div>`
-        : ''
-      return `
-        <div style="background:#0f0f18;border-radius:8px;overflow:hidden;margin-bottom:10px;">
-          <div style="display:flex;align-items:center;padding:10px 14px;gap:10px;">
-            <div style="width:3px;height:36px;background:${colour};border-radius:2px;flex-shrink:0;"></div>
-            <div style="flex:1;">
-              <div style="font-size:14px;font-weight:600;color:#f5f6fa;">${meal.name}</div>
-              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">${mt.kcal}kcal &nbsp;·&nbsp; P<span style="color:#818cf8;">${mt.protein_g}g</span> &nbsp;C<span style="color:#f59e0b;">${mt.carbs_g}g</span> &nbsp;F<span style="color:#34d399;">${mt.fat_g}g</span></div>
-            </div>
-          </div>
-          <div style="padding:0 14px 14px;">
-            ${recipeTag}
-            <table style="width:100%;border-collapse:collapse;">
-              <thead>
-                <tr>
-                  <th style="font-size:10px;color:#5e5e70;text-align:left;padding-bottom:4px;border-bottom:1px solid #1e1e2e;">Food</th>
-                  <th style="font-size:10px;color:#5e5e70;text-align:right;padding-bottom:4px;border-bottom:1px solid #1e1e2e;padding-left:8px;">Amount</th>
-                  <th style="font-size:10px;color:#5e5e70;text-align:right;padding-bottom:4px;border-bottom:1px solid #1e1e2e;padding-left:8px;">kcal</th>
-                  <th style="font-size:10px;color:#818cf8;text-align:right;padding-bottom:4px;border-bottom:1px solid #1e1e2e;padding-left:8px;">P</th>
-                  <th style="font-size:10px;color:#f59e0b;text-align:right;padding-bottom:4px;border-bottom:1px solid #1e1e2e;padding-left:8px;">C</th>
-                  <th style="font-size:10px;color:#34d399;text-align:right;padding-bottom:4px;border-bottom:1px solid #1e1e2e;padding-left:8px;">F</th>
-                </tr>
-              </thead>
-              <tbody>${foods}</tbody>
-            </table>
-          </div>
-        </div>`
-    }).join('')
-
-    return `
-      <div style="border:1.5px solid ${dayBorder};border-radius:12px;overflow:hidden;margin-bottom:20px;">
-        <div style="background:${isTraining ? 'rgba(0,200,150,0.08)' : '#0a0a12'};padding:14px 18px;border-bottom:1px solid ${dayBorder};">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-            <div>
-              <span style="font-size:16px;font-weight:900;color:#f5f6fa;letter-spacing:0.06em;">${day.toUpperCase()}</span>
-              ${isTraining ? '<span style="font-size:11px;color:#00C896;font-weight:700;letter-spacing:0.04em;margin-left:10px;">⚡ TRAINING DAY</span>' : '<span style="font-size:11px;color:#5e5e70;letter-spacing:0.04em;margin-left:10px;">REST DAY</span>'}
-            </div>
-            <div style="font-size:12px;color:#9ca3af;">${t.kcal}kcal &nbsp;·&nbsp; P<span style="color:#818cf8;">${t.protein_g}g</span> C<span style="color:#f59e0b;">${t.carbs_g}g</span> F<span style="color:#34d399;">${t.fat_g}g</span></div>
-          </div>
-        </div>
-        <div style="padding:14px 18px;">${meals}</div>
-      </div>`
-  }
-
-  // Shopping list
   const SHOP_ICONS = {
     'Protein & Meat': '🥩', 'Fish & Seafood': '🐟', 'Dairy & Eggs': '🥚',
     'Grains & Carbs': '🌾', 'Produce': '🥦', 'Fats & Oils': '🫒',
     'Condiments & Spices': '🧂', 'Supplements & Other': '💊',
   }
-  const shoppingHtml = Object.entries(shoppingList || {})
-    .filter(([, items]) => items?.length > 0)
-    .map(([cat, items]) => `
-      <div style="background:#0a0a12;border:1px solid #1e1e2e;border-radius:10px;padding:16px;margin-bottom:12px;">
-        <div style="font-size:13px;font-weight:700;color:#f5f6fa;letter-spacing:0.05em;margin-bottom:10px;">
-          ${SHOP_ICONS[cat] || '📦'} ${cat.toUpperCase()}
+
+  // ── Render one meal card ────────────────────────────────────────────────────
+  function renderMeal(meal) {
+    const mt     = meal.mealTotals || {}
+    const colour = mealTypeColour[meal.mealType] || '#00C896'
+    const recipe = meal.recipe_name ? recipeMap[meal.recipe_name.toLowerCase()] : null
+    const method = recipe?.method || null
+    const img    = recipe?.image_url || null
+
+    const foodRows = (meal.foods || []).map(f => `
+      <tr>
+        <td style="padding:6px 8px 6px 0;font-size:12px;color:#e5e7eb;border-bottom:1px solid #1e1e2e;">${f.name}</td>
+        <td style="padding:6px 4px;font-size:11px;color:#9ca3af;text-align:center;border-bottom:1px solid #1e1e2e;white-space:nowrap;">${f.amount}</td>
+        <td style="padding:6px 4px;font-size:12px;color:#f5f6fa;text-align:center;border-bottom:1px solid #1e1e2e;font-weight:600;">${f.kcal}</td>
+        <td style="padding:6px 4px;font-size:12px;color:#818cf8;text-align:center;border-bottom:1px solid #1e1e2e;font-weight:600;">${f.protein_g}g</td>
+        <td style="padding:6px 4px;font-size:12px;color:#f59e0b;text-align:center;border-bottom:1px solid #1e1e2e;font-weight:600;">${f.carbs_g}g</td>
+        <td style="padding:6px 4px 6px 0;font-size:12px;color:#34d399;text-align:center;border-bottom:1px solid #1e1e2e;font-weight:600;">${f.fat_g}g</td>
+      </tr>`).join('')
+
+    const methodHtml = method ? `
+      <tr><td colspan="2">
+        <div style="margin-top:12px;padding:12px;background:#060608;border-left:3px solid #00C896;border-radius:0 6px 6px 0;">
+          <div style="font-size:10px;font-weight:700;color:#00C896;letter-spacing:0.08em;margin-bottom:6px;">HOW TO MAKE IT</div>
+          <div style="font-size:12px;color:#9ca3af;line-height:1.6;">${method}</div>
         </div>
-        <ul style="margin:0;padding:0;list-style:none;">
-          ${items.map(item => `<li style="font-size:13px;color:#e5e7eb;padding:4px 0;border-bottom:1px solid #1e1e2e;">&nbsp;□ &nbsp;${item}</li>`).join('')}
-        </ul>
-      </div>`).join('')
+      </td></tr>` : ''
 
-  const coachingUrl = process.env.GHL_COACHING_URL || process.env.APP_URL || 'https://performuscle.com'
+    const imageHtml = img ? `
+      <tr><td colspan="2" style="padding-bottom:10px;">
+        <img src="${img}" alt="${meal.recipe_name || meal.name}" width="100%" style="display:block;border-radius:6px;max-height:180px;object-fit:cover;" />
+      </td></tr>` : ''
 
+    return `
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0f0f18;border-radius:8px;margin-bottom:10px;overflow:hidden;">
+        <!-- Meal header -->
+        <tr>
+          <td width="4" style="background:${colour};border-radius:8px 0 0 8px;">&nbsp;</td>
+          <td style="padding:12px 14px;">
+            ${imageHtml}
+            <div style="font-size:14px;font-weight:700;color:#f5f6fa;margin-bottom:3px;">${meal.name}</div>
+            ${meal.recipe_name ? `<div style="font-size:10px;color:#00C896;font-weight:700;letter-spacing:0.05em;margin-bottom:4px;">📖 ${meal.recipe_name}</div>` : ''}
+            <div style="font-size:11px;color:#9ca3af;">${mt.kcal} kcal &nbsp;·&nbsp; <span style="color:#818cf8;">P ${mt.protein_g}g</span> &nbsp;·&nbsp; <span style="color:#f59e0b;">C ${mt.carbs_g}g</span> &nbsp;·&nbsp; <span style="color:#34d399;">F ${mt.fat_g}g</span></div>
+            <!-- Ingredients table -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:10px;">
+              <thead>
+                <tr>
+                  <th style="font-size:10px;color:#5e5e70;text-align:left;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">Ingredient</th>
+                  <th style="font-size:10px;color:#5e5e70;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">Amount</th>
+                  <th style="font-size:10px;color:#5e5e70;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">kcal</th>
+                  <th style="font-size:10px;color:#818cf8;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">P</th>
+                  <th style="font-size:10px;color:#f59e0b;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">C</th>
+                  <th style="font-size:10px;color:#34d399;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">F</th>
+                </tr>
+              </thead>
+              <tbody>${foodRows}</tbody>
+            </table>
+            ${methodHtml}
+          </td>
+        </tr>
+      </table>`
+  }
+
+  // ── Render one day ──────────────────────────────────────────────────────────
+  function renderDay(day) {
+    const plan = weekPlan?.[day]
+    if (!plan) return ''
+    const isTraining = trainingSet.has(day.toLowerCase())
+    const t          = plan.dayTotals || {}
+    const border     = isTraining ? '#00C896' : '#2a2a3a'
+    const headerBg   = isTraining ? '#0a1a14' : '#0a0a12'
+
+    return `
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1.5px solid ${border};border-radius:12px;margin-bottom:20px;border-collapse:separate;border-spacing:0;">
+        <!-- Day header -->
+        <tr>
+          <td style="background:${headerBg};padding:12px 16px;border-bottom:1px solid ${border};border-radius:11px 11px 0 0;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td>
+                  <span style="font-size:15px;font-weight:900;color:#f5f6fa;letter-spacing:0.06em;">${day.toUpperCase()}</span>
+                  ${isTraining
+                    ? '&nbsp;&nbsp;<span style="font-size:10px;color:#00C896;font-weight:700;letter-spacing:0.05em;">⚡ TRAINING DAY</span>'
+                    : '&nbsp;&nbsp;<span style="font-size:10px;color:#5e5e70;letter-spacing:0.05em;">REST DAY</span>'}
+                </td>
+                <td align="right" style="font-size:11px;color:#9ca3af;white-space:nowrap;">
+                  ${t.kcal} kcal &nbsp;·&nbsp;
+                  <span style="color:#818cf8;">P ${t.protein_g}g</span> &nbsp;
+                  <span style="color:#f59e0b;">C ${t.carbs_g}g</span> &nbsp;
+                  <span style="color:#34d399;">F ${t.fat_g}g</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Day meals -->
+        <tr>
+          <td style="padding:14px 16px;">
+            ${(plan.meals || []).map(renderMeal).join('')}
+          </td>
+        </tr>
+      </table>`
+  }
+
+  // ── Shopping list ───────────────────────────────────────────────────────────
+  const shopEntries = Object.entries(shoppingList || {}).filter(([, items]) => items?.length > 0)
+  const shoppingHtml = shopEntries.map(([cat, items]) => `
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a12;border:1px solid #1e1e2e;border-radius:8px;margin-bottom:12px;">
+      <tr>
+        <td style="padding:12px 16px;border-bottom:1px solid #1e1e2e;">
+          <span style="font-size:12px;font-weight:700;color:#f5f6fa;letter-spacing:0.05em;">${SHOP_ICONS[cat] || '📦'} ${cat.toUpperCase()}</span>
+        </td>
+      </tr>
+      ${items.map((item, i) => `
+        <tr>
+          <td style="padding:7px 16px;font-size:13px;color:#e5e7eb;${i < items.length - 1 ? 'border-bottom:1px solid #1a1a24;' : ''}">
+            ☐ &nbsp;${item}
+          </td>
+        </tr>`).join('')}
+    </table>`).join('')
+
+  const coachingUrl = process.env.GHL_COACHING_URL || process.env.APP_URL || 'https://coachdavemarsh.net'
+
+  // ── Full email ──────────────────────────────────────────────────────────────
   const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#030305;font-family:Arial,sans-serif;">
-  <div style="max-width:680px;margin:0 auto;background:#060608;color:#f5f6fa;">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Your 7-Day Meal Plan</title>
+</head>
+<body style="margin:0;padding:0;background:#030305;font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#030305;min-width:320px;">
+  <tr><td align="center" style="padding:20px 10px;">
 
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#060608 0%,#0a1a14 100%);padding:32px 32px 28px;border-bottom:2px solid #00C896;">
-      <div style="font-size:24px;font-weight:900;letter-spacing:0.08em;color:#f5f6fa;">PERFORMUSCLE</div>
-      <div style="font-size:11px;color:#00C896;letter-spacing:0.12em;margin-top:2px;">HEALTH · FUNCTION · PERFORMANCE</div>
-      <div style="margin-top:20px;">
-        <div style="font-size:28px;font-weight:900;color:#f5f6fa;letter-spacing:0.04em;">YOUR 7-DAY MEAL PLAN</div>
-        <div style="font-size:13px;color:#9ca3af;margin-top:6px;">
-          ${mealsPerDay} meals/day &nbsp;·&nbsp; ${(trainingDays || []).length} training days${filters ? ` &nbsp;·&nbsp; ${filters}` : ''}
-        </div>
-      </div>
-    </div>
+    <table width="640" cellpadding="0" cellspacing="0" border="0" style="background:#060608;color:#f5f6fa;max-width:640px;width:100%;">
 
-    <!-- Macro summary -->
-    <div style="padding:20px 32px;background:#0a0a12;border-bottom:1px solid #1e1e2e;">
-      <div style="font-size:11px;color:#5e5e70;font-weight:700;letter-spacing:0.08em;margin-bottom:12px;">DAILY MACRO TARGETS</div>
-      <div style="display:flex;gap:24px;flex-wrap:wrap;">
-        ${[
-          { label: 'KCAL',    val: macros?.kcal,      colour: '#f5f6fa' },
-          { label: 'PROTEIN', val: `${macros?.protein_g}g`, colour: '#818cf8' },
-          { label: 'CARBS',   val: `${macros?.carbs_g}g`,   colour: '#f59e0b' },
-          { label: 'FAT',     val: `${macros?.fat_g}g`,     colour: '#34d399' },
-        ].map(({ label, val, colour }) =>
-          `<div style="text-align:center;">
-            <div style="font-size:22px;font-weight:900;color:${colour};">${val}</div>
-            <div style="font-size:10px;color:#5e5e70;letter-spacing:0.06em;">${label}</div>
-          </div>`
-        ).join('')}
-      </div>
-    </div>
+      <!-- ── HEADER ── -->
+      <tr>
+        <td style="background:#060608;padding:28px 32px 24px;border-bottom:2px solid #00C896;">
+          <div style="font-size:20px;font-weight:900;letter-spacing:0.1em;color:#f5f6fa;">PERFORMUSCLE</div>
+          <div style="font-size:10px;color:#00C896;letter-spacing:0.14em;margin-top:2px;">HEALTH &nbsp;·&nbsp; FUNCTION &nbsp;·&nbsp; PERFORMANCE</div>
+          <div style="margin-top:22px;">
+            <div style="font-size:11px;color:#00C896;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">Your Free Meal Plan Is Ready 🥗</div>
+            <div style="font-size:28px;font-weight:900;color:#f5f6fa;line-height:1.15;margin-bottom:10px;">Hey ${firstName},<br>here's your personalised<br>7-day meal plan!</div>
+            <div style="font-size:13px;color:#9ca3af;">
+              ${mealsPerDay} meals/day &nbsp;·&nbsp; ${(trainingDays || []).length} training days${filters ? ` &nbsp;·&nbsp; ${filters}` : ''}
+            </div>
+          </div>
+        </td>
+      </tr>
 
-    <!-- Meal plan -->
-    <div style="padding:28px 32px;">
-      <div style="font-size:14px;font-weight:900;color:#f5f6fa;letter-spacing:0.08em;margin-bottom:20px;">📅 WEEKLY MEAL PLAN</div>
-      ${DAYS.map(renderDay).join('')}
-    </div>
+      <!-- ── MACRO TARGETS ── -->
+      <tr>
+        <td style="background:#0a0a12;padding:20px 32px;border-bottom:1px solid #1e1e2e;">
+          <div style="font-size:10px;color:#5e5e70;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;">Daily Macro Targets</div>
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td width="25%" align="center" style="padding:4px;">
+                <div style="font-size:26px;font-weight:900;color:#f5f6fa;line-height:1;">${macros?.kcal}</div>
+                <div style="font-size:10px;color:#5e5e70;letter-spacing:0.08em;margin-top:4px;">KCAL</div>
+              </td>
+              <td width="25%" align="center" style="padding:4px;border-left:1px solid #1e1e2e;">
+                <div style="font-size:26px;font-weight:900;color:#818cf8;line-height:1;">${macros?.protein_g}g</div>
+                <div style="font-size:10px;color:#5e5e70;letter-spacing:0.08em;margin-top:4px;">PROTEIN</div>
+              </td>
+              <td width="25%" align="center" style="padding:4px;border-left:1px solid #1e1e2e;">
+                <div style="font-size:26px;font-weight:900;color:#f59e0b;line-height:1;">${macros?.carbs_g}g</div>
+                <div style="font-size:10px;color:#5e5e70;letter-spacing:0.08em;margin-top:4px;">CARBS</div>
+              </td>
+              <td width="25%" align="center" style="padding:4px;border-left:1px solid #1e1e2e;">
+                <div style="font-size:26px;font-weight:900;color:#34d399;line-height:1;">${macros?.fat_g}g</div>
+                <div style="font-size:10px;color:#5e5e70;letter-spacing:0.08em;margin-top:4px;">FAT</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
 
-    <!-- Shopping list -->
-    <div style="padding:0 32px 28px;">
-      <div style="font-size:14px;font-weight:900;color:#f5f6fa;letter-spacing:0.08em;margin-bottom:16px;">🛒 SHOPPING LIST</div>
-      ${shoppingHtml}
-    </div>
+      <!-- ── MEAL PLAN ── -->
+      <tr>
+        <td style="padding:24px 32px;">
+          <div style="font-size:13px;font-weight:900;color:#f5f6fa;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:20px;">📅 Weekly Meal Plan</div>
+          ${DAYS.map(renderDay).join('')}
+        </td>
+      </tr>
 
-    <!-- CTA -->
-    <div style="background:linear-gradient(135deg,#0a1a14 0%,#060608 100%);border-top:2px solid #00C896;padding:32px;text-align:center;">
-      <div style="font-size:11px;color:#00C896;font-weight:700;letter-spacing:0.1em;margin-bottom:8px;">WANT BETTER RESULTS?</div>
-      <div style="font-size:22px;font-weight:900;color:#f5f6fa;letter-spacing:0.04em;margin-bottom:12px;">WORK WITH A COACH</div>
-      <div style="font-size:14px;color:#9ca3af;margin-bottom:24px;line-height:1.6;">Get a fully personalised nutrition &amp; training plan,<br>weekly check-ins, and expert guidance around your goals.</div>
-      <a href="${coachingUrl}" style="display:inline-block;background:#00C896;color:#060608;padding:16px 40px;border-radius:8px;text-decoration:none;font-weight:900;font-size:14px;letter-spacing:0.08em;">APPLY NOW →</a>
-    </div>
+      <!-- ── SHOPPING LIST ── -->
+      <tr>
+        <td style="padding:0 32px 28px;">
+          <div style="font-size:13px;font-weight:900;color:#f5f6fa;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px;">🛒 Shopping List</div>
+          ${shoppingHtml}
+        </td>
+      </tr>
 
-    <!-- Footer -->
-    <div style="padding:20px 32px;text-align:center;border-top:1px solid #1e1e2e;">
-      <div style="font-size:11px;color:#5e5e70;">Performuscle · Health | Function | Performance</div>
-      <div style="font-size:11px;color:#5e5e70;margin-top:4px;">This meal plan was AI-generated based on your macro targets. Consult a registered dietitian for personalised medical nutrition advice.</div>
-    </div>
+      <!-- ── CTA ── -->
+      <tr>
+        <td style="background:#0a1a14;border-top:2px solid #00C896;padding:32px;text-align:center;">
+          <div style="font-size:10px;color:#00C896;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Want Expert Guidance?</div>
+          <div style="font-size:24px;font-weight:900;color:#f5f6fa;letter-spacing:0.02em;margin-bottom:10px;">Work 1-on-1 With a Coach</div>
+          <div style="font-size:13px;color:#9ca3af;line-height:1.7;margin-bottom:24px;">Get a fully personalised nutrition &amp; training plan,<br>weekly check-ins, and real results.</div>
+          <a href="${coachingUrl}" style="display:inline-block;background:#00C896;color:#060608;padding:16px 44px;border-radius:6px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;">Apply Now &rarr;</a>
+        </td>
+      </tr>
 
-  </div>
+      <!-- ── FOOTER ── -->
+      <tr>
+        <td style="padding:20px 32px;text-align:center;border-top:1px solid #1e1e2e;">
+          <div style="font-size:11px;color:#5e5e70;">Performuscle &nbsp;·&nbsp; Health | Function | Performance</div>
+          <div style="font-size:11px;color:#3a3a4a;margin-top:6px;line-height:1.5;">This meal plan was generated based on your macro targets.<br>Consult a registered dietitian for personalised medical nutrition advice.</div>
+        </td>
+      </tr>
+
+    </table>
+  </td></tr>
+</table>
 </body>
 </html>`
 
-  return { subject: `Your 7-Day Meal Plan, ${firstName} 🥗`, html }
+  return { subject: `Hey ${firstName}, your 7-day meal plan is ready! 🥗`, html }
 }
 
 // ─── POST /api/meal-planner/send-plan ────────────────────────────────────────
@@ -507,6 +579,23 @@ router.post('/meal-planner/send-plan', async (req, res) => {
     return res.status(503).json({ error: 'Email not configured — set RESEND_API_KEY' })
   }
 
+  // Fetch recipe methods + images from Supabase to enrich the email
+  let recipeMap = {}
+  const supabase = getSupabase()
+  if (supabase) {
+    try {
+      const { data } = await supabase
+        .from('recipes')
+        .select('name, method, image_url')
+        .eq('is_public', true)
+      if (data) {
+        for (const r of data) {
+          recipeMap[r.name.toLowerCase()] = { method: r.method, image_url: r.image_url }
+        }
+      }
+    } catch { /* non-fatal — email sends without methods */ }
+  }
+
   const { subject, html } = buildMealPlanEmail({
     name: name || email,
     weekPlan,
@@ -515,6 +604,7 @@ router.post('/meal-planner/send-plan', async (req, res) => {
     mealsPerDay,
     trainingDays,
     dietaryFilters,
+    recipeMap,
   })
 
   // Send email via Resend
