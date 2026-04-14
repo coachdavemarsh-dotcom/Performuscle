@@ -116,7 +116,7 @@ router.post('/meal-planner/generate', async (req, res) => {
     try {
       const { data } = await supabase
         .from('recipes')
-        .select('id, name, category, tags, kcal, protein_g, carbs_g, fat_g, servings, ingredients')
+        .select('id, name, category, tags, kcal, protein_g, carbs_g, fat_g, servings, ingredients, image_url, method')
         .eq('is_public', true)
         .order('category')
       recipes = data || []
@@ -316,6 +316,23 @@ Return exactly this JSON structure (no markdown, no code fences):
 
     if (!result.weekPlan) {
       return sendResult({ error: 'AI returned unexpected format — please try again' })
+    }
+
+    // Attach image_url + method from recipe library to each library meal
+    const recipeByName = {}
+    for (const r of recipes) {
+      recipeByName[r.name.toLowerCase()] = r
+    }
+    for (const dayPlan of Object.values(result.weekPlan)) {
+      for (const meal of dayPlan.meals || []) {
+        if (meal.recipe_name) {
+          const r = recipeByName[meal.recipe_name.toLowerCase()]
+          if (r) {
+            if (r.image_url) meal.image_url = r.image_url
+            if (r.method)    meal.method    = r.method
+          }
+        }
+      }
     }
 
     sendResult(result)

@@ -276,11 +276,27 @@ function TDEEStep({ onComplete, onSkip }) {
 // ─── Meal card ────────────────────────────────────────────────────────────────
 function MealCard({ meal }) {
   const [open, setOpen] = useState(false)
-  const t = meal.mealTotals || {}
+  const t      = meal.mealTotals || {}
   const colour = MEAL_TYPE_COLOURS[meal.mealType] || 'var(--accent)'
 
   return (
     <div className="meal-card">
+
+      {/* Recipe hero image */}
+      {meal.image_url && (
+        <div
+          className="meal-image"
+          style={{ backgroundImage: `url(${meal.image_url})` }}
+          aria-label={meal.recipe_name || meal.name}
+        >
+          <div className="meal-image-overlay" />
+          {meal.recipe_name && (
+            <span className="meal-image-badge">{meal.recipe_name}</span>
+          )}
+        </div>
+      )}
+
+      {/* Header row — always visible */}
       <button className="meal-header" onClick={() => setOpen(!open)}>
         <div className="meal-colour-bar" style={{ background: colour }} />
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -294,13 +310,15 @@ function MealCard({ meal }) {
         </span>
       </button>
 
+      {/* Expanded detail */}
       {open && (
         <div className="meal-detail">
-          {meal.recipe_name && (
+          {meal.recipe_name && !meal.image_url && (
             <div style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: '0.04em', margin: '8px 0 6px' }}>
-              FROM LIBRARY: {meal.recipe_name}
+              📖 {meal.recipe_name}
             </div>
           )}
+
           <table className="food-table">
             <thead>
               <tr>
@@ -325,6 +343,14 @@ function MealCard({ meal }) {
               ))}
             </tbody>
           </table>
+
+          {/* Recipe method */}
+          {meal.method && (
+            <div className="recipe-method">
+              <div className="recipe-method-label">HOW TO MAKE IT</div>
+              <div className="recipe-method-text">{meal.method}</div>
+            </div>
+          )}
         </div>
       )}
     </div>
