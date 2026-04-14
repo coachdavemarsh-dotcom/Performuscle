@@ -264,34 +264,53 @@ Return exactly this JSON structure (no markdown, no code fences):
     // Stream tokens from Anthropic so the connection stays warm
     const stream = await anthropic.messages.create({
       model:      'claude-sonnet-4-6',
-      max_tokens: 8000,
+      max_tokens: 12000,
       stream:     true,
       system:     systemPrompt,
       messages:   [{ role: 'user', content: userPrompt }],
     })
 
     let raw = ''
+    let stopReason = null
     for await (const event of stream) {
       if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
         raw += event.delta.text
       }
+      if (event.type === 'message_delta' && event.delta?.stop_reason) {
+        stopReason = event.delta.stop_reason
+      }
     }
 
-    // Strip markdown fences if present
-    let cleaned = raw.trim()
-    if (cleaned.startsWith('`')) {
-      cleaned = cleaned.replace(/^```[a-zA-Z]*\r?\n?/, '').replace(/\r?\n?```\s*$/, '').trim()
+    console.log(`[MealPlanner] Generation complete. stop_reason=${stopReason} length=${raw.length}`)
+
+    if (stopReason === 'max_tokens') {
+      console.error('[MealPlanner] Hit max_tokens — output truncated')
+      return sendResult({ error: 'Plan was too long to generate — try fewer meals per day or contact support.' })
     }
+
+    // Robust JSON extraction — handle prose before/after, code fences, etc.
+    let cleaned = raw.trim()
+
+    // Strip code fences (```json ... ``` or ``` ... ```)
+    const fenceMatch = cleaned.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/)
+    if (fenceMatch) {
+      cleaned = fenceMatch[1].trim()
+    }
+
+    // If still not starting with {, find the first { and last }
     if (!cleaned.startsWith('{')) {
-      const match = cleaned.match(/\{[\s\S]*\}/)
-      if (match) cleaned = match[0]
+      const start = cleaned.indexOf('{')
+      const end   = cleaned.lastIndexOf('}')
+      if (start !== -1 && end !== -1 && end > start) {
+        cleaned = cleaned.slice(start, end + 1)
+      }
     }
 
     let result
     try {
       result = JSON.parse(cleaned)
     } catch {
-      console.error('[MealPlanner] JSON parse error. Raw snippet:', raw.slice(0, 400))
+      console.error('[MealPlanner] JSON parse error. stop_reason:', stopReason, 'Raw tail:', raw.slice(-200))
       return sendResult({ error: 'AI returned invalid JSON — please try again' })
     }
 
