@@ -348,6 +348,7 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
   const firstName = (name?.split(' ')[0] || 'there').replace(/[<>]/g, '')
   const trainingSet = new Set((trainingDays || []).map(d => d.toLowerCase()))
   const filters   = (dietaryFilters || []).join(', ')
+  const siteBase  = process.env.SITE_URL || 'https://coachdavemarsh.net'
 
   const mealTypeColour = {
     'pre-workout':  '#f59e0b',
@@ -364,73 +365,44 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
     'Condiments & Spices': '🧂', 'Supplements & Other': '💊',
   }
 
-  // ── Render one meal card ────────────────────────────────────────────────────
+  // ── Helper: get absolute image URL ─────────────────────────────────────────
+  function absImg(imgRaw) {
+    if (!imgRaw) return null
+    return imgRaw.startsWith('http') ? imgRaw : `${siteBase}${imgRaw}`
+  }
+
+  // ── Render one compact meal card (no methods — those go in section 3) ───────
   function renderMeal(meal) {
     const mt     = meal.mealTotals || {}
     const colour = mealTypeColour[meal.mealType] || '#00C896'
     const recipe = meal.recipe_name ? recipeMap[meal.recipe_name.toLowerCase()] : null
-    const method = recipe?.method || null
-    const imgRaw = recipe?.image_url || null
-    // Convert relative paths like /recipes/foo.jpeg to absolute URLs for email clients
-    const siteBase = process.env.SITE_URL || 'https://coachdavemarsh.net'
-    const img = imgRaw
-      ? (imgRaw.startsWith('http') ? imgRaw : `${siteBase}${imgRaw}`)
-      : null
+    const img    = absImg(recipe?.image_url || null)
 
-    const foodRows = (meal.foods || []).map(f => `
-      <tr>
-        <td style="padding:6px 8px 6px 0;font-size:12px;color:#e5e7eb;border-bottom:1px solid #1e1e2e;">${f.name}</td>
-        <td style="padding:6px 4px;font-size:11px;color:#9ca3af;text-align:center;border-bottom:1px solid #1e1e2e;white-space:nowrap;">${f.amount}</td>
-        <td style="padding:6px 4px;font-size:12px;color:#f5f6fa;text-align:center;border-bottom:1px solid #1e1e2e;font-weight:600;">${f.kcal}</td>
-        <td style="padding:6px 4px;font-size:12px;color:#818cf8;text-align:center;border-bottom:1px solid #1e1e2e;font-weight:600;">${f.protein_g}g</td>
-        <td style="padding:6px 4px;font-size:12px;color:#f59e0b;text-align:center;border-bottom:1px solid #1e1e2e;font-weight:600;">${f.carbs_g}g</td>
-        <td style="padding:6px 4px 6px 0;font-size:12px;color:#34d399;text-align:center;border-bottom:1px solid #1e1e2e;font-weight:600;">${f.fat_g}g</td>
-      </tr>`).join('')
-
-    const methodHtml = method ? `
-      <tr><td colspan="2">
-        <div style="margin-top:12px;padding:12px;background:#060608;border-left:3px solid #00C896;border-radius:0 6px 6px 0;">
-          <div style="font-size:10px;font-weight:700;color:#00C896;letter-spacing:0.08em;margin-bottom:6px;">HOW TO MAKE IT</div>
-          <div style="font-size:12px;color:#9ca3af;line-height:1.6;">${method}</div>
-        </div>
-      </td></tr>` : ''
+    const foodList = (meal.foods || []).map(f =>
+      `<span style="color:#9ca3af;">${f.name}</span> <span style="color:#5e5e70;">${f.amount}</span>`
+    ).join(' &nbsp;·&nbsp; ')
 
     const imageHtml = img ? `
-      <tr><td colspan="2" style="padding-bottom:10px;">
-        <img src="${img}" alt="${meal.recipe_name || meal.name}" width="100%" style="display:block;border-radius:6px;max-height:180px;object-fit:cover;" />
+      <tr><td colspan="2" style="padding-bottom:8px;">
+        <img src="${img}" alt="${meal.recipe_name || meal.name}" width="100%" style="display:block;border-radius:6px;max-height:140px;object-fit:cover;" />
       </td></tr>` : ''
 
     return `
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0f0f18;border-radius:8px;margin-bottom:10px;overflow:hidden;">
-        <!-- Meal header -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0f0f18;border-radius:8px;margin-bottom:8px;overflow:hidden;">
         <tr>
-          <td width="4" style="background:${colour};border-radius:8px 0 0 8px;">&nbsp;</td>
-          <td style="padding:12px 14px;">
+          <td width="3" style="background:${colour};border-radius:8px 0 0 8px;">&nbsp;</td>
+          <td style="padding:10px 12px;">
             ${imageHtml}
-            <div style="font-size:14px;font-weight:700;color:#f5f6fa;margin-bottom:3px;">${meal.name}</div>
-            ${meal.recipe_name ? `<div style="font-size:10px;color:#00C896;font-weight:700;letter-spacing:0.05em;margin-bottom:4px;">📖 ${meal.recipe_name}</div>` : ''}
-            <div style="font-size:11px;color:#9ca3af;">${mt.kcal} kcal &nbsp;·&nbsp; <span style="color:#818cf8;">P ${mt.protein_g}g</span> &nbsp;·&nbsp; <span style="color:#f59e0b;">C ${mt.carbs_g}g</span> &nbsp;·&nbsp; <span style="color:#34d399;">F ${mt.fat_g}g</span></div>
-            <!-- Ingredients table -->
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:10px;">
-              <thead>
-                <tr>
-                  <th style="font-size:10px;color:#5e5e70;text-align:left;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">Ingredient</th>
-                  <th style="font-size:10px;color:#5e5e70;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">Amount</th>
-                  <th style="font-size:10px;color:#5e5e70;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">kcal</th>
-                  <th style="font-size:10px;color:#818cf8;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">P</th>
-                  <th style="font-size:10px;color:#f59e0b;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">C</th>
-                  <th style="font-size:10px;color:#34d399;text-align:center;padding-bottom:5px;border-bottom:1px solid #2a2a3a;">F</th>
-                </tr>
-              </thead>
-              <tbody>${foodRows}</tbody>
-            </table>
-            ${methodHtml}
+            <div style="font-size:13px;font-weight:700;color:#f5f6fa;margin-bottom:2px;">${meal.name}</div>
+            ${meal.recipe_name ? `<div style="font-size:10px;color:#00C896;font-weight:700;letter-spacing:0.04em;margin-bottom:3px;">📖 ${meal.recipe_name}</div>` : ''}
+            <div style="font-size:11px;color:#9ca3af;margin-bottom:5px;">${mt.kcal} kcal &nbsp;·&nbsp; <span style="color:#818cf8;">P ${mt.protein_g}g</span> &nbsp;·&nbsp; <span style="color:#f59e0b;">C ${mt.carbs_g}g</span> &nbsp;·&nbsp; <span style="color:#34d399;">F ${mt.fat_g}g</span></div>
+            <div style="font-size:11px;line-height:1.6;">${foodList}</div>
           </td>
         </tr>
       </table>`
   }
 
-  // ── Render one day ──────────────────────────────────────────────────────────
+  // ── Render one day block ────────────────────────────────────────────────────
   function renderDay(day) {
     const plan = weekPlan?.[day]
     if (!plan) return ''
@@ -440,53 +412,91 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
     const headerBg   = isTraining ? '#0a1a14' : '#0a0a12'
 
     return `
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1.5px solid ${border};border-radius:12px;margin-bottom:20px;border-collapse:separate;border-spacing:0;">
-        <!-- Day header -->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1.5px solid ${border};border-radius:10px;margin-bottom:16px;border-collapse:separate;border-spacing:0;">
         <tr>
-          <td style="background:${headerBg};padding:12px 16px;border-bottom:1px solid ${border};border-radius:11px 11px 0 0;">
-            <table width="100%" cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td>
-                  <span style="font-size:15px;font-weight:900;color:#f5f6fa;letter-spacing:0.06em;">${day.toUpperCase()}</span>
-                  ${isTraining
-                    ? '&nbsp;&nbsp;<span style="font-size:10px;color:#00C896;font-weight:700;letter-spacing:0.05em;">⚡ TRAINING DAY</span>'
-                    : '&nbsp;&nbsp;<span style="font-size:10px;color:#5e5e70;letter-spacing:0.05em;">REST DAY</span>'}
-                </td>
-                <td align="right" style="font-size:11px;color:#9ca3af;white-space:nowrap;">
-                  ${t.kcal} kcal &nbsp;·&nbsp;
-                  <span style="color:#818cf8;">P ${t.protein_g}g</span> &nbsp;
-                  <span style="color:#f59e0b;">C ${t.carbs_g}g</span> &nbsp;
-                  <span style="color:#34d399;">F ${t.fat_g}g</span>
-                </td>
-              </tr>
-            </table>
+          <td style="background:${headerBg};padding:10px 14px;border-bottom:1px solid ${border};border-radius:9px 9px 0 0;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+              <td>
+                <span style="font-size:14px;font-weight:900;color:#f5f6fa;letter-spacing:0.06em;">${day.toUpperCase()}</span>
+                ${isTraining
+                  ? '&nbsp;&nbsp;<span style="font-size:10px;color:#00C896;font-weight:700;">⚡ TRAINING DAY</span>'
+                  : '&nbsp;&nbsp;<span style="font-size:10px;color:#5e5e70;">REST DAY</span>'}
+              </td>
+              <td align="right" style="font-size:11px;color:#9ca3af;white-space:nowrap;">
+                ${t.kcal} kcal &nbsp;·&nbsp;
+                <span style="color:#818cf8;">P ${t.protein_g}g</span> &nbsp;
+                <span style="color:#f59e0b;">C ${t.carbs_g}g</span> &nbsp;
+                <span style="color:#34d399;">F ${t.fat_g}g</span>
+              </td>
+            </tr></table>
           </td>
         </tr>
-        <!-- Day meals -->
         <tr>
-          <td style="padding:14px 16px;">
+          <td style="padding:12px 14px;">
             ${(plan.meals || []).map(renderMeal).join('')}
           </td>
         </tr>
       </table>`
   }
 
-  // ── Shopping list ───────────────────────────────────────────────────────────
+  // ── Section 1 — Meal Plan ──────────────────────────────────────────────────
+  const mealPlanHtml = DAYS.map(renderDay).join('')
+
+  // ── Section 2 — Shopping List ──────────────────────────────────────────────
   const shopEntries = Object.entries(shoppingList || {}).filter(([, items]) => items?.length > 0)
   const shoppingHtml = shopEntries.map(([cat, items]) => `
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a12;border:1px solid #1e1e2e;border-radius:8px;margin-bottom:12px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a12;border:1px solid #1e1e2e;border-radius:8px;margin-bottom:10px;">
       <tr>
-        <td style="padding:12px 16px;border-bottom:1px solid #1e1e2e;">
+        <td style="padding:10px 14px;border-bottom:1px solid #1e1e2e;">
           <span style="font-size:12px;font-weight:700;color:#f5f6fa;letter-spacing:0.05em;">${SHOP_ICONS[cat] || '📦'} ${cat.toUpperCase()}</span>
         </td>
       </tr>
       ${items.map((item, i) => `
         <tr>
-          <td style="padding:7px 16px;font-size:13px;color:#e5e7eb;${i < items.length - 1 ? 'border-bottom:1px solid #1a1a24;' : ''}">
+          <td style="padding:6px 14px;font-size:13px;color:#e5e7eb;${i < items.length - 1 ? 'border-bottom:1px solid #1a1a24;' : ''}">
             ☐ &nbsp;${item}
           </td>
         </tr>`).join('')}
     </table>`).join('')
+
+  // ── Section 3 — Recipe How-To's ───────────────────────────────────────────
+  // Collect unique recipes with methods from across the full week
+  const seenRecipes = new Set()
+  const howToCards = []
+  for (const day of DAYS) {
+    for (const meal of (weekPlan?.[day]?.meals || [])) {
+      if (!meal.recipe_name) continue
+      const key = meal.recipe_name.toLowerCase()
+      if (seenRecipes.has(key)) continue
+      seenRecipes.add(key)
+      const recipe = recipeMap[key]
+      if (!recipe?.method) continue
+      const img = absImg(recipe.image_url)
+      howToCards.push({ name: meal.recipe_name, method: recipe.method, img })
+    }
+  }
+
+  const howToHtml = howToCards.length > 0
+    ? howToCards.map(r => `
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a12;border:1px solid #1e1e2e;border-radius:10px;margin-bottom:14px;overflow:hidden;">
+          ${r.img ? `
+          <tr>
+            <td style="padding:0;">
+              <img src="${r.img}" alt="${r.name}" width="100%" style="display:block;max-height:160px;object-fit:cover;border-radius:9px 9px 0 0;" />
+            </td>
+          </tr>` : ''}
+          <tr>
+            <td style="padding:14px 16px;">
+              <div style="font-size:14px;font-weight:900;color:#f5f6fa;letter-spacing:0.04em;margin-bottom:10px;">${r.name}</div>
+              <div style="font-size:13px;color:#9ca3af;line-height:1.7;">${r.method}</div>
+            </td>
+          </tr>
+        </table>`).join('')
+    : `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a12;border:1px solid #1e1e2e;border-radius:8px;">
+        <tr><td style="padding:20px 16px;text-align:center;">
+          <div style="font-size:13px;color:#5e5e70;">Recipe instructions coming soon — check back after your next plan!</div>
+        </td></tr>
+      </table>`
 
   const coachingUrl = process.env.GHL_COACHING_URL || process.env.APP_URL || 'https://coachdavemarsh.net'
 
@@ -505,7 +515,9 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
 
     <table width="640" cellpadding="0" cellspacing="0" border="0" style="background:#060608;color:#f5f6fa;max-width:640px;width:100%;">
 
-      <!-- ── HEADER ── -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- HEADER                                                             -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
       <tr>
         <td style="background:#060608;padding:28px 32px 24px;border-bottom:2px solid #00C896;">
           <div style="font-size:20px;font-weight:900;letter-spacing:0.1em;color:#f5f6fa;">PERFORMUSCLE</div>
@@ -520,26 +532,26 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
         </td>
       </tr>
 
-      <!-- ── MACRO TARGETS ── -->
+      <!-- MACRO TARGETS -->
       <tr>
-        <td style="background:#0a0a12;padding:20px 32px;border-bottom:1px solid #1e1e2e;">
-          <div style="font-size:10px;color:#5e5e70;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;">Daily Macro Targets</div>
+        <td style="background:#0a0a12;padding:18px 32px;border-bottom:1px solid #1e1e2e;">
+          <div style="font-size:10px;color:#5e5e70;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;">Daily Macro Targets</div>
           <table width="100%" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td width="25%" align="center" style="padding:4px;">
-                <div style="font-size:26px;font-weight:900;color:#f5f6fa;line-height:1;">${macros?.kcal}</div>
+                <div style="font-size:24px;font-weight:900;color:#f5f6fa;line-height:1;">${macros?.kcal}</div>
                 <div style="font-size:10px;color:#5e5e70;letter-spacing:0.08em;margin-top:4px;">KCAL</div>
               </td>
               <td width="25%" align="center" style="padding:4px;border-left:1px solid #1e1e2e;">
-                <div style="font-size:26px;font-weight:900;color:#818cf8;line-height:1;">${macros?.protein_g}g</div>
+                <div style="font-size:24px;font-weight:900;color:#818cf8;line-height:1;">${macros?.protein_g}g</div>
                 <div style="font-size:10px;color:#5e5e70;letter-spacing:0.08em;margin-top:4px;">PROTEIN</div>
               </td>
               <td width="25%" align="center" style="padding:4px;border-left:1px solid #1e1e2e;">
-                <div style="font-size:26px;font-weight:900;color:#f59e0b;line-height:1;">${macros?.carbs_g}g</div>
+                <div style="font-size:24px;font-weight:900;color:#f59e0b;line-height:1;">${macros?.carbs_g}g</div>
                 <div style="font-size:10px;color:#5e5e70;letter-spacing:0.08em;margin-top:4px;">CARBS</div>
               </td>
               <td width="25%" align="center" style="padding:4px;border-left:1px solid #1e1e2e;">
-                <div style="font-size:26px;font-weight:900;color:#34d399;line-height:1;">${macros?.fat_g}g</div>
+                <div style="font-size:24px;font-weight:900;color:#34d399;line-height:1;">${macros?.fat_g}g</div>
                 <div style="font-size:10px;color:#5e5e70;letter-spacing:0.08em;margin-top:4px;">FAT</div>
               </td>
             </tr>
@@ -547,19 +559,71 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
         </td>
       </tr>
 
-      <!-- ── MEAL PLAN ── -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- SECTION 1 — WEEKLY MEAL PLAN                                      -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
       <tr>
-        <td style="padding:24px 32px;">
-          <div style="font-size:13px;font-weight:900;color:#f5f6fa;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:20px;">📅 Weekly Meal Plan</div>
-          ${DAYS.map(renderDay).join('')}
+        <td style="padding:0;">
+          <!-- Section header bar -->
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="background:#0a1a14;padding:14px 32px;border-top:2px solid #00C896;border-bottom:1px solid #00C896;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                  <td>
+                    <span style="font-size:16px;font-weight:900;color:#f5f6fa;letter-spacing:0.06em;">📅 SECTION 1</span>
+                    <span style="font-size:12px;color:#00C896;font-weight:700;letter-spacing:0.06em;"> &nbsp;— YOUR WEEKLY MEAL PLAN</span>
+                  </td>
+                </tr></table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:20px 32px 8px;">
+          ${mealPlanHtml}
         </td>
       </tr>
 
-      <!-- ── SHOPPING LIST ── -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- SECTION 2 — SHOPPING LIST                                         -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
       <tr>
-        <td style="padding:0 32px 28px;">
-          <div style="font-size:13px;font-weight:900;color:#f5f6fa;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px;">🛒 Shopping List</div>
+        <td style="padding:0;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="background:#0a0f1a;padding:14px 32px;border-top:2px solid #3b82f6;border-bottom:1px solid #3b82f6;">
+                <span style="font-size:16px;font-weight:900;color:#f5f6fa;letter-spacing:0.06em;">🛒 SECTION 2</span>
+                <span style="font-size:12px;color:#60a5fa;font-weight:700;letter-spacing:0.06em;"> &nbsp;— SHOPPING LIST</span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:20px 32px 8px;">
           ${shoppingHtml}
+        </td>
+      </tr>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- SECTION 3 — RECIPE HOW-TO'S                                       -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <tr>
+        <td style="padding:0;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="background:#100a1a;padding:14px 32px;border-top:2px solid #8b5cf6;border-bottom:1px solid #8b5cf6;">
+                <span style="font-size:16px;font-weight:900;color:#f5f6fa;letter-spacing:0.06em;">📖 SECTION 3</span>
+                <span style="font-size:12px;color:#a78bfa;font-weight:700;letter-spacing:0.06em;"> &nbsp;— HOW TO MAKE EACH MEAL</span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:20px 32px 24px;">
+          ${howToHtml}
         </td>
       </tr>
 
