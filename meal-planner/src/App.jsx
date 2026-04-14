@@ -569,17 +569,31 @@ export default function App() {
         }),
       })
 
-      let data
-      try {
-        data = await res.json()
-      } catch {
-        throw new Error('The server took too long to respond — please try again. Generation usually takes 15–25 seconds.')
-      }
-      if (!res.ok) throw new Error(data.error || 'Generation failed')
+      if (!res.body) throw new Error('No response from server — please try again.')
 
-      setResult(data)
-      setStep(4)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      // Read the SSE stream until we get a data: line
+      const reader  = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      outer: while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+
+        const lines = buffer.split('\n')
+        buffer = lines.pop() ?? ''
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          const data = JSON.parse(line.slice(6))
+          if (data.error) throw new Error(data.error)
+          setResult(data)
+          setStep(4)
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+          break outer
+        }
+      }
     } catch (err) {
       setError(err.message)
     } finally {

@@ -238,18 +238,47 @@ Return exactly this JSON structure (no markdown, no code fences):
   }
 }`
 
+  // ── SSE setup — keeps connection alive through any proxy/timeout ────────────
+  res.setHeader('Content-Type', 'text/event-stream')
+  res.setHeader('Cache-Control', 'no-cache')
+  res.setHeader('Connection', 'keep-alive')
+  res.flushHeaders()
+
+  // Send a heartbeat comment every 8 s so proxies don't close the connection
+  const heartbeat = setInterval(() => {
+    if (!res.writableEnded) res.write(': ping\n\n')
+  }, 8000)
+
+  // Clean up if the client disconnects early
+  req.on('close', () => clearInterval(heartbeat))
+
+  function sendResult(payload) {
+    clearInterval(heartbeat)
+    if (!res.writableEnded) {
+      res.write(`data: ${JSON.stringify(payload)}\n\n`)
+      res.end()
+    }
+  }
+
   try {
-    const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 5500,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
+    // Stream tokens from Anthropic so the connection stays warm
+    const stream = await anthropic.messages.create({
+      model:      'claude-sonnet-4-6',
+      max_tokens: 8000,
+      stream:     true,
+      system:     systemPrompt,
+      messages:   [{ role: 'user', content: userPrompt }],
     })
 
-    const raw = message.content[0]?.text?.trim() || '{}'
+    let raw = ''
+    for await (const event of stream) {
+      if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
+        raw += event.delta.text
+      }
+    }
 
-    // Strip any markdown code fences
-    let cleaned = raw
+    // Strip markdown fences if present
+    let cleaned = raw.trim()
     if (cleaned.startsWith('`')) {
       cleaned = cleaned.replace(/^```[a-zA-Z]*\r?\n?/, '').replace(/\r?\n?```\s*$/, '').trim()
     }
@@ -263,17 +292,17 @@ Return exactly this JSON structure (no markdown, no code fences):
       result = JSON.parse(cleaned)
     } catch {
       console.error('[MealPlanner] JSON parse error. Raw snippet:', raw.slice(0, 400))
-      return res.status(500).json({ error: 'AI returned invalid JSON' })
+      return sendResult({ error: 'AI returned invalid JSON — please try again' })
     }
 
     if (!result.weekPlan) {
-      return res.status(500).json({ error: 'AI returned unexpected format' })
+      return sendResult({ error: 'AI returned unexpected format — please try again' })
     }
 
-    res.json(result)
+    sendResult(result)
   } catch (err) {
     console.error('[MealPlanner] Generation error:', err.message)
-    res.status(500).json({ error: err.message })
+    sendResult({ error: err.message })
   }
 })
 
