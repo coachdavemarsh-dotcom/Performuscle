@@ -99,27 +99,15 @@ app.use((err, req, res, next) => {
 // ============================================================
 
 app.listen(PORT, () => {
-  console.log(`🚀 Performuscle server running on http://localhost:${PORT}`)
-  console.log(`   Stripe webhooks: POST /api/webhooks/stripe`)
-  console.log(`   Stripe API:      /api/stripe/*`)
-  console.log(`   Email API:       /api/emails/*`)
+  console.log(`🚀 Performuscle server running on port ${PORT}`)
 
-  startReminderCron()
-  startBirthdayCron()
+  // Cron jobs — wrapped so a missing env var never crashes the server
+  try { startReminderCron() } catch (e) { console.warn('⚠️  Reminder cron failed to start:', e.message) }
+  try { startBirthdayCron() } catch (e) { console.warn('⚠️  Birthday cron failed to start:', e.message) }
 
-  if (!process.env.STRIPE_SECRET_KEY) {
-    console.warn('⚠️  STRIPE_SECRET_KEY not set — billing features will not work')
-  }
-  if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    console.warn('⚠️  STRIPE_WEBHOOK_SECRET not set — webhooks will fail verification')
-  }
-  if (!process.env.VITE_SUPABASE_URL) {
-    console.warn('⚠️  VITE_SUPABASE_URL not set — auth middleware will fail')
-  }
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('⚠️  RESEND_API_KEY not set — email notifications disabled')
-  }
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.warn('⚠️  ANTHROPIC_API_KEY not set — AI check-in summaries disabled')
-  }
+  if (!process.env.STRIPE_SECRET_KEY)      console.warn('⚠️  STRIPE_SECRET_KEY not set')
+  if (!process.env.STRIPE_WEBHOOK_SECRET)  console.warn('⚠️  STRIPE_WEBHOOK_SECRET not set')
+  if (!process.env.VITE_SUPABASE_URL)      console.warn('⚠️  VITE_SUPABASE_URL not set')
+  if (!process.env.RESEND_API_KEY)         console.warn('⚠️  RESEND_API_KEY not set')
+  if (!process.env.ANTHROPIC_API_KEY)      console.warn('⚠️  ANTHROPIC_API_KEY not set')
 })
