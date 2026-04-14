@@ -476,27 +476,44 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
     }
   }
 
-  const howToHtml = howToCards.length > 0
-    ? howToCards.map(r => `
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a12;border:1px solid #1e1e2e;border-radius:10px;margin-bottom:14px;overflow:hidden;">
-          ${r.img ? `
-          <tr>
-            <td style="padding:0;">
-              <img src="${r.img}" alt="${r.name}" width="100%" style="display:block;max-height:160px;object-fit:cover;border-radius:9px 9px 0 0;" />
-            </td>
-          </tr>` : ''}
-          <tr>
-            <td style="padding:14px 16px;">
-              <div style="font-size:14px;font-weight:900;color:#f5f6fa;letter-spacing:0.04em;margin-bottom:10px;">${r.name}</div>
-              <div style="font-size:13px;color:#9ca3af;line-height:1.7;">${r.method}</div>
-            </td>
-          </tr>
-        </table>`).join('')
-    : `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a12;border:1px solid #1e1e2e;border-radius:8px;">
-        <tr><td style="padding:20px 16px;text-align:center;">
-          <div style="font-size:13px;color:#5e5e70;">Recipe instructions coming soon — check back after your next plan!</div>
-        </td></tr>
-      </table>`
+  const howToHtml = howToCards.map(r => `
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0a0a12;border:1px solid #1e1e2e;border-radius:10px;margin-bottom:14px;overflow:hidden;">
+        ${r.img ? `
+        <tr>
+          <td style="padding:0;">
+            <img src="${r.img}" alt="${r.name}" width="100%" style="display:block;max-height:160px;object-fit:cover;border-radius:9px 9px 0 0;" />
+          </td>
+        </tr>` : ''}
+        <tr>
+          <td style="padding:14px 16px;">
+            <div style="font-size:14px;font-weight:900;color:#f5f6fa;letter-spacing:0.04em;margin-bottom:10px;">${r.name}</div>
+            <div style="font-size:13px;color:#9ca3af;line-height:1.7;">${r.method}</div>
+          </td>
+        </tr>
+      </table>`).join('')
+
+  // Only render Section 3 if there are recipes with methods
+  const section3Html = howToCards.length > 0 ? `
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- SECTION 3 — RECIPE HOW-TO'S                                       -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <tr>
+        <td style="padding:0;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="background:#100a1a;padding:14px 32px;border-top:2px solid #8b5cf6;border-bottom:1px solid #8b5cf6;">
+                <span style="font-size:16px;font-weight:900;color:#f5f6fa;letter-spacing:0.06em;">📖 SECTION 3</span>
+                <span style="font-size:12px;color:#a78bfa;font-weight:700;letter-spacing:0.06em;"> &nbsp;— HOW TO MAKE EACH MEAL</span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:20px 32px 24px;">
+          ${howToHtml}
+        </td>
+      </tr>` : ''
 
   const coachingUrl = process.env.GHL_COACHING_URL || process.env.APP_URL || 'https://coachdavemarsh.net'
 
@@ -606,26 +623,7 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
         </td>
       </tr>
 
-      <!-- ══════════════════════════════════════════════════════════════════ -->
-      <!-- SECTION 3 — RECIPE HOW-TO'S                                       -->
-      <!-- ══════════════════════════════════════════════════════════════════ -->
-      <tr>
-        <td style="padding:0;">
-          <table width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-              <td style="background:#100a1a;padding:14px 32px;border-top:2px solid #8b5cf6;border-bottom:1px solid #8b5cf6;">
-                <span style="font-size:16px;font-weight:900;color:#f5f6fa;letter-spacing:0.06em;">📖 SECTION 3</span>
-                <span style="font-size:12px;color:#a78bfa;font-weight:700;letter-spacing:0.06em;"> &nbsp;— HOW TO MAKE EACH MEAL</span>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:20px 32px 24px;">
-          ${howToHtml}
-        </td>
-      </tr>
+      ${section3Html}
 
       <!-- ── CTA ── -->
       <tr>
