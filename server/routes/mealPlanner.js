@@ -241,7 +241,7 @@ Return exactly this JSON structure (no markdown, no code fences):
   try {
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 16000,
+      max_tokens: 5500,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
     })

@@ -39,20 +39,236 @@ const SHOPPING_ICONS = {
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
 // ─── Step header ──────────────────────────────────────────────────────────────
+const TOTAL_STEPS = 4
+
 function StepHeader({ step, title, subtitle }) {
   return (
     <div style={{ marginBottom: 28 }}>
       <div className="step-progress">
-        {[1, 2, 3].map(n => (
+        {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map(n => (
           <div key={n} className="step-bar" style={{
             width: n < step ? 28 : n === step ? 48 : 12,
             background: n <= step ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
           }} />
         ))}
       </div>
-      <div className="step-eyebrow">STEP {step} OF 3</div>
+      <div className="step-eyebrow">STEP {step} OF {TOTAL_STEPS}</div>
       <div className="step-title">{title.toUpperCase()}</div>
       {subtitle && <div className="step-sub">{subtitle}</div>}
+    </div>
+  )
+}
+
+// ─── TDEE Calculator (Step 1) ─────────────────────────────────────────────────
+const ACTIVITY_LEVELS = [
+  { value: 'sedentary',  label: 'Sedentary',        desc: 'Desk job, little or no exercise',      multiplier: 1.2   },
+  { value: 'light',      label: 'Lightly Active',   desc: 'Light exercise 1–3 days/week',         multiplier: 1.375 },
+  { value: 'moderate',   label: 'Moderately Active', desc: 'Moderate exercise 3–5 days/week',     multiplier: 1.55  },
+  { value: 'active',     label: 'Very Active',       desc: 'Hard exercise 6–7 days/week',         multiplier: 1.725 },
+  { value: 'veryActive', label: 'Athlete',           desc: 'Twice/day training or physical job',  multiplier: 1.9   },
+]
+
+const GOALS = [
+  { value: 'lose',     label: '🔥 Lose Fat',      adjustment: -400 },
+  { value: 'maintain', label: '⚖️  Maintain',      adjustment: 0    },
+  { value: 'build',    label: '💪 Build Muscle',   adjustment: 250  },
+]
+
+function TDEEStep({ onComplete, onSkip }) {
+  const [units,      setUnits]      = useState('metric')
+  const [sex,        setSex]        = useState('male')
+  const [age,        setAge]        = useState('')
+  const [heightCm,   setHeightCm]   = useState('')
+  const [heightFt,   setHeightFt]   = useState('')
+  const [heightIn,   setHeightIn]   = useState('')
+  const [weight,     setWeight]     = useState('')
+  const [activity,   setActivity]   = useState('moderate')
+  const [goal,       setGoal]       = useState('maintain')
+  const [result,     setResult]     = useState(null)
+  const [error,      setError]      = useState(null)
+
+  function calculate() {
+    const ageNum = Number(age)
+    const weightNum = Number(weight)
+
+    if (!ageNum || !weightNum || (units === 'metric' ? !heightCm : !heightFt)) {
+      setError('Please fill in all fields.')
+      return
+    }
+    setError(null)
+
+    // Convert to metric
+    const weightKg  = units === 'metric' ? weightNum : weightNum * 0.453592
+    const heightCmV = units === 'metric'
+      ? Number(heightCm)
+      : (Number(heightFt) * 30.48) + (Number(heightIn || 0) * 2.54)
+
+    // Mifflin-St Jeor BMR
+    const bmr = sex === 'male'
+      ? (10 * weightKg) + (6.25 * heightCmV) - (5 * ageNum) + 5
+      : (10 * weightKg) + (6.25 * heightCmV) - (5 * ageNum) - 161
+
+    // TDEE
+    const multiplier = ACTIVITY_LEVELS.find(a => a.value === activity)?.multiplier || 1.55
+    const tdee       = Math.round(bmr * multiplier)
+
+    // Goal adjustment
+    const adjustment = GOALS.find(g => g.value === goal)?.adjustment || 0
+    const targetKcal = Math.max(1200, tdee + adjustment)
+
+    // Macro split — protein priority, fat at ~27%, carbs fill the rest
+    const proteinG = Math.round(weightKg * (goal === 'build' ? 2.2 : 2.0))
+    const fatG     = Math.round((targetKcal * 0.27) / 9)
+    const carbsG   = Math.max(50, Math.round((targetKcal - (proteinG * 4) - (fatG * 9)) / 4))
+
+    setResult({ tdee, kcal: targetKcal, protein_g: proteinG, carbs_g: carbsG, fat_g: fatG })
+  }
+
+  const inp = { className: 'form-input' }
+
+  return (
+    <div className="wizard-card">
+      <StepHeader
+        step={1}
+        title="Calculate Your Calories"
+        subtitle="Don't know your macros? We'll work them out for you."
+      />
+
+      {/* Units toggle */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+        {[{ v: 'metric', l: 'Metric (kg / cm)' }, { v: 'imperial', l: 'Imperial (lbs / ft)' }].map(u => (
+          <button key={u.v} className={`pill ${units === u.v ? 'active' : ''}`}
+            style={{ flex: 1, borderRadius: 8, padding: '10px 0' }}
+            onClick={() => setUnits(u.v)}>
+            {u.l.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* Sex */}
+      <div className="section-card">
+        <div className="section-label">BIOLOGICAL SEX</div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {[{ v: 'male', l: '♂ Male' }, { v: 'female', l: '♀ Female' }].map(s => (
+            <button key={s.v} className={`pill ${sex === s.v ? 'active' : ''}`}
+              style={{ flex: 1, borderRadius: 8, padding: '10px 0' }}
+              onClick={() => setSex(s.v)}>
+              {s.l.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Age + Weight + Height */}
+      <div className="section-card">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+          <div>
+            <label className="form-label">Age</label>
+            <input {...inp} type="number" placeholder="30" value={age} onChange={e => setAge(e.target.value)} min="16" max="99" />
+          </div>
+          <div>
+            <label className="form-label">Weight ({units === 'metric' ? 'kg' : 'lbs'})</label>
+            <input {...inp} type="number" placeholder={units === 'metric' ? '80' : '176'} value={weight} onChange={e => setWeight(e.target.value)} />
+          </div>
+        </div>
+
+        {units === 'metric' ? (
+          <div>
+            <label className="form-label">Height (cm)</label>
+            <input {...inp} type="number" placeholder="178" value={heightCm} onChange={e => setHeightCm(e.target.value)} />
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div>
+              <label className="form-label">Height (ft)</label>
+              <input {...inp} type="number" placeholder="5" value={heightFt} onChange={e => setHeightFt(e.target.value)} />
+            </div>
+            <div>
+              <label className="form-label">Height (in)</label>
+              <input {...inp} type="number" placeholder="10" value={heightIn} onChange={e => setHeightIn(e.target.value)} />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Activity level */}
+      <div className="section-card">
+        <div className="section-label">ACTIVITY LEVEL</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {ACTIVITY_LEVELS.map(a => (
+            <button key={a.value}
+              onClick={() => setActivity(a.value)}
+              style={{
+                padding: '12px 16px', borderRadius: 8, border: `1.5px solid ${activity === a.value ? 'var(--accent)' : 'rgba(255,255,255,0.08)'}`,
+                background: activity === a.value ? 'rgba(0,200,150,0.08)' : 'rgba(255,255,255,0.02)',
+                cursor: 'pointer', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: activity === a.value ? 'var(--accent)' : 'var(--white)', fontFamily: 'var(--font-display)', letterSpacing: '0.04em' }}>{a.label.toUpperCase()}</div>
+                <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>{a.desc}</div>
+              </div>
+              {activity === a.value && <span style={{ color: 'var(--accent)', fontSize: 14 }}>✓</span>}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Goal */}
+      <div className="section-card">
+        <div className="section-label">YOUR GOAL</div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {GOALS.map(g => (
+            <button key={g.value} className={`pill ${goal === g.value ? 'active' : ''}`}
+              style={{ flex: 1, borderRadius: 8, padding: '12px 8px', fontSize: 11 }}
+              onClick={() => setGoal(g.value)}>
+              {g.label.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {error && <div className="error-msg">{error}</div>}
+
+      {/* Result */}
+      {result && (
+        <div className="section-card" style={{ borderColor: 'rgba(0,200,150,0.3)', background: 'rgba(0,200,150,0.05)', marginBottom: 16 }}>
+          <div style={{ fontSize: 11, fontFamily: 'var(--font-display)', letterSpacing: '0.08em', color: 'var(--accent)', marginBottom: 12 }}>
+            YOUR ESTIMATED TARGETS
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 12 }}>
+            {[
+              { label: 'KCAL',    val: result.kcal,      color: 'var(--white)' },
+              { label: 'PROTEIN', val: `${result.protein_g}g`, color: '#818cf8' },
+              { label: 'CARBS',   val: `${result.carbs_g}g`,   color: '#f59e0b' },
+              { label: 'FAT',     val: `${result.fat_g}g`,     color: '#34d399' },
+            ].map(({ label, val, color }) => (
+              <div key={label} style={{ textAlign: 'center' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, color }}>{val}</div>
+                <div style={{ fontSize: 10, color: 'var(--muted)', letterSpacing: '0.06em' }}>{label}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--muted)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 10 }}>
+            Maintenance TDEE: <strong style={{ color: 'var(--white)' }}>{result.tdee} kcal</strong>
+            &nbsp;·&nbsp; Mifflin-St Jeor formula &nbsp;·&nbsp; Adjust based on real-world progress
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {!result ? (
+          <button className="btn-primary" style={{ width: '100%' }} onClick={calculate}>
+            CALCULATE MY CALORIES →
+          </button>
+        ) : (
+          <button className="btn-primary" style={{ width: '100%' }} onClick={() => onComplete(result)}>
+            BUILD MY PLAN WITH THESE MACROS →
+          </button>
+        )}
+        <button className="btn-secondary" style={{ width: '100%' }} onClick={onSkip}>
+          I ALREADY KNOW MY MACROS — SKIP
+        </button>
+      </div>
     </div>
   )
 }
@@ -310,7 +526,7 @@ export default function App() {
   const [result,     setResult]     = useState(null)
   const [activeTab,  setActiveTab]  = useState('plan')
 
-  // Step 1 state
+  // Step 2 state (macros — may be pre-filled from TDEE step)
   const [macros, setMacros] = useState({ kcal: '', protein_g: '', carbs_g: '', fat_g: '' })
 
   // Step 2 state
@@ -353,11 +569,16 @@ export default function App() {
         }),
       })
 
-      const data = await res.json()
+      let data
+      try {
+        data = await res.json()
+      } catch {
+        throw new Error('The server took too long to respond — please try again. Generation usually takes 15–25 seconds.')
+      }
       if (!res.ok) throw new Error(data.error || 'Generation failed')
 
       setResult(data)
-      setStep(3)
+      setStep(4)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
       setError(err.message)
@@ -378,13 +599,12 @@ export default function App() {
               <div className="logo-name">PERFORMUSCLE</div>
               <div className="logo-tag">Health · Function · Performance</div>
             </div>
-            <div className="header-badge">✨ AI MEAL PLANNER</div>
           </div>
         </div>
       </header>
 
       {/* Hero — hide once results are showing */}
-      {step < 3 && (
+      {step < 4 && (
         <section className="hero">
           <div className="container">
             <div className="hero-eyebrow">FREE TOOL — NO SIGN-UP REQUIRED</div>
@@ -417,17 +637,37 @@ export default function App() {
       <div className="wizard-wrapper">
         <div className="container">
 
-          {/* ── Step 1: Macros ─────────────────────────────────────────────── */}
+          {/* ── Step 1: TDEE Calculator ───────────────────────────────────── */}
           {step === 1 && (
+            <TDEEStep
+              onComplete={tdeeResult => {
+                setMacros({
+                  kcal:      String(tdeeResult.kcal),
+                  protein_g: String(tdeeResult.protein_g),
+                  carbs_g:   String(tdeeResult.carbs_g),
+                  fat_g:     String(tdeeResult.fat_g),
+                })
+                setStep(2)
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+              onSkip={() => {
+                setMacros({ kcal: '', protein_g: '', carbs_g: '', fat_g: '' })
+                setStep(2)
+              }}
+            />
+          )}
+
+          {/* ── Step 2: Macros ─────────────────────────────────────────────── */}
+          {step === 2 && (
             <div className="wizard-card">
-              <StepHeader step={1} title="Your Macro Targets" subtitle="Enter your daily nutrition targets. Not sure? Use a TDEE calculator first." />
+              <StepHeader step={2} title="Your Macro Targets" subtitle="Pre-filled from your TDEE — tweak if needed." />
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 20 }}>
                 {[
-                  { key: 'kcal',      label: 'Calories (kcal)', ph: '2400', tip: 'Total daily calories' },
-                  { key: 'protein_g', label: 'Protein (g)',     ph: '180',  tip: 'e.g. 2g per kg bodyweight' },
-                  { key: 'carbs_g',   label: 'Carbs (g)',       ph: '220',  tip: 'Remaining after protein & fat' },
-                  { key: 'fat_g',     label: 'Fat (g)',         ph: '75',   tip: 'Min 0.8g per kg bodyweight' },
+                  { key: 'kcal',      label: 'Calories (kcal)', ph: '2400' },
+                  { key: 'protein_g', label: 'Protein (g)',     ph: '180'  },
+                  { key: 'carbs_g',   label: 'Carbs (g)',       ph: '220'  },
+                  { key: 'fat_g',     label: 'Fat (g)',         ph: '75'   },
                 ].map(({ key, label, ph }) => (
                   <div key={key}>
                     <label className="form-label">{label}</label>
@@ -441,12 +681,11 @@ export default function App() {
                 ))}
               </div>
 
-              {/* Quick macro preview */}
               {macros.kcal && macros.protein_g && macros.carbs_g && macros.fat_g && (
                 <div className="section-card" style={{ marginBottom: 20 }}>
                   <div className="macro-grid">
                     {[
-                      { label: 'KCAL',    val: macros.kcal      },
+                      { label: 'KCAL',    val: macros.kcal                },
                       { label: 'PROTEIN', val: macros.protein_g, unit: 'g' },
                       { label: 'CARBS',   val: macros.carbs_g,   unit: 'g' },
                       { label: 'FAT',     val: macros.fat_g,     unit: 'g' },
@@ -461,23 +700,28 @@ export default function App() {
               )}
 
               {error && <div className="error-msg">{error}</div>}
-              <button className="btn-primary" style={{ width: '100%' }} onClick={() => {
-                if (!macros.kcal || !macros.protein_g || !macros.carbs_g || !macros.fat_g) {
-                  setError('Please fill in all four macro targets.')
-                  return
-                }
-                setError(null)
-                setStep(2)
-              }}>
-                NEXT →
-              </button>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button className="btn-secondary" style={{ flex: 1 }} onClick={() => { setStep(1); setError(null) }}>
+                  ← BACK
+                </button>
+                <button className="btn-primary" style={{ flex: 2 }} onClick={() => {
+                  if (!macros.kcal || !macros.protein_g || !macros.carbs_g || !macros.fat_g) {
+                    setError('Please fill in all four macro targets.')
+                    return
+                  }
+                  setError(null)
+                  setStep(3)
+                }}>
+                  NEXT →
+                </button>
+              </div>
             </div>
           )}
 
-          {/* ── Step 2: Preferences ────────────────────────────────────────── */}
-          {step === 2 && (
+          {/* ── Step 3: Preferences ────────────────────────────────────────── */}
+          {step === 3 && (
             <div className="wizard-card">
-              <StepHeader step={2} title="Your Preferences" subtitle="Tell us about your training schedule and dietary needs." />
+              <StepHeader step={3} title="Your Preferences" subtitle="Tell us about your training schedule and dietary needs." />
 
               {/* Meals per day */}
               <div className="section-card">
@@ -551,7 +795,7 @@ export default function App() {
               {error && <div className="error-msg">{error}</div>}
 
               <div style={{ display: 'flex', gap: 10 }}>
-                <button className="btn-secondary" style={{ flex: 1 }} onClick={() => { setStep(1); setError(null) }}>
+                <button className="btn-secondary" style={{ flex: 1 }} onClick={() => { setStep(2); setError(null) }}>
                   ← BACK
                 </button>
                 <button
@@ -579,8 +823,8 @@ export default function App() {
             </div>
           )}
 
-          {/* ── Step 3: Results ────────────────────────────────────────────── */}
-          {step === 3 && result && (
+          {/* ── Step 4: Results ────────────────────────────────────────────── */}
+          {step === 4 && result && (
             <div>
               <div className="results-header">
                 <div>
@@ -591,7 +835,7 @@ export default function App() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button className="btn-secondary" onClick={() => { setStep(2); setResult(null) }}>
+                  <button className="btn-secondary" onClick={() => { setStep(3); setResult(null) }}>
                     ← REGENERATE
                   </button>
                   <button className="btn-secondary" onClick={() => { setStep(1); setResult(null); setMacros({ kcal: '', protein_g: '', carbs_g: '', fat_g: '' }) }}>
