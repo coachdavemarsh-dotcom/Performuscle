@@ -7,7 +7,7 @@
 # e.g. https://performuscle-api.up.railway.app
 [[redirects]]
   from    = "/api/*"
-  to      = "https://REPLACE-WITH-YOUR-RAILWAY-URL.up.railway.app/api/:splat"
+  to      = "https://performuscle-production.up.railway.app/api/:splat"
   status  = 200
   force   = true
 
