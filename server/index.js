@@ -15,6 +15,9 @@ const app = express()
 const PORT = process.env.PORT || 3001
 const isProd = process.env.NODE_ENV === 'production'
 
+// Trust Railway's reverse proxy so express-rate-limit can read X-Forwarded-For correctly
+app.set('trust proxy', 1)
+
 // ============================================================
 // MIDDLEWARE
 // ============================================================
