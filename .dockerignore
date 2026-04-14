@@ -1,0 +1,12 @@
+node_modules
+meal-planner/node_modules
+meal-planner/dist
+dist
+.env
+.git
+*.md
+src
+public
+meal-planner/src
+performuscle-landing.html
+serve-landing.cjs

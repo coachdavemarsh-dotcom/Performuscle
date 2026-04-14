@@ -2,13 +2,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies first (cached layer)
+# Install dependencies
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
-# Copy only the server code — no Vite, no frontend
+# Copy server code
 COPY server/ ./server/
 
+# Expose port
 EXPOSE 3001
 
 CMD ["node", "server/index.js"]
