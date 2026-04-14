@@ -370,7 +370,12 @@ function buildMealPlanEmail({ name, weekPlan, shoppingList, macros, mealsPerDay,
     const colour = mealTypeColour[meal.mealType] || '#00C896'
     const recipe = meal.recipe_name ? recipeMap[meal.recipe_name.toLowerCase()] : null
     const method = recipe?.method || null
-    const img    = recipe?.image_url || null
+    const imgRaw = recipe?.image_url || null
+    // Convert relative paths like /recipes/foo.jpeg to absolute URLs for email clients
+    const siteBase = process.env.SITE_URL || 'https://coachdavemarsh.net'
+    const img = imgRaw
+      ? (imgRaw.startsWith('http') ? imgRaw : `${siteBase}${imgRaw}`)
+      : null
 
     const foodRows = (meal.foods || []).map(f => `
       <tr>

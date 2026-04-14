@@ -469,7 +469,7 @@ function LeadCTA({ result, macros, mealsPerDay, trainingDays, dietaryFilters }) 
         <div style={{ flex: 1 }}>
           <div className="cta-title">📧 GET YOUR PLAN BY EMAIL</div>
           <div className="cta-sub">
-            We'll send your full 7-day meal plan and shopping list straight to your inbox — ready to save or print.
+            We'll send your full 7-day meal plan, shopping list and exactly how to make each meal straight to your inbox — ready to save or print.
           </div>
         </div>
         {planSent ? (

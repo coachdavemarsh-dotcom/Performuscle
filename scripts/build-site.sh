@@ -17,6 +17,16 @@ for ext in jpg jpeg png webp svg ico gif; do
   find . -maxdepth 1 -name "*.${ext}" -exec cp {} dist/ \; 2>/dev/null || true
 done
 
+# Copy recipe images from the app's public folder so they're served on coachdavemarsh.net/recipes/
+if [ -d "public/recipes" ]; then
+  echo "  → Copying recipe images..."
+  mkdir -p dist/recipes
+  cp public/recipes/*.jpeg dist/recipes/ 2>/dev/null || true
+  cp public/recipes/*.jpg  dist/recipes/ 2>/dev/null || true
+  cp public/recipes/*.png  dist/recipes/ 2>/dev/null || true
+  echo "     $(ls dist/recipes | wc -l | tr -d ' ') recipe images copied"
+fi
+
 # ── Meal planner ──────────────────────────────────────────────────────────────
 echo "  → Building meal planner..."
 cd meal-planner
