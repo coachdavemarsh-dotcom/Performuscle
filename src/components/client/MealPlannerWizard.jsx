@@ -25,8 +25,9 @@ const MEAL_TYPE_COLOURS = {
   'snack':        '#ec4899',
 }
 
-// In dev fall back to localhost; in production use relative /api/* (Vercel proxies to Railway)
-const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '')
+// Dev: localhost Express. Production: call Railway directly (bypasses Vercel proxy timeout)
+const RAILWAY_URL = 'https://performuscle-production.up.railway.app'
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : RAILWAY_URL)
 
 // ─── Utility ─────────────────────────────────────────────────────────────────
 const pill = (active) => ({
