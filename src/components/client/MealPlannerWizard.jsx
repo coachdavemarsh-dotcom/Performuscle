@@ -25,7 +25,8 @@ const MEAL_TYPE_COLOURS = {
   'snack':        '#ec4899',
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+// In dev fall back to localhost; in production use relative /api/* (Vercel proxies to Railway)
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '')
 
 // ─── Utility ─────────────────────────────────────────────────────────────────
 const pill = (active) => ({
@@ -84,7 +85,7 @@ function StepHeader({ step, title, subtitle }) {
 // ─── Meal card ────────────────────────────────────────────────────────────────
 function MealCard({ meal }) {
   const [open, setOpen] = useState(false)
-  const t = meal.mealTotals || {}
+  const t      = meal.mealTotals || {}
   const colour = MEAL_TYPE_COLOURS[meal.mealType] || 'var(--accent)'
 
   return (
@@ -95,6 +96,33 @@ function MealCard({ meal }) {
       marginBottom: 8,
       overflow: 'hidden',
     }}>
+      {/* Recipe image banner */}
+      {meal.image_url && (
+        <div style={{
+          height: 120,
+          backgroundImage: `url(${meal.image_url})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          position: 'relative',
+        }}>
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to bottom, transparent 30%, rgba(6,6,8,0.85))',
+          }} />
+          {meal.recipe_name && (
+            <span style={{
+              position: 'absolute', bottom: 8, left: 10,
+              background: 'var(--accent)', color: '#060608',
+              fontSize: 10, fontWeight: 700,
+              fontFamily: 'var(--font-display)', letterSpacing: '0.04em',
+              padding: '3px 8px', borderRadius: 12,
+            }}>
+              {meal.recipe_name}
+            </span>
+          )}
+        </div>
+      )}
+
       <button
         onClick={() => setOpen(!open)}
         style={{
@@ -117,7 +145,7 @@ function MealCard({ meal }) {
 
       {open && (
         <div style={{ padding: '0 12px 12px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          {meal.recipe_name && (
+          {meal.recipe_name && !meal.image_url && (
             <div style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: '0.04em', margin: '8px 0 6px' }}>
               FROM LIBRARY: {meal.recipe_name}
             </div>
@@ -148,45 +176,24 @@ function MealCard({ meal }) {
               ))}
             </tbody>
           </table>
+
+          {meal.method && (
+            <div style={{
+              marginTop: 12, padding: '10px 12px',
+              background: 'rgba(0,200,150,0.05)',
+              borderLeft: '3px solid var(--accent)',
+              borderRadius: '0 6px 6px 0',
+            }}>
+              <div style={{ fontSize: 10, fontFamily: 'var(--font-display)', letterSpacing: '0.08em', color: 'var(--accent)', marginBottom: 6 }}>
+                HOW TO MAKE IT
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.7 }}>
+                {meal.method}
+              </div>
+            </div>
+          )}
         </div>
       )}
-    </div>
-  )
-}
-
-// ─── Day column ───────────────────────────────────────────────────────────────
-function DayColumn({ day, dayPlan }) {
-  if (!dayPlan) return (
-    <div style={{ minWidth: 220, flex: '0 0 220px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 12 }}>
-      <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, letterSpacing: '0.06em', color: 'var(--muted)' }}>{day.toUpperCase()}</div>
-    </div>
-  )
-
-  const isTraining = dayPlan.dayType === 'training'
-  const t = dayPlan.dayTotals || {}
-
-  return (
-    <div style={{
-      minWidth: 220, flex: '0 0 220px',
-      background: 'rgba(255,255,255,0.02)',
-      border: `1px solid ${isTraining ? 'rgba(0,200,150,0.2)' : 'rgba(255,255,255,0.06)'}`,
-      borderRadius: 12,
-      padding: 12,
-    }}>
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, letterSpacing: '0.06em', color: 'var(--white)' }}>
-          {day.toUpperCase()}
-        </div>
-        <div style={{ fontSize: 11, color: isTraining ? 'var(--accent)' : 'var(--muted)', fontFamily: 'var(--font-display)', letterSpacing: '0.04em', marginTop: 2 }}>
-          {isTraining ? '⚡ TRAINING' : 'REST'}
-        </div>
-        <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4 }}>
-          {t.kcal}kcal · P{t.protein_g}g · C{t.carbs_g}g · F{t.fat_g}g
-        </div>
-      </div>
-      {(dayPlan.meals || []).map((meal, i) => (
-        <MealCard key={i} meal={meal} />
-      ))}
     </div>
   )
 }
@@ -218,7 +225,7 @@ function ShoppingList({ shoppingList }) {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
         {nonEmpty.map(([cat, items]) => (
           <div key={cat} className="card" style={{ padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
@@ -247,11 +254,11 @@ function ShoppingList({ shoppingList }) {
   )
 }
 
-// ─── Send plan button (logged-in clients) ────────────────────────────────────
+// ─── Send plan button ─────────────────────────────────────────────────────────
 function SendPlanButton({ result, macros, mealsPerDay, trainingDays, dietaryFilters, userEmail, userName }) {
-  const [sending,  setSending]  = useState(false)
-  const [sent,     setSent]     = useState(false)
-  const [error,    setError]    = useState(null)
+  const [sending, setSending] = useState(false)
+  const [sent,    setSent]    = useState(false)
+  const [error,   setError]   = useState(null)
 
   async function handleSend() {
     if (!userEmail) return
@@ -290,13 +297,8 @@ function SendPlanButton({ result, macros, mealsPerDay, trainingDays, dietaryFilt
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-      <button
-        className="btn-secondary"
-        onClick={handleSend}
-        disabled={sending || !userEmail}
-        style={{ fontSize: 12 }}
-      >
-        {sending ? 'SENDING…' : `📧 EMAIL ME THIS PLAN`}
+      <button className="btn-secondary" onClick={handleSend} disabled={sending || !userEmail} style={{ fontSize: 12 }}>
+        {sending ? 'SENDING…' : '📧 EMAIL ME THIS PLAN'}
       </button>
       {error && <div style={{ fontSize: 11, color: '#f87171' }}>{error}</div>}
     </div>
@@ -313,6 +315,7 @@ export default function MealPlannerWizard() {
   const [error,      setError]      = useState(null)
   const [result,     setResult]     = useState(null)
   const [activeTab,  setActiveTab]  = useState('plan')
+  const [activeDay,  setActiveDay]  = useState('Monday')
 
   // Step 1
   const [macroSource, setMacroSource] = useState('plan')
@@ -338,6 +341,7 @@ export default function MealPlannerWizard() {
     setDietaryFilters(p => p.includes(f) ? p.filter(x => x !== f) : [...p, f])
   }
 
+  // ── SSE streaming generation ────────────────────────────────────────────────
   async function handleGenerate() {
     const m = activeMacros
     if (!m.kcal || !m.protein_g || !m.carbs_g || !m.fat_g) {
@@ -365,11 +369,33 @@ export default function MealPlannerWizard() {
         }),
       })
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Generation failed')
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Generation failed')
+      }
 
-      setResult(data)
-      setStep(3)
+      // Server streams SSE — read until we get the data event
+      const reader  = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      outer: while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() ?? ''
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          const data = JSON.parse(line.slice(6))
+          if (data.error) throw new Error(data.error)
+          setResult(data)
+          setActiveDay('Monday')
+          setActiveTab('plan')
+          setStep(3)
+          break outer
+        }
+      }
     } catch (err) {
       setError(err.message)
     } finally {
@@ -529,10 +555,7 @@ export default function MealPlannerWizard() {
         <button className="btn-secondary" style={{ flex: 1 }} onClick={() => { setStep(1); setError(null) }}>
           ← BACK
         </button>
-        <button
-          className="btn-primary" style={{ flex: 2 }}
-          onClick={handleGenerate} disabled={generating}
-        >
+        <button className="btn-primary" style={{ flex: 2 }} onClick={handleGenerate} disabled={generating}>
           {generating ? 'GENERATING…' : '✨ GENERATE PLAN'}
         </button>
       </div>
@@ -541,74 +564,142 @@ export default function MealPlannerWizard() {
         <div style={{ textAlign: 'center', marginTop: 24 }}>
           <div className="spinner" style={{ margin: '0 auto 12px' }} />
           <div style={{ fontSize: 13, color: 'var(--muted)' }}>Building your personalised 7-day meal plan…</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', marginTop: 4 }}>This takes 15–30 seconds</div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', marginTop: 4 }}>This usually takes 60–90 seconds</div>
         </div>
       )}
     </div>
   )
 
   // ── Step 3: Results ─────────────────────────────────────────────────────────
-  if (step === 3 && result) return (
-    <div>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-        <div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, letterSpacing: '0.06em', color: 'var(--white)' }}>
-            YOUR MEAL PLAN
+  if (step === 3 && result) {
+    const activeDayPlan = result.weekPlan?.[activeDay]
+    const isTraining    = activeDayPlan?.dayType === 'training'
+    const t             = activeDayPlan?.dayTotals || {}
+
+    return (
+      <div>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
+          <div>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, letterSpacing: '0.06em', color: 'var(--white)' }}>
+              YOUR MEAL PLAN
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
+              {mealsPerDay} meals/day · {trainingDays.length} training days
+              {dietaryFilters.length > 0 && ` · ${dietaryFilters.join(', ')}`}
+            </div>
           </div>
-          <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
-            {mealsPerDay} meals/day · {trainingDays.length} training days
-            {dietaryFilters.length > 0 && ` · ${dietaryFilters.join(', ')}`}
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+            <SendPlanButton
+              result={result}
+              macros={activeMacros}
+              mealsPerDay={mealsPerDay}
+              trainingDays={trainingDays}
+              dietaryFilters={dietaryFilters}
+              userEmail={user?.email}
+              userName={user?.user_metadata?.full_name}
+            />
+            <button className="btn-secondary" onClick={() => { setStep(2); setResult(null) }}>
+              ← REGENERATE
+            </button>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-          <SendPlanButton
-            result={result}
-            macros={activeMacros}
-            mealsPerDay={mealsPerDay}
-            trainingDays={trainingDays}
-            dietaryFilters={dietaryFilters}
-            userEmail={user?.email}
-            userName={user?.user_metadata?.full_name}
-          />
-          <button className="btn-secondary" onClick={() => { setStep(2); setResult(null) }}>
-            ← REGENERATE
-          </button>
+
+        {/* Main tabs */}
+        <div style={{ display: 'flex', gap: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: 4, marginBottom: 20 }}>
+          {[
+            { id: 'plan',     label: '📅  MEAL PLAN'    },
+            { id: 'shopping', label: '🛒  SHOPPING LIST' },
+          ].map(tab => (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+              flex: 1, padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              fontFamily: 'var(--font-display)', fontSize: 12, letterSpacing: '0.04em',
+              background: activeTab === tab.id ? 'rgba(0,200,150,0.15)' : 'transparent',
+              color: activeTab === tab.id ? 'var(--accent)' : 'var(--muted)',
+            }}>
+              {tab.label}
+            </button>
+          ))}
         </div>
+
+        {activeTab === 'plan' && (
+          <div>
+            {/* Day selector — scrollable pill row */}
+            <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 8, marginBottom: 16, scrollbarWidth: 'none' }}>
+              {DAYS.map((day, i) => {
+                const dp = result.weekPlan?.[day]
+                const isTrain = dp?.dayType === 'training'
+                const isActive = activeDay === day
+                return (
+                  <button
+                    key={day}
+                    onClick={() => setActiveDay(day)}
+                    style={{
+                      flexShrink: 0,
+                      padding: '8px 14px',
+                      borderRadius: 20,
+                      border: isActive
+                        ? `1.5px solid ${isTrain ? 'var(--accent)' : 'rgba(255,255,255,0.4)'}`
+                        : `1.5px solid ${isTrain ? 'rgba(0,200,150,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                      background: isActive
+                        ? (isTrain ? 'rgba(0,200,150,0.15)' : 'rgba(255,255,255,0.08)')
+                        : 'rgba(255,255,255,0.03)',
+                      color: isActive
+                        ? (isTrain ? 'var(--accent)' : 'var(--white)')
+                        : 'var(--muted)',
+                      cursor: 'pointer',
+                      fontSize: 12,
+                      fontFamily: 'var(--font-display)',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    {DAY_ABBR[i]}
+                    {isTrain && <span style={{ marginLeft: 4, fontSize: 9 }}>⚡</span>}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Active day card */}
+            {activeDayPlan && (
+              <div>
+                {/* Day header */}
+                <div style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  marginBottom: 14, flexWrap: 'wrap', gap: 8,
+                }}>
+                  <div>
+                    <span style={{ fontFamily: 'var(--font-display)', fontSize: 18, letterSpacing: '0.06em', color: 'var(--white)' }}>
+                      {activeDay.toUpperCase()}
+                    </span>
+                    {isTraining
+                      ? <span style={{ marginLeft: 10, fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: '0.04em' }}>⚡ TRAINING DAY</span>
+                      : <span style={{ marginLeft: 10, fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--font-display)', letterSpacing: '0.04em' }}>REST DAY</span>
+                    }
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+                    {t.kcal} kcal &nbsp;·&nbsp;
+                    <span style={{ color: '#818cf8' }}>P {t.protein_g}g</span> &nbsp;·&nbsp;
+                    <span style={{ color: '#f59e0b' }}>C {t.carbs_g}g</span> &nbsp;·&nbsp;
+                    <span style={{ color: '#34d399' }}>F {t.fat_g}g</span>
+                  </div>
+                </div>
+
+                {/* Meal cards */}
+                {(activeDayPlan.meals || []).map((meal, i) => (
+                  <MealCard key={i} meal={meal} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'shopping' && (
+          <ShoppingList shoppingList={result.shoppingList} />
+        )}
       </div>
-
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: 4, marginBottom: 20 }}>
-        {[
-          { id: 'plan',     label: '📅  MEAL PLAN'     },
-          { id: 'shopping', label: '🛒  SHOPPING LIST'  },
-        ].map(tab => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-            flex: 1, padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
-            fontFamily: 'var(--font-display)', fontSize: 12, letterSpacing: '0.04em',
-            background: activeTab === tab.id ? 'rgba(0,200,150,0.15)' : 'transparent',
-            color: activeTab === tab.id ? 'var(--accent)' : 'var(--muted)',
-          }}>
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {activeTab === 'plan' && (
-        <div style={{ overflowX: 'auto', paddingBottom: 16 }}>
-          <div style={{ display: 'flex', gap: 12, minWidth: 'max-content' }}>
-            {DAYS.map(day => (
-              <DayColumn key={day} day={day} dayPlan={result.weekPlan?.[day]} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'shopping' && (
-        <ShoppingList shoppingList={result.shoppingList} />
-      )}
-    </div>
-  )
+    )
+  }
 
   return null
 }
