@@ -649,7 +649,7 @@ export default function App() {
           <div className="container">
             <div className="hero-eyebrow">FREE TOOL — NO SIGN-UP REQUIRED</div>
             <h1 className="hero-title">
-              Your Custom<br /><span>7-Day Meal Plan</span><br />in Seconds
+              Your Custom<br /><span>7-Day Meal Plan</span><br />in Minutes
             </h1>
             <p className="hero-sub">
               Enter your macros, set your training days and dietary preferences.
@@ -856,7 +856,7 @@ export default function App() {
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 6 }}>
                     AI is calculating macros, structuring training days, and compiling your shopping list.
-                    <br />This usually takes 15–30 seconds.
+                    <br />This usually takes 60–90 seconds.
                   </div>
                 </div>
               )}
