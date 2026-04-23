@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth.jsx'
 import { useCoach } from '../../hooks/useCoach.js'
 import { supabase } from '../../lib/supabase.js'
 import { navalBF } from '../../lib/calculators.js'
-import { sendWelcome, inviteClient } from '../../lib/emailApi.js'
+import { sendWelcome } from '../../lib/emailApi.js'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -331,6 +331,7 @@ function ClientCard({ client, programme, lastCheckIn, assessment, testResult, na
 // ─── invite modal ─────────────────────────────────────────────────────────────
 
 function InviteClientModal({ onClose }) {
+  const { user } = useAuth()
   const [fullName, setFullName] = useState('')
   const [email,    setEmail]    = useState('')
   const [sending,  setSending]  = useState(false)
@@ -341,13 +342,34 @@ function InviteClientModal({ onClose }) {
     if (!fullName.trim() || !email.trim()) { setError('Please fill in both fields.'); return }
     setSending(true)
     setError(null)
-    const result = await inviteClient({ email: email.trim(), fullName: fullName.trim() })
-    setSending(false)
-    if (result.ok) {
-      setSent(true)
-    } else {
-      setError(result.error || 'Failed to send invite. Check the server is running.')
+
+    try {
+      // Use Supabase's built-in magic-link flow — no Express server required.
+      // The coach_id + full_name go into user_metadata so Onboarding can
+      // auto-link the client when they complete registration.
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/onboarding`,
+          data: {
+            full_name:  fullName.trim(),
+            coach_id:   user?.id,
+            invited:    true,
+          },
+        },
+      })
+
+      if (otpError) {
+        setError(otpError.message)
+      } else {
+        setSent(true)
+      }
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.')
     }
+
+    setSending(false)
   }
 
   return (

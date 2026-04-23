@@ -37,15 +37,17 @@ function ProgressBar({ value, max, color = 'var(--accent)', height = 6 }) {
 
 // ─── view 1: course library ───────────────────────────────────────────────────
 
-function CourseLibrary({ progress, onSelectCourse }) {
+function CourseLibrary({ progress, onSelectCourse, hideHeader }) {
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Learning Hub</h1>
-          <p className="page-subtitle">Build your knowledge, understand your programme</p>
+      {!hideHeader && (
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">Learning Hub</h1>
+            <p className="page-subtitle">Build your knowledge, understand your programme</p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="grid-2">
         {COURSES.map(course => {
@@ -674,7 +676,7 @@ function Quiz({ course, module: mod, progress, onBack, onComplete }) {
 
 // ─── main component ───────────────────────────────────────────────────────────
 
-export default function Learn() {
+export default function Learn({ hideHeader = false }) {
   const { user } = useAuth()
 
   const [view, setView] = useState('library') // 'library' | 'course' | 'lesson' | 'quiz'
@@ -780,6 +782,7 @@ export default function Learn() {
         <CourseLibrary
           progress={progress}
           onSelectCourse={goToCourse}
+          hideHeader={hideHeader}
         />
       )}
 

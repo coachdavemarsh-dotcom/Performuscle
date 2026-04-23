@@ -11,7 +11,6 @@ import Habits from './components/client/Habits.jsx'
 import Progress from './components/client/Progress.jsx'
 import CheckIn from './components/client/CheckIn.jsx'
 import Education from './components/client/Education.jsx'
-import Learn from './components/client/Learn.jsx'
 import GoalMap from './components/client/GoalMap.jsx'
 import CycleTracker from './components/client/CycleTracker.jsx'
 import TestResults from './components/client/TestResults.jsx'
@@ -109,7 +108,6 @@ function AppRoutes() {
         <Route path="progress" element={<Progress />} />
         <Route path="checkin" element={<CheckIn />} />
         <Route path="education" element={<Education />} />
-        <Route path="learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
         <Route path="goalmap" element={<GoalMap />} />
         <Route path="cycle" element={<CycleTracker />} />
         <Route path="results" element={<TestResults />} />

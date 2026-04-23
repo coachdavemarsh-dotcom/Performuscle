@@ -6,6 +6,7 @@ import { getWeekSessions, upsertSetLog, completeSession, upsertConditioningLog, 
 import { epley } from '../../lib/calculators.js'
 import { EXERCISE_BY_NAME } from '../../data/exerciseLibrary.js'
 import MovementPrep from '../shared/MovementPrep.jsx'
+import ProgressionCard from '../shared/ProgressionCard.jsx'
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -2129,6 +2130,9 @@ export default function Training() {
   const sessionType = session?.session_type || 'strength'
   const typeMeta = SESSION_TYPE_META[sessionType] || SESSION_TYPE_META.strength
 
+  // All exercises across the whole week (for progression analysis)
+  const allCurrentExercises = weekSessions.flatMap(s => s.exercises || [])
+
   // Strength session data
   const exercises = session ? [...(session.exercises || [])].sort((a, b) => a.order_index - b.order_index) : []
   const groups = []
@@ -2171,6 +2175,13 @@ export default function Training() {
           <button className="btn btn-primary" onClick={handleStrengthFinish}>Finish Session</button>
         )}
       </div>
+
+      {/* Weekly progressive overload targets */}
+      <ProgressionCard
+        program={program}
+        exercises={allCurrentExercises}
+        prevWeightMap={prevWeightMap}
+      />
 
       {/* Week session picker */}
       <WeekSessionPicker sessions={weekSessions} selectedId={session?.id} onSelect={s => { setSession(s); setDone(false); setCondResult(null); setWorkoutStarted(false); setTotalSetsDone(0) }} />

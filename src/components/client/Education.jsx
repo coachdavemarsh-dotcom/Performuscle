@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { supabase } from '../../lib/supabase.js'
+import Learn from './Learn.jsx'
 
 // ============================================================
 // BUILT-IN MODULE LIBRARY (used until coach uploads content)
@@ -784,6 +785,7 @@ function ModuleCard({ module, clientWeek, completed, onClick }) {
 
 export default function Education() {
   const { profile } = useAuth()
+  const [tab, setTab] = useState('articles') // 'articles' | 'courses'
   const [activeCategory, setActiveCategory] = useState('all')
   const [selectedModule, setSelectedModule] = useState(null)
   const [search, setSearch] = useState('')
@@ -856,7 +858,7 @@ export default function Education() {
   const totalCompleted = Object.keys(completions).length
   const overallPct = totalMods > 0 ? Math.round((totalCompleted / totalMods) * 100) : 0
 
-  if (selectedModule) {
+  if (tab === 'articles' && selectedModule) {
     return (
       <ModuleDetail
         module={selectedModule}
@@ -868,6 +870,31 @@ export default function Education() {
     )
   }
 
+  // ── Tab switcher ─────────────────────────────────────────────
+  const TabBar = () => (
+    <div style={{ display: 'flex', gap: 4, marginBottom: 24 }}>
+      {[
+        { key: 'articles', label: 'Articles & Quizzes' },
+        { key: 'courses',  label: 'Courses' },
+      ].map(t => (
+        <button
+          key={t.key}
+          onClick={() => setTab(t.key)}
+          style={{
+            fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: 1.5,
+            padding: '7px 18px', borderRadius: 6, cursor: 'pointer',
+            background: tab === t.key ? 'var(--accent)' : 'var(--s3)',
+            border: `1px solid ${tab === t.key ? 'var(--accent)' : 'var(--border)'}`,
+            color: tab === t.key ? 'var(--ink)' : 'var(--muted)',
+            transition: 'all .15s',
+          }}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  )
+
   return (
     <div>
       <div className="page-header">
@@ -876,6 +903,14 @@ export default function Education() {
           <div className="page-subtitle">Training · Nutrition · Recovery · Programming · Mindset</div>
         </div>
       </div>
+
+      <TabBar />
+
+      {/* ── Courses tab ── */}
+      {tab === 'courses' && <Learn hideHeader />}
+
+      {/* ── Articles & Quizzes tab ── */}
+      {tab === 'articles' && <>
 
       {/* Overall progress */}
       <div className="card" style={{ marginBottom: 20, padding: '14px 18px' }}>
@@ -959,6 +994,8 @@ export default function Education() {
           <div className="empty-state-text">No modules match your search</div>
         </div>
       )}
+
+      </>}
     </div>
   )
 }
