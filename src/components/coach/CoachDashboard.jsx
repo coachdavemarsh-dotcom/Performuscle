@@ -443,6 +443,127 @@ function InviteClientModal({ onClose }) {
   )
 }
 
+// ─── onboarding video settings ────────────────────────────────────────────────
+
+const FMS_VIDEO_FIELDS = [
+  { id: 'welcome',              label: 'Welcome / Intro Video',       desc: 'Shown to every new client before they start onboarding' },
+  { id: 'deep_squat',           label: 'Deep Squat Demo',             desc: 'FMS test 1' },
+  { id: 'hurdle_step',          label: 'Hurdle Step Demo',            desc: 'FMS test 2' },
+  { id: 'inline_lunge',         label: 'Inline Lunge Demo',           desc: 'FMS test 3' },
+  { id: 'shoulder_mobility',    label: 'Shoulder Mobility Demo',      desc: 'FMS test 4' },
+  { id: 'active_straight_leg',  label: 'Active Straight Leg Raise',   desc: 'FMS test 5' },
+  { id: 'trunk_stability',      label: 'Trunk Stability Push-Up',     desc: 'FMS test 6' },
+  { id: 'rotary_stability',     label: 'Rotary Stability Demo',       desc: 'FMS test 7' },
+]
+
+function OnboardingVideoSettings({ coachId }) {
+  const [urls, setUrls]       = useState({})
+  const [open, setOpen]       = useState(false)
+  const [saving, setSaving]   = useState(false)
+  const [saved, setSaved]     = useState(false)
+
+  useEffect(() => {
+    if (!coachId) return
+    supabase
+      .from('profiles')
+      .select('onboarding_videos')
+      .eq('id', coachId)
+      .single()
+      .then(({ data }) => { if (data?.onboarding_videos) setUrls(data.onboarding_videos) })
+  }, [coachId])
+
+  async function handleSave() {
+    setSaving(true)
+    await supabase.from('profiles').update({ onboarding_videos: urls }).eq('id', coachId)
+    setSaving(false)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2500)
+  }
+
+  return (
+    <div className="card section-gap">
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+          background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left',
+        }}
+      >
+        <div style={{
+          width: 36, height: 36, borderRadius: 8, flexShrink: 0,
+          background: 'linear-gradient(135deg,var(--accent),var(--accent-hi))',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 2.5l10 5.5-10 5.5V2.5z" fill="#060608"/>
+          </svg>
+        </div>
+        <div style={{ flex: 1 }}>
+          <div className="card-title">Onboarding Videos</div>
+          <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+            Paste YouTube or Vimeo URLs — shown to clients during onboarding
+          </div>
+        </div>
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ color: 'var(--muted)', transform: open ? 'rotate(180deg)' : '', transition: 'transform .2s', flexShrink: 0 }}>
+          <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </button>
+
+      {open && (
+        <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{
+            padding: '10px 14px', borderRadius: 8,
+            background: 'rgba(0,200,150,.06)', border: '1px solid rgba(0,200,150,.15)',
+            fontSize: 12, color: 'var(--muted)', lineHeight: 1.6,
+          }}>
+            💡 Supports <strong style={{ color: 'var(--white)' }}>YouTube</strong> and <strong style={{ color: 'var(--white)' }}>Vimeo</strong> URLs. Paste the full link — e.g. <code style={{ color: 'var(--accent)', fontSize: 11 }}>https://vimeo.com/123456789</code>
+          </div>
+
+          {FMS_VIDEO_FIELDS.map(f => (
+            <div key={f.id} style={{
+              padding: '14px 16px', borderRadius: 8,
+              background: 'var(--s3)', border: '1px solid var(--border)',
+              borderLeft: f.id === 'welcome' ? '3px solid var(--accent)' : '1px solid var(--border)',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: 0.5, color: 'var(--white)' }}>
+                    {f.label}
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>{f.desc}</div>
+                </div>
+                {urls[f.id] && (
+                  <span style={{
+                    fontSize: 9, padding: '2px 8px', borderRadius: 4,
+                    background: 'rgba(0,200,150,.1)', color: 'var(--accent)',
+                    border: '1px solid rgba(0,200,150,.2)', alignSelf: 'flex-start', flexShrink: 0,
+                  }}>SET</span>
+                )}
+              </div>
+              <input
+                className="input"
+                style={{ fontSize: 12 }}
+                placeholder="Paste YouTube or Vimeo URL…"
+                value={urls[f.id] || ''}
+                onChange={e => setUrls(prev => ({ ...prev, [f.id]: e.target.value }))}
+              />
+            </div>
+          ))}
+
+          <button
+            className="btn btn-primary"
+            onClick={handleSave}
+            disabled={saving}
+            style={{ marginTop: 4 }}
+          >
+            {saving ? 'Saving…' : saved ? '✓ Saved' : 'Save Video URLs'}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function CoachDashboard() {
   const { user } = useAuth()
   const { clients, activeClients, pendingCheckIns, overdueCheckIns, loading } = useCoach()
@@ -692,6 +813,10 @@ export default function CoachDashboard() {
           </div>
         </div>
       )}
+
+      {/* Onboarding video settings */}
+      <OnboardingVideoSettings coachId={user?.id} />
+
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase.js'
 import { useAuth } from '../../hooks/useAuth.jsx'
@@ -160,6 +160,20 @@ const ROM_AREAS = [
   },
 ]
 
+// ─── video URL parser (YouTube + Vimeo) ──────────────────────────────────────
+
+function parseVideoEmbed(url) {
+  if (!url || typeof url !== 'string') return null
+  const u = url.trim()
+  // YouTube: watch?v=, youtu.be/, /embed/
+  const yt = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0&modestbranding=1`
+  // Vimeo: vimeo.com/ID or player.vimeo.com/video/ID
+  const vi = u.match(/(?:vimeo\.com\/(?:video\/)?|player\.vimeo\.com\/video\/)(\d+)/)
+  if (vi) return `https://player.vimeo.com/video/${vi[1]}`
+  return null
+}
+
 // ─── shared UI ────────────────────────────────────────────────────────────────
 
 function PillButton({ active, onClick, children, style = {} }) {
@@ -217,10 +231,14 @@ function InputField({ label, note, children }) {
 
 // ─── demo video component ─────────────────────────────────────────────────────
 
-function DemoVideo({ youtubeId, searchQuery, label = 'Watch Demo' }) {
+function DemoVideo({ videoUrl, youtubeId, searchQuery, label = 'Watch Demo' }) {
   const [open, setOpen] = useState(false)
 
-  if (!youtubeId) {
+  // Accept full URL (new) or bare YouTube ID (legacy), falling back to search
+  const embedUrl = parseVideoEmbed(videoUrl)
+    || (youtubeId ? `https://www.youtube.com/embed/${youtubeId}?rel=0` : null)
+
+  if (!embedUrl) {
     return (
       <a
         href={`https://www.youtube.com/results?search_query=${searchQuery}`}
@@ -248,13 +266,13 @@ function DemoVideo({ youtubeId, searchQuery, label = 'Watch Demo' }) {
         border: `1px solid ${open ? 'rgba(0,200,150,.2)' : 'rgba(100,160,255,.2)'}`,
         borderRadius: 4, padding: '4px 10px', cursor: 'pointer',
       }}>
-        <span>{open ? '▼' : '▶'}</span> {open ? 'HIDE VIDEO' : `${label.toUpperCase()} VIDEO`}
+        <span>{open ? '▼' : '▶'}</span> {open ? 'HIDE VIDEO' : `PLAY — ${label.toUpperCase()}`}
       </button>
       {open && (
         <div style={{ marginTop: 10, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border)' }}>
           <iframe
-            width="100%" height="200"
-            src={`https://www.youtube.com/embed/${youtubeId}?rel=0`}
+            width="100%" height="220"
+            src={embedUrl}
             title={label} frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -374,18 +392,72 @@ function ScoreButtons({ value, onChange }) {
 
 // ─── step: welcome ────────────────────────────────────────────────────────────
 
-function StepWelcome({ onNext }) {
+function StepWelcome({ onNext, coachVideoUrl }) {
+  const [videoOpen, setVideoOpen] = useState(false)
+  const embedUrl = parseVideoEmbed(coachVideoUrl)
+
   return (
     <div style={{ textAlign: 'center', padding: '10px 0 20px' }}>
-      <div style={{ fontSize: 48, marginBottom: 20 }}>👋</div>
+      <div style={{ fontSize: 48, marginBottom: 16 }}>👋</div>
       <h1 style={{
         fontFamily: 'var(--font-display)', fontSize: 36, letterSpacing: 2,
         background: 'linear-gradient(135deg,var(--accent),var(--accent-hi))',
         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: 12,
       }}>LET'S BUILD YOUR PLAN</h1>
-      <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.8, maxWidth: 340, margin: '0 auto 24px' }}>
-        This takes around 5 minutes across two parts. Your answers personalise everything — training, nutrition, and movement programming.
-      </p>
+
+      {/* Coach intro video */}
+      {embedUrl ? (
+        <div style={{ marginBottom: 24, textAlign: 'left' }}>
+          <button
+            onClick={() => setVideoOpen(o => !o)}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+              padding: '13px 16px', borderRadius: 10, cursor: 'pointer',
+              background: videoOpen ? 'rgba(0,200,150,.06)' : 'var(--s3)',
+              border: `1px solid ${videoOpen ? 'var(--border-accent)' : 'var(--border)'}`,
+              transition: 'all .15s',
+            }}
+          >
+            <div style={{
+              width: 36, height: 36, borderRadius: 8, flexShrink: 0,
+              background: 'linear-gradient(135deg,var(--accent),var(--accent-hi))',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M3 2l9 5-9 5V2z" fill="#060608"/>
+              </svg>
+            </div>
+            <div style={{ flex: 1, textAlign: 'left' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: 1, color: 'var(--white)' }}>
+                A MESSAGE FROM DAVE
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                Watch before you start — what to expect & how it works
+              </div>
+            </div>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ color: 'var(--muted)', transform: videoOpen ? 'rotate(180deg)' : '', transition: 'transform .2s', flexShrink: 0 }}>
+              <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+          {videoOpen && (
+            <div style={{ borderRadius: '0 0 10px 10px', overflow: 'hidden', border: '1px solid var(--border-accent)', borderTop: 'none' }}>
+              <iframe
+                width="100%" height="260"
+                src={embedUrl}
+                title="Welcome from Dave"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          )}
+        </div>
+      ) : (
+        <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.8, maxWidth: 340, margin: '0 auto 24px' }}>
+          This takes around 5–10 minutes across two parts. Your answers personalise everything — training, nutrition, and movement programming.
+        </p>
+      )}
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 340, margin: '0 auto 28px', textAlign: 'left' }}>
         {[
           { icon: '👤', label: 'Part 1 — Your Profile', desc: 'Goals, body stats & lifestyle' },
@@ -781,7 +853,7 @@ function StepPosture({ data, update, onNext, onBack }) {
 
 // ─── step: FMS ────────────────────────────────────────────────────────────────
 
-function StepFMS({ data, update, onNext, onBack }) {
+function StepFMS({ data, update, onNext, onBack, videoUrls = {} }) {
   const [openTest, setOpenTest] = useState(FMS_TESTS[0].id)
 
   function updateFMS(testId, field, value) {
@@ -887,7 +959,7 @@ function StepFMS({ data, update, onNext, onBack }) {
 
                   {/* Demo video link */}
                   <div style={{ marginBottom: 12 }}>
-                    <DemoVideo youtubeId={test.youtubeId} searchQuery={test.youtubeSearch} label={`Demo — ${test.name}`} />
+                    <DemoVideo videoUrl={videoUrls[test.id]} searchQuery={test.youtubeSearch} label={`Demo — ${test.name}`} />
                   </div>
 
                   {/* Scoring criteria */}
@@ -1315,9 +1387,26 @@ function ProgressBar({ current, total, part, partTotal }) {
 export default function Onboarding() {
   const { user, profile, refreshProfile } = useAuth()
   const navigate = useNavigate()
-  const [step, setStep]     = useState(0)
-  const [saving, setSaving] = useState(false)
-  const [error, setError]   = useState(null)
+  const [step, setStep]         = useState(0)
+  const [saving, setSaving]     = useState(false)
+  const [error, setError]       = useState(null)
+  const [coachVideos, setCoachVideos] = useState({})
+
+  // Fetch coach's onboarding video URLs
+  useEffect(() => {
+    const coachId = user?.user_metadata?.coach_id || profile?.coach_id
+    if (!coachId) return
+    supabase
+      .from('profiles')
+      .select('onboarding_videos')
+      .eq('id', coachId)
+      .single()
+      .then(({ data: coachProfile }) => {
+        if (coachProfile?.onboarding_videos) {
+          setCoachVideos(coachProfile.onboarding_videos)
+        }
+      })
+  }, [user, profile])
 
   const [data, setData] = useState({
     full_name:              profile?.full_name || '',
@@ -1531,13 +1620,13 @@ export default function Onboarding() {
           )}
 
           <div key={step} style={{ animation: 'fadeIn .2s ease' }}>
-            {currentStepId === 'welcome'  && <StepWelcome onNext={nextStep} />}
+            {currentStepId === 'welcome'  && <StepWelcome onNext={nextStep} coachVideoUrl={coachVideos.welcome} />}
             {currentStepId === 'about'    && <StepAboutYou data={data} update={update} onNext={nextStep} onBack={prevStep} />}
             {currentStepId === 'goal'     && <StepYourGoal data={data} update={update} onNext={nextStep} onBack={prevStep} />}
             {currentStepId === 'lifestyle'&& <StepLifestyle data={data} update={update} onNext={nextStep} onBack={prevStep} />}
             {currentStepId === 'cycle'    && <StepCycleTracking data={data} update={update} onNext={nextStep} onBack={prevStep} />}
             {currentStepId === 'posture'  && <StepPosture data={data} update={update} onNext={nextStep} onBack={prevStep} />}
-            {currentStepId === 'fms'      && <StepFMS data={data} update={update} onNext={nextStep} onBack={prevStep} />}
+            {currentStepId === 'fms'      && <StepFMS data={data} update={update} onNext={nextStep} onBack={prevStep} videoUrls={coachVideos} />}
             {currentStepId === 'movement'  && <StepMovement data={data} update={update} onNext={nextStep} onBack={prevStep} />}
             {currentStepId === 'baseline'  && <StepBaseline data={data} onNext={nextStep} onBack={prevStep} />}
             {currentStepId === 'done'      && <StepAllSet saving={saving} error={error} />}

@@ -194,6 +194,14 @@ const icons = {
       <path d="M10.3 10h1.4M11 9.3v1.4"/>
     </svg>
   ),
+  fuel: (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M5 14V8.5A3.5 3.5 0 018.5 5h0A3.5 3.5 0 0112 8.5V14"/>
+      <path d="M3 14h10"/>
+      <path d="M8.5 5V2M7 2h3"/>
+      <circle cx="8.5" cy="9.5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+  ),
 }
 
 const clientNav = [
@@ -201,6 +209,7 @@ const clientNav = [
   { to: '/training', label: 'Training', icon: 'training' },
   { to: '/nutrition', label: 'Nutrition', icon: 'nutrition' },
   { to: '/meal-planner', label: 'Meal Planner', icon: 'mealplanner' },
+  { to: '/fuel', label: 'Performance Fuel', icon: 'fuel' },
   { to: '/habits', label: 'Habits', icon: 'habits' },
   { to: '/progress', label: 'Progress', icon: 'progress' },
   { to: '/checkin', label: 'Check-In', icon: 'checkin' },

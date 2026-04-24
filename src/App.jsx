@@ -35,6 +35,7 @@ import Mobility from './components/client/Mobility.jsx'
 import PSMF from './components/client/PSMF.jsx'
 import MealPlanTemplates from './components/coach/MealPlanTemplates.jsx'
 import MealPlannerWizard from './components/client/MealPlannerWizard.jsx'
+import PerformanceFuel from './components/client/PerformanceFuel.jsx'
 
 // Auth pages
 import Auth from './components/Auth.jsx'
@@ -116,6 +117,7 @@ function AppRoutes() {
         <Route path="mobility" element={<Mobility />} />
         <Route path="psmf" element={<PSMF />} />
         <Route path="meal-planner" element={<MealPlannerWizard />} />
+        <Route path="fuel" element={<PerformanceFuel />} />
 
         {/* Coach routes */}
         <Route
