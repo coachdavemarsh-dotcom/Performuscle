@@ -456,6 +456,152 @@ const FMS_VIDEO_FIELDS = [
   { id: 'rotary_stability',     label: 'Rotary Stability Demo',       desc: 'FMS test 7' },
 ]
 
+// ─── Leads Panel ──────────────────────────────────────────────────────────────
+
+const SOURCE_LABELS = {
+  'meal-planner': '🍽 Meal Planner',
+}
+
+function LeadsPanel() {
+  const [leads,    setLeads]    = useState([])
+  const [loading,  setLoading]  = useState(true)
+  const [filter,   setFilter]   = useState('all')   // 'all' | 'new' | 'converted'
+
+  useEffect(() => {
+    supabase
+      .from('leads')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (!error && data) setLeads(data)
+        setLoading(false)
+      })
+  }, [])
+
+  async function toggleConverted(lead) {
+    const next = !lead.converted
+    await supabase.from('leads').update({ converted: next }).eq('id', lead.id)
+    setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, converted: next } : l))
+  }
+
+  const filtered = leads.filter(l =>
+    filter === 'all'       ? true :
+    filter === 'new'       ? !l.converted :
+    filter === 'converted' ? l.converted : true
+  )
+
+  const newCount  = leads.filter(l => !l.converted).length
+  const convCount = leads.filter(l => l.converted).length
+
+  return (
+    <div className="card section-gap">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: '0.12em', color: 'var(--accent)', marginBottom: 4 }}>LEAD CAPTURE</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, letterSpacing: '0.04em', color: 'var(--white)' }}>MEAL PLANNER LEADS</div>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {[['all', `All (${leads.length})`], ['new', `New (${newCount})`], ['converted', `Converted (${convCount})`]].map(([val, label]) => (
+            <button
+              key={val}
+              onClick={() => setFilter(val)}
+              style={{
+                padding: '6px 14px', borderRadius: 6, fontSize: 11, fontFamily: 'var(--font-display)',
+                letterSpacing: '0.05em', cursor: 'pointer', border: '1px solid',
+                background: filter === val ? 'var(--accent)'               : 'rgba(255,255,255,0.04)',
+                color:      filter === val ? 'var(--ink)'                  : 'var(--muted)',
+                borderColor:filter === val ? 'transparent'                 : 'rgba(255,255,255,0.08)',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--muted)', fontSize: 13 }}>Loading leads…</div>
+      ) : filtered.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+          <div style={{ fontSize: 32, marginBottom: 12 }}>📬</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 15, color: 'var(--white)', marginBottom: 8 }}>
+            {filter === 'all' ? 'NO LEADS YET' : `NO ${filter.toUpperCase()} LEADS`}
+          </div>
+          <div style={{ fontSize: 13, color: 'var(--muted)' }}>
+            {filter === 'all' ? 'Leads will appear here when someone submits the meal planner.' : 'Adjust the filter above.'}
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {filtered.map(lead => (
+            <div key={lead.id} style={{
+              display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
+              background: 'var(--bg-card-2)', borderRadius: 8,
+              border: `1px solid ${lead.converted ? 'rgba(0,200,150,0.2)' : 'rgba(255,255,255,0.06)'}`,
+              opacity: lead.converted ? 0.7 : 1,
+            }}>
+              {/* Avatar */}
+              <div style={{
+                width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+                background: lead.converted ? 'rgba(0,200,150,0.15)' : 'rgba(255,255,255,0.07)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: 'var(--font-display)', fontSize: 13, color: lead.converted ? 'var(--accent)' : 'var(--sub)',
+              }}>
+                {lead.name ? initials(lead.name) : lead.email[0].toUpperCase()}
+              </div>
+
+              {/* Info */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 14, color: 'var(--white)', fontWeight: 500, marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {lead.name || <span style={{ color: 'var(--muted)', fontStyle: 'italic' }}>No name</span>}
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lead.email}</div>
+              </div>
+
+              {/* Source + date */}
+              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                <div style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: '0.04em', marginBottom: 3 }}>
+                  {SOURCE_LABELS[lead.source] || lead.source}
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--muted)' }}>
+                  {daysAgo(lead.created_at)}
+                </div>
+              </div>
+
+              {/* Converted toggle */}
+              <button
+                onClick={() => toggleConverted(lead)}
+                title={lead.converted ? 'Mark as new' : 'Mark as converted'}
+                style={{
+                  flexShrink: 0, padding: '5px 12px', borderRadius: 6, fontSize: 10,
+                  fontFamily: 'var(--font-display)', letterSpacing: '0.06em', cursor: 'pointer',
+                  border: '1px solid',
+                  background:   lead.converted ? 'rgba(0,200,150,0.12)' : 'rgba(255,255,255,0.04)',
+                  color:        lead.converted ? 'var(--accent)'        : 'var(--muted)',
+                  borderColor:  lead.converted ? 'rgba(0,200,150,0.3)'  : 'rgba(255,255,255,0.08)',
+                }}
+              >
+                {lead.converted ? '✓ CLIENT' : 'CONVERT'}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {leads.length > 0 && (
+        <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--muted)' }}>
+          <span>{leads.length} total lead{leads.length !== 1 ? 's' : ''}</span>
+          <span style={{ color: 'var(--accent)' }}>
+            {convCount} converted ({leads.length ? Math.round((convCount / leads.length) * 100) : 0}%)
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Onboarding Video Settings ────────────────────────────────────────────────
+
 function OnboardingVideoSettings({ coachId }) {
   const [urls, setUrls]       = useState({})
   const [open, setOpen]       = useState(false)
@@ -813,6 +959,9 @@ export default function CoachDashboard() {
           </div>
         </div>
       )}
+
+      {/* Leads panel */}
+      <LeadsPanel />
 
       {/* Onboarding video settings */}
       <OnboardingVideoSettings coachId={user?.id} />

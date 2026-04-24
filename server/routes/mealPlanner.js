@@ -709,6 +709,27 @@ router.post('/meal-planner/send-plan', async (req, res) => {
     return res.status(500).json({ error: err.message })
   }
 
+  // Save lead to Supabase — fire-and-forget (non-fatal)
+  const supabaseForLead = getSupabase()
+  if (supabaseForLead) {
+    supabaseForLead
+      .from('leads')
+      .upsert(
+        {
+          email,
+          name:    name || null,
+          source:  'meal-planner',
+          tags:    ['meal-plan-lead'],
+          meta:    { mealsPerDay, trainingDays, dietaryFilters, kcal: macros?.kcal },
+        },
+        { onConflict: 'email', ignoreDuplicates: false }
+      )
+      .then(({ error }) => {
+        if (error) console.warn('[MealPlanner] Lead save failed:', error.message)
+        else console.log(`[MealPlanner] Lead saved: ${email}`)
+      })
+  }
+
   // Optional GHL webhook — fire-and-forget
   if (process.env.GHL_WEBHOOK_URL) {
     fetch(process.env.GHL_WEBHOOK_URL, {
