@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { useClient } from '../../hooks/useClient.js'
 import { getMeasurements, getHabitLogsRange, supabase } from '../../lib/supabase.js'
-import { navalBF } from '../../lib/calculators.js'
+import { navalBF, periodisedNutrition } from '../../lib/calculators.js'
 
 // ─── Featured Content hero banner ────────────────────────────────────────────
 function FeaturedContentBanner({ coachId }) {
@@ -403,6 +403,124 @@ function CycleCard({ profile }) {
   )
 }
 
+// ─── nutrition targets card ───────────────────────────────────────────────────
+
+const DAY_TYPE_CONFIG = {
+  training: { label: 'Training Day', icon: '⚡', color: 'var(--accent)'  },
+  moderate: { label: 'Moderate Day', icon: '🔄', color: 'var(--info)'    },
+  rest:     { label: 'Rest Day',     icon: '💤', color: 'var(--purple)'  },
+}
+
+function NutritionTargetsCard({ profile }) {
+  const [dayType, setDayType] = useState('training')
+
+  const targets = (() => {
+    const { gender, current_weight, height_cm, date_of_birth, activity_level, goal_type } = profile || {}
+    if (!current_weight || !height_cm || !date_of_birth) return null
+    const age = Math.floor((Date.now() - new Date(date_of_birth)) / (365.25 * 24 * 60 * 60 * 1000))
+    return periodisedNutrition({
+      gender:        gender === 'non_binary' ? 'female' : (gender || 'male'),
+      weight:        current_weight,
+      height:        height_cm,
+      age,
+      activityLevel: activity_level || 'moderate',
+      goalType:      goal_type      || 'maintain',
+    })
+  })()
+
+  if (!targets) return null
+
+  const cfg    = DAY_TYPE_CONFIG[dayType]
+  const today  = targets[`${dayType}Day`] || targets.moderateDay
+  const GOAL_LABEL = { cut: 'Fat Loss', maintain: 'Maintenance', gain: 'Muscle Gain', recomp: 'Recomp' }[profile?.goal_type] || 'Maintenance'
+
+  return (
+    <div className="card" style={{ borderLeft: `3px solid ${cfg.color}` }}>
+      {/* Header */}
+      <div className="card-header" style={{ marginBottom: 16 }}>
+        <div>
+          <div className="card-title">Daily Nutrition Targets</div>
+          <div className="label" style={{ marginTop: 2 }}>{GOAL_LABEL} · TDEE {targets.tdee} kcal</div>
+        </div>
+        <Link to="/nutrition" style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-display)', letterSpacing: '0.06em' }}>
+          LOG FOOD →
+        </Link>
+      </div>
+
+      {/* Day type toggle */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 20 }}>
+        {Object.entries(DAY_TYPE_CONFIG).map(([key, c]) => (
+          <button
+            key={key}
+            onClick={() => setDayType(key)}
+            style={{
+              flex: 1, padding: '8px 0', borderRadius: 8, cursor: 'pointer',
+              fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: '0.08em',
+              border: `1.5px solid ${dayType === key ? c.color : 'var(--border-hi)'}`,
+              background: dayType === key ? `${c.color}15` : 'var(--s2)',
+              color: dayType === key ? c.color : 'var(--sub)',
+              transition: 'all 0.15s',
+            }}
+          >
+            {c.icon} {c.label.split(' ')[0].toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* Main calorie target */}
+      <div style={{ textAlign: 'center', padding: '16px 0 20px', borderBottom: '1px solid var(--border-hi)', marginBottom: 16 }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: '0.12em', color: 'var(--muted)', marginBottom: 6 }}>
+          {cfg.icon} {cfg.label.toUpperCase()} TARGET
+        </div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 52, color: cfg.color, lineHeight: 1 }}>
+          {today.kcal.toLocaleString()}
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>calories</div>
+      </div>
+
+      {/* Macro split */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
+        {[
+          { label: 'PROTEIN', value: today.protein_g, unit: 'g', color: 'var(--info)',   sub: `${(today.protein_g / (profile?.current_weight || 80)).toFixed(1)}g/kg` },
+          { label: 'CARBS',   value: today.carbs_g,   unit: 'g', color: cfg.color,        sub: 'primary fuel'   },
+          { label: 'FAT',     value: today.fat_g,     unit: 'g', color: 'var(--warn)',    sub: `${(today.fat_g / (profile?.current_weight || 80)).toFixed(1)}g/kg` },
+        ].map(m => (
+          <div key={m.label} style={{
+            background: 'var(--s3)', borderRadius: 8, padding: '12px 10px', textAlign: 'center',
+            border: `1px solid ${m.color}22`,
+          }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: '1.5px', color: 'var(--muted)', marginBottom: 6 }}>{m.label}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: m.color, lineHeight: 1 }}>{m.value}</div>
+            <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 3 }}>{m.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Training vs Rest comparison */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8,
+        padding: '12px 14px', background: 'var(--s3)', borderRadius: 8,
+        border: '1px solid var(--border-hi)',
+      }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: '1.5px', color: 'var(--accent)', marginBottom: 4 }}>⚡ TRAINING DAY</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--white)' }}>{targets.trainingDay.kcal.toLocaleString()} <span style={{ fontSize: 11, color: 'var(--muted)' }}>kcal</span></div>
+          <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>C: {targets.trainingDay.carbs_g}g · P: {targets.trainingDay.protein_g}g · F: {targets.trainingDay.fat_g}g</div>
+        </div>
+        <div style={{ borderLeft: '1px solid var(--border-hi)', paddingLeft: 12 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: '1.5px', color: 'var(--purple)', marginBottom: 4 }}>💤 REST DAY</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--white)' }}>{targets.restDay.kcal.toLocaleString()} <span style={{ fontSize: 11, color: 'var(--muted)' }}>kcal</span></div>
+          <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>C: {targets.restDay.carbs_g}g · P: {targets.restDay.protein_g}g · F: {targets.restDay.fat_g}g</div>
+        </div>
+      </div>
+
+      <div style={{ marginTop: 10, fontSize: 11, color: 'var(--muted)', textAlign: 'center' }}>
+        Carb cycling — protein stays fixed · carbs flex with training demand
+      </div>
+    </div>
+  )
+}
+
 // ─── stat card ────────────────────────────────────────────────────────────────
 
 function Stat({ label, value, unit, sub, color = 'var(--white)', warn }) {
@@ -511,6 +629,11 @@ export default function Dashboard() {
       {/* Body composition */}
       <div className="section-gap">
         <BodyCompCard profile={profile} latestWeight={latestWeight} />
+      </div>
+
+      {/* Nutrition targets card */}
+      <div className="section-gap">
+        <NutritionTargetsCard profile={profile} />
       </div>
 
       {/* Cycle tracking card (female/non-binary only) */}

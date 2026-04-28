@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth.jsx'
 import { useClient } from '../../hooks/useClient.js'
 import MacroBar from '../shared/MacroBar.jsx'
 import { getNutritionLog, upsertNutritionLog, searchFoods } from '../../lib/supabase.js'
-import { sumMacros } from '../../lib/calculators.js'
+import { sumMacros, periodisedNutrition } from '../../lib/calculators.js'
 import RecipeLibrary from './RecipeLibrary.jsx'
 import MealPlanView from './MealPlanView.jsx'
 
@@ -387,11 +387,27 @@ export default function Nutrition() {
     setTimeout(() => setSaved(false), 2000)
   }
 
-  // Get targets from nutrition plan for this day type
+  // Auto-calculated periodised targets from profile data
+  const autoTargets = (() => {
+    const { gender, current_weight, height_cm, date_of_birth, activity_level, goal_type } = profile || {}
+    if (!current_weight || !height_cm || !date_of_birth) return null
+    const age = Math.floor((Date.now() - new Date(date_of_birth)) / (365.25 * 24 * 60 * 60 * 1000))
+    const result = periodisedNutrition({
+      gender: gender === 'non_binary' ? 'female' : (gender || 'male'),
+      weight: current_weight,
+      height: height_cm,
+      age,
+      activityLevel: activity_level || 'moderate',
+      goalType:      goal_type      || 'maintain',
+    })
+    return { training: result.trainingDay, moderate: result.moderateDay, rest: result.restDay, meta: result.meta }
+  })()
+
+  // Coach-assigned targets take priority; fall back to auto-calculated
   const planDayType = nutritionPlan?.day_types?.find(dt => dt.label === dayType || dt.day_type === dayType)
   const targets = planDayType
     ? { kcal: planDayType.kcal, protein_g: planDayType.protein_g, carbs_g: planDayType.carbs_g, fat_g: planDayType.fat_g }
-    : {}
+    : (autoTargets?.[dayType] || {})
 
   const allFoods = meals.flatMap(m => m.foods || [])
   const currentMacros = sumMacros(allFoods)

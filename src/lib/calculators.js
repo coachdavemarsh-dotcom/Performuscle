@@ -203,6 +203,88 @@ export function rollingAverage(entries, window = 7) {
 }
 
 /**
+ * Periodised nutrition — calculates training day, rest day and moderate day
+ * macro targets based on profile data. Uses carb cycling: protein stays fixed,
+ * carbs flex up on training days and down on rest days, fat fills the gap.
+ *
+ * @param {object} p
+ * @param {string}  p.gender        - 'male'|'female'|'non_binary'
+ * @param {number}  p.weight        - kg
+ * @param {number}  p.height        - cm
+ * @param {number}  p.age           - years
+ * @param {string}  p.activityLevel - 'sedentary'|'light'|'moderate'|'active'|'very_active'
+ * @param {string}  p.goalType      - 'cut'|'maintain'|'gain'|'recomp'
+ * @param {number}  [p.trainingDaysPerWeek] - defaults inferred from activityLevel
+ */
+export function periodisedNutrition({ gender, weight, height, age, activityLevel, goalType, trainingDaysPerWeek }) {
+  const w = parseFloat(weight) || 80
+  const h = parseFloat(height) || 175
+  const a = parseInt(age)      || 30
+
+  // 1. BMR (Mifflin-St Jeor)
+  const bmr = gender === 'male'
+    ? 10 * w + 6.25 * h - 5 * a + 5
+    : 10 * w + 6.25 * h - 5 * a - 161
+
+  // 2. TDEE
+  const actMult = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very_active: 1.9 }
+  const tdee = Math.round(bmr * (actMult[activityLevel] || 1.55))
+
+  // 3. Weekly calorie goal adjustment
+  const adjust = { cut: -400, maintain: 0, gain: 250, recomp: -200 }[goalType] ?? 0
+  const avgDaily = tdee + adjust
+
+  // 4. Training days per week (infer if not supplied)
+  const trainingDays = trainingDaysPerWeek
+    ?? { sedentary: 0, light: 2, moderate: 3, active: 5, very_active: 6 }[activityLevel]
+    ?? 3
+  const restDays = 7 - trainingDays
+
+  // 5. Calorie split: training days +300 vs rest days (weekly total preserved)
+  const BOOST = 300
+  const restKcal     = Math.round((avgDaily * 7 - trainingDays * BOOST) / 7 / 50) * 50
+  const trainingKcal = restKcal + BOOST
+  const moderateKcal = Math.round(avgDaily / 50) * 50
+
+  // 6. Protein — same all days (structural, not a flex macro)
+  const proteinPerKg = { cut: 2.3, maintain: 2.0, gain: 1.8, recomp: 2.2 }[goalType] ?? 2.0
+  const proteinG = Math.round(w * proteinPerKg / 5) * 5
+  const proteinKcal = proteinG * 4
+
+  // 7. Fat — higher on rest days (preferred substrate at rest), lower training days
+  const fatTraining = Math.round(w * 0.8 / 5) * 5
+  const fatRest     = Math.round(w * 1.1 / 5) * 5
+  const fatModerate = Math.round(w * 0.95 / 5) * 5
+
+  // 8. Carbs = remaining calories ÷ 4
+  function carbs(kcal, fat) { return Math.max(0, Math.round((kcal - proteinKcal - fat * 9) / 4 / 5) * 5) }
+
+  return {
+    tdee,
+    avgDaily: moderateKcal,
+    trainingDay: {
+      kcal:      trainingKcal,
+      protein_g: proteinG,
+      carbs_g:   carbs(trainingKcal, fatTraining),
+      fat_g:     fatTraining,
+    },
+    moderateDay: {
+      kcal:      moderateKcal,
+      protein_g: proteinG,
+      carbs_g:   carbs(moderateKcal, fatModerate),
+      fat_g:     fatModerate,
+    },
+    restDay: {
+      kcal:      restKcal,
+      protein_g: proteinG,
+      carbs_g:   carbs(restKcal, fatRest),
+      fat_g:     fatRest,
+    },
+    meta: { trainingDays, restDays, goalAdjust: adjust },
+  }
+}
+
+/**
  * Calculate macro targets from kcal goal and protein/fat priorities
  */
 export function macroTargets(kcal, proteinG, fatG) {
