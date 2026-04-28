@@ -2,424 +2,292 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { getActiveMealPlan } from '../../lib/supabase.js'
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// ─── Config ───────────────────────────────────────────────────────────────────
 
 const DAY_TABS = [
-  { key: 'training', label: 'Training Day' },
-  { key: 'moderate', label: 'Moderate Day' },
-  { key: 'rest', label: 'Rest Day' },
+  { key: 'training', label: 'Training',  icon: '⚡', color: 'var(--accent)'  },
+  { key: 'moderate', label: 'Moderate',  icon: '🔄', color: 'var(--info)'    },
+  { key: 'rest',     label: 'Rest',      icon: '💤', color: 'var(--purple)'  },
 ]
 
 const MEAL_SECTIONS = [
-  { key: 'breakfast', label: 'Breakfast' },
-  { key: 'lunch', label: 'Lunch' },
-  { key: 'dinner', label: 'Dinner' },
-  { key: 'snacks', label: 'Snacks' },
+  { key: 'breakfast',    label: 'Breakfast',       icon: '🌅' },
+  { key: 'pre_workout',  label: 'Pre-Workout',     icon: '⚡' },
+  { key: 'lunch',        label: 'Lunch',           icon: '☀️' },
+  { key: 'post_workout', label: 'Post-Workout',    icon: '💪' },
+  { key: 'dinner',       label: 'Dinner',          icon: '🌙' },
+  { key: 'snacks',       label: 'Snacks',          icon: '🍎' },
 ]
 
-// ─── Macro helpers ────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function sumSection(items = []) {
+function sumItems(items = []) {
   return items.reduce(
     (acc, item) => ({
-      kcal: acc.kcal + (item.kcal || 0),
+      kcal:      acc.kcal      + (item.kcal      || 0),
       protein_g: acc.protein_g + (item.protein_g || 0),
-      carbs_g: acc.carbs_g + (item.carbs_g || 0),
-      fat_g: acc.fat_g + (item.fat_g || 0),
+      carbs_g:   acc.carbs_g   + (item.carbs_g   || 0),
+      fat_g:     acc.fat_g     + (item.fat_g     || 0),
     }),
     { kcal: 0, protein_g: 0, carbs_g: 0, fat_g: 0 }
   )
 }
 
 function sumDay(dayData = {}) {
-  return MEAL_SECTIONS.reduce(
-    (acc, s) => {
-      const totals = sumSection(dayData[s.key])
-      return {
-        kcal: acc.kcal + totals.kcal,
-        protein_g: acc.protein_g + totals.protein_g,
-        carbs_g: acc.carbs_g + totals.carbs_g,
-        fat_g: acc.fat_g + totals.fat_g,
-      }
-    },
-    { kcal: 0, protein_g: 0, carbs_g: 0, fat_g: 0 }
+  return MEAL_SECTIONS.reduce((acc, s) => {
+    const t = sumItems(dayData[s.key])
+    return {
+      kcal:      acc.kcal      + t.kcal,
+      protein_g: acc.protein_g + t.protein_g,
+      carbs_g:   acc.carbs_g   + t.carbs_g,
+      fat_g:     acc.fat_g     + t.fat_g,
+    }
+  }, { kcal: 0, protein_g: 0, carbs_g: 0, fat_g: 0 })
+}
+
+// ─── Day totals strip ─────────────────────────────────────────────────────────
+
+function DayTotals({ dayData, color }) {
+  const t = sumDay(dayData)
+  const stats = [
+    { label: 'CALORIES', value: Math.round(t.kcal),      unit: 'kcal', color },
+    { label: 'PROTEIN',  value: Math.round(t.protein_g), unit: 'g',    color: 'var(--accent)' },
+    { label: 'CARBS',    value: Math.round(t.carbs_g),   unit: 'g',    color: 'var(--info)'   },
+    { label: 'FAT',      value: Math.round(t.fat_g),     unit: 'g',    color: 'var(--warn)'   },
+  ]
+  return (
+    <div style={{
+      display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginBottom: 20,
+    }}>
+      {stats.map(s => (
+        <div key={s.label} style={{
+          background: 'var(--s3)', borderRadius: 10, padding: '12px 8px', textAlign: 'center',
+          border: `1px solid ${s.color}22`,
+        }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: '1.5px', color: 'var(--muted)', marginBottom: 5 }}>
+            {s.label}
+          </div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: s.color, lineHeight: 1 }}>
+            {s.value}
+          </div>
+          <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>{s.unit}</div>
+        </div>
+      ))}
+    </div>
   )
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Food item row ────────────────────────────────────────────────────────────
 
-function MacroPill({ label, value, unit = 'g', color }) {
+function FoodRow({ item }) {
   return (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 3,
-        padding: '2px 7px',
-        borderRadius: 999,
-        background: color + '18',
-        color: color,
-        fontSize: 11,
-        fontFamily: 'var(--font-body)',
-        fontWeight: 600,
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {label}: {value}{unit}
-    </span>
-  )
-}
-
-function RecipeRow({ item }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        gap: 6,
-        padding: '8px 0',
-        borderBottom: '1px solid var(--border)',
-      }}
-    >
-      <span
-        style={{
-          fontFamily: 'var(--font-body)',
-          fontWeight: 700,
-          fontSize: 14,
-          color: 'var(--white)',
-          flex: '1 1 140px',
-          minWidth: 0,
-        }}
-      >
-        {item.name}
-      </span>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, flexShrink: 0 }}>
-        <MacroPill label="P" value={item.protein_g ?? 0} color="var(--accent)" />
-        <MacroPill label="C" value={item.carbs_g ?? 0} color="#2563eb" />
-        <MacroPill label="F" value={item.fat_g ?? 0} color="var(--warn)" />
-        <MacroPill label="" value={item.kcal ?? 0} unit="cal" color="var(--muted)" />
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border-hi)',
+    }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 14, color: 'var(--white)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {item.name}
+        </div>
+        {item.serving && (
+          <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 1 }}>{item.serving}</div>
+        )}
+      </div>
+      <div style={{ display: 'flex', gap: 10, flexShrink: 0, alignItems: 'center' }}>
+        <MacroChip value={item.protein_g ?? 0} label="P" color="var(--accent)" />
+        <MacroChip value={item.carbs_g   ?? 0} label="C" color="var(--info)"   />
+        <MacroChip value={item.fat_g     ?? 0} label="F" color="var(--warn)"   />
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--muted)', minWidth: 44, textAlign: 'right' }}>
+          {item.kcal ?? 0}<span style={{ fontSize: 9, marginLeft: 1 }}>kcal</span>
+        </div>
       </div>
     </div>
   )
 }
 
-function SectionTotalsRow({ totals }) {
+function MacroChip({ value, label, color }) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 6,
-        paddingTop: 10,
-        marginTop: 4,
-        borderTop: '1px solid var(--border-hi)',
-      }}
-    >
-      <span
-        style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: 11,
-          color: 'var(--muted)',
-          marginRight: 4,
-          alignSelf: 'center',
-        }}
-      >
-        Total:
-      </span>
-      <MacroPill label="P" value={Math.round(totals.protein_g)} color="var(--accent)" />
-      <MacroPill label="C" value={Math.round(totals.carbs_g)} color="#2563eb" />
-      <MacroPill label="F" value={Math.round(totals.fat_g)} color="var(--warn)" />
-      <MacroPill label="" value={Math.round(totals.kcal)} unit=" kcal" color="var(--muted)" />
+    <div style={{ textAlign: 'center', minWidth: 32 }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, color, lineHeight: 1 }}>
+        {Math.round(value)}
+      </div>
+      <div style={{ fontSize: 9, color: 'var(--muted)', letterSpacing: '0.05em' }}>{label}</div>
     </div>
   )
 }
 
-function MealSectionCard({ label, items = [] }) {
-  const totals = sumSection(items)
-  const hasItems = items.length > 0
+// ─── Meal section card ────────────────────────────────────────────────────────
+
+function MealSection({ section, items }) {
+  if (!items?.length) return null
+  const totals = sumItems(items)
 
   return (
-    <div
-      className="card"
-      style={{ marginBottom: 16 }}
-    >
-      <h3
-        style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 18,
-          color: 'var(--accent)',
-          letterSpacing: '0.05em',
-          margin: '0 0 10px 0',
-        }}
-      >
-        {label}
-      </h3>
-
-      {hasItems ? (
-        <>
+    <div className="card" style={{ marginBottom: 12 }}>
+      {/* Section header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 16 }}>{section.icon}</span>
           <div>
-            {items.map((item, i) => (
-              <RecipeRow key={item.recipe_id ?? i} item={item} />
-            ))}
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, letterSpacing: '0.08em', color: 'var(--white)' }}>
+              {section.label.toUpperCase()}
+            </div>
           </div>
-          <SectionTotalsRow totals={totals} />
-        </>
-      ) : (
-        <p
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 13,
-            color: 'var(--muted)',
-            margin: 0,
-          }}
-        >
-          No items in this meal.
-        </p>
+        </div>
+        {/* Section kcal */}
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, color: 'var(--muted)' }}>
+          {Math.round(totals.kcal)}<span style={{ fontSize: 10, marginLeft: 2 }}>kcal</span>
+        </div>
+      </div>
+
+      {/* Macro header row */}
+      <div style={{
+        display: 'flex', justifyContent: 'flex-end', gap: 10, paddingBottom: 6,
+        marginBottom: 2, borderBottom: '1px solid var(--border-hi)',
+      }}>
+        {[
+          { label: 'P', color: 'var(--accent)' },
+          { label: 'C', color: 'var(--info)'   },
+          { label: 'F', color: 'var(--warn)'   },
+        ].map(m => (
+          <div key={m.label} style={{ minWidth: 32, textAlign: 'center', fontSize: 9, color: m.color, fontFamily: 'var(--font-display)', letterSpacing: '0.08em' }}>
+            {m.label}
+          </div>
+        ))}
+        <div style={{ minWidth: 44 }} />
+      </div>
+
+      {/* Food rows */}
+      {items.map((item, i) => (
+        <FoodRow key={item.recipe_id ?? i} item={item} />
+      ))}
+
+      {/* Section totals */}
+      {items.length > 1 && (
+        <div style={{
+          display: 'flex', justifyContent: 'flex-end', alignItems: 'center',
+          gap: 10, paddingTop: 8, marginTop: 2,
+        }}>
+          <div style={{ fontSize: 10, color: 'var(--muted)', marginRight: 'auto' }}>TOTAL</div>
+          <MacroChip value={totals.protein_g} label="P" color="var(--accent)" />
+          <MacroChip value={totals.carbs_g}   label="C" color="var(--info)"   />
+          <MacroChip value={totals.fat_g}     label="F" color="var(--warn)"   />
+          <div style={{ minWidth: 44 }} />
+        </div>
       )}
     </div>
   )
 }
 
-function DayTotalsBar({ dayData }) {
-  const totals = sumDay(dayData)
-
-  const stats = [
-    { label: 'Calories', value: Math.round(totals.kcal), unit: 'kcal', color: 'var(--white)' },
-    { label: 'Protein', value: Math.round(totals.protein_g), unit: 'g', color: 'var(--accent)' },
-    { label: 'Carbs', value: Math.round(totals.carbs_g), unit: 'g', color: '#2563eb' },
-    { label: 'Fat', value: Math.round(totals.fat_g), unit: 'g', color: 'var(--warn)' },
-  ]
-
-  return (
-    <div
-      className="card"
-      style={{ marginTop: 8 }}
-    >
-      <p
-        style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 15,
-          color: 'var(--muted)',
-          letterSpacing: '0.08em',
-          margin: '0 0 14px 0',
-        }}
-      >
-        DAY TOTALS
-      </p>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 8,
-        }}
-      >
-        {stats.map((s) => (
-          <div key={s.label} style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 28,
-                color: s.color,
-                lineHeight: 1,
-              }}
-            >
-              {s.value}
-              <span style={{ fontSize: 13, marginLeft: 2, color: 'var(--muted)' }}>{s.unit}</span>
-            </div>
-            <div
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: 11,
-                color: 'var(--muted)',
-                marginTop: 3,
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-              }}
-            >
-              {s.label}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+// ─── Empty / rest states ──────────────────────────────────────────────────────
 
 function RestDayNote() {
   return (
-    <div
-      style={{
-        padding: '14px 16px',
-        borderRadius: 8,
-        background: 'var(--sub)',
-        border: '1px solid var(--border)',
-        fontFamily: 'var(--font-body)',
-        fontSize: 14,
-        color: 'var(--muted)',
-        marginBottom: 16,
-      }}
-    >
-      Rest day — eat to your macro targets.
+    <div style={{
+      padding: '16px 18px', borderRadius: 10, marginBottom: 16,
+      background: 'rgba(167,139,250,0.06)', border: '1px solid rgba(167,139,250,0.2)',
+    }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, letterSpacing: '0.06em', color: 'var(--purple)', marginBottom: 4 }}>
+        💤 REST DAY
+      </div>
+      <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6 }}>
+        No specific meal plan for today — eat to your macro targets, prioritise protein and keep carbs moderate. Focus on recovery.
+      </div>
     </div>
   )
 }
 
 function EmptyState() {
   return (
-    <div
-      className="card"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '48px 24px',
-        textAlign: 'center',
-        gap: 16,
-      }}
-    >
-      <span style={{ fontSize: 48 }}>🍽️</span>
-      <p
-        style={{
-          fontFamily: 'var(--font-body)',
-          fontSize: 15,
-          color: 'var(--muted)',
-          maxWidth: 320,
-          margin: 0,
-          lineHeight: 1.6,
-        }}
-      >
-        No meal plan assigned yet — your coach will set one up for you.
-      </p>
+    <div className="card" style={{ textAlign: 'center', padding: '48px 24px' }}>
+      <div style={{ fontSize: 40, marginBottom: 14 }}>🍽️</div>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, letterSpacing: '0.04em', color: 'var(--white)', marginBottom: 8 }}>
+        NO MEAL PLAN YET
+      </div>
+      <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.7, maxWidth: 280, margin: '0 auto' }}>
+        Your coach will assign a personalised meal plan once your onboarding is complete.
+      </div>
     </div>
   )
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function MealPlanView() {
   const { user } = useAuth()
-  const [plan, setPlan] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [activeDay, setActiveDay] = useState('training')
+  const [plan,       setPlan]       = useState(null)
+  const [loading,    setLoading]    = useState(true)
+  const [activeDay,  setActiveDay]  = useState('training')
 
   useEffect(() => {
     if (!user?.id) return
     let cancelled = false
-
     async function load() {
       setLoading(true)
       const { data } = await getActiveMealPlan(user.id)
-      if (!cancelled) {
-        setPlan(data ?? null)
-        setLoading(false)
-      }
+      if (!cancelled) { setPlan(data ?? null); setLoading(false) }
     }
-
     load()
     return () => { cancelled = true }
   }, [user?.id])
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: 200,
-        }}
-      >
-        <span className="spinner" />
-      </div>
-    )
-  }
-
-  if (!plan) {
-    return (
-      <div style={{ padding: '0 0 32px' }}>
-        <EmptyState />
-      </div>
-    )
-  }
-
-  const dayData = plan.days?.[activeDay] ?? {}
-  const hasAnyItems = MEAL_SECTIONS.some(
-    (s) => (dayData[s.key] ?? []).length > 0
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+      <span className="spinner" />
+    </div>
   )
 
+  if (!plan) return <EmptyState />
+
+  const dayData     = plan.days?.[activeDay] ?? {}
+  const activeTab   = DAY_TABS.find(t => t.key === activeDay)
+  const hasAnyItems = MEAL_SECTIONS.some(s => (dayData[s.key] ?? []).length > 0)
+
   return (
-    <div style={{ padding: '0 0 48px' }}>
-      {/* Page header */}
-      <div style={{ marginBottom: 24 }}>
-        <h1
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 32,
-            color: 'var(--white)',
-            letterSpacing: '0.04em',
-            margin: '0 0 4px 0',
-          }}
-        >
+    <div style={{ paddingBottom: 48 }}>
+      {/* Plan name */}
+      <div style={{ marginBottom: 20 }}>
+        <div className="label" style={{ marginBottom: 2 }}>Coach-assigned plan</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 24, letterSpacing: '0.04em', color: 'var(--white)' }}>
           {plan.name}
-        </h1>
-        <p
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 13,
-            color: 'var(--muted)',
-            margin: 0,
-          }}
-        >
-          Assigned by your coach
-        </p>
+        </div>
       </div>
 
-      {/* Day tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 8,
-          marginBottom: 24,
-          flexWrap: 'wrap',
-        }}
-      >
-        {DAY_TABS.map((tab) => (
+      {/* Day type tabs */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+        {DAY_TABS.map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveDay(tab.key)}
-            className={activeDay === tab.key ? 'btn btn-sm' : 'btn btn-ghost btn-sm'}
             style={{
-              borderRadius: 999,
-              fontFamily: 'var(--font-body)',
-              fontWeight: 600,
-              fontSize: 13,
-              ...(activeDay === tab.key
-                ? { background: 'var(--accent)', color: 'var(--ink)', border: 'none' }
-                : { color: 'var(--muted)' }),
+              flex: 1, padding: '10px 0', borderRadius: 8, cursor: 'pointer',
+              fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: '0.08em',
+              border: `1.5px solid ${activeDay === tab.key ? tab.color : 'var(--border-hi)'}`,
+              background: activeDay === tab.key ? `${tab.color}15` : 'var(--s2)',
+              color: activeDay === tab.key ? tab.color : 'var(--sub)',
+              transition: 'all 0.15s',
             }}
           >
-            {tab.label}
+            {tab.icon} {tab.label.toUpperCase()}
           </button>
         ))}
       </div>
+
+      {/* Day totals — at the top so clients see their target at a glance */}
+      <DayTotals dayData={dayData} color={activeTab?.color || 'var(--accent)'} />
 
       {/* Meal sections or rest note */}
       {!hasAnyItems ? (
         <RestDayNote />
       ) : (
-        MEAL_SECTIONS.map((s) => (
-          <MealSectionCard
+        MEAL_SECTIONS.map(s => (
+          <MealSection
             key={s.key}
-            label={s.label}
+            section={s}
             items={dayData[s.key] ?? []}
           />
         ))
       )}
-
-      {/* Day totals bar */}
-      <DayTotalsBar dayData={dayData} />
     </div>
   )
 }
