@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth.jsx'
 import { useCoach } from '../../hooks/useCoach.js'
 import { supabase } from '../../lib/supabase.js'
 import { navalBF } from '../../lib/calculators.js'
-import { sendWelcome, inviteClient } from '../../lib/emailApi.js'
+import { sendWelcome, inviteClient, resendInvite } from '../../lib/emailApi.js'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -78,6 +78,7 @@ function Alert({ type = 'warn', icon, message, action, onAction }) {
 // ─── client card ─────────────────────────────────────────────────────────────
 
 function ClientCard({ client, programme, lastCheckIn, assessment, testResult, navigate, coachId }) {
+  const [inviteState, setInviteState] = useState('idle') // idle | sending | sent | error
   const p      = client.profile || {}
   const name   = p.full_name || 'Unknown'
   const color  = avatarColor(name)
@@ -305,6 +306,31 @@ function ClientCard({ client, programme, lastCheckIn, assessment, testResult, na
             title="Send welcome email"
           >
             📧 WELCOME
+          </button>
+        </div>
+        <div style={{ marginBottom: 6 }}>
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{
+              width: '100%', fontSize: 10,
+              color:       inviteState === 'sent'  ? 'var(--accent)' : inviteState === 'error' ? 'var(--danger)' : 'var(--muted)',
+              borderColor: inviteState === 'sent'  ? 'rgba(0,200,150,.35)' : inviteState === 'error' ? 'rgba(255,68,68,.35)' : undefined,
+              background:  inviteState === 'sent'  ? 'rgba(0,200,150,.07)' : inviteState === 'error' ? 'rgba(255,68,68,.07)' : undefined,
+            }}
+            disabled={inviteState === 'sending'}
+            onClick={async () => {
+              if (inviteState === 'sent') return
+              setInviteState('sending')
+              const { ok } = await resendInvite({ clientId: client.client_id })
+              setInviteState(ok ? 'sent' : 'error')
+              if (ok) setTimeout(() => setInviteState('idle'), 4000)
+            }}
+            title="Resend invite link to client's email"
+          >
+            {inviteState === 'sending' ? '⏳ SENDING…'
+              : inviteState === 'sent'  ? '✓ INVITE SENT'
+              : inviteState === 'error' ? '✗ FAILED — RETRY'
+              : '↗ RESEND INVITE'}
           </button>
         </div>
         <div style={{ display: 'flex', gap: 6 }}>

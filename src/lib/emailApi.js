@@ -52,3 +52,7 @@ export function sendWelcome({ clientId, coachId }) {
 export function inviteClient({ email, fullName }) {
   return post('invite-client', { email, fullName })
 }
+
+export function resendInvite({ clientId }) {
+  return post('resend-invite', { clientId })
+}

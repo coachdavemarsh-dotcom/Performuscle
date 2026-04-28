@@ -188,4 +188,59 @@ router.post('/invite-client', requireAuth, requireCoach, async (req, res) => {
   }
 })
 
+// ─── POST /api/emails/resend-invite ─────────────────────────────────────────
+// Called by coach to resend the invite link to an existing client
+// Body: { clientId }
+router.post('/resend-invite', requireAuth, requireCoach, async (req, res) => {
+  try {
+    const { clientId } = req.body
+    if (!clientId) {
+      return res.status(400).json({ error: 'clientId is required' })
+    }
+
+    // Look up client's auth record (email) + profile (name) + coach name
+    const [clientAuth, clientProfile, coachProfile] = await Promise.all([
+      supabaseAdmin.auth.admin.getUserById(clientId),
+      supabaseAdmin.from('profiles').select('full_name').eq('id', clientId).single(),
+      supabaseAdmin.from('profiles').select('full_name').eq('id', req.user.id).single(),
+    ])
+
+    const clientEmail = clientAuth?.data?.user?.email
+    if (!clientEmail) {
+      return res.status(404).json({ error: 'Client email not found' })
+    }
+
+    const clientName = clientProfile?.data?.full_name || 'there'
+    const coachName  = coachProfile?.data?.full_name  || 'Your coach'
+    const redirectTo = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/onboarding`
+
+    // Generate a fresh invite link
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'invite',
+      email: clientEmail,
+      options: {
+        data: { coach_id: req.user.id, full_name: clientName, invited: true },
+        redirectTo,
+      },
+    })
+
+    if (linkError) {
+      console.error('[Resend Invite] generateLink error:', linkError)
+      return res.status(500).json({ error: linkError.message })
+    }
+
+    const inviteUrl = linkData?.properties?.action_link
+    if (!inviteUrl) {
+      return res.status(500).json({ error: 'Failed to generate invite link' })
+    }
+
+    await sendClientInviteEmail({ clientEmail, clientName, coachName, inviteUrl })
+
+    res.json({ sent: true, email: clientEmail })
+  } catch (err) {
+    console.error('[Email Route] resend-invite:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 export default router
