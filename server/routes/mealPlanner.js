@@ -694,7 +694,7 @@ router.post('/meal-planner/send-plan', async (req, res) => {
   // Send email via Resend
   const resend = new Resend(process.env.RESEND_API_KEY)
   // Build from address — use env var if set, otherwise fall back to onboarding address
-  const fromEmail = process.env.FROM_EMAIL_ADDRESS || 'onboarding@resend.dev'
+  const fromEmail = process.env.FROM_EMAIL_ADDRESS || 'noreply@coachdavemarsh.net'
   const fromName  = process.env.FROM_EMAIL_NAME    || 'Performuscle'
   const FROM      = `${fromName} <${fromEmail}>`
 

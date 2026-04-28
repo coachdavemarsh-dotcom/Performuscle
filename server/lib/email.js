@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 import * as templates from './emailTemplates.js'
 
-const FROM = process.env.FROM_EMAIL || 'Performuscle <notifications@performuscle.com>'
+const FROM = process.env.FROM_EMAIL || 'Performuscle <noreply@coachdavemarsh.net>'
 const APP_URL = process.env.APP_URL || 'http://localhost:5173'
 
 async function send({ to, subject, html }) {

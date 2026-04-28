@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth.jsx'
 import { useCoach } from '../../hooks/useCoach.js'
 import { supabase } from '../../lib/supabase.js'
 import { navalBF } from '../../lib/calculators.js'
-import { sendWelcome } from '../../lib/emailApi.js'
+import { sendWelcome, inviteClient } from '../../lib/emailApi.js'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -344,24 +344,14 @@ function InviteClientModal({ onClose }) {
     setError(null)
 
     try {
-      // Use Supabase's built-in magic-link flow — no Express server required.
-      // The coach_id + full_name go into user_metadata so Onboarding can
-      // auto-link the client when they complete registration.
-      const { error: otpError } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo: `${window.location.origin}/onboarding`,
-          data: {
-            full_name:  fullName.trim(),
-            coach_id:   user?.id,
-            invited:    true,
-          },
-        },
-      })
+      // Use the server-side invite route which:
+      // — calls admin.generateLink (24-hour link, not 1-hour OTP)
+      // — stores coach_id + full_name in user_metadata properly
+      // — sends our branded invite email via Resend
+      const { ok, error: inviteError } = await inviteClient({ email: email.trim(), fullName: fullName.trim() })
 
-      if (otpError) {
-        setError(otpError.message)
+      if (!ok) {
+        setError(inviteError || 'Failed to send invite.')
       } else {
         setSent(true)
       }
