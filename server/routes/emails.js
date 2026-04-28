@@ -188,6 +188,50 @@ router.post('/invite-client', requireAuth, requireCoach, async (req, res) => {
   }
 })
 
+// ─── GET /api/emails/pending-invites ────────────────────────────────────────
+// Returns users invited by this coach who haven't completed onboarding yet
+router.get('/pending-invites', requireAuth, requireCoach, async (req, res) => {
+  try {
+    // Fetch all auth users (up to 1000 — plenty for a coaching business)
+    const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers({
+      perPage: 1000,
+      page: 1,
+    })
+    if (listError) throw listError
+
+    // Filter to those invited by this coach
+    const invited = users.filter(u =>
+      u.user_metadata?.invited === true &&
+      u.user_metadata?.coach_id === req.user.id
+    )
+
+    if (!invited.length) return res.json({ pending: [] })
+
+    // Find which invited users have already completed onboarding (in clients table)
+    const { data: existingClients } = await supabaseAdmin
+      .from('clients')
+      .select('client_id')
+      .eq('coach_id', req.user.id)
+
+    const onboarded = new Set((existingClients || []).map(c => c.client_id))
+
+    const pending = invited
+      .filter(u => !onboarded.has(u.id))
+      .map(u => ({
+        id:        u.id,
+        email:     u.email,
+        fullName:  u.user_metadata?.full_name || null,
+        invitedAt: u.created_at,
+      }))
+      .sort((a, b) => new Date(b.invitedAt) - new Date(a.invitedAt))
+
+    res.json({ pending })
+  } catch (err) {
+    console.error('[Email Route] pending-invites:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // ─── POST /api/emails/resend-invite ─────────────────────────────────────────
 // Called by coach to resend the invite link to an existing client
 // Body: { clientId }

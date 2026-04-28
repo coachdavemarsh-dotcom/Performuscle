@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth.jsx'
 import { useCoach } from '../../hooks/useCoach.js'
 import { supabase } from '../../lib/supabase.js'
 import { navalBF } from '../../lib/calculators.js'
-import { sendWelcome, inviteClient, resendInvite } from '../../lib/emailApi.js'
+import { sendWelcome, inviteClient, resendInvite, getPendingInvites } from '../../lib/emailApi.js'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -616,6 +616,136 @@ function LeadsPanel() {
   )
 }
 
+// ─── Pending Invites Panel ────────────────────────────────────────────────────
+
+function PendingInvitesPanel() {
+  const [pending,  setPending]  = useState([])
+  const [loading,  setLoading]  = useState(true)
+  const [states,   setStates]   = useState({}) // { [userId]: 'idle' | 'sending' | 'sent' | 'error' }
+
+  useEffect(() => {
+    getPendingInvites().then(({ ok, data }) => {
+      if (ok) setPending(data.pending || [])
+      setLoading(false)
+    })
+  }, [])
+
+  async function handleResend(u) {
+    setStates(s => ({ ...s, [u.id]: 'sending' }))
+    const { ok } = await resendInvite({ clientId: u.id })
+    setStates(s => ({ ...s, [u.id]: ok ? 'sent' : 'error' }))
+    if (ok) setTimeout(() => setStates(s => ({ ...s, [u.id]: 'idle' })), 4000)
+  }
+
+  // Don't render the card at all if there's nothing pending
+  if (!loading && pending.length === 0) return null
+
+  function daysAgoInvited(dateStr) {
+    const d = Math.floor((Date.now() - new Date(dateStr)) / (1000 * 60 * 60 * 24))
+    if (d === 0) return 'Today'
+    if (d === 1) return 'Yesterday'
+    return `${d}d ago`
+  }
+
+  function emailInitials(email = '') {
+    return email[0]?.toUpperCase() || '?'
+  }
+
+  return (
+    <div className="card section-gap">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: '0.12em', color: 'var(--warn)', marginBottom: 4 }}>
+            AWAITING SIGNUP
+          </div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, letterSpacing: '0.04em', color: 'var(--white)' }}>
+            PENDING INVITES
+          </div>
+        </div>
+        {!loading && (
+          <div style={{
+            fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--warn)',
+            background: 'rgba(255,173,0,.08)', border: '1px solid rgba(255,173,0,.25)',
+            borderRadius: 8, padding: '6px 14px',
+          }}>
+            {pending.length}
+          </div>
+        )}
+      </div>
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--muted)', fontSize: 13 }}>
+          Loading…
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {pending.map(u => {
+            const state = states[u.id] || 'idle'
+            const name  = u.fullName || u.email
+            return (
+              <div key={u.id} style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '12px 16px', borderRadius: 8,
+                background: 'var(--s3)',
+                border: '1px solid rgba(255,173,0,.18)',
+              }}>
+                {/* Avatar */}
+                <div style={{
+                  width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
+                  background: 'rgba(255,173,0,.12)', border: '1px solid rgba(255,173,0,.3)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--warn)',
+                }}>
+                  {u.fullName ? initials(u.fullName) : emailInitials(u.email)}
+                </div>
+
+                {/* Info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, color: 'var(--white)', fontWeight: 500, marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {u.fullName || <span style={{ color: 'var(--muted)', fontStyle: 'italic' }}>No name</span>}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {u.email}
+                  </div>
+                </div>
+
+                {/* Invited date */}
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ fontSize: 10, color: 'var(--muted)', fontFamily: 'var(--font-display)', marginBottom: 2 }}>INVITED</div>
+                  <div style={{ fontSize: 12, color: 'var(--warn)' }}>{daysAgoInvited(u.invitedAt)}</div>
+                </div>
+
+                {/* Resend button */}
+                <button
+                  onClick={() => handleResend(u)}
+                  disabled={state === 'sending'}
+                  style={{
+                    flexShrink: 0, padding: '6px 14px', borderRadius: 6,
+                    fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: '0.1em',
+                    cursor: state === 'sending' ? 'default' : 'pointer', border: '1px solid',
+                    background:   state === 'sent'    ? 'rgba(0,200,150,.12)'   : state === 'error' ? 'rgba(255,68,68,.1)' : 'rgba(255,173,0,.1)',
+                    color:        state === 'sent'    ? 'var(--accent)'          : state === 'error' ? 'var(--danger)'      : 'var(--warn)',
+                    borderColor:  state === 'sent'    ? 'rgba(0,200,150,.35)'   : state === 'error' ? 'rgba(255,68,68,.35)' : 'rgba(255,173,0,.35)',
+                  }}
+                >
+                  {state === 'sending' ? '⏳ …'
+                    : state === 'sent'  ? '✓ SENT'
+                    : state === 'error' ? '✗ RETRY'
+                    : '↗ RESEND'}
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.06)', fontSize: 11, color: 'var(--muted)' }}>
+        These clients received an invite email but haven't completed signup yet.
+      </div>
+    </div>
+  )
+}
+
 // ─── Onboarding Video Settings ────────────────────────────────────────────────
 
 function OnboardingVideoSettings({ coachId }) {
@@ -877,6 +1007,9 @@ export default function CoachDashboard() {
           )}
         </div>
       )}
+
+      {/* Pending invites */}
+      <PendingInvitesPanel />
 
       {/* Filter bar + client grid */}
       <div className="section-gap">

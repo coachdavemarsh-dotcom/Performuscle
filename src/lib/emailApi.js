@@ -2,11 +2,16 @@ import { supabase } from './supabase.js'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
+async function authHeaders() {
+  const { data: { session } } = await supabase.auth.getSession()
+  const headers = {}
+  if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`
+  return headers
+}
+
 async function post(path, body) {
   try {
-    const { data: { session } } = await supabase.auth.getSession()
-    const headers = { 'Content-Type': 'application/json' }
-    if (session?.access_token) headers['Authorization'] = `Bearer ${session.access_token}`
+    const headers = { 'Content-Type': 'application/json', ...(await authHeaders()) }
     const res = await fetch(`${API_URL}/api/emails/${path}`, {
       method: 'POST',
       headers,
@@ -14,10 +19,29 @@ async function post(path, body) {
       body: JSON.stringify(body),
     })
     if (!res.ok) {
-      const body = await res.json().catch(() => ({}))
-      return { ok: false, error: body.error || `HTTP ${res.status}` }
+      const payload = await res.json().catch(() => ({}))
+      return { ok: false, error: payload.error || `HTTP ${res.status}` }
     }
     return { ok: true }
+  } catch (err) {
+    return { ok: false, error: err.message }
+  }
+}
+
+async function get(path) {
+  try {
+    const headers = await authHeaders()
+    const res = await fetch(`${API_URL}/api/emails/${path}`, {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+    })
+    if (!res.ok) {
+      const payload = await res.json().catch(() => ({}))
+      return { ok: false, error: payload.error || `HTTP ${res.status}` }
+    }
+    const data = await res.json()
+    return { ok: true, data }
   } catch (err) {
     return { ok: false, error: err.message }
   }
@@ -55,4 +79,8 @@ export function inviteClient({ email, fullName }) {
 
 export function resendInvite({ clientId }) {
   return post('resend-invite', { clientId })
+}
+
+export function getPendingInvites() {
+  return get('pending-invites')
 }
