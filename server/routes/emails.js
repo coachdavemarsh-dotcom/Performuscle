@@ -258,14 +258,13 @@ router.post('/resend-invite', requireAuth, requireCoach, async (req, res) => {
     const coachName  = coachProfile?.data?.full_name  || 'Your coach'
     const redirectTo = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/onboarding`
 
-    // Generate a fresh invite link
+    // Generate a fresh login link.
+    // type:'invite' fails with email_exists for already-registered users,
+    // so we use type:'magiclink' which works for any existing account.
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'invite',
+      type: 'magiclink',
       email: clientEmail,
-      options: {
-        data: { coach_id: req.user.id, full_name: clientName, invited: true },
-        redirectTo,
-      },
+      options: { redirectTo },
     })
 
     if (linkError) {
