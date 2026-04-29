@@ -618,10 +618,12 @@ function StepYourGoal({ data, update, onNext, onBack }) {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 18 }}>
         {[
-          { v: 'cut',      i: '🔥', l: 'Lose Body Fat',      d: 'Reduce fat while preserving muscle' },
-          { v: 'gain',     i: '💪', l: 'Build Muscle',       d: 'Increase lean mass and strength' },
-          { v: 'recomp',   i: '⚖️', l: 'Recomposition',     d: 'Lose fat and gain muscle simultaneously' },
-          { v: 'maintain', i: '🏃', l: 'Maintain & Perform', d: 'Keep composition, focus on performance' },
+          { v: 'cut',       i: '🔥', l: 'Lose Body Fat',      d: 'Reduce fat while preserving muscle' },
+          { v: 'gain',      i: '💪', l: 'Build Muscle',       d: 'Increase lean mass and strength' },
+          { v: 'recomp',    i: '⚖️', l: 'Recomposition',     d: 'Lose fat and gain muscle simultaneously' },
+          { v: 'maintain',  i: '🏃', l: 'Maintain & Perform', d: 'Keep composition, focus on performance' },
+          { v: 'pain',      i: '🩹', l: 'Get Out of Pain',    d: 'Reduce pain & restore function' },
+          { v: 'longevity', i: '🌱', l: 'Longevity',          d: 'Move well & stay healthy long-term' },
         ].map(g => (
           <OptionCard key={g.v} active={data.goal_type === g.v} onClick={() => update('goal_type', g.v)} icon={g.i} label={g.l} desc={g.d} />
         ))}
@@ -1392,6 +1394,9 @@ export default function Onboarding() {
   const [error, setError]       = useState(null)
   const [coachVideos, setCoachVideos] = useState({})
 
+  // ── localStorage draft key (per-user so multi-account is safe) ──────────────
+  const storageKey = user ? `pm_onboarding_${user.id}` : null
+
   // Fetch coach's onboarding video URLs
   useEffect(() => {
     const coachId = user?.user_metadata?.coach_id || profile?.coach_id
@@ -1407,6 +1412,20 @@ export default function Onboarding() {
         }
       })
   }, [user, profile])
+
+  // ── restore draft from localStorage when user becomes known ─────────────────
+  useEffect(() => {
+    if (!storageKey) return
+    try {
+      const raw = localStorage.getItem(storageKey)
+      if (!raw) return
+      const saved = JSON.parse(raw)
+      setData(prev => ({ ...prev, ...saved }))
+      const savedStep = localStorage.getItem(`${storageKey}_step`)
+      if (savedStep !== null) setStep(Math.max(0, parseInt(savedStep, 10)))
+    } catch {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey])
 
   const [data, setData] = useState({
     full_name:              profile?.full_name || '',
@@ -1452,6 +1471,25 @@ export default function Onboarding() {
   function update(key, value) {
     setData(prev => ({ ...prev, [key]: value }))
   }
+
+  // ── auto-save draft (File objects excluded — not JSON-serialisable) ──────────
+  useEffect(() => {
+    if (!storageKey) return
+    try {
+      const toSave = {
+        ...data,
+        // strip File objects
+        posture_front: null, posture_back: null, posture_side: null,
+        hip_media: null, shoulder_media: null, spine_media: null,
+        // keep FMS scores/notes but not video blobs
+        fms: Object.fromEntries(
+          Object.entries(data.fms || {}).map(([k, v]) => [k, { score: v.score ?? null, notes: v.notes || '' }])
+        ),
+      }
+      localStorage.setItem(storageKey, JSON.stringify(toSave))
+      localStorage.setItem(`${storageKey}_step`, String(step))
+    } catch {}
+  }, [data, step, storageKey])
 
   const showCycleStep = ['female', 'non_binary'].includes(data.gender)
 
@@ -1575,6 +1613,11 @@ export default function Onboarding() {
       })
 
       await refreshProfile()
+      // Clear the draft now that onboarding is complete
+      if (storageKey) {
+        localStorage.removeItem(storageKey)
+        localStorage.removeItem(`${storageKey}_step`)
+      }
       setTimeout(() => navigate('/dashboard', { replace: true }), 2500)
 
     } catch (err) {
