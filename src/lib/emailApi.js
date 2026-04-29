@@ -1,6 +1,9 @@
 import { supabase } from './supabase.js'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+// In production, leave VITE_API_URL unset — requests go to /api/* which
+// Vercel proxies server-side to Railway (no CORS). For local dev, set
+// VITE_API_URL=http://localhost:3001 in your .env file.
+const API_URL = import.meta.env.VITE_API_URL || ''
 
 async function authHeaders() {
   const { data: { session } } = await supabase.auth.getSession()
