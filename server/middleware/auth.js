@@ -1,12 +1,20 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Lazy init — created on first request so missing env vars don't crash startup
+// Uses service role key (same as email routes) and server-safe options
 let _supabase = null
 function getSupabase() {
   if (!_supabase) {
     _supabase = createClient(
       process.env.VITE_SUPABASE_URL,
-      process.env.VITE_SUPABASE_ANON_KEY
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+          detectSessionInUrl: false,
+        },
+      }
     )
   }
   return _supabase
@@ -27,6 +35,7 @@ export async function requireAuth(req, res, next) {
   const { data: { user }, error } = await getSupabase().auth.getUser(token)
 
   if (error || !user) {
+    console.error('[Auth] getUser failed:', error?.message || error, '| token prefix:', token?.slice(0, 20))
     return res.status(401).json({ error: 'Invalid or expired token' })
   }
 
