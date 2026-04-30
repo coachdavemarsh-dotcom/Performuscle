@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Structural Balance Calculator — Performuscle</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --surface2: #1e1e1e;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --accent: #00C896;
+      --accent-dim: rgba(0,200,150,0.12);
+      --accent-warn: #f59e0b;
+      --accent-danger: #ef4444;
+      --accent-danger-dim: rgba(239,68,68,0.1);
+      --accent-warn-dim: rgba(245,158,11,0.1);
+      --text: #f0f0f0;
+      --text2: #9a9a9a;
+      --text3: #5a5a5a;
+      --font-display: 'Bebas Neue', 'Impact', sans-serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      margin-bottom: 40px;
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+    }
+
+    .logo span { color: var(--text2); }
+
+    .header-badge {
+      font-size: 11px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(0,200,150,0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    /* Hero */
+    .hero { margin-bottom: 48px; }
+
+    .hero-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 6vw, 56px);
+      letter-spacing: 0.02em;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .hero-sub {
+      color: var(--text2);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* Unit toggle */
+    .unit-toggle {
+      display: inline-flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin: 24px 0 40px;
+    }
+
+    .unit-toggle button {
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .unit-toggle button.active {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* Section headers */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    /* Ratio card */
+    .ratio-section { margin-bottom: 32px; }
+
+    .ratio-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ratio-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: 1fr 110px 100px 130px;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 8px;
+      transition: border-color 0.15s;
+    }
+
+    .ratio-card:hover { border-color: var(--border2); }
+
+    .ratio-card.anchor {
+      background: var(--surface2);
+      border-style: dashed;
+    }
+
+    .ratio-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .ratio-desc {
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    .ratio-input-wrap { position: relative; }
+
+    .ratio-input-wrap input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      padding: 10px 14px;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .ratio-input-wrap input:focus { border-color: var(--accent); }
+
+    .ratio-input-wrap input::placeholder { color: var(--text3); font-size: 13px; }
+
+    .ratio-actual {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text2);
+      font-family: var(--font-display);
+      letter-spacing: 0.05em;
+    }
+
+    .ratio-actual.populated { color: var(--text); }
+
+    .ratio-status { text-align: center; }
+
+    .status-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    .status-anchor {
+      background: rgba(255,255,255,0.05);
+      color: var(--text3);
+    }
+
+    .status-good {
+      background: rgba(0,200,150,0.15);
+      color: var(--accent);
+    }
+
+    .status-close {
+      background: var(--accent-warn-dim);
+      color: var(--accent-warn);
+    }
+
+    .status-deficit {
+      background: var(--accent-danger-dim);
+      color: var(--accent-danger);
+    }
+
+    /* Column headers */
+    .ratio-col-headers {
+      display: grid;
+      grid-template-columns: 1fr 110px 100px 130px;
+      gap: 16px;
+      padding: 0 20px;
+      margin-bottom: 8px;
+    }
+
+    .col-header {
+      font-size: 11px;
+      color: var(--text3);
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .col-header:first-child { text-align: left; }
+
+    /* Summary panel */
+    .summary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 40px 0;
+      display: none;
+    }
+
+    .summary.visible { display: block; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-stat {
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+
+    .summary-stat-label {
+      font-size: 11px;
+      color: var(--text3);
+      font-weight: 500;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .summary-stat-val {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--text);
+      letter-spacing: 0.03em;
+      line-height: 1;
+    }
+
+    .summary-stat-sub {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 4px;
+    }
+
+    /* Deficit list */
+    .deficit-list { margin-top: 20px; }
+
+    .deficit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .deficit-item:last-child { border-bottom: none; }
+
+    .deficit-icon {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .deficit-icon.red { background: var(--accent-danger); }
+    .deficit-icon.amber { background: var(--accent-warn); }
+    .deficit-icon.green { background: var(--accent); }
+
+    .deficit-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .deficit-detail { font-size: 12px; color: var(--text2); }
+
+    /* Programming output */
+    .program-output {
+      margin: 40px 0;
+      display: none;
+    }
+
+    .program-output.visible { display: block; }
+
+    .program-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      letter-spacing: 0.04em;
+      margin-bottom: 24px;
+    }
+
+    .program-title span { color: var(--accent); }
+
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .block-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .block-card.active-block { border-color: var(--accent); }
+
+    .block-num {
+      font-size: 11px;
+      color: var(--text3);
+      font-weight: 500;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .block-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .block-detail {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+
+    .block-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+
+    .block-tag {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .tag-prox { background: rgba(0,200,150,0.12); color: var(--accent); }
+    .tag-mixed { background: rgba(59,139,212,0.12); color: #60a5fa; }
+    .tag-earned { background: var(--accent-danger-dim); color: var(--accent-danger); }
+    .tag-neutral { background: rgba(255,255,255,0.05); color: var(--text3); }
+
+    /* Classification table */
+    .class-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .class-col {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .class-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .class-col-title.prox { color: var(--accent); }
+    .class-col-title.mixed { color: #60a5fa; }
+    .class-col-title.earned { color: var(--accent-danger); }
+
+    .class-item {
+      font-size: 12px;
+      color: var(--text2);
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.4;
+    }
+
+    .class-item:last-child { border-bottom: none; }
+
+    /* Chart */
+    .chart-section {
+      margin-top: 40px;
+      display: none;
+    }
+
+    .chart-section.visible { display: block; }
+
+    .chart-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .chart-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 20px;
+    }
+
+    .chart-canvas-wrap {
+      position: relative;
+      height: 280px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 20px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text2);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    /* Quote */
+    .quote {
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      margin: 40px 0;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      background: var(--accent-dim);
+    }
+
+    .quote p {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 80px;
+      padding: 24px 0;
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    /* Responsive */
+    @media (max-width: 680px) {
+      .ratio-card {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .ratio-col-headers { display: none; }
+
+      .ratio-actual, .ratio-status { text-align: left; }
+
+      .class-grid { grid-template-columns: 1fr; }
+
+      .block-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">PERFORM<span>USCLE</span></div>
+    <div class="header-badge">Coach Tool</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="hero-label">Poliquin Method</div>
+    <h1>Structural <span>Balance</span><br>Calculator</h1>
+    <p class="hero-sub">Enter estimated 1RM values to generate a ratio profile, identify deficits, and receive a periodisation block recommendation based on Poliquin's structural balance benchmarks.</p>
+  </div>
+
+  <!-- Unit toggle -->
+  <div class="unit-toggle">
+    <button class="active" onclick="setUnit('kg')">KG</button>
+    <button onclick="setUnit('lb')">LB</button>
+  </div>
+
+  <!-- Upper Body -->
+  <div class="ratio-section">
+    <div class="ratio-section-title">Upper body ratios</div>
+
+    <div class="ratio-col-headers">
+      <div class="col-header">Movement</div>
+      <div class="col-header">1RM (<span class="unit-label">kg</span>)</div>
+      <div class="col-header">Actual %</div>
+      <div class="col-header">Status</div>
+    </div>
+
+    <div class="ratio-card anchor">
+      <div>
+        <div class="ratio-name">Close-grip bench press</div>
+        <div class="ratio-desc">Upper body anchor — all upper ratios calculated from this</div>
+      </div>
+      <div class="ratio-input-wrap">
+        <input type="number" id="cgbp" placeholder="e.g. 100" min="0" oninput="calculate()">
+      </div>
+      <div class="ratio-actual" id="cgbp-pct">—</div>
+      <div class="ratio-status"><span class="status-pill status-anchor">Anchor</span></div>
+    </div>
+
+    <div class="ratio-card">
+      <div>
+        <div class="ratio-name">Supinated chin-up</div>
+        <div class="ratio-desc">Bodyweight + added load · Target: ~100% of CGBP</div>
+      </div>
+      <div class="ratio-input-wrap">
+        <input type="number" id="chin" placeholder="e.g. 95" min="0" oninput="calculate()">
+      </div>
+      <div class="ratio-actual" id="chin-pct">—</div>
+      <div class="ratio-status" id="chin-status"></div>
+    </div>
+
+    <div class="ratio-card">
+      <div>
+        <div class="ratio-name">Pronated barbell curl</div>
+        <div class="ratio-desc">Strict · Target: ~32% of CGBP</div>
+      </div>
+      <div class="ratio-input-wrap">
+        <input type="number" id="curl" placeholder="e.g. 40" min="0" oninput="calculate()">
+      </div>
+      <div class="ratio-actual" id="curl-pct">—</div>
+      <div class="ratio-status" id="curl-status"></div>
+    </div>
+  </div>
+
+  <!-- Lower Body -->
+  <div class="ratio-section">
+    <div class="ratio-section-title">Lower body ratios</div>
+
+    <div class="ratio-col-headers">
+      <div class="col-header">Movement</div>
+      <div class="col-header">1RM (<span class="unit-label">kg</span>)</div>
+      <div class="col-header">Actual %</div>
+      <div class="col-header">Status</div>
+    </div>
+
+    <div class="ratio-card anchor">
+      <div>
+        <div class="ratio-name">Back squat</div>
+        <div class="ratio-desc">Lower body anchor — all lower ratios calculated from this</div>
+      </div>
+      <div class="ratio-input-wrap">
+        <input type="number" id="squat" placeholder="e.g. 140" min="0" oninput="calculate()">
+      </div>
+      <div class="ratio-actual" id="squat-pct">—</div>
+      <div class="ratio-status"><span class="status-pill status-anchor">Anchor</span></div>
+    </div>
+
+    <div class="ratio-card">
+      <div>
+        <div class="ratio-name">Lying leg curl</div>
+        <div class="ratio-desc">Prone · Target: ~52% of back squat</div>
+      </div>
+      <div class="ratio-input-wrap">
+        <input type="number" id="legcurl" placeholder="e.g. 72" min="0" oninput="calculate()">
+      </div>
+      <div class="ratio-actual" id="legcurl-pct">—</div>
+      <div class="ratio-status" id="legcurl-status"></div>
+    </div>
+
+    <div class="ratio-card">
+      <div>
+        <div class="ratio-name">Single-leg leg press</div>
+        <div class="ratio-desc">Per leg · Target: ~85% of back squat</div>
+      </div>
+      <div class="ratio-input-wrap">
+        <input type="number" id="slp" placeholder="e.g. 115" min="0" oninput="calculate()">
+      </div>
+      <div class="ratio-actual" id="slp-pct">—</div>
+      <div class="ratio-status" id="slp-status"></div>
+    </div>
+  </div>
+
+  <!-- Summary panel -->
+  <div class="summary" id="summary">
+    <div class="section-label">Ratio profile summary</div>
+    <div class="summary-grid">
+      <div class="summary-stat">
+        <div class="summary-stat-label">Deficits</div>
+        <div class="summary-stat-val" id="s-deficits">0</div>
+        <div class="summary-stat-sub">ratios out of range</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-stat-label">Priority</div>
+        <div class="summary-stat-val" id="s-priority">—</div>
+        <div class="summary-stat-sub">address first</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-stat-label">Start block</div>
+        <div class="summary-stat-val" id="s-block">—</div>
+        <div class="summary-stat-sub">recommended phase</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-stat-label">Earned tier</div>
+        <div class="summary-stat-val" id="s-earned">—</div>
+        <div class="summary-stat-sub">high-expression loading</div>
+      </div>
+    </div>
+    <div class="deficit-list" id="deficit-list"></div>
+  </div>
+
+  <!-- Periodisation output -->
+  <div class="program-output" id="program-output">
+    <div class="program-title">Block <span>Periodisation</span> Plan</div>
+
+    <div class="block-grid">
+      <div class="block-card" id="block1">
+        <div class="block-num">Block 01</div>
+        <div class="block-name">Structural rebalancing</div>
+        <div class="block-detail">4 weeks · 10–15 reps · moderate intensity</div>
+        <div class="block-tags">
+          <span class="block-tag tag-prox">A-block: deficit work</span>
+          <span class="block-tag tag-mixed">B-block: constrained</span>
+          <span class="block-tag tag-earned">Earned: parked</span>
+        </div>
+      </div>
+      <div class="block-card" id="block2">
+        <div class="block-num">Block 02</div>
+        <div class="block-name">Retest + reclassify</div>
+        <div class="block-detail">End of B1 · ratio-gated progression</div>
+        <div class="block-tags">
+          <span class="block-tag tag-neutral">Within 10–15% → progress</span>
+          <span class="block-tag tag-prox">Gap remains → extend B1</span>
+        </div>
+      </div>
+      <div class="block-card" id="block3">
+        <div class="block-num">Block 03</div>
+        <div class="block-name">Strength development</div>
+        <div class="block-detail">3–4 weeks · 5–8 reps · intensity increases</div>
+        <div class="block-tags">
+          <span class="block-tag tag-prox">Both systems progress</span>
+          <span class="block-tag tag-mixed">Mixed tier introduced</span>
+        </div>
+      </div>
+      <div class="block-card" id="block4">
+        <div class="block-num">Block 04</div>
+        <div class="block-name">Peak / sport expression</div>
+        <div class="block-detail">2–3 weeks · ratios must be in range</div>
+        <div class="block-tags">
+          <span class="block-tag tag-earned">Earned tier unlocked</span>
+          <span class="block-tag tag-mixed">Speed + complexity</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise classification -->
+    <div class="section-label" style="margin-top:32px">Exercise classification by deficit</div>
+    <div class="class-grid">
+      <div class="class-col">
+        <div class="class-col-title prox">A-block — proximal delivery bias</div>
+        <div class="class-item">Romanian deadlift</div>
+        <div class="class-item">Nordic curl negatives</div>
+        <div class="class-item">Hip thrust variations</div>
+        <div class="class-item">Single-leg RDL w/ reach</div>
+        <div class="class-item">Supinated chin-up</div>
+        <div class="class-item">Incline DB curl</div>
+        <div class="class-item">Cable pull-apart</div>
+        <div class="class-item">Bear crawl variations</div>
+      </div>
+      <div class="class-col">
+        <div class="class-col-title mixed">B-block — mixed delivery + expression</div>
+        <div class="class-item">Heel-elevated goblet squat</div>
+        <div class="class-item">Front squat</div>
+        <div class="class-item">Trap bar deadlift</div>
+        <div class="class-item">Landmine split squat</div>
+        <div class="class-item">Supported SL-RDL</div>
+        <div class="class-item">Landmine press</div>
+        <div class="class-item">DB row variations</div>
+        <div class="class-item">Wall-supported hinge</div>
+      </div>
+      <div class="class-col">
+        <div class="class-col-title earned">Earned — deficit must close first</div>
+        <div class="class-item">Back squat (heavy)</div>
+        <div class="class-item">Conventional deadlift</div>
+        <div class="class-item">Olympic lift variations</div>
+        <div class="class-item">Plyometrics</div>
+        <div class="class-item">Sprinting / COD work</div>
+        <div class="class-item">Overhead barbell press</div>
+        <div class="class-item">Weighted dips</div>
+        <div class="class-item">Barbell back squat</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress chart -->
+  <div class="chart-section" id="chart-section">
+    <div class="chart-wrap">
+      <div class="chart-title">Ratio tracking across blocks — example progression</div>
+      <div class="chart-canvas-wrap">
+        <canvas id="progressChart" role="img" aria-label="Line chart showing structural balance ratios progressing toward benchmarks across four testing blocks">
+          Shows hamstring:squat and curl:bench ratios moving toward Poliquin benchmarks across 4 blocks.
+        </canvas>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:#00C896"></div>
+          <span>Leg curl : squat ratio</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:#60a5fa"></div>
+          <span>Curl : bench ratio</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:rgba(255,255,255,0.2);border-top:2px dashed rgba(255,255,255,0.3)"></div>
+          <span>Benchmarks</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote">
+    <p>"If you don't own proximal delivery, your distal drivers will write cheques the system can't cash."</p>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    Performuscle · Structural Balance Calculator · Based on Poliquin structural balance methodology
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+  // ─── Config ───────────────────────────────────────────────
+  const RATIOS = {
+    chin:    { anchor: 'cgbp',  target: 100, label: 'Chin-up / Close-grip bench',   system: 'Upper' },
+    curl:    { anchor: 'cgbp',  target: 32,  label: 'Barbell curl / Close-grip bench', system: 'Upper' },
+    legcurl: { anchor: 'squat', target: 52,  label: 'Leg curl / Back squat',         system: 'Lower' },
+    slp:     { anchor: 'squat', target: 85,  label: 'Single-leg press / Back squat', system: 'Lower' },
+  };
+
+  let currentUnit = 'kg';
+  let chartInstance = null;
+
+  // ─── Unit toggle ──────────────────────────────────────────
+  function setUnit(unit) {
+    currentUnit = unit;
+    document.querySelectorAll('.unit-toggle button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.unit-label').forEach(el => el.textContent = unit);
+    calculate();
+  }
+
+  // ─── Status helpers ───────────────────────────────────────
+  function getStatus(actual, target) {
+    const pct = actual / target * 100;
+    if (pct >= 90)  return { cls: 'status-good',    label: 'On target', tier: 'good' };
+    if (pct >= 75)  return { cls: 'status-close',   label: 'Close',     tier: 'close' };
+    return              { cls: 'status-deficit',  label: 'Deficit',   tier: 'deficit' };
+  }
+
+  function statusPill(cls, label) {
+    return `<span class="status-pill ${cls}">${label}</span>`;
+  }
+
+  // ─── Main calculate ───────────────────────────────────────
+  function calculate() {
+    const cgbp  = parseFloat(document.getElementById('cgbp').value)  || 0;
+    const squat = parseFloat(document.getElementById('squat').value) || 0;
+
+    // Anchors
+    document.getElementById('cgbp-pct').textContent  = cgbp  ? 'anchor' : '—';
+    document.getElementById('squat-pct').textContent = squat ? 'anchor' : '—';
+
+    let deficits = [];
+    let totalFilled = 0;
+
+    Object.entries(RATIOS).forEach(([id, conf]) => {
+      const val   = parseFloat(document.getElementById(id).value) || 0;
+      const anch  = conf.anchor === 'cgbp' ? cgbp : squat;
+      const pctEl = document.getElementById(id + '-pct');
+      const stEl  = document.getElementById(id + '-status');
+
+      if (!val || !anch) {
+        pctEl.textContent = '—';
+        pctEl.classList.remove('populated');
+        stEl.innerHTML = '';
+        return;
+      }
+
+      totalFilled++;
+      const actual = val / anch * 100;
+      pctEl.textContent = Math.round(actual) + '%';
+      pctEl.classList.add('populated');
+
+      const s = getStatus(actual, conf.target);
+      stEl.innerHTML = statusPill(s.cls, s.label);
+
+      if (s.tier !== 'good') {
+        deficits.push({
+          id, label: conf.label,
+          actual: Math.round(actual),
+          target: conf.target,
+          tier: s.tier,
+          gap: conf.target - actual,
+          system: conf.system,
+        });
+      }
+    });
+
+    if (!cgbp && !squat) {
+      hidePanels(); return;
+    }
+
+    showSummary(deficits, totalFilled);
+  }
+
+  function hidePanels() {
+    document.getElementById('summary').classList.remove('visible');
+    document.getElementById('program-output').classList.remove('visible');
+    document.getElementById('chart-section').classList.remove('visible');
+  }
+
+  function showSummary(deficits, filled) {
+    const summaryEl = document.getElementById('summary');
+    summaryEl.classList.add('visible');
+
+    // Sort deficits by gap size
+    deficits.sort((a, b) => b.gap - a.gap);
+
+    // Stats
+    document.getElementById('s-deficits').textContent = deficits.length;
+
+    const priority = deficits.length > 0
+      ? deficits[0].system + ' body'
+      : 'None';
+    document.getElementById('s-priority').textContent = priority;
+
+    const block = deficits.length > 1
+      ? 'B1'
+      : deficits.length === 1
+        ? 'B1 → B2'
+        : 'B3';
+    document.getElementById('s-block').textContent = block;
+
+    const earnedStatus = deficits.length > 0 ? 'Parked' : 'Available';
+    document.getElementById('s-earned').textContent = earnedStatus;
+
+    // Deficit list
+    const listEl = document.getElementById('deficit-list');
+    if (deficits.length === 0) {
+      listEl.innerHTML = `<div class="deficit-item"><div class="deficit-icon green"></div><div><div class="deficit-name">All ratios within target range</div><div class="deficit-detail">Structural balance is sufficient — proceed to strength development (Block 3)</div></div></div>`;
+    } else {
+      listEl.innerHTML = deficits.map(d => `
+        <div class="deficit-item">
+          <div class="deficit-icon ${d.tier === 'deficit' ? 'red' : 'amber'}"></div>
+          <div>
+            <div class="deficit-name">${d.label}</div>
+            <div class="deficit-detail">
+              Actual: <strong style="color:var(--text)">${d.actual}%</strong> · 
+              Target: <strong style="color:var(--text)">${d.target}%</strong> · 
+              Gap: <strong style="color:${d.tier === 'deficit' ? 'var(--accent-danger)' : 'var(--accent-warn)'}">${Math.round(d.gap)}%</strong>
+              — ${getPrescription(d.id)}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Show program block
+    document.getElementById('program-output').classList.add('visible');
+
+    // Highlight current starting block
+    ['block1','block2','block3','block4'].forEach(id => {
+      document.getElementById(id).classList.remove('active-block');
+    });
+    const startBlock = deficits.length > 0 ? 'block1' : 'block3';
+    document.getElementById(startBlock).classList.add('active-block');
+
+    // Show chart
+    showChart(deficits);
+    document.getElementById('chart-section').classList.add('visible');
+  }
+
+  function getPrescription(id) {
+    const map = {
+      chin:    'Prioritise supinated chin-up + vertical pull volume in A-block',
+      curl:    'Prioritise elbow flexor work — incline DB curl, cable curl in A-block',
+      legcurl: 'Prioritise RDL, Nordic curl negatives, hip thrust in A-block. Constrain squat pattern.',
+      slp:     'Prioritise unilateral lower body work — SL-RDL, reverse lunge in A-block',
+    };
+    return map[id] || '';
+  }
+
+  // ─── Chart ────────────────────────────────────────────────
+  function showChart(deficits) {
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    if (chartInstance) { chartInstance.destroy(); }
+
+    // Use actual deficit data if available, otherwise show example
+    const lcActual = document.getElementById('legcurl').value
+      ? parseFloat(document.getElementById('legcurl').value) / (parseFloat(document.getElementById('squat').value)) * 100
+      : 35;
+    const curlActual = document.getElementById('curl').value
+      ? parseFloat(document.getElementById('curl').value) / (parseFloat(document.getElementById('cgbp').value)) * 100
+      : 24;
+
+    const lcProgression  = [Math.round(lcActual), Math.round(lcActual * 1.15), Math.round(lcActual * 1.28), Math.round(lcActual * 1.38)].map(v => Math.min(v, 52));
+    const curlProgression = [Math.round(curlActual), Math.round(curlActual * 1.12), Math.round(curlActual * 1.22), Math.round(curlActual * 1.3)].map(v => Math.min(v, 32));
+
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Baseline', 'Block 1 retest', 'Block 2 retest', 'Block 3 retest'],
+        datasets: [
+          {
+            label: 'Leg curl : squat',
+            data: lcProgression,
+            borderColor: '#00C896',
+            backgroundColor: 'rgba(0,200,150,0.06)',
+            borderWidth: 2,
+            pointRadius: 5,
+            pointBackgroundColor: '#00C896',
+            tension: 0.3,
+            fill: true,
+          },
+          {
+            label: 'Curl : bench',
+            data: curlProgression,
+            borderColor: '#60a5fa',
+            backgroundColor: 'rgba(96,165,250,0.06)',
+            borderWidth: 2,
+            pointRadius: 5,
+            pointBackgroundColor: '#60a5fa',
+            tension: 0.3,
+            fill: true,
+          },
+          {
+            label: 'Leg curl benchmark (52%)',
+            data: [52, 52, 52, 52],
+            borderColor: 'rgba(0,200,150,0.35)',
+            borderWidth: 1.5,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            fill: false,
+          },
+          {
+            label: 'Curl benchmark (32%)',
+            data: [32, 32, 32, 32],
+            borderColor: 'rgba(96,165,250,0.35)',
+            borderWidth: 1.5,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            fill: false,
+          },
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            min: 0,
+            max: 65,
+            ticks: {
+              callback: v => v + '%',
+              color: '#5a5a5a',
+              font: { size: 11 },
+            },
+            grid: { color: 'rgba(255,255,255,0.04)' }
+          },
+          x: {
+            ticks: { color: '#5a5a5a', font: { size: 11 }, autoSkip: false },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>

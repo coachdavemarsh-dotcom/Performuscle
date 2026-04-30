@@ -520,17 +520,18 @@ export default function Calculators() {
   const [activeCalc, setActiveCalc] = useState('bf')
 
   const calcs = [
-    { id: 'bf', label: 'Naval BF%' },
-    { id: 'ea', label: 'Energy Availability' },
-    { id: 'wl', label: 'Weight Loss Rate' },
+    { id: 'bf',  label: 'Naval BF%' },
+    { id: 'ea',  label: 'Energy Availability' },
+    { id: 'wl',  label: 'Weight Loss Rate' },
     { id: '1rm', label: '1RM Calculator' },
+    { id: 'sb',  label: 'Structural Balance' },
   ]
 
   return (
     <div>
       <div className="page-header">
         <div className="page-title">Calculators</div>
-        <div className="page-subtitle">Coaching tools — BF%, Energy Availability, Weight Loss, 1RM</div>
+        <div className="page-subtitle">Coaching tools — BF%, Energy Availability, Weight Loss, 1RM, Structural Balance</div>
       </div>
 
       <div className="tabs">
@@ -545,10 +546,67 @@ export default function Calculators() {
         ))}
       </div>
 
-      {activeCalc === 'bf' && <NavalBFCalc />}
-      {activeCalc === 'ea' && <EnergyAvailabilityCalc />}
-      {activeCalc === 'wl' && <WeightLossCalc />}
+      {activeCalc === 'bf'  && <NavalBFCalc />}
+      {activeCalc === 'ea'  && <EnergyAvailabilityCalc />}
+      {activeCalc === 'wl'  && <WeightLossCalc />}
       {activeCalc === '1rm' && <OneRMCalc />}
+      {activeCalc === 'sb'  && <StructuralBalanceLaunch />}
     </div>
+  )
+}
+
+// ============================================================
+// STRUCTURAL BALANCE LAUNCH CARD
+// ============================================================
+
+function StructuralBalanceLaunch() {
+  const features = [
+    'Live ratio calculator — upper & lower body anchored correctly',
+    'Status pills: On Target / Close / Deficit calculated in real time',
+    'Auto-generated summary — deficits, priority system & starting block',
+    'Deficit list with specific A-block exercise prescriptions per ratio',
+    'Four-block periodisation plan with active starting block highlighted',
+    'Exercise classification table: Proximal / Mixed / Earned',
+    'Chart.js progression tracking from your entered values',
+    'KG / LB toggle + fully responsive',
+  ]
+
+  return (
+    <CalcSection title="STRUCTURAL BALANCE CALCULATOR">
+      <div style={{ marginBottom: 24 }}>
+        <p style={{ color: 'var(--sub)', lineHeight: 1.7, marginBottom: 20 }}>
+          Identify muscular imbalances across 7 key strength ratios, generate a prioritised deficit report,
+          and get a four-block corrective programme — all in real time.
+        </p>
+        <ul style={{ listStyle: 'none', padding: 0, marginBottom: 28 }}>
+          {features.map((f, i) => (
+            <li key={i} style={{
+              display: 'flex', alignItems: 'flex-start', gap: 10,
+              padding: '7px 0',
+              borderBottom: i < features.length - 1 ? '1px solid var(--border)' : 'none',
+              fontSize: 14, color: 'var(--sub)',
+            }}>
+              <span style={{ color: 'var(--accent)', fontWeight: 700, flexShrink: 0 }}>✓</span>
+              {f}
+            </li>
+          ))}
+        </ul>
+        <a
+          href="/structural-balance.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 10,
+            background: 'var(--accent)', color: '#060608',
+            padding: '14px 32px', borderRadius: 8,
+            fontFamily: 'var(--font-display)', fontSize: 16,
+            letterSpacing: 2, textDecoration: 'none',
+            fontWeight: 700,
+          }}
+        >
+          LAUNCH CALCULATOR ↗
+        </a>
+      </div>
+    </CalcSection>
   )
 }
