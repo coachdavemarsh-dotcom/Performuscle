@@ -892,6 +892,448 @@ function RelativeStrengthTest({ saveProps, clients, selectedClient }) {
 }
 
 // ============================================================
+// STRUCTURAL BALANCE TEST
+// ============================================================
+
+// 5RM / 3RM → estimated 1RM  (Brzycki: w × (1 + reps/30))
+function estOneRM(weight, reps) {
+  const w = parseFloat(weight)
+  if (!w || w <= 0) return null
+  return w * (1 + reps / 30)
+}
+
+// Status for a ratio
+function sbStatus(actual, target) {
+  if (actual === null) return null
+  const pct = actual / target
+  if (pct >= 0.95) return { label: 'ON TARGET', color: 'var(--accent)', bg: 'var(--accent-dim)' }
+  if (pct >= 0.85) return { label: 'CLOSE',     color: 'var(--warn)',   bg: 'rgba(245,158,11,.08)' }
+  return                  { label: 'DEFICIT',    color: 'var(--danger)', bg: 'rgba(239,68,68,.08)' }
+}
+
+// Structural balance ratios — target is % of anchor 1RM
+const SB_UPPER = [
+  { id: 'incline_press',   name: 'Incline DB Press',          target: 65,  critical: false },
+  { id: 'close_grip',      name: 'Close Grip Bench Press',    target: 75,  critical: false },
+  { id: 'db_military',     name: 'Seated DB Military Press',  target: 65,  critical: false },
+  { id: 'cable_row',       name: 'Low Cable Row',             target: 75,  critical: false },
+  { id: 'ext_rotation',    name: 'External Rotation',         target: 10,  critical: false },
+  { id: 'powell_raise',    name: 'Powell Raise',              target: 8,   critical: true  },
+  { id: 'incline_curl',    name: 'Incline DB Curl',           target: 13,  critical: false },
+]
+const SB_LOWER = [
+  { id: 'rdl',             name: 'Romanian Deadlift',         target: 90,  critical: false },
+  { id: 'calf_raise',      name: 'Standing Calf Raise',       target: 75,  critical: false },
+]
+
+function SBRow({ ratio, orm, anchorOrm, unit, repMode, onInput }) {
+  const multiplier = unit === 'lb' ? 0.4536 : 1
+  const ormKg = orm !== null ? orm * multiplier : null
+  const pct = ormKg !== null && anchorOrm !== null ? (ormKg / anchorOrm) * 100 : null
+  const status = sbStatus(pct, ratio.target)
+
+  return (
+    <div style={{
+      display: 'grid', gridTemplateColumns: '1fr 120px 70px 70px 100px',
+      gap: 10, alignItems: 'center',
+      padding: '10px 14px',
+      background: ratio.critical && status?.label === 'DEFICIT' ? 'rgba(239,68,68,.06)' : 'var(--s3)',
+      border: `1px solid ${ratio.critical && status?.label === 'DEFICIT' ? 'rgba(239,68,68,.4)' : 'var(--border)'}`,
+      borderRadius: 8,
+    }}>
+      {/* Name */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 13, color: 'var(--white)' }}>{ratio.name}</span>
+        {ratio.critical && (
+          <span style={{
+            fontSize: 9, letterSpacing: 1, fontFamily: 'var(--font-display)',
+            color: 'var(--danger)', background: 'rgba(239,68,68,.12)',
+            border: '1px solid rgba(239,68,68,.3)', borderRadius: 3, padding: '1px 5px',
+          }}>CRITICAL</span>
+        )}
+      </div>
+      {/* Input */}
+      <input
+        type="number" step="0.5" className="input"
+        style={{ width: '100%' }}
+        placeholder={`0 ${unit}`}
+        value={orm ?? ''}
+        onChange={e => onInput(e.target.value)}
+      />
+      {/* Est. 1RM */}
+      <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+        {ormKg !== null && repMode !== '1rm'
+          ? `~${Math.round(ormKg)}kg`
+          : '—'
+        }
+      </div>
+      {/* Ratio % */}
+      <div style={{ textAlign: 'center' }}>
+        {pct !== null
+          ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, color: 'var(--sub)' }}>{Math.round(pct)}%</span>
+          : <span style={{ color: 'var(--muted)', fontSize: 12 }}>—</span>
+        }
+      </div>
+      {/* Status */}
+      <div style={{ textAlign: 'right' }}>
+        {status
+          ? <span style={{
+              fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1,
+              color: status.color, background: status.bg,
+              border: `1px solid ${status.color}44`, borderRadius: 4, padding: '2px 8px',
+            }}>{status.label}</span>
+          : <span style={{ fontSize: 11, color: 'var(--muted)' }}>target {ratio.target}%</span>
+        }
+      </div>
+    </div>
+  )
+}
+
+function StructuralBalanceTest({ saveProps, clients, selectedClient }) {
+  const [repMode, setRepMode] = useState('5rm')
+  const [unit, setUnit]       = useState('kg')
+
+  // Anchor inputs (raw weight entered, before 1RM conversion)
+  const [benchRaw, setBenchRaw]   = useState('')
+  const [squatRaw, setSquatRaw]   = useState('')
+  const [wristFlexRaw, setWristFlexRaw] = useState('')
+  const [hipAbdRaw, setHipAbdRaw]       = useState('')
+  const [hipAddRaw, setHipAddRaw]       = useState('')
+  const [wristExtRaw, setWristExtRaw]   = useState('')
+
+  // Per-ratio inputs
+  const [inputs, setInputs] = useState({})
+  const setInput = (id, val) => setInputs(p => ({ ...p, [id]: val }))
+
+  const reps = repMode === '5rm' ? 5 : repMode === '3rm' ? 3 : 1
+  const toKg = (w) => unit === 'lb' ? (parseFloat(w) || 0) * 0.4536 : (parseFloat(w) || 0)
+
+  // Anchor 1RMs (in kg)
+  const benchOrm = benchRaw ? estOneRM(toKg(benchRaw), reps) : null
+  const squatOrm = squatRaw ? estOneRM(toKg(squatRaw), reps) : null
+  const wristFlexOrm = wristFlexRaw ? estOneRM(toKg(wristFlexRaw), reps) : null
+  const hipAbdOrm    = hipAbdRaw    ? estOneRM(toKg(hipAbdRaw),    reps) : null
+
+  // Per-ratio 1RMs (in kg)
+  const ratioOrm = (id) => {
+    const raw = inputs[id]
+    if (!raw) return null
+    return estOneRM(toKg(raw), reps)
+  }
+
+  // Wrist and hip ratios
+  const wristExtOrm  = wristExtRaw ? estOneRM(toKg(wristExtRaw), reps) : null
+  const hipAddOrmVal = hipAddRaw   ? estOneRM(toKg(hipAddRaw),   reps) : null
+
+  const wristPct = wristExtOrm && wristFlexOrm ? (wristExtOrm / wristFlexOrm) * 100 : null
+  const hipPct   = hipAddOrmVal && hipAbdOrm   ? (hipAddOrmVal / hipAbdOrm)    * 100 : null
+
+  const wristStatus = sbStatus(wristPct, 65)
+  const hipStatus   = sbStatus(hipPct,   80)
+
+  // Deficits summary
+  const upperResults = SB_UPPER.map(r => {
+    const pct = ratioOrm(r.id) !== null && benchOrm ? (ratioOrm(r.id) / benchOrm) * 100 : null
+    return { ...r, pct, status: sbStatus(pct, r.target) }
+  })
+  const lowerResults = SB_LOWER.map(r => {
+    const pct = ratioOrm(r.id) !== null && squatOrm ? (ratioOrm(r.id) / squatOrm) * 100 : null
+    return { ...r, pct, status: sbStatus(pct, r.target) }
+  })
+
+  const allResults = [
+    ...upperResults,
+    ...lowerResults,
+    wristPct !== null ? { id: 'wrist_ext', name: 'Wrist Extension', pct: wristPct, status: wristStatus, critical: false } : null,
+    hipPct   !== null ? { id: 'hip_add',   name: 'Hip Adductor',    pct: hipPct,   status: hipStatus,   critical: false } : null,
+  ].filter(Boolean)
+
+  const deficits  = allResults.filter(r => r.status?.label === 'DEFICIT')
+  const criticals = deficits.filter(r => r.critical)
+  const hasAnyInput = benchRaw || squatRaw || Object.keys(inputs).length > 0
+
+  // Build save payload
+  const savePayload = {
+    repMode, unit,
+    bench_1rm: benchOrm ? Math.round(benchOrm * 10) / 10 : null,
+    squat_1rm: squatOrm ? Math.round(squatOrm * 10) / 10 : null,
+    deficits_count: deficits.length,
+    critical_count: criticals.length,
+    ratios: Object.fromEntries(allResults.map(r => [r.id, { pct: r.pct ? Math.round(r.pct) : null, status: r.status?.label || null }])),
+  }
+
+  return (
+    <TestSection
+      title="Structural Balance Assessment"
+      subtitle="Ratio-based strength audit — identifies muscular deficits and programs priority correctives (Poliquin methodology)"
+    >
+      {/* Controls */}
+      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 20 }}>
+        <div>
+          <div className="label" style={{ marginBottom: 4 }}>Input Mode</div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {[['1rm','1RM'],['3rm','3RM'],['5rm','5RM']].map(([id, label]) => (
+              <button key={id} className={`btn btn-sm ${repMode === id ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setRepMode(id)}>{label}</button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="label" style={{ marginBottom: 4 }}>Unit</div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {['kg','lb'].map(u => (
+              <button key={u} className={`btn btn-sm ${unit === u ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setUnit(u)}>{u.toUpperCase()}</button>
+            ))}
+          </div>
+        </div>
+        {repMode !== '1rm' && (
+          <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ fontSize: 11, color: 'var(--muted)', padding: '6px 10px', background: 'var(--s3)', border: '1px solid var(--border)', borderRadius: 6 }}>
+              Auto-converting {repMode.toUpperCase()} → 1RM &nbsp;·&nbsp; w × (1 + {repMode === '5rm' ? 5 : 3}/30)
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Column headers */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px 70px 70px 100px', gap: 10, padding: '0 14px', marginBottom: 6 }}>
+        <div className="label" style={{ fontSize: 9 }}>EXERCISE</div>
+        <div className="label" style={{ fontSize: 9 }}>{repMode === '1rm' ? '1RM' : repMode.toUpperCase()} ({unit})</div>
+        <div className="label" style={{ fontSize: 9, textAlign: 'center' }}>EST. 1RM</div>
+        <div className="label" style={{ fontSize: 9, textAlign: 'center' }}>RATIO</div>
+        <div className="label" style={{ fontSize: 9, textAlign: 'right' }}>STATUS</div>
+      </div>
+
+      {/* ── UPPER BODY ─────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '14px 0 8px' }}>
+        <div style={{ fontSize: 10, fontFamily: 'var(--font-display)', letterSpacing: 2, color: 'var(--muted)' }}>UPPER BODY</div>
+        <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+        <div style={{ fontSize: 10, color: 'var(--muted)' }}>Anchor</div>
+      </div>
+
+      {/* Bench anchor */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: '1fr 120px 70px 70px 100px',
+        gap: 10, alignItems: 'center', padding: '10px 14px',
+        background: 'var(--accent-dim)', border: '1px solid var(--border-accent)', borderRadius: 8, marginBottom: 8,
+      }}>
+        <div style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>
+          FLAT BENCH PRESS — ANCHOR
+        </div>
+        <input type="number" step="0.5" className="input" style={{ width: '100%' }}
+          placeholder={`0 ${unit}`} value={benchRaw}
+          onChange={e => setBenchRaw(e.target.value)} />
+        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+          {benchOrm && repMode !== '1rm' ? `~${Math.round(benchOrm)}kg` : '—'}
+        </div>
+        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-display)' }}>100%</div>
+        <div />
+      </div>
+
+      {/* Upper ratios */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+        {SB_UPPER.map(r => (
+          <SBRow key={r.id} ratio={r}
+            orm={inputs[r.id] ?? null}
+            anchorOrm={benchOrm}
+            unit={unit} repMode={repMode}
+            onInput={val => setInput(r.id, val)} />
+        ))}
+      </div>
+
+      {/* ── WRIST RATIO ────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '14px 0 8px' }}>
+        <div style={{ fontSize: 10, fontFamily: 'var(--font-display)', letterSpacing: 2, color: 'var(--muted)' }}>WRIST RATIO</div>
+        <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+        {/* Wrist Flexion anchor */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 120px 70px 70px 100px',
+          gap: 10, alignItems: 'center', padding: '10px 14px',
+          background: 'rgba(96,165,250,.06)', border: '1px solid rgba(96,165,250,.2)', borderRadius: 8,
+        }}>
+          <div style={{ fontSize: 13, color: 'var(--info, #60a5fa)' }}>Wrist Flexion — Anchor</div>
+          <input type="number" step="0.5" className="input" style={{ width: '100%' }}
+            placeholder={`0 ${unit}`} value={wristFlexRaw}
+            onChange={e => setWristFlexRaw(e.target.value)} />
+          <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+            {wristFlexOrm && repMode !== '1rm' ? `~${Math.round(wristFlexOrm)}kg` : '—'}
+          </div>
+          <div style={{ textAlign: 'center', fontSize: 12, color: '#60a5fa', fontFamily: 'var(--font-display)' }}>100%</div>
+          <div />
+        </div>
+        {/* Wrist Extension */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 120px 70px 70px 100px',
+          gap: 10, alignItems: 'center', padding: '10px 14px',
+          background: 'var(--s3)', border: '1px solid var(--border)', borderRadius: 8,
+        }}>
+          <span style={{ fontSize: 13, color: 'var(--white)' }}>Wrist Extension</span>
+          <input type="number" step="0.5" className="input" style={{ width: '100%' }}
+            placeholder={`0 ${unit}`} value={wristExtRaw}
+            onChange={e => setWristExtRaw(e.target.value)} />
+          <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+            {wristExtOrm && repMode !== '1rm' ? `~${Math.round(wristExtOrm)}kg` : '—'}
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            {wristPct !== null
+              ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, color: 'var(--sub)' }}>{Math.round(wristPct)}%</span>
+              : <span style={{ color: 'var(--muted)', fontSize: 12 }}>—</span>}
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            {wristStatus
+              ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1, color: wristStatus.color, background: wristStatus.bg, border: `1px solid ${wristStatus.color}44`, borderRadius: 4, padding: '2px 8px' }}>{wristStatus.label}</span>
+              : <span style={{ fontSize: 11, color: 'var(--muted)' }}>target 65%</span>}
+          </div>
+        </div>
+      </div>
+
+      {/* ── LOWER BODY ─────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '14px 0 8px' }}>
+        <div style={{ fontSize: 10, fontFamily: 'var(--font-display)', letterSpacing: 2, color: 'var(--muted)' }}>LOWER BODY</div>
+        <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+        <div style={{ fontSize: 10, color: 'var(--muted)' }}>Anchor</div>
+      </div>
+
+      {/* Squat anchor */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: '1fr 120px 70px 70px 100px',
+        gap: 10, alignItems: 'center', padding: '10px 14px',
+        background: 'var(--accent-dim)', border: '1px solid var(--border-accent)', borderRadius: 8, marginBottom: 8,
+      }}>
+        <div style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>
+          BACK SQUAT — ANCHOR
+        </div>
+        <input type="number" step="0.5" className="input" style={{ width: '100%' }}
+          placeholder={`0 ${unit}`} value={squatRaw}
+          onChange={e => setSquatRaw(e.target.value)} />
+        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+          {squatOrm && repMode !== '1rm' ? `~${Math.round(squatOrm)}kg` : '—'}
+        </div>
+        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-display)' }}>100%</div>
+        <div />
+      </div>
+
+      {/* Lower ratios */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+        {SB_LOWER.map(r => (
+          <SBRow key={r.id} ratio={r}
+            orm={inputs[r.id] ?? null}
+            anchorOrm={squatOrm}
+            unit={unit} repMode={repMode}
+            onInput={val => setInput(r.id, val)} />
+        ))}
+      </div>
+
+      {/* ── HIP RATIO ──────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '14px 0 8px' }}>
+        <div style={{ fontSize: 10, fontFamily: 'var(--font-display)', letterSpacing: 2, color: 'var(--muted)' }}>HIP RATIO</div>
+        <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 24 }}>
+        {/* Hip Abductor anchor */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 120px 70px 70px 100px',
+          gap: 10, alignItems: 'center', padding: '10px 14px',
+          background: 'rgba(96,165,250,.06)', border: '1px solid rgba(96,165,250,.2)', borderRadius: 8,
+        }}>
+          <div style={{ fontSize: 13, color: '#60a5fa' }}>Hip Abductor — Anchor</div>
+          <input type="number" step="0.5" className="input" style={{ width: '100%' }}
+            placeholder={`0 ${unit}`} value={hipAbdRaw}
+            onChange={e => setHipAbdRaw(e.target.value)} />
+          <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+            {hipAbdOrm && repMode !== '1rm' ? `~${Math.round(hipAbdOrm)}kg` : '—'}
+          </div>
+          <div style={{ textAlign: 'center', fontSize: 12, color: '#60a5fa', fontFamily: 'var(--font-display)' }}>100%</div>
+          <div />
+        </div>
+        {/* Hip Adductor */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 120px 70px 70px 100px',
+          gap: 10, alignItems: 'center', padding: '10px 14px',
+          background: 'var(--s3)', border: '1px solid var(--border)', borderRadius: 8,
+        }}>
+          <span style={{ fontSize: 13, color: 'var(--white)' }}>Hip Adductor</span>
+          <input type="number" step="0.5" className="input" style={{ width: '100%' }}
+            placeholder={`0 ${unit}`} value={hipAddRaw}
+            onChange={e => setHipAddRaw(e.target.value)} />
+          <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+            {hipAddOrmVal && repMode !== '1rm' ? `~${Math.round(hipAddOrmVal)}kg` : '—'}
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            {hipPct !== null
+              ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, color: 'var(--sub)' }}>{Math.round(hipPct)}%</span>
+              : <span style={{ color: 'var(--muted)', fontSize: 12 }}>—</span>}
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            {hipStatus
+              ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1, color: hipStatus.color, background: hipStatus.bg, border: `1px solid ${hipStatus.color}44`, borderRadius: 4, padding: '2px 8px' }}>{hipStatus.label}</span>
+              : <span style={{ fontSize: 11, color: 'var(--muted)' }}>target 80%</span>}
+          </div>
+        </div>
+      </div>
+
+      {/* ── SUMMARY ────────────────────────────────────────────────────────── */}
+      {hasAnyInput && allResults.length > 0 && (
+        <div style={{
+          padding: '16px 20px', background: 'var(--s3)',
+          border: '1px solid var(--border)', borderRadius: 10, marginBottom: 20,
+          display: 'flex', gap: 32, flexWrap: 'wrap',
+        }}>
+          <div>
+            <div className="label" style={{ marginBottom: 4 }}>RATIOS ASSESSED</div>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: 'var(--accent)' }}>{allResults.length}</span>
+          </div>
+          <div>
+            <div className="label" style={{ marginBottom: 4 }}>DEFICITS</div>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: deficits.length ? 'var(--warn)' : 'var(--accent)' }}>{deficits.length}</span>
+          </div>
+          {criticals.length > 0 && (
+            <div>
+              <div className="label" style={{ marginBottom: 4 }}>CRITICAL</div>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: 'var(--danger)' }}>{criticals.length}</span>
+            </div>
+          )}
+          {criticals.length > 0 && (
+            <div style={{
+              display: 'flex', alignItems: 'center', padding: '8px 14px',
+              background: 'rgba(239,68,68,.08)', border: '1px solid rgba(239,68,68,.25)',
+              borderRadius: 8, fontSize: 12, color: 'var(--danger)', flex: 1,
+            }}>
+              ⚠ Powell Raise deficit — programming gate active. Address before upper body loading progression.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Full calculator link */}
+      <div style={{ marginBottom: 16 }}>
+        <a href="/structural-balance.html" target="_blank" rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            fontSize: 12, color: 'var(--accent)', textDecoration: 'none',
+            padding: '6px 12px', border: '1px solid var(--border-accent)',
+            borderRadius: 6, background: 'var(--accent-dim)',
+          }}>
+          OPEN FULL CALCULATOR ↗ — periodisation plan, exercise prescriptions &amp; progression chart
+        </a>
+      </div>
+
+      <SaveResultButton
+        {...saveProps}
+        testType="structural_balance"
+        results={savePayload}
+        disabled={allResults.length === 0}
+      />
+    </TestSection>
+  )
+}
+
+// ============================================================
 // MAIN PAGE
 // ============================================================
 
@@ -902,6 +1344,7 @@ const TABS = [
   { id: 'wingate', label: 'Wingate', group: 'Anaerobic' },
   { id: 'grip', label: 'Grip Strength', group: 'Strength' },
   { id: 'relative', label: 'Relative Strength', group: 'Strength' },
+  { id: 'balance', label: 'Structural Balance', group: 'Strength' },
   { id: 'rhr', label: 'Resting HR', group: 'Cardiovascular' },
 ]
 
@@ -984,6 +1427,7 @@ export default function Testing() {
       {activeTab === 'wingate'  && <WingateTest  saveProps={saveProps} />}
       {activeTab === 'grip'     && <GripStrengthTest saveProps={saveProps} />}
       {activeTab === 'relative' && <RelativeStrengthTest saveProps={saveProps} clients={clients} selectedClient={selectedClient} />}
+      {activeTab === 'balance'  && <StructuralBalanceTest saveProps={saveProps} clients={clients} selectedClient={selectedClient} />}
       {activeTab === 'rhr'      && <HRFitness    saveProps={saveProps} />}
     </div>
   )
