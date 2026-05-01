@@ -34,8 +34,11 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Cache app shell and static assets
-        globPatterns:         ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Take over immediately — don't wait for tabs to close
+        skipWaiting:  true,
+        clientsClaim: true,
+        // Cache app shell and static assets (exclude standalone tool pages)
+        globPatterns:         ['**/*.{js,css,ico,png,svg,woff2}'],
         // Don't cache Supabase, Stripe, or standalone HTML tool pages
         navigateFallback:     '/index.html',
         navigateFallbackDenylist: [/^\/api/, /^\/supabase/, /\.html$/],
