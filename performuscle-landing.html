@@ -1473,6 +1473,112 @@
     }
 
     /* ============================================================
+       TOOLS PROMO
+    ============================================================ */
+    .tools-promo {
+      padding-block: var(--pad-v);
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .tools-promo::before {
+      content: '';
+      position: absolute;
+      top: -10%;
+      left: -10%;
+      width: 55%;
+      height: 120%;
+      background: radial-gradient(ellipse at center, rgba(0,200,150,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .tools-promo__inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 7vw, 100px);
+      align-items: center;
+    }
+    .tools-promo__features {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-block: 32px;
+    }
+    .tools-promo__feature {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--off-white);
+    }
+    .tools-promo__feature::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .tools-promo__panel {
+      background: var(--black);
+      border: 1px solid var(--border-hi);
+      padding: 32px;
+      position: relative;
+    }
+    .tools-promo__panel-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--black);
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      padding: 5px 12px;
+      margin-bottom: 24px;
+    }
+    .tools-promo__row {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+    }
+    .tools-promo__row-name {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--off-white);
+    }
+    .tools-promo__row-target {
+      font-family: var(--font-display);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .tools-promo__row-status {
+      font-family: var(--font-display);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+    }
+    .tools-promo__row-status.on-target { color: #00C896; background: rgba(0,200,150,0.1); }
+    .tools-promo__row-status.close     { color: #F59E0B; background: rgba(245,158,11,0.1); }
+    .tools-promo__row-status.deficit   { color: #EF4444; background: rgba(239,68,68,0.1); }
+    .tools-promo__panel-cta {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      .tools-promo__inner { grid-template-columns: 1fr; }
+      .tools-promo__panel { display: none; }
+    }
+
+    /* ============================================================
        PERFORMANCE AUDIT
     ============================================================ */
     .audit {
@@ -2045,6 +2151,7 @@
           <li><a href="#results">Results</a></li>
           <li><a href="#blog">Blog</a></li>
           <li><a href="/meal-planner/" target="_blank" rel="noopener" style="color:var(--accent);">Free Meal Planner</a></li>
+          <li><a href="#tools">Tools</a></li>
         </ul>
         <a href="#apply" class="btn-outline nav__cta">Apply</a>
         <div class="nav__hamburger" id="hamburger" onclick="toggleMenu()">
@@ -2060,6 +2167,7 @@
         <li><a href="#results" onclick="toggleMenu()">Results</a></li>
         <li><a href="#blog" onclick="toggleMenu()">Blog</a></li>
         <li><a href="/meal-planner/" target="_blank" rel="noopener" style="color:var(--accent);" onclick="toggleMenu()">Free Meal Planner</a></li>
+        <li><a href="#tools" onclick="toggleMenu()">Tools</a></li>
       </ul>
       <a href="#apply" class="btn-primary" style="width:100%;justify-content:center;" onclick="toggleMenu()">Apply <span class="arrow">→</span></a>
     </div>
@@ -2596,6 +2704,74 @@
           <div class="meal-planner-promo__panel-cta">
             Free · No sign-up required · Results in 30 seconds
           </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       TOOLS
+  ============================================================ -->
+  <section class="tools-promo" id="tools">
+    <div class="container">
+      <div class="tools-promo__inner">
+
+        <!-- Left: copy -->
+        <div data-reveal>
+          <div class="eyebrow">Coach Tools</div>
+          <div class="display-2">Structural<br>Balance<br><span style="color:var(--accent)">Calculator</span></div>
+          <p class="body-lg" style="margin-top:20px;">
+            The gold standard in strength assessment. Based on Poliquin methodology — identify exactly which muscles are limiting your performance and creating injury risk before they become a problem.
+          </p>
+          <div class="tools-promo__features">
+            <div class="tools-promo__feature">Upper body ratios anchored to flat bench 1RM</div>
+            <div class="tools-promo__feature">Lower body ratios anchored to back squat 1RM</div>
+            <div class="tools-promo__feature">Powell raise critical flag for shoulder health</div>
+            <div class="tools-promo__feature">Wrist, hip adductor &amp; abductor ratios included</div>
+            <div class="tools-promo__feature">3RM / 5RM input with automatic 1RM conversion</div>
+            <div class="tools-promo__feature">Instant deficit chart with clear on-target thresholds</div>
+          </div>
+          <div class="cta-row">
+            <a href="/coach-tools.html" class="btn-primary">
+              Access Calculator <span class="arrow">→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: mock panel -->
+        <div class="tools-promo__panel" data-reveal data-reveal-delay="2">
+          <div class="tools-promo__panel-badge">POLIQUIN METHODOLOGY · STRUCTURAL BALANCE</div>
+          <div style="font-family:var(--font-display);font-size:11px;letter-spacing:0.1em;color:var(--muted);margin-bottom:16px;">UPPER BODY — FLAT BENCH ANCHOR</div>
+
+          <div class="tools-promo__row">
+            <div class="tools-promo__row-name">Incline DB Press</div>
+            <div class="tools-promo__row-target">65%</div>
+            <div class="tools-promo__row-status on-target">ON TARGET</div>
+          </div>
+          <div class="tools-promo__row">
+            <div class="tools-promo__row-name">Close Grip Bench</div>
+            <div class="tools-promo__row-target">75%</div>
+            <div class="tools-promo__row-status close">CLOSE</div>
+          </div>
+          <div class="tools-promo__row">
+            <div class="tools-promo__row-name">DB Military Press</div>
+            <div class="tools-promo__row-target">65%</div>
+            <div class="tools-promo__row-status deficit">DEFICIT</div>
+          </div>
+          <div class="tools-promo__row">
+            <div class="tools-promo__row-name">Powell Raise ⚑</div>
+            <div class="tools-promo__row-target">8%</div>
+            <div class="tools-promo__row-status deficit">DEFICIT</div>
+          </div>
+          <div class="tools-promo__row" style="opacity:0.4;">
+            <div class="tools-promo__row-name">+ 3 more exercises</div>
+            <div class="tools-promo__row-target"></div>
+            <div class="tools-promo__row-status"></div>
+          </div>
+
+          <div class="tools-promo__panel-cta">Access code required · For coaches &amp; mentees only</div>
         </div>
 
       </div>
