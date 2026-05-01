@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Performuscle Tools
+  <title>Performuscle Tools</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -18,6 +18,7 @@
       --white:      #F5F6FA;
       --muted:      #5e5e70;
       --danger:     #EF4444;
+      --warn:       #F59E0B;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,6 +32,8 @@
       flex-direction: column;
     }
 
+    a { color: inherit; text-decoration: none; }
+
     /* ── LOCK SCREEN ─────────────────────────────────────── */
     #lock-screen {
       flex: 1;
@@ -43,11 +46,9 @@
       animation: fadeIn .35s ease;
     }
 
-    .logo-block {
-      text-align: center;
-    }
+    .logo-block { text-align: center; }
 
-    .logo-block .logo-icon {
+    .logo-icon {
       width: 64px;
       height: 64px;
       border-radius: 14px;
@@ -58,11 +59,7 @@
       justify-content: center;
       margin: 0 auto 1rem;
     }
-
-    .logo-block .logo-icon svg {
-      width: 36px;
-      height: 36px;
-    }
+    .logo-icon svg { width: 36px; height: 36px; }
 
     .logo-block h1 {
       font-family: 'Bebas Neue', sans-serif;
@@ -70,7 +67,6 @@
       letter-spacing: .08em;
       line-height: 1;
     }
-
     .logo-block h1 span { color: var(--accent); }
 
     .logo-block p {
@@ -98,7 +94,6 @@
       font-size: 1.3rem;
       letter-spacing: .08em;
       text-align: center;
-      color: var(--white);
     }
 
     .gate-card p {
@@ -108,9 +103,7 @@
       line-height: 1.5;
     }
 
-    .input-wrap {
-      position: relative;
-    }
+    .input-wrap { position: relative; }
 
     .input-wrap input {
       width: 100%;
@@ -126,15 +119,8 @@
       transition: border-color .2s;
       text-align: center;
     }
-
-    .input-wrap input:focus {
-      border-color: var(--accent);
-    }
-
-    .input-wrap input::placeholder {
-      letter-spacing: .05em;
-      color: var(--muted);
-    }
+    .input-wrap input:focus { border-color: var(--accent); }
+    .input-wrap input::placeholder { letter-spacing: .05em; color: var(--muted); }
 
     .toggle-pw {
       position: absolute;
@@ -149,7 +135,6 @@
       display: flex;
       align-items: center;
     }
-
     .toggle-pw:hover { color: var(--white); }
 
     .btn-unlock {
@@ -165,7 +150,6 @@
       cursor: pointer;
       transition: background .2s, transform .1s;
     }
-
     .btn-unlock:hover  { background: var(--accent-hi); }
     .btn-unlock:active { transform: scale(.98); }
 
@@ -176,79 +160,47 @@
       display: none;
     }
 
-    /* ── TOOL AREA ───────────────────────────────────────── */
-    #tool-screen {
+    /* ── HUB SCREEN ──────────────────────────────────────── */
+    #hub-screen {
       display: none;
       flex-direction: column;
       flex: 1;
       animation: fadeIn .35s ease;
     }
 
-    /* top nav bar */
-    .tool-nav {
+    .hub-nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: .9rem 1.5rem;
+      padding: 1rem 1.5rem;
       background: var(--ink-2);
       border-bottom: 1px solid rgba(255,255,255,.07);
-      gap: 1rem;
-      flex-wrap: wrap;
     }
 
-    .tool-nav .brand {
+    .hub-brand {
       display: flex;
       align-items: center;
-      gap: .75rem;
+      gap: .6rem;
     }
 
-    .tool-nav .brand .icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+    .hub-brand .icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
       background: var(--accent-dim);
       border: 1px solid rgba(0,200,150,.2);
       display: flex;
       align-items: center;
       justify-content: center;
     }
+    .hub-brand .icon svg { width: 17px; height: 17px; }
 
-    .tool-nav .brand .icon svg { width: 18px; height: 18px; }
-
-    .tool-nav .brand-name {
+    .hub-brand-name {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       letter-spacing: .07em;
     }
-
-    .tool-nav .brand-name span { color: var(--accent); }
-
-    .tool-tabs {
-      display: flex;
-      gap: .5rem;
-      flex-wrap: wrap;
-    }
-
-    .tool-tab {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: .95rem;
-      letter-spacing: .07em;
-      padding: .4rem .9rem;
-      border-radius: 7px;
-      border: 1px solid rgba(255,255,255,.1);
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all .2s;
-    }
-
-    .tool-tab:hover { color: var(--white); border-color: rgba(255,255,255,.2); }
-
-    .tool-tab.active {
-      background: var(--accent-dim);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .hub-brand-name span { color: var(--accent); }
 
     .lock-btn {
       font-family: 'DM Sans', sans-serif;
@@ -261,60 +213,161 @@
       cursor: pointer;
       transition: color .2s, border-color .2s;
     }
-
     .lock-btn:hover { color: var(--danger); border-color: var(--danger); }
 
-    /* iframe container */
-    .iframe-panel {
-      display: none;
+    .hub-body {
       flex: 1;
-    }
-
-    .iframe-panel.active { display: flex; }
-
-    .iframe-panel iframe {
-      width: 100%;
-      flex: 1;
-      border: none;
-    }
-
-    /* placeholder panels for future tools */
-    .placeholder-panel {
-      display: none;
-      flex: 1;
+      padding: 3rem 1.5rem;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      gap: 2rem;
+    }
+
+    .hub-header { text-align: center; }
+
+    .hub-header h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: .08em;
+    }
+    .hub-header p {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-top: .4rem;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 860px;
+    }
+
+    .tool-card {
+      background: var(--ink-2);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px;
+      padding: 1.75rem;
+      display: flex;
       flex-direction: column;
       gap: 1rem;
-      color: var(--muted);
+      transition: border-color .2s, transform .15s;
+      position: relative;
+      overflow: hidden;
     }
 
-    .placeholder-panel.active { display: flex; }
-
-    .placeholder-panel h3 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.6rem;
-      letter-spacing: .08em;
-      color: var(--white);
+    .tool-card.live {
+      border-color: rgba(0,200,150,.2);
+      cursor: pointer;
+    }
+    .tool-card.live:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
     }
 
-    .placeholder-panel p {
-      font-size: .85rem;
-      max-width: 280px;
-      text-align: center;
-      line-height: 1.5;
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 120px; height: 120px;
+      background: radial-gradient(ellipse at top right, rgba(0,200,150,.07), transparent 70%);
+      pointer-events: none;
     }
 
-    .coming-badge {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: .8rem;
-      letter-spacing: .1em;
-      padding: .25rem .7rem;
+    .tool-card.coming::before {
+      background: radial-gradient(ellipse at top right, rgba(94,94,112,.05), transparent 70%);
+    }
+
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .25rem .6rem;
       border-radius: 20px;
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.1);
-      color: var(--muted);
+      width: fit-content;
     }
+    .card-badge.live-badge {
+      background: rgba(0,200,150,.12);
+      color: var(--accent);
+      border: 1px solid rgba(0,200,150,.25);
+    }
+    .card-badge.soon-badge {
+      background: rgba(94,94,112,.1);
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,.07);
+    }
+    .card-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .card-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,200,150,.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tool-card.coming .card-icon {
+      background: rgba(255,255,255,.03);
+      border-color: rgba(255,255,255,.07);
+    }
+    .card-icon svg { width: 22px; height: 22px; }
+
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: .06em;
+    }
+    .tool-card.coming .card-title { color: var(--muted); }
+
+    .card-desc {
+      font-size: .83rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .card-features {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+    .card-feature {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .8rem;
+      color: #9898aa;
+    }
+    .card-feature::before {
+      content: '';
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .tool-card.coming .card-feature::before { background: var(--muted); }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: auto;
+    }
+    .card-cta .arrow { transition: transform .15s; }
+    .tool-card.live:hover .card-cta .arrow { transform: translateX(4px); }
 
     /* animations */
     @keyframes fadeIn {
@@ -324,7 +377,7 @@
 
     @media (max-width: 500px) {
       .gate-card { padding: 1.75rem 1.25rem; }
-      .tool-nav { padding: .75rem 1rem; }
+      .hub-body { padding: 2rem 1rem; }
     }
   </style>
 </head>
@@ -335,7 +388,6 @@
 
   <div class="logo-block">
     <div class="logo-icon">
-      <!-- Dumbbell SVG icon -->
       <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect x="2" y="14" width="5" height="8" rx="2" fill="#00C896"/>
         <rect x="7" y="11" width="4" height="14" rx="2" fill="#00C896"/>
@@ -369,17 +421,16 @@
     </div>
 
     <div class="error-msg" id="error-msg">Incorrect access code. Please try again.</div>
-
     <button class="btn-unlock" id="unlock-btn">UNLOCK TOOLS</button>
   </div>
 
 </div>
 
-<!-- ══ TOOL SCREEN ════════════════════════════════════════════════════════════ -->
-<div id="tool-screen">
+<!-- ══ HUB SCREEN ═════════════════════════════════════════════════════════════ -->
+<div id="hub-screen">
 
-  <nav class="tool-nav">
-    <div class="brand">
+  <nav class="hub-nav">
+    <div class="hub-brand">
       <div class="icon">
         <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="2" y="14" width="5" height="8" rx="2" fill="#00C896"/>
@@ -389,40 +440,83 @@
           <rect x="29" y="14" width="5" height="8" rx="2" fill="#00C896"/>
         </svg>
       </div>
-      <span class="brand-name">PERFORM<span>USCLE</span></span>
+      <span class="hub-brand-name">PERFORM<span>USCLE</span></span>
     </div>
-
-    <div class="tool-tabs">
-      <button class="tool-tab active" data-panel="sb">Structural Balance</button>
-      <button class="tool-tab" data-panel="coming1">1RM Calculator</button>
-      <button class="tool-tab" data-panel="coming2">Body Composition</button>
-    </div>
-
     <button class="lock-btn" id="lock-btn">Lock</button>
   </nav>
 
-  <!-- Structural Balance iframe -->
-  <div class="iframe-panel active" id="panel-sb">
-    <iframe src="/structural-balance.html" title="Structural Balance Calculator" allowfullscreen></iframe>
-  </div>
+  <div class="hub-body">
 
-  <!-- Coming soon panels -->
-  <div class="placeholder-panel" id="panel-coming1">
-    <div class="coming-badge">COMING SOON</div>
-    <h3>1RM CALCULATOR</h3>
-    <p>Multi-formula 1RM estimator with Epley, Brzycki, Lander and Lombardi methods.</p>
-  </div>
+    <div class="hub-header">
+      <h2>COACH TOOLS</h2>
+      <p>Select a tool to open it</p>
+    </div>
 
-  <div class="placeholder-panel" id="panel-coming2">
-    <div class="coming-badge">COMING SOON</div>
-    <h3>BODY COMPOSITION</h3>
-    <p>Naval body fat percentage and energy availability calculators.</p>
-  </div>
+    <div class="tool-grid">
 
+      <!-- ── Structural Balance ── -->
+      <a href="/structural-balance.html" class="tool-card live">
+        <div class="card-badge live-badge"><span class="dot"></span> Live</div>
+        <div class="card-icon">
+          <!-- Bar chart icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6"  y1="20" x2="6"  y2="14"/>
+            <line x1="2"  y1="20" x2="22" y2="20"/>
+          </svg>
+        </div>
+        <div class="card-title">Structural Balance</div>
+        <p class="card-desc">Poliquin methodology. Identify strength deficits before they cause injury.</p>
+        <div class="card-features">
+          <div class="card-feature">Upper &amp; lower body ratio analysis</div>
+          <div class="card-feature">3RM / 5RM → 1RM conversion</div>
+          <div class="card-feature">Powell raise critical flag</div>
+          <div class="card-feature">Instant deficit chart</div>
+        </div>
+        <div class="card-cta">Open Calculator <span class="arrow">→</span></div>
+      </a>
+
+      <!-- ── 1RM Calculator ── -->
+      <div class="tool-card coming">
+        <div class="card-badge soon-badge">Coming Soon</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#5e5e70" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="card-title">1RM Calculator</div>
+        <p class="card-desc">Multi-formula estimator using Epley, Brzycki, Lander and Lombardi methods.</p>
+        <div class="card-features">
+          <div class="card-feature">Four formula comparison</div>
+          <div class="card-feature">Rep range estimator</div>
+          <div class="card-feature">Percentage training zones</div>
+        </div>
+      </div>
+
+      <!-- ── Body Composition ── -->
+      <div class="tool-card coming">
+        <div class="card-badge soon-badge">Coming Soon</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#5e5e70" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div class="card-title">Body Composition</div>
+        <p class="card-desc">Naval body fat percentage and energy availability calculators.</p>
+        <div class="card-features">
+          <div class="card-feature">Naval BF% method</div>
+          <div class="card-feature">Energy availability score</div>
+          <div class="card-feature">TDEE estimation</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <script>
-  // ── Auth state ──────────────────────────────────────────────────────────────
   const SESSION_KEY = 'pm_coach_auth'
   const CORRECT_PW  = 'PERFORM'
 
@@ -430,50 +524,47 @@
     return sessionStorage.getItem(SESSION_KEY) === '1'
   }
 
-  function unlock() {
-    sessionStorage.setItem(SESSION_KEY, '1')
+  function showHub() {
     document.getElementById('lock-screen').style.display = 'none'
-    const ts = document.getElementById('tool-screen')
-    ts.style.display = 'flex'
+    document.getElementById('hub-screen').style.display  = 'flex'
   }
 
   function lock() {
     sessionStorage.removeItem(SESSION_KEY)
-    document.getElementById('tool-screen').style.display = 'none'
-    const ls = document.getElementById('lock-screen')
-    ls.style.display = 'flex'
+    document.getElementById('hub-screen').style.display  = 'none'
+    document.getElementById('lock-screen').style.display = 'flex'
     document.getElementById('pw-input').value = ''
     document.getElementById('error-msg').style.display = 'none'
   }
 
   // Auto-unlock if already authenticated this session
-  if (isUnlocked()) unlock()
+  if (isUnlocked()) showHub()
 
-  // ── Password submit ─────────────────────────────────────────────────────────
+  // Password submit
   function attemptUnlock() {
     const val = document.getElementById('pw-input').value.trim().toUpperCase()
     if (val === CORRECT_PW) {
+      sessionStorage.setItem(SESSION_KEY, '1')
       document.getElementById('error-msg').style.display = 'none'
-      unlock()
+      showHub()
     } else {
-      const err = document.getElementById('error-msg')
-      err.style.display = 'block'
+      document.getElementById('error-msg').style.display = 'block'
       const input = document.getElementById('pw-input')
       input.value = ''
       input.focus()
-      // shake animation
       input.style.borderColor = '#EF4444'
       setTimeout(() => { input.style.borderColor = '' }, 1200)
     }
   }
 
   document.getElementById('unlock-btn').addEventListener('click', attemptUnlock)
-
-  document.getElementById('pw-input').addEventListener('keydown', (e) => {
+  document.getElementById('pw-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') attemptUnlock()
   })
 
-  // ── Show/hide password ─────────────────────────────────────────────────────
+  document.getElementById('lock-btn').addEventListener('click', lock)
+
+  // Show/hide password
   document.getElementById('toggle-pw').addEventListener('click', () => {
     const input = document.getElementById('pw-input')
     const isText = input.type === 'text'
@@ -483,30 +574,7 @@
       : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
   })
 
-  // ── Lock button ─────────────────────────────────────────────────────────────
-  document.getElementById('lock-btn').addEventListener('click', lock)
-
-  // ── Tab switching ───────────────────────────────────────────────────────────
-  const tabs   = document.querySelectorAll('.tool-tab')
-  const panels = {
-    sb:      document.getElementById('panel-sb'),
-    coming1: document.getElementById('panel-coming1'),
-    coming2: document.getElementById('panel-coming2'),
-  }
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'))
-      tab.classList.add('active')
-
-      const target = tab.dataset.panel
-      Object.entries(panels).forEach(([key, el]) => {
-        el.classList.toggle('active', key === target)
-      })
-    })
-  })
-
-  // Auto-focus password input on load
+  // Focus password on load
   window.addEventListener('load', () => {
     if (!isUnlocked()) document.getElementById('pw-input').focus()
   })
