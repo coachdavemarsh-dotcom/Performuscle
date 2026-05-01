@@ -36,9 +36,9 @@ export default defineConfig({
       workbox: {
         // Cache app shell and static assets
         globPatterns:         ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        // Don't cache Supabase or Stripe API calls
+        // Don't cache Supabase, Stripe, or standalone HTML tool pages
         navigateFallback:     '/index.html',
-        navigateFallbackDenylist: [/^\/api/, /^\/supabase/],
+        navigateFallbackDenylist: [/^\/api/, /^\/supabase/, /\.html$/],
         runtimeCaching: [
           {
             // Cache recipe images
