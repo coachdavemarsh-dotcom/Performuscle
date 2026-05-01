@@ -27,6 +27,11 @@ if [ -d "public/recipes" ]; then
   echo "     $(ls dist/recipes | wc -l | tr -d ' ') recipe images copied"
 fi
 
+# ── Coach / mentee tools ──────────────────────────────────────────────────────
+echo "  → Copying tool pages..."
+[ -f "public/structural-balance.html" ] && cp public/structural-balance.html dist/structural-balance.html
+[ -f "public/coach-tools.html" ]        && cp public/coach-tools.html        dist/coach-tools.html
+
 # ── Meal planner ──────────────────────────────────────────────────────────────
 echo "  → Building meal planner..."
 cd meal-planner
@@ -38,5 +43,7 @@ cp -r meal-planner/dist/* dist/meal-planner/
 
 echo ""
 echo "✅  Build complete — dist/ is ready for Netlify"
-echo "    Landing page  →  dist/index.html"
-echo "    Meal planner  →  dist/meal-planner/"
+echo "    Landing page         →  dist/index.html"
+echo "    Meal planner         →  dist/meal-planner/"
+echo "    Structural Balance   →  dist/structural-balance.html"
+echo "    Coach Tools          →  dist/coach-tools.html"
