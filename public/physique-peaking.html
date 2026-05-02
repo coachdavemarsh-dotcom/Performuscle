@@ -75,8 +75,10 @@
     .toggle button.active { background: var(--accent); color: #000; }
 
     /* ── Screen visibility ── */
-    .screen { display: none; }
-    .screen.active { display: block; }
+    .screen { display: none !important; }
+    #pw-screen.active      { display: flex !important; }
+    #form-screen.active    { display: block !important; }
+    #results-screen.active { display: block !important; }
 
     /* ════════════════════════════════════════════
        PASSWORD GATE
