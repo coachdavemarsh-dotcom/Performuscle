@@ -41,6 +41,9 @@ import PerformanceFuel from './components/client/PerformanceFuel.jsx'
 import Auth from './components/Auth.jsx'
 import Onboarding from './components/client/Onboarding.jsx'
 
+// Standalone coach tools (no Supabase auth — own password gate)
+import PhysiquePeaking from './pages/PhysiquePeaking.jsx'
+
 function ProtectedRoute({ children, coachOnly = false }) {
   const { user, profile, loading } = useAuth()
 
@@ -76,6 +79,9 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* Standalone coach tools — password-gated internally, no Supabase auth needed */}
+      <Route path="/physique-peaking" element={<PhysiquePeaking />} />
+
       {/* Auth */}
       <Route
         path="/auth"
