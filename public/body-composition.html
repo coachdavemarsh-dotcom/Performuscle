@@ -341,51 +341,129 @@
 
     .rol-full { grid-column: 1 / -1; }
 
-    /* deficit pills */
-    .deficit-pills {
-      display: flex;
+    /* rate pills */
+    .rate-pills {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      flex-wrap: wrap;
     }
 
-    .deficit-pill {
-      flex: 1;
-      min-width: 110px;
-      padding: 10px 8px;
+    @media (max-width: 520px) {
+      .rate-pills { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .rate-pill {
+      padding: 12px 6px;
       background: var(--ink-3);
       border: 1px solid var(--border);
       border-radius: 8px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
       color: var(--muted);
       cursor: pointer;
       text-align: center;
       transition: border-color .18s, color .18s, background .18s;
     }
 
-    .deficit-pill.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--accent-dim);
-    }
+    .rate-pill.active          { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .rate-pill.active-warn     { border-color: var(--warn);   color: var(--warn);   background: rgba(245,158,11,.08); }
+    .rate-pill.active-danger   { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,.08); }
 
-    .deficit-pill .pill-cal {
+    .rate-pill .pill-pct {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 20px;
+      font-size: 22px;
       letter-spacing: .04em;
       display: block;
       color: inherit;
     }
 
-    .deficit-pill .pill-sub {
-      font-size: 11px;
+    .rate-pill .pill-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
       color: var(--muted);
       display: block;
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
-    .deficit-pill.active .pill-sub { color: var(--accent); opacity: .75; }
+    .rate-pill.active .pill-label        { color: var(--accent); }
+    .rate-pill.active-warn .pill-label   { color: var(--warn); }
+    .rate-pill.active-danger .pill-label { color: var(--danger); }
+
+    /* rate quality badge */
+    .rate-quality {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      margin-bottom: 20px;
+    }
+    .rate-quality.green  { background: rgba(0,200,150,.1);  color: var(--accent); border: 1px solid rgba(0,200,150,.25); }
+    .rate-quality.amber  { background: rgba(245,158,11,.1); color: var(--warn);   border: 1px solid rgba(245,158,11,.25); }
+    .rate-quality.red    { background: rgba(239,68,68,.1);  color: var(--danger); border: 1px solid rgba(239,68,68,.25); }
+
+    /* result sections */
+    .result-section {
+      margin-bottom: 22px;
+    }
+
+    .result-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 12px;
+      letter-spacing: .14em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .stats-3 { grid-template-columns: 1fr 1fr; }
+    }
+
+    .stat-block-accent .stat-block-value { color: var(--accent); }
+    .stat-block-accent .stat-block-unit  { color: var(--accent); }
+    .stat-block-warn   .stat-block-value { color: var(--warn); }
+    .stat-block-warn   .stat-block-unit  { color: var(--warn); }
+    .stat-block-muted  .stat-block-value { color: var(--muted); }
+
+    /* composition table */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .comp-table th {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 10px;
+      letter-spacing: .12em;
+      color: var(--muted);
+      text-align: left;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .comp-table td {
+      padding: 11px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--white);
+    }
+    .comp-table tr:last-child td {
+      border-bottom: none;
+      font-weight: 600;
+    }
+    .comp-table .fat-row td   { color: var(--accent); }
+    .comp-table .lean-row td  { color: var(--warn); }
+    .comp-table .total-row td { color: var(--white); border-top: 1px solid var(--border); }
 
     /* use BF button */
     .use-bf-btn {
@@ -703,6 +781,15 @@
             </div>
           </div>
 
+          <!-- Current calories -->
+          <div class="field">
+            <label>Current Daily Calories</label>
+            <div class="input-row">
+              <input type="number" id="rol-calories" placeholder="e.g. 2800" min="0" step="50" />
+              <span style="padding:0 10px;color:var(--muted);font-size:13px;white-space:nowrap;align-self:center;">kcal</span>
+            </div>
+          </div>
+
           <!-- Current BF% -->
           <div class="field">
             <label>Current Body Fat %</label>
@@ -718,53 +805,75 @@
             <input type="number" id="rol-bf-goal" placeholder="e.g. 15" min="1" max="70" step="0.1" />
           </div>
 
-          <!-- Deficit -->
-          <div class="field">
-            <label>Weekly Caloric Deficit</label>
-            <div class="deficit-pills">
-              <button class="deficit-pill" data-deficit="250" onclick="selectDeficit(this)">
-                <span class="pill-cal">250</span>
-                <span class="pill-sub">cal/day</span>
+          <!-- Rate of loss pills — full width -->
+          <div class="field rol-full">
+            <label>Rate of Loss (% body weight / week)</label>
+            <div class="rate-pills">
+              <button class="rate-pill active" data-rate="0.5" data-lean="10" data-quality="green" data-label="Conservative" onclick="selectRate(this)">
+                <span class="pill-pct">0.5%</span>
+                <span class="pill-label">Conservative</span>
               </button>
-              <button class="deficit-pill active" data-deficit="500" onclick="selectDeficit(this)">
-                <span class="pill-cal">500</span>
-                <span class="pill-sub">cal/day</span>
+              <button class="rate-pill" data-rate="0.75" data-lean="18" data-quality="green" data-label="Moderate" onclick="selectRate(this)">
+                <span class="pill-pct">0.75%</span>
+                <span class="pill-label">Moderate</span>
               </button>
-              <button class="deficit-pill" data-deficit="750" onclick="selectDeficit(this)">
-                <span class="pill-cal">750</span>
-                <span class="pill-sub">cal/day</span>
+              <button class="rate-pill" data-rate="1.0" data-lean="28" data-quality="amber" data-label="Aggressive" onclick="selectRate(this)">
+                <span class="pill-pct">1.0%</span>
+                <span class="pill-label">Aggressive</span>
+              </button>
+              <button class="rate-pill" data-rate="1.25" data-lean="38" data-quality="red" data-label="Very Aggressive" onclick="selectRate(this)">
+                <span class="pill-pct">1.25%</span>
+                <span class="pill-label">Very Aggressive</span>
               </button>
             </div>
           </div>
 
         </div>
-        <div class="error-msg" id="rol-error">Please fill in all fields with valid numbers. Goal BF% must be less than current BF%.</div>
+        <div class="error-msg" id="rol-error">Please fill in all required fields. Goal BF% must be lower than current BF%.</div>
         <button class="calc-btn" onclick="calcRol()">CALCULATE</button>
       </div>
 
       <!-- RESULTS -->
       <div class="result-card" id="rol-result">
 
-        <div class="stats-row" id="rol-stats"></div>
+        <!-- Rate quality badge -->
+        <div id="rol-quality-badge"></div>
 
-        <div class="timeline-title">PROJECTED TIMELINES</div>
-        <table class="timeline-table">
-          <thead>
-            <tr>
-              <th>Deficit</th>
-              <th>Weekly Fat Loss</th>
-              <th>Weeks to Goal</th>
-              <th>Est. Date</th>
-            </tr>
-          </thead>
-          <tbody id="timeline-body"></tbody>
-        </table>
+        <!-- Section 1: Weekly protocol -->
+        <div class="result-section">
+          <div class="result-section-title">WEEKLY PROTOCOL</div>
+          <div class="stats-3" id="rol-protocol"></div>
+        </div>
 
-        <p class="note">
-          Assumes lean mass is preserved throughout the deficit phase.
-          Fat loss rate is derived from 7,700 kcal ≈ 1 kg of fat.
-          Results are estimates.
-        </p>
+        <!-- Section 2: Timeline -->
+        <div class="result-section">
+          <div class="result-section-title">TIMELINE TO GOAL</div>
+          <div class="stats-3" id="rol-timeline"></div>
+        </div>
+
+        <!-- Section 3: Composition breakdown -->
+        <div class="result-section">
+          <div class="result-section-title">EXPECTED WEIGHT LOSS COMPOSITION</div>
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Weight Lost</th>
+                <th>% of Total</th>
+              </tr>
+            </thead>
+            <tbody id="comp-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Section 4: End-point projection -->
+        <div class="result-section">
+          <div class="result-section-title">END-POINT PROJECTION</div>
+          <div class="stats-row" id="rol-endpoint"></div>
+        </div>
+
+        <p class="note" id="rol-note"></p>
+
       </div>
 
     </div><!-- /panel-rol -->
@@ -777,7 +886,6 @@
     ============================================================ */
     let navalBfResult  = null; // last calculated BF%
     let navalGender    = 'male';
-    let selectedDeficit = 500;
 
     // Per-field unit state: store the currently active unit
     const unitState = {};
@@ -848,13 +956,27 @@
     });
 
     /* ============================================================
-       DEFICIT PILLS
+       RATE PILLS
     ============================================================ */
-    function selectDeficit(pill) {
-      document.querySelectorAll('.deficit-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      selectedDeficit = parseInt(pill.dataset.deficit, 10);
-      // Re-render timeline if result is visible
+    let selectedRate     = 0.5;
+    let selectedLeanPct  = 10;   // % of weight loss that is lean mass
+    let selectedQuality  = 'green';
+    let selectedRateLabel = 'Conservative';
+
+    function selectRate(pill) {
+      document.querySelectorAll('.rate-pill').forEach(p => {
+        p.classList.remove('active', 'active-warn', 'active-danger');
+      });
+      const q = pill.dataset.quality;
+      if (q === 'amber') pill.classList.add('active-warn');
+      else if (q === 'red') pill.classList.add('active-danger');
+      else pill.classList.add('active');
+
+      selectedRate      = parseFloat(pill.dataset.rate);
+      selectedLeanPct   = parseInt(pill.dataset.lean, 10);
+      selectedQuality   = q;
+      selectedRateLabel = pill.dataset.label;
+
       if (document.getElementById('rol-result').classList.contains('visible')) {
         calcRol();
       }
@@ -1013,85 +1135,144 @@
       errEl.classList.remove('visible');
 
       const weightKg  = getKgValue('rol-weight');
+      const calories  = parseFloat(document.getElementById('rol-calories').value);
       const bfCurrent = parseFloat(document.getElementById('rol-bf-current').value);
       const bfGoal    = parseFloat(document.getElementById('rol-bf-goal').value);
 
-      if (!weightKg || isNaN(bfCurrent) || isNaN(bfGoal) ||
+      if (!weightKg || isNaN(calories) || calories <= 0 ||
+          isNaN(bfCurrent) || isNaN(bfGoal) ||
           bfCurrent <= 0 || bfGoal <= 0 || bfGoal >= bfCurrent) {
         errEl.classList.add('visible');
         return;
       }
 
-      const wUnit = getWeightUnit();
-      const toDisplay = wUnit === 'lbs' ? (v => round2(v * 2.20462)) : (v => round2(v));
-      const unitLabel = wUnit;
+      const wUnit     = getWeightUnit();
+      const toDisp    = wUnit === 'lbs' ? (v => round1(v * 2.20462)) : (v => round1(v));
+      const ul        = wUnit;
 
-      // Masses in kg
-      const fatMassKg  = weightKg * (bfCurrent / 100);
-      const leanMassKg = weightKg - fatMassKg;
+      // ── Current composition ──
+      const fatKg     = weightKg * (bfCurrent / 100);
+      const leanKg    = weightKg - fatKg;
 
-      // Goal fat mass (lean stays constant)
-      const goalFatMassKg    = leanMassKg / (1 - bfGoal / 100) * (bfGoal / 100);
-      const fatToLoseKg      = fatMassKg - goalFatMassKg;
-      const targetWeightKg   = leanMassKg + goalFatMassKg;
+      // ── Rate parameters ──
+      const leanFrac  = selectedLeanPct / 100;          // e.g. 0.10
+      const fatFrac   = 1 - leanFrac;                   // e.g. 0.90
 
-      // Stats render
-      const statsEl = document.getElementById('rol-stats');
-      statsEl.innerHTML = `
+      // ── Weekly weight loss from % of BW ──
+      const weeklyLossKg  = weightKg * (selectedRate / 100);
+      const dailyDeficit  = Math.round((weeklyLossKg * 7700) / 7);
+      const targetCals    = Math.round(calories - dailyDeficit);
+
+      // ── Total weight to lose (accounting for lean loss) ──
+      // Solve: goalBF = (fatKg - W×fatFrac) / (weightKg - W)
+      // W = (fatKg - goalBF×weightKg) / (fatFrac - goalBF)
+      const goalBF = bfGoal / 100;
+      const totalLossKg = (fatKg - goalBF * weightKg) / (fatFrac - goalBF);
+
+      if (totalLossKg <= 0) {
+        errEl.classList.add('visible');
+        return;
+      }
+
+      const weeksToGoal   = Math.ceil(totalLossKg / weeklyLossKg);
+      const today         = new Date(2026, 4, 2);
+      const estDate       = new Date(today);
+      estDate.setDate(estDate.getDate() + weeksToGoal * 7);
+      const dateStr       = estDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+      // ── Composition breakdown ──
+      const fatLostKg    = totalLossKg * fatFrac;
+      const leanLostKg   = totalLossKg * leanFrac;
+
+      // ── End-point projection ──
+      const finalWeightKg = weightKg - totalLossKg;
+      const finalFatKg    = fatKg - fatLostKg;
+      const finalLeanKg   = leanKg - leanLostKg;
+      const finalBFpct    = round1((finalFatKg / finalWeightKg) * 100);
+
+      // ── Quality badge ──
+      const qColour = selectedQuality === 'green' ? 'green'
+                    : selectedQuality === 'amber'  ? 'amber' : 'red';
+      const fatPct  = 100 - selectedLeanPct;
+      document.getElementById('rol-quality-badge').innerHTML = `
+        <div class="rate-quality ${qColour}">
+          ${selectedRateLabel} — ${selectedRate}% BW/week · ~${fatPct}% fat loss / ~${selectedLeanPct}% lean mass loss
+        </div>`;
+
+      // ── Section 1: Weekly protocol ──
+      document.getElementById('rol-protocol').innerHTML = `
         <div class="stat-block">
-          <div class="stat-block-label">LEAN MASS</div>
-          <div class="stat-block-value">${toDisplay(leanMassKg)}<span class="stat-block-unit">${unitLabel}</span></div>
+          <div class="stat-block-label">WEEKLY LOSS TARGET</div>
+          <div class="stat-block-value">${toDisp(weeklyLossKg)}<span class="stat-block-unit">${ul}</span></div>
         </div>
         <div class="stat-block">
-          <div class="stat-block-label">FAT MASS</div>
-          <div class="stat-block-value">${toDisplay(fatMassKg)}<span class="stat-block-unit">${unitLabel}</span></div>
+          <div class="stat-block-label">DAILY DEFICIT</div>
+          <div class="stat-block-value stat-block-warn">${dailyDeficit}<span class="stat-block-unit" style="color:var(--warn)">kcal</span></div>
         </div>
         <div class="stat-block">
-          <div class="stat-block-label">FAT TO LOSE</div>
-          <div class="stat-block-value" style="color:var(--warn)">${toDisplay(fatToLoseKg)}<span class="stat-block-unit" style="color:var(--warn)">${unitLabel}</span></div>
+          <div class="stat-block-label">TARGET DAILY CALS</div>
+          <div class="stat-block-value stat-block-accent">${targetCals}<span class="stat-block-unit" style="color:var(--accent)">kcal</span></div>
+        </div>`;
+
+      // ── Section 2: Timeline ──
+      const months = round1(weeksToGoal / 4.33);
+      document.getElementById('rol-timeline').innerHTML = `
+        <div class="stat-block">
+          <div class="stat-block-label">TOTAL TO LOSE</div>
+          <div class="stat-block-value">${toDisp(totalLossKg)}<span class="stat-block-unit">${ul}</span></div>
         </div>
         <div class="stat-block">
-          <div class="stat-block-label">TARGET WEIGHT</div>
-          <div class="stat-block-value" style="color:var(--accent)">${toDisplay(targetWeightKg)}<span class="stat-block-unit" style="color:var(--accent)">${unitLabel}</span></div>
+          <div class="stat-block-label">DURATION</div>
+          <div class="stat-block-value">${weeksToGoal}<span class="stat-block-unit">wks (${months} mo)</span></div>
         </div>
-      `;
+        <div class="stat-block">
+          <div class="stat-block-label">TARGET DATE</div>
+          <div class="stat-block-value stat-block-accent" style="font-size:18px">${dateStr}</div>
+        </div>`;
 
-      // Timeline — 1 kg fat ≈ 7700 kcal
-      // deficit cal/day × 7 = weekly kcal deficit
-      // weekly fat loss kg = weekly kcal / 7700
-      const deficits = [250, 500, 750];
-      const today = new Date(2026, 4, 2); // May 2 2026 (month is 0-indexed)
+      // ── Section 3: Composition breakdown ──
+      const tbody = document.getElementById('comp-body');
+      tbody.innerHTML = `
+        <tr class="fat-row">
+          <td>Fat mass lost</td>
+          <td>${toDisp(fatLostKg)} ${ul}</td>
+          <td>${fatPct}%</td>
+        </tr>
+        <tr class="lean-row">
+          <td>Lean mass lost</td>
+          <td>${toDisp(leanLostKg)} ${ul}</td>
+          <td>${selectedLeanPct}%</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total weight lost</td>
+          <td>${toDisp(totalLossKg)} ${ul}</td>
+          <td>100%</td>
+        </tr>`;
 
-      const tbody = document.getElementById('timeline-body');
-      tbody.innerHTML = '';
+      // ── Section 4: End-point projection ──
+      document.getElementById('rol-endpoint').innerHTML = `
+        <div class="stat-block">
+          <div class="stat-block-label">FINAL WEIGHT</div>
+          <div class="stat-block-value stat-block-accent">${toDisp(finalWeightKg)}<span class="stat-block-unit" style="color:var(--accent)">${ul}</span></div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block-label">FINAL BODY FAT</div>
+          <div class="stat-block-value stat-block-accent">${finalBFpct}<span class="stat-block-unit" style="color:var(--accent)">%</span></div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block-label">FINAL FAT MASS</div>
+          <div class="stat-block-value">${toDisp(finalFatKg)}<span class="stat-block-unit">${ul}</span></div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block-label">FINAL LEAN MASS</div>
+          <div class="stat-block-value">${toDisp(finalLeanKg)}<span class="stat-block-unit">${ul}</span></div>
+        </div>`;
 
-      deficits.forEach(def => {
-        const weeklyLossKg   = (def * 7) / 7700;          // kg fat/week
-        const weeksToGoal    = fatToLoseKg / weeklyLossKg;
-        const weeksRounded   = Math.ceil(weeksToGoal);
-        const estDate        = new Date(today);
-        estDate.setDate(estDate.getDate() + weeksRounded * 7);
-
-        const dateStr = estDate.toLocaleDateString('en-GB', {
-          day: 'numeric', month: 'short', year: 'numeric'
-        });
-
-        const weeklyLossDisplay = wUnit === 'lbs'
-          ? round2(weeklyLossKg * 2.20462) + ' lbs/wk'
-          : round2(weeklyLossKg) + ' kg/wk';
-
-        const isActive = def === selectedDeficit;
-        const tr = document.createElement('tr');
-        if (isActive) tr.className = 'row-active';
-
-        tr.innerHTML = `
-          <td><span class="deficit-label">${def} cal/day</span></td>
-          <td>${weeklyLossDisplay}</td>
-          <td>${weeksRounded} wks</td>
-          <td>${dateStr}</td>
-        `;
-        tbody.appendChild(tr);
-      });
+      // ── Note ──
+      const calsWarning = targetCals < 1500
+        ? ` <strong style="color:var(--danger)">⚠ Target calories (${targetCals} kcal) are very low — consider a more conservative rate.</strong>` : '';
+      document.getElementById('rol-note').innerHTML =
+        `Lean mass loss estimates are based on rate of loss research (Barakat et al.). Optimise protein intake and progressive training to minimise lean tissue losses.${calsWarning}`;
 
       document.getElementById('rol-result').classList.add('visible');
     }
