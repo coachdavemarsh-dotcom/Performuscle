@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1RM Calculator — Performuscle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Design tokens ── */
+    :root {
+      --ink:         #060608;
+      --ink-2:       #0f1014;
+      --ink-3:       #1a1b21;
+      --accent:      #00C896;
+      --accent-hi:   #00FFB8;
+      --accent-dim:  rgba(0,200,150,.08);
+      --white:       #F5F6FA;
+      --muted:       #5e5e70;
+      --danger:      #EF4444;
+      --warn:        #F59E0B;
+      --border:      rgba(255,255,255,.07);
+      --border-md:   rgba(255,255,255,.12);
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --radius:       10px;
+    }
+
+    /* ── Base ── */
+    html { font-size: 16px; }
+    body {
+      background: var(--ink);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: .9375rem;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hi); }
+
+    /* ── Header ── */
+    .header {
+      background: var(--ink-2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      text-decoration: none;
+    }
+
+    .header-brand svg {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .wordmark {
+      font-family: var(--font-display);
+      font-size: 1.375rem;
+      letter-spacing: .04em;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .wordmark span { color: var(--accent); }
+
+    .header-back {
+      display: flex;
+      align-items: center;
+      gap: .375rem;
+      font-family: var(--font-body);
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color .15s;
+    }
+    .header-back:hover { color: var(--white); }
+    .header-back svg { width: 14px; height: 14px; }
+
+    /* ── Page shell ── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    /* ── Two-column layout ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--ink-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+    }
+
+    /* ── Page title block ── */
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 2.625rem;
+      letter-spacing: .04em;
+      line-height: 1;
+      margin-bottom: .375rem;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: .875rem;
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── Form elements ── */
+    .field + .field { margin-top: 1.125rem; }
+
+    .field-label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: .875rem;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: .5rem;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      background: var(--ink-3);
+      border: 1px solid var(--border-md);
+      border-radius: 6px;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: .9375rem;
+      padding: .625rem .875rem;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    input[type="number"]:focus,
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,200,150,.12);
+    }
+
+    input::placeholder { color: var(--muted); }
+
+    /* ── Unit toggle ── */
+    .unit-toggle {
+      display: flex;
+      background: var(--ink-3);
+      border: 1px solid var(--border-md);
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .unit-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: .875rem;
+      letter-spacing: .06em;
+      padding: .625rem .875rem;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+
+    .unit-btn.active {
+      background: var(--accent);
+      color: var(--ink);
+    }
+
+    .unit-btn:not(.active):hover { color: var(--white); }
+
+    /* ── Calculate button ── */
+    .btn-calc {
+      display: block;
+      width: 100%;
+      margin-top: 1.5rem;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      color: var(--ink);
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      letter-spacing: .1em;
+      padding: .875rem 1.5rem;
+      transition: background .15s, transform .1s;
+    }
+
+    .btn-calc:hover { background: var(--accent-hi); }
+    .btn-calc:active { transform: scale(.985); }
+
+    .calc-note {
+      margin-top: .75rem;
+      font-size: .775rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── Validation error ── */
+    .error-msg {
+      display: none;
+      color: var(--danger);
+      font-size: .8125rem;
+      margin-top: .375rem;
+    }
+    .error-msg.visible { display: block; }
+
+    /* ── Results panel ── */
+    .results-panel {
+      display: none;
+      opacity: 0;
+      transition: opacity .3s ease;
+    }
+    .results-panel.visible {
+      display: block;
+    }
+    .results-panel.fade-in {
+      opacity: 1;
+    }
+
+    /* ── Section header ── */
+    .section-label {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: .875rem;
+    }
+
+    .results-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      letter-spacing: .04em;
+      margin-bottom: 1.25rem;
+      line-height: 1.1;
+    }
+
+    .results-title span {
+      color: var(--accent);
+    }
+
+    /* ── Tables ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .875rem;
+    }
+
+    thead th {
+      background: var(--ink-3);
+      color: var(--muted);
+      font-family: var(--font-display);
+      font-size: .8rem;
+      letter-spacing: .1em;
+      padding: .625rem .875rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-md);
+    }
+
+    tbody tr:nth-child(odd)  { background: var(--ink-2); }
+    tbody tr:nth-child(even) { background: var(--ink-3); }
+
+    tbody td {
+      padding: .6rem .875rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    /* Average row highlight */
+    tbody tr.avg-row {
+      background: rgba(0,200,150,.1) !important;
+      border-left: 3px solid var(--accent);
+    }
+    tbody tr.avg-row td {
+      font-weight: 600;
+      color: var(--accent-hi);
+    }
+    tbody tr.avg-row td:first-child {
+      padding-left: calc(.875rem - 3px);
+    }
+
+    /* Training zone intensity rows */
+    tbody tr.zone-danger { background: rgba(239,68,68,.07) !important; }
+    tbody tr.zone-warn   { background: rgba(245,158,11,.07) !important; }
+    tbody tr.zone-accent { background: rgba(0,200,150,.06) !important; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+      font-family: var(--font-display);
+      font-size: .75rem;
+      letter-spacing: .06em;
+      padding: .15rem .5rem;
+      border-radius: 4px;
+    }
+    .badge-danger { background: rgba(239,68,68,.15); color: #f87171; }
+    .badge-warn   { background: rgba(245,158,11,.15); color: #fbbf24; }
+    .badge-accent { background: rgba(0,200,150,.12); color: var(--accent); }
+
+    /* ── Divider ── */
+    .results-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1.5rem 0;
+    }
+
+    /* ── Big 1RM display ── */
+    .rm-display {
+      display: flex;
+      align-items: baseline;
+      gap: .5rem;
+      margin-bottom: 1.25rem;
+    }
+    .rm-number {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      line-height: 1;
+      color: var(--accent-hi);
+      letter-spacing: .02em;
+    }
+    .rm-unit {
+      font-family: var(--font-display);
+      font-size: 1.375rem;
+      color: var(--muted);
+      letter-spacing: .06em;
+    }
+    .rm-label {
+      font-size: .8125rem;
+      color: var(--muted);
+      margin-bottom: .875rem;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--ink-2); }
+    ::-webkit-scrollbar-thumb { background: var(--ink-3); border-radius: 3px; }
+
+    @media (max-width: 480px) {
+      .page { padding: 1.5rem .875rem 3rem; }
+      .card { padding: 1.25rem; }
+      .page-title { font-size: 2rem; }
+      .rm-number { font-size: 2.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="header">
+  <a class="header-brand" href="/coach-tools.html">
+    <!-- Dumbbell SVG -->
+    <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="1" y="10" width="4" height="6" rx="1.5" fill="#00C896"/>
+      <rect x="5" y="8" width="3" height="10" rx="1.5" fill="#00C896"/>
+      <rect x="8" y="11" width="10" height="4" rx="2" fill="#F5F6FA"/>
+      <rect x="18" y="8" width="3" height="10" rx="1.5" fill="#00C896"/>
+      <rect x="21" y="10" width="4" height="6" rx="1.5" fill="#00C896"/>
+    </svg>
+    <span class="wordmark">PERFOR<span>MUSCLE</span></span>
+  </a>
+  <a class="header-back" href="/coach-tools.html">
+    <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Back to Tools
+  </a>
+</header>
+
+<!-- ── Main ── -->
+<main class="page">
+  <div class="layout">
+
+    <!-- ── Left: Inputs ── -->
+    <div class="card">
+      <h1 class="page-title">1RM CALCULATOR</h1>
+      <p class="page-subtitle">Estimate your one-rep max from any rep range</p>
+
+      <!-- Weight -->
+      <div class="field">
+        <label class="field-label" for="weight-input">WEIGHT LIFTED</label>
+        <div class="input-row">
+          <input
+            type="number"
+            id="weight-input"
+            placeholder="e.g. 100"
+            min="1"
+            step="0.5"
+          />
+          <div class="unit-toggle" role="group" aria-label="Weight unit">
+            <button class="unit-btn active" id="btn-kg" type="button" onclick="setUnit('kg')">KG</button>
+            <button class="unit-btn" id="btn-lbs" type="button" onclick="setUnit('lbs')">LBS</button>
+          </div>
+        </div>
+        <span class="error-msg" id="err-weight">Please enter a valid weight greater than 0.</span>
+      </div>
+
+      <!-- Reps -->
+      <div class="field">
+        <label class="field-label" for="reps-input">REPS PERFORMED</label>
+        <input
+          type="number"
+          id="reps-input"
+          placeholder="e.g. 5"
+          min="1"
+          max="12"
+          step="1"
+        />
+        <span class="error-msg" id="err-reps">Please enter reps between 1 and 12.</span>
+      </div>
+
+      <!-- Exercise name (optional) -->
+      <div class="field">
+        <label class="field-label" for="exercise-input">EXERCISE <span style="color:var(--muted);font-size:.75rem;letter-spacing:.04em;">(optional)</span></label>
+        <input
+          type="text"
+          id="exercise-input"
+          placeholder="e.g. Bench Press"
+          maxlength="60"
+        />
+      </div>
+
+      <button class="btn-calc" type="button" onclick="calculate()">CALCULATE</button>
+      <p class="calc-note">Valid for 1–12 reps. Results become less accurate above 10 reps.</p>
+    </div>
+
+    <!-- ── Right: Results ── -->
+    <div id="results" class="results-panel" aria-live="polite">
+      <div class="card">
+
+        <!-- Exercise + big 1RM display -->
+        <p class="section-label" id="results-section-label">ESTIMATED 1RM</p>
+        <div id="results-exercise-title" class="results-title"></div>
+
+        <div class="rm-display">
+          <span class="rm-number" id="rm-avg-big">—</span>
+          <span class="rm-unit" id="rm-unit-label">KG</span>
+        </div>
+        <p class="rm-label">Average across all formulas (recommended)</p>
+
+        <!-- Formula comparison table -->
+        <div class="table-wrap">
+          <table id="formula-table" aria-label="1RM formula comparison">
+            <thead>
+              <tr>
+                <th>FORMULA</th>
+                <th>ESTIMATED 1RM</th>
+              </tr>
+            </thead>
+            <tbody id="formula-tbody">
+              <!-- filled by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="results-divider"></div>
+
+        <!-- Training zones -->
+        <p class="section-label">TRAINING ZONES</p>
+        <div class="table-wrap">
+          <table id="zones-table" aria-label="Training zones based on 1RM">
+            <thead>
+              <tr>
+                <th>% 1RM</th>
+                <th id="zones-weight-header">EST. WEIGHT</th>
+                <th>TYPICAL REPS</th>
+              </tr>
+            </thead>
+            <tbody id="zones-tbody">
+              <!-- filled by JS -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  /* ── State ── */
+  let unit = 'kg';
+
+  function setUnit(u) {
+    unit = u;
+    document.getElementById('btn-kg').classList.toggle('active', u === 'kg');
+    document.getElementById('btn-lbs').classList.toggle('active', u === 'lbs');
+    // Re-run if results are already showing
+    if (document.getElementById('results').classList.contains('visible')) {
+      calculate();
+    }
+  }
+
+  /* ── Formulas ── */
+  function calcEpley(w, r)    { return r === 1 ? w : w * (1 + r / 30); }
+  function calcBrzycki(w, r)  { return r === 1 ? w : w * (36 / (37 - r)); }
+  function calcLander(w, r)   { return r === 1 ? w : (100 * w) / (101.3 - 2.67123 * r); }
+  function calcLombardi(w, r) { return r === 1 ? w : w * Math.pow(r, 0.10); }
+  function calcMayhew(w, r)   { return r === 1 ? w : (100 * w) / (52.2 + 41.9 * Math.exp(-0.055 * r)); }
+  function calcOConner(w, r)  { return r === 1 ? w : w * (1 + 0.025 * r); }
+
+  const FORMULAS = [
+    { name: 'Epley',    fn: calcEpley    },
+    { name: 'Brzycki',  fn: calcBrzycki  },
+    { name: 'Lander',   fn: calcLander   },
+    { name: 'Lombardi', fn: calcLombardi },
+    { name: 'Mayhew',   fn: calcMayhew   },
+    { name: "O'Conner", fn: calcOConner  },
+  ];
+
+  /* ── Training zones ── */
+  const ZONES = [
+    { pct: 100, label: '100%', reps: '1',    intensity: 'danger' },
+    { pct:  95, label:  '95%', reps: '2–3',  intensity: 'danger' },
+    { pct:  90, label:  '90%', reps: '3–4',  intensity: 'danger' },
+    { pct:  85, label:  '85%', reps: '5–6',  intensity: 'danger' },
+    { pct:  80, label:  '80%', reps: '8–10', intensity: 'warn'   },
+    { pct:  75, label:  '75%', reps: '10–12',intensity: 'warn'   },
+    { pct:  70, label:  '70%', reps: '12–15',intensity: 'warn'   },
+    { pct:  65, label:  '65%', reps: '15–20',intensity: 'accent' },
+    { pct:  60, label:  '60%', reps: '20+',  intensity: 'accent' },
+  ];
+
+  const BADGE_MAP = {
+    danger: '<span class="badge badge-danger">High</span>',
+    warn:   '<span class="badge badge-warn">Moderate</span>',
+    accent: '<span class="badge badge-accent">Low</span>',
+  };
+
+  /* ── Round helper ── */
+  function r1(v) { return Math.round(v * 10) / 10; }
+
+  /* ── Validate ── */
+  function validate(w, r) {
+    let ok = true;
+    const errW = document.getElementById('err-weight');
+    const errR = document.getElementById('err-reps');
+
+    if (!w || w <= 0 || isNaN(w)) {
+      errW.classList.add('visible');
+      ok = false;
+    } else {
+      errW.classList.remove('visible');
+    }
+
+    if (!r || r < 1 || r > 12 || isNaN(r) || !Number.isInteger(r)) {
+      errR.classList.add('visible');
+      ok = false;
+    } else {
+      errR.classList.remove('visible');
+    }
+
+    return ok;
+  }
+
+  /* ── Main calculate ── */
+  function calculate() {
+    const weight   = parseFloat(document.getElementById('weight-input').value);
+    const reps     = parseInt(document.getElementById('reps-input').value, 10);
+    const exercise = document.getElementById('exercise-input').value.trim();
+
+    if (!validate(weight, reps)) return;
+
+    /* Compute all formulas */
+    const estimates = FORMULAS.map(f => ({
+      name: f.name,
+      value: f.fn(weight, reps),
+    }));
+
+    const avg = estimates.reduce((sum, e) => sum + e.value, 0) / estimates.length;
+
+    /* ── Formula table ── */
+    const tbody = document.getElementById('formula-tbody');
+    tbody.innerHTML = '';
+
+    estimates.forEach(e => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${e.name}</td><td>${r1(e.value)} ${unit}</td>`;
+      tbody.appendChild(tr);
+    });
+
+    // Average row
+    const avgRow = document.createElement('tr');
+    avgRow.className = 'avg-row';
+    avgRow.innerHTML = `<td>Average (Recommended)</td><td>${r1(avg)} ${unit}</td>`;
+    tbody.appendChild(avgRow);
+
+    /* ── Big 1RM display ── */
+    document.getElementById('rm-avg-big').textContent  = r1(avg);
+    document.getElementById('rm-unit-label').textContent = unit.toUpperCase();
+
+    /* ── Exercise title ── */
+    const titleEl = document.getElementById('results-exercise-title');
+    if (exercise) {
+      titleEl.innerHTML = `<span style="color:var(--white)">${exercise}</span> <span style="color:var(--muted);font-size:1.2rem;">1 REP MAX</span>`;
+    } else {
+      titleEl.innerHTML = `ONE-REP <span>MAX</span>`;
+    }
+
+    /* ── Training zones table ── */
+    const ztbody = document.getElementById('zones-tbody');
+    ztbody.innerHTML = '';
+    document.getElementById('zones-weight-header').textContent = `EST. WEIGHT (${unit.toUpperCase()})`;
+
+    ZONES.forEach(z => {
+      const estWeight = r1(avg * z.pct / 100);
+      const tr = document.createElement('tr');
+      tr.className = `zone-${z.intensity}`;
+      tr.innerHTML = `
+        <td><strong>${z.label}</strong></td>
+        <td>${estWeight} ${unit}</td>
+        <td>${z.reps} reps &nbsp;${BADGE_MAP[z.intensity]}</td>
+      `;
+      ztbody.appendChild(tr);
+    });
+
+    /* ── Show results ── */
+    const panel = document.getElementById('results');
+    panel.classList.add('visible');
+    // Trigger fade-in on next frame
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        panel.classList.add('fade-in');
+      });
+    });
+
+    // Scroll into view on mobile
+    if (window.innerWidth < 860) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  /* ── Allow Enter key to calculate ── */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') calculate();
+  });
+</script>
+</body>
+</html>

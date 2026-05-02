@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Body Composition — Performuscle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:        #060608;
+      --ink-2:      #0f1014;
+      --ink-3:      #1a1b21;
+      --accent:     #00C896;
+      --accent-hi:  #00FFB8;
+      --accent-dim: rgba(0,200,150,.08);
+      --white:      #F5F6FA;
+      --muted:      #5e5e70;
+      --danger:     #EF4444;
+      --warn:       #F59E0B;
+      --border:     rgba(255,255,255,.07);
+      --radius:     10px;
+    }
+
+    html, body {
+      background: var(--ink);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 60px;
+      background: var(--ink-2);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .header-brand svg {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .header-wordmark {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: .06em;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .header-wordmark span {
+      color: var(--accent);
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      letter-spacing: .08em;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .18s;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    /* ── LAYOUT ── */
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: .06em;
+      color: var(--white);
+      margin-bottom: 24px;
+    }
+
+    /* ── MAIN TABS ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--ink-3);
+      border-radius: var(--radius);
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 0;
+      background: transparent;
+      border: none;
+      border-radius: 7px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: .1em;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background .18s, color .18s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: var(--ink);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── SUB TABS (gender) ── */
+    .sub-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--ink-3);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+
+    .sub-tab-btn {
+      padding: 8px 28px;
+      background: transparent;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      letter-spacing: .12em;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background .18s, color .18s;
+    }
+
+    .sub-tab-btn.active {
+      background: var(--ink-2);
+      color: var(--white);
+      border: 1px solid var(--border);
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--ink-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 15px;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* ── FORM ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-full { grid-column: 1 / -1; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+
+    .field label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 12px;
+      letter-spacing: .12em;
+      color: var(--muted);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .input-row input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    input[type="number"] {
+      background: var(--ink-3);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      padding: 10px 14px;
+      width: 100%;
+      outline: none;
+      transition: border-color .18s;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    input[type="number"]:focus {
+      border-color: var(--accent);
+    }
+
+    /* unit toggle pills */
+    .unit-toggle {
+      display: flex;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .unit-btn {
+      padding: 0 11px;
+      background: var(--ink-3);
+      border: none;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      height: 100%;
+      white-space: nowrap;
+    }
+
+    .unit-btn + .unit-btn { border-left: 1px solid var(--border); }
+
+    .unit-btn.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    /* calc button */
+    .calc-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: var(--ink);
+      border: none;
+      border-radius: 8px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 17px;
+      letter-spacing: .1em;
+      cursor: pointer;
+      transition: background .18s, transform .1s;
+    }
+
+    .calc-btn:hover { background: var(--accent-hi); }
+    .calc-btn:active { transform: scale(.98); }
+
+    /* ── RESULTS ── */
+    .result-card {
+      background: var(--ink-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .result-card.visible { display: block; }
+
+    .result-bf {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .result-bf-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .result-bf-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 64px;
+      line-height: 1;
+      letter-spacing: .02em;
+    }
+
+    .result-bf-category {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: .1em;
+      margin-top: 6px;
+    }
+
+    .color-green  { color: var(--accent); }
+    .color-amber  { color: var(--warn); }
+    .color-red    { color: var(--danger); }
+
+    /* ── RATE OF LOSS ── */
+    .rol-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 520px) {
+      .rol-grid { grid-template-columns: 1fr; }
+    }
+
+    .rol-full { grid-column: 1 / -1; }
+
+    /* deficit pills */
+    .deficit-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .deficit-pill {
+      flex: 1;
+      min-width: 110px;
+      padding: 10px 8px;
+      background: var(--ink-3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      text-align: center;
+      transition: border-color .18s, color .18s, background .18s;
+    }
+
+    .deficit-pill.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .deficit-pill .pill-cal {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: .04em;
+      display: block;
+      color: inherit;
+    }
+
+    .deficit-pill .pill-sub {
+      font-size: 11px;
+      color: var(--muted);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .deficit-pill.active .pill-sub { color: var(--accent); opacity: .75; }
+
+    /* use BF button */
+    .use-bf-btn {
+      width: 100%;
+      margin-top: 6px;
+      padding: 9px 14px;
+      background: var(--accent-dim);
+      border: 1px dashed var(--accent);
+      border-radius: 7px;
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .18s;
+      text-align: left;
+    }
+
+    .use-bf-btn:hover { background: rgba(0,200,150,.14); }
+    .use-bf-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+      border-style: solid;
+    }
+
+    /* stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+
+    .stat-block {
+      background: var(--ink-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .stat-block-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 11px;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-block-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: .04em;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .stat-block-unit {
+      font-size: 14px;
+      color: var(--muted);
+      margin-left: 3px;
+    }
+
+    /* timeline table */
+    .timeline-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .timeline-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .timeline-table th {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 11px;
+      letter-spacing: .1em;
+      color: var(--muted);
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .timeline-table td {
+      padding: 11px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--white);
+      vertical-align: middle;
+    }
+
+    .timeline-table tr:last-child td { border-bottom: none; }
+
+    .timeline-table tr.row-active td {
+      background: var(--accent-dim);
+    }
+
+    .timeline-table tr.row-active td:first-child {
+      border-left: 3px solid var(--accent);
+      padding-left: 7px;
+    }
+
+    .timeline-table .deficit-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 15px;
+      letter-spacing: .04em;
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .note strong { color: var(--accent); font-weight: 600; }
+
+    /* error state */
+    .error-msg {
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .error-msg.visible { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <a href="#" class="header-brand">
+      <!-- dumbbell SVG -->
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="9" width="3" height="6" rx="1" fill="#00C896"/>
+        <rect x="4" y="7" width="3" height="10" rx="1.2" fill="#00C896"/>
+        <rect x="7" y="10.5" width="10" height="3" rx="1" fill="#00C896"/>
+        <rect x="17" y="7" width="3" height="10" rx="1.2" fill="#00C896"/>
+        <rect x="20" y="9" width="3" height="6" rx="1" fill="#00C896"/>
+      </svg>
+      <span class="header-wordmark">PERFOR<span>MUSCLE</span></span>
+    </a>
+    <a href="/coach-tools.html" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to Tools
+    </a>
+  </header>
+
+  <!-- PAGE -->
+  <div class="page">
+    <div class="page-title">Body Composition</div>
+
+    <!-- MAIN TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="naval">NAVAL BF%</button>
+      <button class="tab-btn" data-tab="rol">RATE OF LOSS</button>
+    </div>
+
+    <!-- ===================== TAB 1: NAVAL BF% ===================== -->
+    <div class="tab-panel active" id="panel-naval">
+
+      <!-- Gender sub-tabs -->
+      <div class="sub-tabs">
+        <button class="sub-tab-btn active" data-gender="male">MALE</button>
+        <button class="sub-tab-btn" data-gender="female">FEMALE</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">MEASUREMENTS</div>
+
+        <!-- MALE FORM -->
+        <div id="form-male">
+          <div class="form-grid">
+            <!-- Height -->
+            <div class="field">
+              <label>Height</label>
+              <div class="input-row">
+                <input type="number" id="m-height" placeholder="e.g. 178" min="0" step="0.1" />
+                <div class="unit-toggle">
+                  <button class="unit-btn active" data-field="m-height" data-unit="cm">cm</button>
+                  <button class="unit-btn" data-field="m-height" data-unit="in">in</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Neck -->
+            <div class="field">
+              <label>Neck Circumference</label>
+              <div class="input-row">
+                <input type="number" id="m-neck" placeholder="e.g. 38" min="0" step="0.1" />
+                <div class="unit-toggle">
+                  <button class="unit-btn active" data-field="m-neck" data-unit="cm">cm</button>
+                  <button class="unit-btn" data-field="m-neck" data-unit="in">in</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Waist -->
+            <div class="field form-full">
+              <label>Waist Circumference (at navel)</label>
+              <div class="input-row">
+                <input type="number" id="m-waist" placeholder="e.g. 86" min="0" step="0.1" />
+                <div class="unit-toggle">
+                  <button class="unit-btn active" data-field="m-waist" data-unit="cm">cm</button>
+                  <button class="unit-btn" data-field="m-waist" data-unit="in">in</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="error-msg" id="m-error">Please fill in all fields with valid positive numbers.</div>
+          <button class="calc-btn" onclick="calcNaval('male')">CALCULATE</button>
+        </div>
+
+        <!-- FEMALE FORM -->
+        <div id="form-female" style="display:none;">
+          <div class="form-grid">
+            <!-- Height -->
+            <div class="field">
+              <label>Height</label>
+              <div class="input-row">
+                <input type="number" id="f-height" placeholder="e.g. 165" min="0" step="0.1" />
+                <div class="unit-toggle">
+                  <button class="unit-btn active" data-field="f-height" data-unit="cm">cm</button>
+                  <button class="unit-btn" data-field="f-height" data-unit="in">in</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Neck -->
+            <div class="field">
+              <label>Neck Circumference</label>
+              <div class="input-row">
+                <input type="number" id="f-neck" placeholder="e.g. 33" min="0" step="0.1" />
+                <div class="unit-toggle">
+                  <button class="unit-btn active" data-field="f-neck" data-unit="cm">cm</button>
+                  <button class="unit-btn" data-field="f-neck" data-unit="in">in</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Waist -->
+            <div class="field">
+              <label>Waist Circumference (at navel)</label>
+              <div class="input-row">
+                <input type="number" id="f-waist" placeholder="e.g. 74" min="0" step="0.1" />
+                <div class="unit-toggle">
+                  <button class="unit-btn active" data-field="f-waist" data-unit="cm">cm</button>
+                  <button class="unit-btn" data-field="f-waist" data-unit="in">in</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hip -->
+            <div class="field">
+              <label>Hip Circumference</label>
+              <div class="input-row">
+                <input type="number" id="f-hip" placeholder="e.g. 96" min="0" step="0.1" />
+                <div class="unit-toggle">
+                  <button class="unit-btn active" data-field="f-hip" data-unit="cm">cm</button>
+                  <button class="unit-btn" data-field="f-hip" data-unit="in">in</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="error-msg" id="f-error">Please fill in all fields with valid positive numbers.</div>
+          <button class="calc-btn" onclick="calcNaval('female')">CALCULATE</button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="result-card" id="naval-result">
+        <div class="result-bf">
+          <div class="result-bf-label">BODY FAT PERCENTAGE</div>
+          <div class="result-bf-value" id="bf-value">—</div>
+          <div class="result-bf-category" id="bf-category">—</div>
+        </div>
+        <p class="note">
+          Calculated using the U.S. Navy circumference method.
+          <strong>ACE body fat categories</strong> applied for classification.
+        </p>
+      </div>
+
+    </div><!-- /panel-naval -->
+
+    <!-- ===================== TAB 2: RATE OF LOSS ===================== -->
+    <div class="tab-panel" id="panel-rol">
+
+      <div class="card">
+        <div class="card-title">CLIENT DATA</div>
+        <div class="rol-grid">
+
+          <!-- Weight -->
+          <div class="field">
+            <label>Current Body Weight</label>
+            <div class="input-row">
+              <input type="number" id="rol-weight" placeholder="e.g. 85" min="0" step="0.1" />
+              <div class="unit-toggle">
+                <button class="unit-btn active" data-field="rol-weight" data-unit="kg">kg</button>
+                <button class="unit-btn" data-field="rol-weight" data-unit="lbs">lbs</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current BF% -->
+          <div class="field">
+            <label>Current Body Fat %</label>
+            <input type="number" id="rol-bf-current" placeholder="e.g. 22" min="1" max="70" step="0.1" />
+            <button class="use-bf-btn" id="use-bf-btn" onclick="useBfResult()" disabled>
+              ↑ Use Naval BF% result
+            </button>
+          </div>
+
+          <!-- Goal BF% -->
+          <div class="field">
+            <label>Goal Body Fat %</label>
+            <input type="number" id="rol-bf-goal" placeholder="e.g. 15" min="1" max="70" step="0.1" />
+          </div>
+
+          <!-- Deficit -->
+          <div class="field">
+            <label>Weekly Caloric Deficit</label>
+            <div class="deficit-pills">
+              <button class="deficit-pill" data-deficit="250" onclick="selectDeficit(this)">
+                <span class="pill-cal">250</span>
+                <span class="pill-sub">cal/day</span>
+              </button>
+              <button class="deficit-pill active" data-deficit="500" onclick="selectDeficit(this)">
+                <span class="pill-cal">500</span>
+                <span class="pill-sub">cal/day</span>
+              </button>
+              <button class="deficit-pill" data-deficit="750" onclick="selectDeficit(this)">
+                <span class="pill-cal">750</span>
+                <span class="pill-sub">cal/day</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <div class="error-msg" id="rol-error">Please fill in all fields with valid numbers. Goal BF% must be less than current BF%.</div>
+        <button class="calc-btn" onclick="calcRol()">CALCULATE</button>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="result-card" id="rol-result">
+
+        <div class="stats-row" id="rol-stats"></div>
+
+        <div class="timeline-title">PROJECTED TIMELINES</div>
+        <table class="timeline-table">
+          <thead>
+            <tr>
+              <th>Deficit</th>
+              <th>Weekly Fat Loss</th>
+              <th>Weeks to Goal</th>
+              <th>Est. Date</th>
+            </tr>
+          </thead>
+          <tbody id="timeline-body"></tbody>
+        </table>
+
+        <p class="note">
+          Assumes lean mass is preserved throughout the deficit phase.
+          Fat loss rate is derived from 7,700 kcal ≈ 1 kg of fat.
+          Results are estimates.
+        </p>
+      </div>
+
+    </div><!-- /panel-rol -->
+
+  </div><!-- /page -->
+
+  <script>
+    /* ============================================================
+       STATE
+    ============================================================ */
+    let navalBfResult  = null; // last calculated BF%
+    let navalGender    = 'male';
+    let selectedDeficit = 500;
+
+    // Per-field unit state: store the currently active unit
+    const unitState = {};
+
+    /* ============================================================
+       MAIN TABS
+    ============================================================ */
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    /* ============================================================
+       GENDER SUB-TABS
+    ============================================================ */
+    document.querySelectorAll('.sub-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        navalGender = btn.dataset.gender;
+        document.getElementById('form-male').style.display   = (navalGender === 'male')   ? 'block' : 'none';
+        document.getElementById('form-female').style.display = (navalGender === 'female') ? 'block' : 'none';
+        document.getElementById('naval-result').classList.remove('visible');
+        document.getElementById('m-error').classList.remove('visible');
+        document.getElementById('f-error').classList.remove('visible');
+      });
+    });
+
+    /* ============================================================
+       UNIT TOGGLES — general (cm/in and kg/lbs)
+    ============================================================ */
+    document.querySelectorAll('.unit-toggle').forEach(toggle => {
+      toggle.querySelectorAll('.unit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const field = btn.dataset.field;
+          const newUnit = btn.dataset.unit;
+          const prevActive = toggle.querySelector('.unit-btn.active');
+          const prevUnit = prevActive ? prevActive.dataset.unit : null;
+
+          if (prevUnit === newUnit) return;
+
+          // Update button states
+          toggle.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          // Convert existing value
+          const input = document.getElementById(field);
+          const val = parseFloat(input.value);
+          if (!isNaN(val) && val > 0) {
+            if (prevUnit === 'cm' && newUnit === 'in') {
+              input.value = round2(val / 2.54);
+            } else if (prevUnit === 'in' && newUnit === 'cm') {
+              input.value = round2(val * 2.54);
+            } else if (prevUnit === 'kg' && newUnit === 'lbs') {
+              input.value = round2(val * 2.20462);
+            } else if (prevUnit === 'lbs' && newUnit === 'kg') {
+              input.value = round2(val / 2.20462);
+            }
+          }
+
+          unitState[field] = newUnit;
+        });
+      });
+    });
+
+    /* ============================================================
+       DEFICIT PILLS
+    ============================================================ */
+    function selectDeficit(pill) {
+      document.querySelectorAll('.deficit-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      selectedDeficit = parseInt(pill.dataset.deficit, 10);
+      // Re-render timeline if result is visible
+      if (document.getElementById('rol-result').classList.contains('visible')) {
+        calcRol();
+      }
+    }
+
+    /* ============================================================
+       HELPERS
+    ============================================================ */
+    function round2(v) { return Math.round(v * 100) / 100; }
+    function round1(v) { return Math.round(v * 10) / 10; }
+
+    function getCmValue(fieldId) {
+      const input = document.getElementById(fieldId);
+      const val = parseFloat(input.value);
+      if (isNaN(val) || val <= 0) return null;
+      const toggle = document.querySelector(`.unit-btn.active[data-field="${fieldId}"]`);
+      const unit = toggle ? toggle.dataset.unit : 'cm';
+      return unit === 'in' ? val * 2.54 : val;
+    }
+
+    function getKgValue(fieldId) {
+      const input = document.getElementById(fieldId);
+      const val = parseFloat(input.value);
+      if (isNaN(val) || val <= 0) return null;
+      const toggle = document.querySelector(`.unit-btn.active[data-field="${fieldId}"]`);
+      const unit = toggle ? toggle.dataset.unit : 'kg';
+      return unit === 'lbs' ? val / 2.20462 : val;
+    }
+
+    function getWeightUnit() {
+      const toggle = document.querySelector('.unit-btn.active[data-field="rol-weight"]');
+      return toggle ? toggle.dataset.unit : 'kg';
+    }
+
+    /* ============================================================
+       NAVAL BF% FORMULA
+    ============================================================ */
+    function navalBf(gender, heightCm, neckCm, waistCm, hipCm) {
+      if (gender === 'male') {
+        const log_diff = Math.log10(waistCm - neckCm);
+        const log_h    = Math.log10(heightCm);
+        return 495 / (1.0324 - 0.19077 * log_diff + 0.15456 * log_h) - 450;
+      } else {
+        const log_sum = Math.log10(waistCm + hipCm - neckCm);
+        const log_h   = Math.log10(heightCm);
+        return 495 / (1.29579 - 0.35004 * log_sum + 0.22100 * log_h) - 450;
+      }
+    }
+
+    /* ============================================================
+       ACE CATEGORIES
+    ============================================================ */
+    function bfCategory(gender, bf) {
+      if (gender === 'male') {
+        if (bf < 5)  return 'Essential';
+        if (bf <= 13) return 'Athletic';
+        if (bf <= 17) return 'Fitness';
+        if (bf <= 24) return 'Average';
+        return 'Obese';
+      } else {
+        if (bf < 13) return 'Essential';
+        if (bf <= 20) return 'Athletic';
+        if (bf <= 24) return 'Fitness';
+        if (bf <= 31) return 'Average';
+        return 'Obese';
+      }
+    }
+
+    function bfColorClass(gender, bf) {
+      if (gender === 'male') {
+        if (bf < 15) return 'color-green';
+        if (bf <= 20) return 'color-amber';
+        return 'color-red';
+      } else {
+        if (bf < 25) return 'color-green';
+        if (bf <= 30) return 'color-amber';
+        return 'color-red';
+      }
+    }
+
+    /* ============================================================
+       CALCULATE NAVAL BF%
+    ============================================================ */
+    function calcNaval(gender) {
+      const errEl = document.getElementById(gender === 'male' ? 'm-error' : 'f-error');
+      errEl.classList.remove('visible');
+
+      const prefix = gender === 'male' ? 'm' : 'f';
+      const heightCm = getCmValue(prefix + '-height');
+      const neckCm   = getCmValue(prefix + '-neck');
+      const waistCm  = getCmValue(prefix + '-waist');
+      const hipCm    = gender === 'female' ? getCmValue('f-hip') : 0;
+
+      if (!heightCm || !neckCm || !waistCm || (gender === 'female' && !hipCm)) {
+        errEl.classList.add('visible');
+        return;
+      }
+
+      if (gender === 'male' && waistCm <= neckCm) {
+        errEl.textContent = 'Waist must be greater than neck circumference.';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      if (gender === 'female' && (waistCm + hipCm) <= neckCm) {
+        errEl.textContent = 'Waist + hip must be greater than neck circumference.';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      errEl.textContent = 'Please fill in all fields with valid positive numbers.';
+
+      const bf = navalBf(gender, heightCm, neckCm, waistCm, hipCm);
+      if (isNaN(bf) || bf <= 0 || bf >= 100) {
+        errEl.textContent = 'Could not calculate — check your measurements.';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      navalBfResult = round1(bf);
+      navalGender   = gender;
+
+      // Render
+      const bfValueEl = document.getElementById('bf-value');
+      const bfCatEl   = document.getElementById('bf-category');
+
+      bfValueEl.textContent = navalBfResult + '%';
+      bfValueEl.className   = 'result-bf-value ' + bfColorClass(gender, navalBfResult);
+      bfCatEl.textContent   = bfCategory(gender, navalBfResult);
+      bfCatEl.className     = 'result-bf-category ' + bfColorClass(gender, navalBfResult);
+
+      document.getElementById('naval-result').classList.add('visible');
+
+      // Enable "Use Naval BF%" button in tab 2
+      document.getElementById('use-bf-btn').disabled = false;
+    }
+
+    /* ============================================================
+       USE BF% RESULT IN TAB 2
+    ============================================================ */
+    function useBfResult() {
+      if (navalBfResult === null) return;
+      document.getElementById('rol-bf-current').value = navalBfResult;
+      // Switch to ROL tab
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelector('[data-tab="rol"]').classList.add('active');
+      document.getElementById('panel-rol').classList.add('active');
+    }
+
+    /* ============================================================
+       RATE OF LOSS CALCULATION
+    ============================================================ */
+    function calcRol() {
+      const errEl = document.getElementById('rol-error');
+      errEl.classList.remove('visible');
+
+      const weightKg  = getKgValue('rol-weight');
+      const bfCurrent = parseFloat(document.getElementById('rol-bf-current').value);
+      const bfGoal    = parseFloat(document.getElementById('rol-bf-goal').value);
+
+      if (!weightKg || isNaN(bfCurrent) || isNaN(bfGoal) ||
+          bfCurrent <= 0 || bfGoal <= 0 || bfGoal >= bfCurrent) {
+        errEl.classList.add('visible');
+        return;
+      }
+
+      const wUnit = getWeightUnit();
+      const toDisplay = wUnit === 'lbs' ? (v => round2(v * 2.20462)) : (v => round2(v));
+      const unitLabel = wUnit;
+
+      // Masses in kg
+      const fatMassKg  = weightKg * (bfCurrent / 100);
+      const leanMassKg = weightKg - fatMassKg;
+
+      // Goal fat mass (lean stays constant)
+      const goalFatMassKg    = leanMassKg / (1 - bfGoal / 100) * (bfGoal / 100);
+      const fatToLoseKg      = fatMassKg - goalFatMassKg;
+      const targetWeightKg   = leanMassKg + goalFatMassKg;
+
+      // Stats render
+      const statsEl = document.getElementById('rol-stats');
+      statsEl.innerHTML = `
+        <div class="stat-block">
+          <div class="stat-block-label">LEAN MASS</div>
+          <div class="stat-block-value">${toDisplay(leanMassKg)}<span class="stat-block-unit">${unitLabel}</span></div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block-label">FAT MASS</div>
+          <div class="stat-block-value">${toDisplay(fatMassKg)}<span class="stat-block-unit">${unitLabel}</span></div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block-label">FAT TO LOSE</div>
+          <div class="stat-block-value" style="color:var(--warn)">${toDisplay(fatToLoseKg)}<span class="stat-block-unit" style="color:var(--warn)">${unitLabel}</span></div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-block-label">TARGET WEIGHT</div>
+          <div class="stat-block-value" style="color:var(--accent)">${toDisplay(targetWeightKg)}<span class="stat-block-unit" style="color:var(--accent)">${unitLabel}</span></div>
+        </div>
+      `;
+
+      // Timeline — 1 kg fat ≈ 7700 kcal
+      // deficit cal/day × 7 = weekly kcal deficit
+      // weekly fat loss kg = weekly kcal / 7700
+      const deficits = [250, 500, 750];
+      const today = new Date(2026, 4, 2); // May 2 2026 (month is 0-indexed)
+
+      const tbody = document.getElementById('timeline-body');
+      tbody.innerHTML = '';
+
+      deficits.forEach(def => {
+        const weeklyLossKg   = (def * 7) / 7700;          // kg fat/week
+        const weeksToGoal    = fatToLoseKg / weeklyLossKg;
+        const weeksRounded   = Math.ceil(weeksToGoal);
+        const estDate        = new Date(today);
+        estDate.setDate(estDate.getDate() + weeksRounded * 7);
+
+        const dateStr = estDate.toLocaleDateString('en-GB', {
+          day: 'numeric', month: 'short', year: 'numeric'
+        });
+
+        const weeklyLossDisplay = wUnit === 'lbs'
+          ? round2(weeklyLossKg * 2.20462) + ' lbs/wk'
+          : round2(weeklyLossKg) + ' kg/wk';
+
+        const isActive = def === selectedDeficit;
+        const tr = document.createElement('tr');
+        if (isActive) tr.className = 'row-active';
+
+        tr.innerHTML = `
+          <td><span class="deficit-label">${def} cal/day</span></td>
+          <td>${weeklyLossDisplay}</td>
+          <td>${weeksRounded} wks</td>
+          <td>${dateStr}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('rol-result').classList.add('visible');
+    }
+  </script>
+</body>
+</html>

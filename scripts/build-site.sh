@@ -31,6 +31,8 @@ fi
 echo "  → Copying tool pages..."
 [ -f "public/structural-balance.html" ] && cp public/structural-balance.html dist/structural-balance.html
 [ -f "public/coach-tools.html" ]        && cp public/coach-tools.html        dist/coach-tools.html
+[ -f "public/1rm-calculator.html" ]     && cp public/1rm-calculator.html     dist/1rm-calculator.html
+[ -f "public/body-composition.html" ]   && cp public/body-composition.html   dist/body-composition.html
 
 # ── Meal planner ──────────────────────────────────────────────────────────────
 echo "  → Building meal planner..."
@@ -47,3 +49,5 @@ echo "    Landing page         →  dist/index.html"
 echo "    Meal planner         →  dist/meal-planner/"
 echo "    Structural Balance   →  dist/structural-balance.html"
 echo "    Coach Tools          →  dist/coach-tools.html"
+echo "    1RM Calculator       →  dist/1rm-calculator.html"
+echo "    Body Composition     →  dist/body-composition.html"
