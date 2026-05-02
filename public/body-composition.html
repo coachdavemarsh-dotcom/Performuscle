@@ -588,6 +588,97 @@
 
     .note strong { color: var(--accent); font-weight: 600; }
 
+    /* ── Email capture ── */
+    .email-capture {
+      background: var(--ink-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .email-capture-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 15px;
+      letter-spacing: .1em;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .email-capture-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .email-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .email-fields { grid-template-columns: 1fr; }
+    }
+
+    .email-field label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 12px;
+      letter-spacing: .12em;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      background: var(--ink-3);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      padding: 10px 14px;
+      width: 100%;
+      outline: none;
+      transition: border-color .18s;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus { border-color: var(--accent); }
+
+    input[type="text"]::placeholder,
+    input[type="email"]::placeholder { color: var(--muted); }
+
+    .btn-email {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      color: var(--accent);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: .1em;
+      cursor: pointer;
+      transition: background .18s, color .18s;
+    }
+
+    .btn-email:hover { background: var(--accent); color: var(--ink); }
+    .btn-email:disabled { opacity: .45; cursor: not-allowed; }
+
+    .email-status {
+      margin-top: 10px;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+    }
+
+    .email-status.success { color: var(--accent); display: block; }
+    .email-status.error   { color: var(--danger); display: block; }
+
     /* error state */
     .error-msg {
       background: rgba(239,68,68,.1);
@@ -878,6 +969,24 @@
 
     </div><!-- /panel-rol -->
 
+    <!-- ── Email capture (shared, shown after any calculation) ── -->
+    <div class="email-capture" id="email-capture">
+      <div class="email-capture-title">EMAIL MY RESULTS</div>
+      <div class="email-capture-sub">Get a copy of your results — we'll also send them to your coach.</div>
+      <div class="email-fields">
+        <div class="email-field">
+          <label for="cap-name">YOUR NAME</label>
+          <input type="text" id="cap-name" placeholder="e.g. Alex Smith" maxlength="80" />
+        </div>
+        <div class="email-field">
+          <label for="cap-email">EMAIL ADDRESS</label>
+          <input type="email" id="cap-email" placeholder="you@example.com" />
+        </div>
+      </div>
+      <button class="btn-email" id="btn-send-email" type="button" onclick="sendResults()">SEND MY RESULTS</button>
+      <p class="email-status" id="email-status"></p>
+    </div>
+
   </div><!-- /page -->
 
   <script>
@@ -1112,6 +1221,8 @@
 
       // Enable "Use Naval BF%" button in tab 2
       document.getElementById('use-bf-btn').disabled = false;
+
+      showEmailCapture();
     }
 
     /* ============================================================
@@ -1275,6 +1386,100 @@
         `Lean mass loss estimates are based on rate of loss research (Barakat et al.). Optimise protein intake and progressive training to minimise lean tissue losses.${calsWarning}`;
 
       document.getElementById('rol-result').classList.add('visible');
+      showEmailCapture();
+    }
+
+    /* ============================================================
+       EMAIL CAPTURE
+    ============================================================ */
+    function showEmailCapture() {
+      const el = document.getElementById('email-capture');
+      el.style.display = 'block';
+      document.getElementById('email-status').className = 'email-status';
+      document.getElementById('email-status').textContent = '';
+      document.getElementById('btn-send-email').disabled = false;
+      document.getElementById('btn-send-email').textContent = 'SEND MY RESULTS';
+    }
+
+    async function sendResults() {
+      const name  = document.getElementById('cap-name').value.trim();
+      const email = document.getElementById('cap-email').value.trim();
+      const statusEl = document.getElementById('email-status');
+      const btn = document.getElementById('btn-send-email');
+
+      if (!name || !email) {
+        statusEl.className = 'email-status error';
+        statusEl.textContent = 'Please enter your name and email address.';
+        return;
+      }
+
+      // Determine active tab and build results payload
+      const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+      let calculator, results;
+
+      if (activeTab === 'naval') {
+        if (navalBfResult === null) {
+          statusEl.className = 'email-status error';
+          statusEl.textContent = 'Please calculate your results first.';
+          return;
+        }
+        const catEl = document.getElementById('bf-category');
+        const valEl = document.getElementById('bf-value');
+        const colorClass = valEl.className.replace('result-bf-value', '').trim();
+        calculator = 'body-composition-bf';
+        results = { gender: navalGender, bf: navalBfResult, category: catEl.textContent, colorClass };
+      } else {
+        const wUnit = getWeightUnit();
+        const weeklyLossDisp = document.querySelector('#rol-protocol .stat-block:nth-child(1) .stat-block-value')?.textContent || '';
+        const deficitDisp    = document.querySelector('#rol-protocol .stat-block:nth-child(2) .stat-block-value')?.textContent || '';
+        const targetCalsDisp = document.querySelector('#rol-protocol .stat-block:nth-child(3) .stat-block-value')?.textContent || '';
+        const totalLossDisp  = document.querySelector('#rol-timeline .stat-block:nth-child(1) .stat-block-value')?.textContent || '';
+        const durationDisp   = document.querySelector('#rol-timeline .stat-block:nth-child(2) .stat-block-value')?.textContent || '';
+        const dateDisp       = document.querySelector('#rol-timeline .stat-block:nth-child(3) .stat-block-value')?.textContent || '';
+
+        calculator = 'body-composition-rol';
+        results = {
+          rateLabel: selectedRateLabel,
+          rate: selectedRate,
+          weeklyLoss: weeklyLossDisp.replace(wUnit, '').trim(),
+          unit: wUnit,
+          dailyDeficit: deficitDisp.replace('kcal', '').trim(),
+          targetCals: targetCalsDisp.replace('kcal', '').trim(),
+          totalLoss: totalLossDisp.replace(wUnit, '').trim(),
+          weeks: durationDisp,
+          months: durationDisp,
+          targetDate: dateDisp,
+          fatLost: document.querySelector('#comp-body tr.fat-row td:nth-child(2)')?.textContent?.replace(wUnit, '').trim() || '',
+          leanLost: document.querySelector('#comp-body tr.lean-row td:nth-child(2)')?.textContent?.replace(wUnit, '').trim() || '',
+          finalWeight: document.querySelector('#rol-endpoint .stat-block:nth-child(1) .stat-block-value')?.textContent?.replace(wUnit, '').trim() || '',
+          finalBf: document.querySelector('#rol-endpoint .stat-block:nth-child(2) .stat-block-value')?.textContent?.replace('%', '').trim() || '',
+        };
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'SENDING…';
+      statusEl.className = 'email-status';
+
+      try {
+        const res = await fetch('/api/emails/calculator-results', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, calculator, results }),
+        });
+
+        if (res.ok) {
+          statusEl.className = 'email-status success';
+          statusEl.textContent = '✓ Results sent! Check your inbox.';
+          btn.textContent = 'SENT';
+        } else {
+          throw new Error('Send failed');
+        }
+      } catch {
+        statusEl.className = 'email-status error';
+        statusEl.textContent = 'Something went wrong — please try again.';
+        btn.disabled = false;
+        btn.textContent = 'SEND MY RESULTS';
+      }
     }
   </script>
 </body>

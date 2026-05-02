@@ -380,6 +380,88 @@
       margin-bottom: .875rem;
     }
 
+    /* ── Email capture ── */
+    .email-capture {
+      margin-top: 1.5rem;
+      background: var(--ink-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.75rem;
+    }
+
+    .email-capture-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: .08em;
+      color: var(--white);
+      margin-bottom: .25rem;
+    }
+
+    .email-capture-sub {
+      font-size: .8125rem;
+      color: var(--muted);
+      margin-bottom: 1.125rem;
+    }
+
+    .email-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+      margin-bottom: .75rem;
+    }
+
+    @media (max-width: 520px) {
+      .email-fields { grid-template-columns: 1fr; }
+    }
+
+    input[type="email"] {
+      width: 100%;
+      background: var(--ink-3);
+      border: 1px solid var(--border-md);
+      border-radius: 6px;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: .9375rem;
+      padding: .625rem .875rem;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    input[type="email"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,200,150,.12);
+    }
+
+    input[type="email"]::placeholder { color: var(--muted); }
+
+    .btn-email {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      color: var(--accent);
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: .1em;
+      padding: .75rem 1.5rem;
+      transition: background .15s, color .15s;
+    }
+
+    .btn-email:hover { background: var(--accent); color: var(--ink); }
+    .btn-email:disabled { opacity: .5; cursor: not-allowed; }
+
+    .email-status {
+      margin-top: .625rem;
+      font-size: .8125rem;
+      text-align: center;
+      display: none;
+    }
+
+    .email-status.success { color: var(--accent); display: block; }
+    .email-status.error   { color: var(--danger); display: block; }
+
     /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--ink-2); }
@@ -522,6 +604,25 @@
         </div>
 
       </div>
+
+      <!-- ── Email capture ── -->
+      <div class="email-capture" id="email-capture" style="display:none;">
+        <p class="email-capture-title">EMAIL MY RESULTS</p>
+        <p class="email-capture-sub">Get a copy of your results — we'll also send them to your coach.</p>
+        <div class="email-fields">
+          <div>
+            <label class="field-label" for="cap-name">YOUR NAME</label>
+            <input type="text" id="cap-name" placeholder="e.g. Alex Smith" maxlength="80" />
+          </div>
+          <div>
+            <label class="field-label" for="cap-email">EMAIL ADDRESS</label>
+            <input type="email" id="cap-email" placeholder="you@example.com" />
+          </div>
+        </div>
+        <button class="btn-email" id="btn-send-email" type="button" onclick="sendResults()">SEND MY RESULTS</button>
+        <p class="email-status" id="email-status"></p>
+      </div>
+
     </div>
 
   </div>
@@ -667,16 +768,79 @@
     /* ── Show results ── */
     const panel = document.getElementById('results');
     panel.classList.add('visible');
-    // Trigger fade-in on next frame
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         panel.classList.add('fade-in');
       });
     });
 
+    // Show email capture
+    document.getElementById('email-capture').style.display = 'block';
+
+    // Reset email status on recalculate
+    document.getElementById('email-status').className = 'email-status';
+    document.getElementById('email-status').textContent = '';
+    document.getElementById('btn-send-email').disabled = false;
+    document.getElementById('btn-send-email').textContent = 'SEND MY RESULTS';
+
     // Scroll into view on mobile
     if (window.innerWidth < 860) {
       panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  /* ── Send results via email ── */
+  async function sendResults() {
+    const name  = document.getElementById('cap-name').value.trim();
+    const email = document.getElementById('cap-email').value.trim();
+    const statusEl = document.getElementById('email-status');
+    const btn = document.getElementById('btn-send-email');
+
+    if (!name || !email) {
+      statusEl.className = 'email-status error';
+      statusEl.textContent = 'Please enter your name and email address.';
+      return;
+    }
+
+    const weight   = parseFloat(document.getElementById('weight-input').value);
+    const reps     = parseInt(document.getElementById('reps-input').value, 10);
+    const exercise = document.getElementById('exercise-input').value.trim();
+    const avgVal   = parseFloat(document.getElementById('rm-avg-big').textContent);
+
+    const formulas = Array.from(document.querySelectorAll('#formula-tbody tr:not(.avg-row) td:first-child'))
+      .map((td, i) => ({
+        name: td.textContent,
+        value: document.querySelectorAll('#formula-tbody tr:not(.avg-row) td:last-child')[i].textContent.replace(' ' + unit, ''),
+      }));
+
+    btn.disabled = true;
+    btn.textContent = 'SENDING…';
+    statusEl.className = 'email-status';
+
+    try {
+      const res = await fetch('/api/emails/calculator-results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          calculator: '1rm',
+          results: { exercise, weight, reps, unit, estimated1rm: avgVal, formulas },
+        }),
+      });
+
+      if (res.ok) {
+        statusEl.className = 'email-status success';
+        statusEl.textContent = '✓ Results sent! Check your inbox.';
+        btn.textContent = 'SENT';
+      } else {
+        throw new Error('Send failed');
+      }
+    } catch {
+      statusEl.className = 'email-status error';
+      statusEl.textContent = 'Something went wrong — please try again.';
+      btn.disabled = false;
+      btn.textContent = 'SEND MY RESULTS';
     }
   }
 

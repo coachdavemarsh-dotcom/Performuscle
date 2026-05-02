@@ -186,6 +186,24 @@
     .quote { border-left: 3px solid var(--accent); padding: 16px 20px; margin: 40px 0; border-radius: 0 var(--rs) var(--rs) 0; background: var(--accent-dim); }
     .quote p { font-size: 15px; color: var(--text); font-style: italic; line-height: 1.6; }
 
+    /* ── Email capture ── */
+    .email-capture { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 24px 28px; margin: 36px 0 0; display: none; }
+    .email-capture.visible { display: block; }
+    .email-capture-title { font-family: var(--font-d); font-size: 18px; letter-spacing: .04em; color: var(--text); margin-bottom: 4px; }
+    .email-capture-sub { font-size: 13px; color: var(--text2); margin-bottom: 18px; }
+    .email-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    @media (max-width: 520px) { .email-fields { grid-template-columns: 1fr; } }
+    .email-field label { display: block; font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+    input[type="email"] { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--rs); color: var(--text); font-family: var(--font-b); font-size: 14px; padding: 9px 12px; outline: none; transition: border-color .15s; }
+    input[type="email"]:focus { border-color: var(--accent); }
+    input[type="email"]::placeholder { color: var(--text3); font-size: 12px; }
+    .btn-email { width: 100%; padding: 11px; background: transparent; border: 1px solid var(--accent); border-radius: var(--rs); color: var(--accent); font-family: var(--font-d); font-size: 16px; letter-spacing: .1em; cursor: pointer; transition: background .15s, color .15s; }
+    .btn-email:hover { background: var(--accent); color: #000; }
+    .btn-email:disabled { opacity: .45; cursor: not-allowed; }
+    .email-status { margin-top: 10px; font-size: 13px; text-align: center; display: none; }
+    .email-status.success { color: var(--accent); display: block; }
+    .email-status.error   { color: var(--danger); display: block; }
+
     footer { border-top: 1px solid var(--border); margin-top: 80px; padding: 22px 0; text-align: center; font-size: 12px; color: var(--text3); }
 
     @media (max-width: 640px) {
@@ -442,6 +460,24 @@
       <p>"Structural balance doesn't tell you how strong a client is. It tells you whether the strength they have is safe to express."</p>
     </div>
 
+    <!-- ── Email capture ── -->
+    <div class="email-capture" id="email-capture">
+      <div class="email-capture-title">Email My Results</div>
+      <div class="email-capture-sub">Get a copy of your deficit profile — we'll also send it to your coach.</div>
+      <div class="email-fields">
+        <div class="email-field">
+          <label for="cap-name">Your Name</label>
+          <input type="text" id="cap-name" placeholder="e.g. Alex Smith" maxlength="80" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-family:var(--font-b);font-size:14px;padding:9px 12px;width:100%;outline:none;" />
+        </div>
+        <div class="email-field">
+          <label for="cap-email">Email Address</label>
+          <input type="email" id="cap-email" placeholder="you@example.com" />
+        </div>
+      </div>
+      <button class="btn-email" id="btn-send-email" type="button" onclick="sendResults()">Send My Results</button>
+      <p class="email-status" id="email-status"></p>
+    </div>
+
   </div><!-- end calculator tab -->
 
   <!-- ─── REFERENCE TAB ─── -->
@@ -684,6 +720,78 @@
     // Highlight active block
     ['b1','b2','b3','b4'].forEach(id => document.getElementById(id).classList.remove('active'));
     document.getElementById(deficits.length ? 'b1' : 'b3').classList.add('active');
+
+    // Show email capture
+    const ec = document.getElementById('email-capture');
+    ec.classList.add('visible');
+    document.getElementById('email-status').className = 'email-status';
+    document.getElementById('email-status').textContent = '';
+    const sendBtn = document.getElementById('btn-send-email');
+    if (sendBtn.textContent !== 'SENT') {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send My Results';
+    }
+
+    // Cache for sendResults
+    window._sbDeficits = deficits;
+    window._sbSummary = { totalDeficits: deficits.length, criticalCount, prioritySystem: deficits.length ? (deficits[0].system + ' body') : 'None', startPhase: deficits.length > 1 ? 'B1' : deficits.length === 1 ? 'B1→B2' : 'B3' };
+  }
+
+  async function sendResults() {
+    const name  = document.getElementById('cap-name').value.trim();
+    const email = document.getElementById('cap-email').value.trim();
+    const statusEl = document.getElementById('email-status');
+    const btn = document.getElementById('btn-send-email');
+
+    if (!name || !email) {
+      statusEl.className = 'email-status error';
+      statusEl.textContent = 'Please enter your name and email address.';
+      return;
+    }
+
+    if (!window._sbSummary) {
+      statusEl.className = 'email-status error';
+      statusEl.textContent = 'Please enter your lifts to calculate first.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    statusEl.className = 'email-status';
+
+    try {
+      const res = await fetch('/api/emails/calculator-results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          calculator: 'structural-balance',
+          results: {
+            deficits: (window._sbDeficits || []).map(d => ({
+              label: d.label,
+              actual: d.actual,
+              target: d.target,
+              tier: d.tier,
+            })),
+            ...window._sbSummary,
+          },
+        }),
+      });
+
+      if (res.ok) {
+        statusEl.className = 'email-status success';
+        statusEl.textContent = '✓ Results sent! Check your inbox.';
+        btn.textContent = 'SENT';
+      } else {
+        throw new Error('Send failed');
+      }
+    } catch {
+      statusEl.className = 'email-status error';
+      statusEl.textContent = 'Something went wrong — please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Send My Results';
+    }
   }
 
   function renderChart(deficits) {

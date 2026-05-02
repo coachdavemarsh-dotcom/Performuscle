@@ -91,6 +91,22 @@ export async function sendClientInviteEmail({ clientEmail, clientName, coachName
   return send({ to: clientEmail, subject, html })
 }
 
+export async function sendCalculatorResults({
+  clientEmail,
+  clientName,
+  calculatorName,
+  resultsHtml,
+  coachEmail,
+}) {
+  const clientTpl = templates.calculatorResultsClient({ name: clientName, calculatorName, resultsHtml })
+  const coachTpl  = templates.calculatorResultsCoach({ name: clientName, email: clientEmail, calculatorName, resultsHtml })
+
+  await send({ to: clientEmail, subject: clientTpl.subject, html: clientTpl.html })
+  if (coachEmail) {
+    await send({ to: coachEmail, subject: coachTpl.subject, html: coachTpl.html })
+  }
+}
+
 export async function sendBirthdayEmail({ clientEmail, clientName }) {
   const firstName = clientName?.split(' ')[0] || 'there'
   const subject = `🎂 Happy Birthday, ${firstName}!`

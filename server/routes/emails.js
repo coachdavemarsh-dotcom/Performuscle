@@ -6,7 +6,14 @@ import {
   sendCoachReplyNotification,
   sendWelcomeEmail,
   sendClientInviteEmail,
+  sendCalculatorResults,
 } from '../lib/email.js'
+import {
+  build1rmResultsHtml,
+  buildBfResultsHtml,
+  buildRolResultsHtml,
+  buildStructuralBalanceResultsHtml,
+} from '../lib/emailTemplates.js'
 
 const router = Router()
 
@@ -282,6 +289,63 @@ router.post('/resend-invite', requireAuth, requireCoach, async (req, res) => {
     res.json({ sent: true, email: clientEmail })
   } catch (err) {
     console.error('[Email Route] resend-invite:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ─── POST /api/emails/calculator-results ─────────────────────────────────────
+// Public — no auth required. Called from static calculator pages.
+// Body: { name, email, calculator, results }
+// calculator: '1rm' | 'body-composition-bf' | 'body-composition-rol' | 'structural-balance'
+router.post('/calculator-results', async (req, res) => {
+  try {
+    const { name, email, calculator, results } = req.body
+
+    if (!name || !email || !calculator || !results) {
+      return res.status(400).json({ error: 'name, email, calculator, and results are required' })
+    }
+
+    // Basic email validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Invalid email address' })
+    }
+
+    const CALCULATORS = {
+      '1rm':                   '1RM Calculator',
+      'body-composition-bf':   'Body Composition (Body Fat %)',
+      'body-composition-rol':  'Body Composition (Rate of Loss)',
+      'structural-balance':    'Structural Balance Calculator',
+    }
+
+    const calculatorName = CALCULATORS[calculator]
+    if (!calculatorName) {
+      return res.status(400).json({ error: 'Unknown calculator type' })
+    }
+
+    let resultsHtml = ''
+    if (calculator === '1rm') {
+      resultsHtml = build1rmResultsHtml(results)
+    } else if (calculator === 'body-composition-bf') {
+      resultsHtml = buildBfResultsHtml(results)
+    } else if (calculator === 'body-composition-rol') {
+      resultsHtml = buildRolResultsHtml(results)
+    } else if (calculator === 'structural-balance') {
+      resultsHtml = buildStructuralBalanceResultsHtml(results)
+    }
+
+    const coachEmail = process.env.COACH_EMAIL || null
+
+    await sendCalculatorResults({
+      clientEmail: email,
+      clientName: name,
+      calculatorName,
+      resultsHtml,
+      coachEmail,
+    })
+
+    res.json({ sent: true })
+  } catch (err) {
+    console.error('[Email Route] calculator-results:', err)
     res.status(500).json({ error: err.message })
   }
 })
