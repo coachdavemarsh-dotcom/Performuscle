@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Physique Peaking Calculator — Performuscle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #0F0F0F;
+      --card:        #1A1A1A;
+      --card2:       #222222;
+      --accent:      #00C9A7;
+      --accent-dim:  rgba(0,201,167,0.10);
+      --accent-bdr:  rgba(0,201,167,0.25);
+      --text:        #FFFFFF;
+      --muted:       #888888;
+      --faint:       #444444;
+      --border:      rgba(255,255,255,0.07);
+      --border-md:   rgba(255,255,255,0.13);
+      --danger:      #EF4444;
+      --danger-dim:  rgba(239,68,68,0.10);
+      --warn:        #F59E0B;
+      --warn-dim:    rgba(245,158,11,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    input, select, button, textarea { font-family: 'Inter', sans-serif; }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    select option { background: var(--card2); color: var(--text); }
+
+    /* ── Shared field styles ── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field-label {
+      display: block; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    }
+    .field-input {
+      width: 100%; background: var(--card2); border: 1px solid var(--border-md);
+      border-radius: 8px; color: var(--text); font-size: 14px;
+      padding: 10px 14px; outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,201,167,0.15); }
+    .field-input.error { border-color: var(--danger); }
+    .field-error { font-size: 11px; color: var(--danger); }
+
+    select.field-input { appearance: none; cursor: pointer; }
+
+    /* ── Toggle buttons ── */
+    .toggle {
+      display: flex; background: var(--card2); border-radius: 8px;
+      border: 1px solid var(--border-md); overflow: hidden;
+    }
+    .toggle button {
+      flex: 1; padding: 10px 0; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; transition: background .15s, color .15s;
+      background: transparent; color: var(--muted);
+    }
+    .toggle button.active { background: var(--accent); color: #000; }
+
+    /* ── Screen visibility ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ════════════════════════════════════════════
+       PASSWORD GATE
+    ════════════════════════════════════════════ */
+    #pw-screen {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 2rem;
+    }
+    .pw-brand {
+      text-align: center; margin-bottom: 2.5rem;
+    }
+    .pw-brand-name {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2rem;
+      letter-spacing: 0.15em; color: var(--accent);
+    }
+    .pw-brand-sub {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); margin-top: 4px;
+    }
+    .pw-card {
+      background: var(--card); border: 1px solid var(--border-md);
+      border-radius: 14px; padding: 2rem 2rem; width: 100%; max-width: 380px;
+      text-align: center;
+    }
+    .pw-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .pw-card p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .pw-input-wrap { position: relative; margin-bottom: 12px; }
+    .pw-input-wrap input {
+      width: 100%; background: var(--card2); border: 1px solid var(--border-md);
+      border-radius: 8px; color: var(--text); font-size: 15px;
+      padding: 12px 14px; outline: none; text-align: center;
+      letter-spacing: 0.15em; transition: border-color .15s, box-shadow .15s;
+    }
+    .pw-input-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,201,167,0.15); }
+    .pw-input-wrap input.error { border-color: var(--danger); }
+    .pw-error { font-size: 13px; color: var(--danger); margin-bottom: 12px; }
+    .pw-btn {
+      width: 100%; padding: 13px; background: var(--accent); border: none;
+      border-radius: 8px; color: #000; font-size: 14px; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.05em; transition: background .15s;
+    }
+    .pw-btn:hover { background: #00e6be; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60%  { transform: translateX(-8px); }
+      40%,80%  { transform: translateX(8px); }
+    }
+    .shake { animation: shake 0.45s ease; }
+
+    /* ════════════════════════════════════════════
+       NAV BAR (form + results screens)
+    ════════════════════════════════════════════ */
+    .tool-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 60px;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-brand-name {
+      font-weight: 800; font-size: 15px; letter-spacing: 0.18em; color: var(--accent);
+    }
+    .nav-divider { color: var(--faint); font-size: 14px; margin: 0 2px; }
+    .nav-sub { font-size: 13px; color: var(--muted); letter-spacing: 0.05em; }
+    .nav-btn {
+      font-size: 13px; color: var(--muted); background: transparent;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 6px 14px; cursor: pointer; transition: color .15s, border-color .15s;
+    }
+    .nav-btn:hover { color: var(--text); border-color: var(--border-md); }
+
+    /* ════════════════════════════════════════════
+       MAIN CONTAINER
+    ════════════════════════════════════════════ */
+    .main-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
+
+    /* ════════════════════════════════════════════
+       FORM SCREEN
+    ════════════════════════════════════════════ */
+    .form-header { margin-bottom: 28px; }
+    .form-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+    .form-header h1 span { color: var(--accent); }
+    .form-header p { font-size: 15px; color: var(--muted); max-width: 560px; }
+
+    .form-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px;
+    }
+    .form-card-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .form-card-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+
+    .form-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px;
+    }
+
+    .water-load-btn {
+      width: 100%; padding: 10px 14px; border-radius: 8px; cursor: pointer;
+      text-align: left; background: var(--card2); border: 1px solid var(--border-md);
+      color: var(--muted); font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px; transition: background .15s, color .15s, border-color .15s;
+    }
+    .water-load-btn.active {
+      background: var(--accent-dim); border-color: var(--accent-bdr); color: var(--accent);
+    }
+
+    .form-actions { display: flex; gap: 12px; margin-top: 28px; }
+    .btn-generate {
+      flex: 1; padding: 14px; background: var(--accent); border: none;
+      border-radius: 10px; color: #000; font-size: 15px; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.04em; transition: background .15s;
+    }
+    .btn-generate:hover { background: #00e6be; }
+    .btn-reset {
+      padding: 14px 20px; background: transparent; border: 1px solid var(--border-md);
+      border-radius: 10px; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+
+    /* ════════════════════════════════════════════
+       RESULTS SCREEN
+    ════════════════════════════════════════════ */
+    .results-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; margin-bottom: 24px;
+    }
+    .results-title { font-size: 32px; font-weight: 800; margin-bottom: 6px; }
+    .results-sub { font-size: 14px; color: var(--muted); }
+
+    /* ── Warning banner ── */
+    .banner {
+      border-radius: 10px; padding: 14px 20px; margin-bottom: 20px;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .banner-warn { background: var(--warn-dim); border: 1px solid rgba(245,158,11,0.3); }
+    .banner-info  { background: var(--accent-dim); border: 1px solid var(--accent-bdr); }
+    .banner-icon { font-size: 18px; flex-shrink: 0; }
+    .banner-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+    .banner-warn .banner-title { color: var(--warn); }
+    .banner-info .banner-title { color: var(--accent); }
+    .banner-body  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── Client header card ── */
+    .client-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px 24px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+    .client-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--accent-dim); border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 18px; color: var(--accent); flex-shrink: 0;
+    }
+    .client-name { font-size: 20px; font-weight: 700; margin-bottom: 2px; }
+    .client-meta { font-size: 13px; color: var(--muted); }
+    .client-meta .days-out { font-weight: 600; color: var(--accent); }
+    .client-meta .days-out.warn-out { color: var(--warn); }
+    .client-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+    .tag {
+      border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600;
+    }
+    .tag-accent { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-bdr); }
+    .tag-blue { background: rgba(96,165,250,0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.25); }
+
+    /* ── Metric grid ── */
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px; margin-bottom: 20px;
+    }
+    .metric-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px;
+    }
+    .metric-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .metric-value { font-size: 28px; font-weight: 700; line-height: 1; }
+    .metric-value.accent { color: var(--accent); }
+    .metric-unit { font-size: 14px; font-weight: 400; color: var(--muted); margin-left: 4px; }
+
+    /* ── Macro comparison ── */
+    .macro-compare {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;
+    }
+    .macro-compare-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+    .macro-compare-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+    .macro-chip {
+      flex: 1; min-width: 100px; background: var(--card2);
+      border-radius: 8px; padding: 10px 14px; border: 1px solid var(--border);
+    }
+    .macro-chip.big-diff { border-color: var(--warn); }
+    .macro-chip-name { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .macro-chip-vals { font-size: 14px; font-weight: 600; }
+    .macro-chip-diff { font-size: 11px; color: var(--warn); margin-top: 4px; }
+
+    /* ── Protocol table ── */
+    .protocol-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; margin-bottom: 20px; overflow: hidden;
+    }
+    .protocol-card-header {
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .table-scroll { overflow-x: auto; }
+    .table-scroll::-webkit-scrollbar { height: 4px; }
+    .table-scroll::-webkit-scrollbar-track { background: var(--card); }
+    .table-scroll::-webkit-scrollbar-thumb { background: var(--faint); border-radius: 2px; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 860px; }
+    thead th {
+      padding: 8px 12px; background: var(--card); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid var(--border-md); text-align: left; white-space: nowrap;
+    }
+    tbody td {
+      padding: 10px 12px; border-bottom: 1px solid var(--border);
+      font-size: 13px; white-space: nowrap;
+    }
+    tbody tr:nth-child(even) { background: var(--card2); }
+    tbody tr:nth-child(odd)  { background: var(--card); }
+    .td-day   { font-weight: 700; }
+    .td-date  { color: var(--muted); }
+    .td-carbs { color: var(--accent); font-weight: 600; }
+    .td-kcals { color: var(--muted); }
+    .td-cardio{ color: var(--muted); font-size: 12px; }
+    .td-notes { color: var(--muted); font-size: 12px; white-space: normal; min-width: 220px; line-height: 1.5; }
+
+    .phase-badge {
+      border-radius: 4px; padding: 2px 8px;
+      font-size: 11px; font-weight: 700; white-space: nowrap;
+    }
+    .phase-dep   { background: rgba(239,68,68,0.15);   color: #f87171; }
+    .phase-load  { background: var(--accent-dim);       color: var(--accent); }
+    .phase-hold  { background: rgba(96,165,250,0.15);   color: #60a5fa; }
+    .phase-shoot { background: rgba(255,255,255,0.06);  color: var(--accent); }
+
+    /* ── Collapsibles ── */
+    .collapsible { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
+    .collapsible-btn {
+      width: 100%; padding: 14px 20px; background: var(--card); border: none;
+      color: var(--text); cursor: pointer; display: flex; justify-content: space-between;
+      align-items: center; font-size: 14px; font-weight: 600;
+    }
+    .collapsible-icon { color: var(--muted); font-size: 18px; line-height: 1; }
+    .collapsible-body {
+      background: var(--card2); padding: 16px 20px;
+      border-top: 1px solid var(--border); display: none;
+    }
+    .collapsible-body.open { display: block; }
+
+    .food-head { font-weight: 700; font-size: 13px; margin-bottom: 6px; margin-top: 14px; }
+    .food-head:first-child { margin-top: 0; }
+    .food-head.green { color: var(--accent); }
+    .food-head.red   { color: var(--danger); }
+    .food-text { font-size: 13px; color: var(--muted); line-height: 1.8; }
+
+    .supp-list { font-size: 13px; color: var(--muted); line-height: 2; margin: 0; padding-left: 18px; }
+    .checklist { font-size: 13px; color: var(--muted); line-height: 2; }
+    .check-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 4px; }
+    .check-box { color: var(--accent); flex-shrink: 0; }
+
+    /* ── Action buttons ── */
+    .result-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+    .btn-copy {
+      flex: 1; min-width: 200px; padding: 14px 20px; background: var(--accent);
+      border: none; border-radius: 10px; color: #000; font-size: 15px; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.03em; transition: background .2s, color .2s;
+    }
+    .btn-copy.copied {
+      background: var(--accent-dim); border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .btn-back {
+      padding: 14px 24px; background: transparent; border: 1px solid var(--border-md);
+      border-radius: 10px; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .main-wrap { padding: 20px 16px 48px; }
+      .form-card { padding: 20px 16px; }
+      .tool-nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ PASSWORD GATE ══════════════════════════════════════════════════════════ -->
+<div id="pw-screen" class="screen active">
+  <div class="pw-brand">
+    <div class="pw-brand-name">PERFORMUSCLE</div>
+    <div class="pw-brand-sub">Physique Peaking Calculator</div>
+  </div>
+  <div class="pw-card">
+    <h2>Coach Access</h2>
+    <p>Enter your password to continue</p>
+    <div class="pw-input-wrap" id="pw-wrap">
+      <input type="password" id="pw-input" placeholder="Password" autocomplete="off" spellcheck="false" />
+    </div>
+    <div class="pw-error" id="pw-error" style="display:none">Incorrect password</div>
+    <button class="pw-btn" id="pw-btn">Enter</button>
+  </div>
+</div>
+
+<!-- ══ FORM SCREEN ════════════════════════════════════════════════════════════ -->
+<div id="form-screen" class="screen">
+  <nav class="tool-nav">
+    <div class="nav-brand">
+      <span class="nav-brand-name">PERFORMUSCLE</span>
+      <span class="nav-divider">|</span>
+      <span class="nav-sub">Physique Peaking Calculator</span>
+    </div>
+  </nav>
+
+  <div class="main-wrap">
+    <div class="form-header">
+      <h1>Physique <span>Peaking</span> Protocol</h1>
+      <p>Generate a fully personalised 7-day peaking protocol for photoshoots and contest prep. All calculations are client-specific based on bodyweight and lean mass.</p>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-title">Client Details</div>
+      <div class="form-card-sub">Fill in the client's stats to generate their peaking protocol.</div>
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label class="field-label" for="f-name">Client Name</label>
+          <input class="field-input" type="text" id="f-name" placeholder="e.g. Sarah Jones" />
+          <span class="field-error" id="err-name" style="display:none">Required</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="f-date">Shoot / Contest Date</label>
+          <input class="field-input" type="date" id="f-date" style="color-scheme:dark" />
+          <span class="field-error" id="err-date" style="display:none">Required</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="f-bw">Bodyweight (kg)</label>
+          <input class="field-input" type="number" id="f-bw" placeholder="e.g. 78.5" step="0.1" />
+          <span class="field-error" id="err-bw" style="display:none">Enter a valid weight</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="f-bf">Body Fat %</label>
+          <input class="field-input" type="number" id="f-bf" placeholder="e.g. 14.5" step="0.1" />
+          <span class="field-error" id="err-bf" style="display:none">Enter 1–50%</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Goal Type</label>
+          <div class="toggle" id="tog-goal">
+            <button type="button" class="active" data-val="Photoshoot">Photoshoot</button>
+            <button type="button" data-val="Contest Prep">Contest Prep</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="f-macros">Current Macros (optional)</label>
+          <input class="field-input" type="text" id="f-macros" placeholder='e.g. "200g protein / 250g carbs / 70g fat"' />
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="f-days">Training Days / Week</label>
+          <select class="field-input" id="f-days">
+            <option>3</option><option>4</option><option selected>5</option><option>6</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="f-cardio">Cardio Type</label>
+          <select class="field-input" id="f-cardio">
+            <option>None</option>
+            <option selected>LISS only</option>
+            <option>LISS + HIIT</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Peaking Method</label>
+          <div class="toggle" id="tog-method">
+            <button type="button" class="active" data-val="Back Load">Back Load</button>
+            <button type="button" data-val="Front Load">Front Load</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Water Load Add-On</label>
+          <button type="button" class="water-load-btn" id="water-load-btn">
+            <span id="water-load-icon">○</span>
+            AIS Protocol Add-On
+          </button>
+        </div>
+
+      </div><!-- /form-grid -->
+
+      <div class="form-actions">
+        <button type="button" class="btn-generate" id="btn-generate">Generate Protocol</button>
+        <button type="button" class="btn-reset" id="btn-form-reset">Reset</button>
+      </div>
+    </div><!-- /form-card -->
+  </div><!-- /main-wrap -->
+</div><!-- /form-screen -->
+
+<!-- ══ RESULTS SCREEN ═════════════════════════════════════════════════════════ -->
+<div id="results-screen" class="screen">
+  <nav class="tool-nav">
+    <div class="nav-brand">
+      <span class="nav-brand-name">PERFORMUSCLE</span>
+      <span class="nav-divider">|</span>
+      <span class="nav-sub">Physique Peaking Calculator</span>
+    </div>
+    <button type="button" class="nav-btn" id="btn-new-protocol">← New Protocol</button>
+  </nav>
+
+  <div class="main-wrap">
+    <!-- content injected by JS -->
+    <div id="results-content"></div>
+  </div>
+</div>
+
+<script>
+  /* ─── Constants ─────────────────────────────────────────────────────────── */
+  const PW_KEY = 'pp_auth'
+  const CORRECT = 'Physique'
+
+  /* ─── Helpers ───────────────────────────────────────────────────────────── */
+  const r    = n => Math.round(n)
+  const kcal = (c, p, f) => r(c * 4 + p * 4 + f * 9)
+  const fmtL = ml => ml >= 1000 ? `${(ml / 1000).toFixed(1)}L` : `${ml}ml`
+
+  function getDaysOut(shootDate) {
+    if (!shootDate) return null
+    const today = new Date(); today.setHours(0,0,0,0)
+    const shoot = new Date(shootDate); shoot.setHours(0,0,0,0)
+    return Math.ceil((shoot - today) / 86400000)
+  }
+
+  function dayDate(shootDate, daysBack) {
+    const d = new Date(shootDate)
+    d.setDate(d.getDate() - daysBack)
+    return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+  }
+
+  function fmtShootDate(shootDate) {
+    return new Date(shootDate).toLocaleDateString('en-GB', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    })
+  }
+
+  function parseMacros(str) {
+    if (!str?.trim()) return null
+    const p = str.match(/(\d+)\s*g?\s*(?:protein|pro)/i)?.[1]
+    const c = str.match(/(\d+)\s*g?\s*(?:carbs?|carbohydrates?)/i)?.[1]
+    const f = str.match(/(\d+)\s*g?\s*fat/i)?.[1]
+    if (!p && !c && !f) return null
+    return { protein: p ? +p : null, carbs: c ? +c : null, fat: f ? +f : null }
+  }
+
+  /* ─── Cardio map ────────────────────────────────────────────────────────── */
+  const CARDIO = {
+    'None':       { d7:'Off', d6:'Off', d5:'Metabolic weights (3×15 @ RPE 6)', d4:'Off', d3:'Off', d2:'Off', d1:'Full body pump only', d0:'Off' },
+    'LISS only':  { d7:'LISS', d6:'LISS', d5:'Metabolic weights (3×15 @ RPE 6)', d4:'LISS', d3:'LISS', d2:'Off', d1:'Full body pump only', d0:'Off' },
+    'LISS + HIIT':{ d7:'LISS', d6:'LISS + HIIT', d5:'Metabolic weights (3×15 @ RPE 6)', d4:'LISS', d3:'LISS', d2:'Off', d1:'Full body pump only', d0:'Off' },
+  }
+
+  /* ─── Protocol calculators ──────────────────────────────────────────────── */
+  function calcBackLoad(BW, LBM, cardioType) {
+    const dC = Math.max(r(BW*0.8),50), dP=r(LBM*2.2), dF=r(LBM*0.7), dW=r(BW*35)
+    const l1C=r(BW*6.6), l1P=r(LBM*1.8), l1F=r(LBM*0.3), lW=r(BW*100)
+    const l2C=r(l1C*0.75), l2P=r(LBM*1.8), l2F=r(LBM*0.3)
+    const hC=r(((dC+l2C)/2)*0.9), hP=r(LBM*1.8), hF=r(LBM*0.5), hW=r(BW*35)
+    const d1C=Math.min(r(hC*1.1),l2C), d1P=r(LBM*1.8), d1F=r(LBM*0.4), d1W=r(BW*15)
+    const d0Min=r(d1C*0.6), d0P=r(BW*0.5), d0F=r(BW*0.1), d0W=r(BW*15)
+    const cv=k=>CARDIO[cardioType]?.[k]??'Off'
+    return [
+      { key:'d7', lbl:'D-7', phase:'Depletion 1',  pc:'dep',  c:dC,             p:dP,  f:dF,  w:dW,  cardio:cv('d7'), notes:'Lower body session' },
+      { key:'d6', lbl:'D-6', phase:'Depletion 2',  pc:'dep',  c:dC,             p:dP,  f:dF,  w:dW,  cardio:cv('d6'), notes:'Upper body session' },
+      { key:'d5', lbl:'D-5', phase:'Depletion 3',  pc:'dep',  c:dC,             p:dP,  f:dF,  w:dW,  cardio:cv('d5'), notes:'Baseline visual assessment AM' },
+      { key:'d4', lbl:'D-4', phase:'Load Day 1',   pc:'load', c:l1C,            p:l1P, f:l1F, w:lW,  cardio:cv('d4'), notes:'Prioritise low-GI carbs early, moderate-GI PM' },
+      { key:'d3', lbl:'D-3', phase:'Load Day 2',   pc:'load', c:l2C,            p:l2P, f:l2F, w:lW,  cardio:cv('d3'), notes:'Monitor fullness vs spillover. If bloated from D-4, reduce by 20%.' },
+      { key:'d2', lbl:'D-2', phase:'Hold',         pc:'hold', c:hC,             p:hP,  f:hF,  w:hW,  cardio:cv('d2'), notes:'Visual assessment PM. Aim for "almost full".' },
+      { key:'d1', lbl:'D-1', phase:'Final Adj.',   pc:'hold', c:d1C,            p:d1P, f:d1F, w:d1W, cardio:cv('d1'), notes:'Easy to digest foods only. No HIIT. Drink to thirst.' },
+      { key:'d0', lbl:'D-0', phase:'Shoot Day',    pc:'shoot',c:`${d0Min}–${d1C}`, cNum:d1C, p:d0P, f:d0F, w:d0W, cardio:cv('d0'), isShoot:true,
+        notes:`Graze every 2–3hrs based on visual. 1g Na per 1000kcal 10–20min before pump-up. ${fmtL(d0W)} post-weigh then drink to thirst.` },
+    ]
+  }
+
+  function calcFrontLoad(BW, LBM, cardioType) {
+    const dC=Math.max(r(BW*0.8),50), dP=r(LBM*2.2), dF=r(LBM*0.7)
+    const l1C=r(BW*6.6), l1P=r(LBM*1.8), l1F=r(LBM*0.3), lW=r(BW*100)
+    const l2C=r(l1C*0.75), l2P=r(LBM*1.8), l2F=r(LBM*0.3)
+    const hC=r(((dC+l2C)/2)*0.9), hP=r(LBM*1.8), hF=r(LBM*0.5), hW=r(BW*35)
+    const t1F=r(LBM*0.9), t2F=r(LBM*1.0), tW=r(BW*15)
+    const d1C=r(dC*0.8), d0Min=r(d1C*0.6), d0P=r(BW*0.5), d0F=r(BW*0.1), d0W=r(BW*15)
+    const cv=k=>CARDIO[cardioType]?.[k]??'Off'
+    return [
+      { key:'d7', lbl:'D-7', phase:'Load Day 1',  pc:'load', c:l1C,            p:l1P, f:l1F, w:lW,       cardio:cv('d7'), notes:'Prioritise low-GI carbs early, moderate-GI PM' },
+      { key:'d6', lbl:'D-6', phase:'Load Day 2',  pc:'load', c:l2C,            p:l2P, f:l2F, w:lW,       cardio:cv('d6'), notes:'Monitor fullness vs spillover. Reduce by 20% if bloated from D-7.' },
+      { key:'d5', lbl:'D-5', phase:'Hold',        pc:'hold', c:hC,             p:hP,  f:hF,  w:hW,       cardio:cv('d5'), notes:'Visual assessment PM. Aim for "almost full".' },
+      { key:'d4', lbl:'D-4', phase:'Moderate',    pc:'dep',  c:dC,             p:dP,  f:dF,  w:r(BW*35), cardio:cv('d4'), notes:'Maintain training quality. Baseline visual assessment.' },
+      { key:'d3', lbl:'D-3', phase:'Moderate',    pc:'dep',  c:dC,             p:dP,  f:dF,  w:r(BW*35), cardio:cv('d3'), notes:'Consistent with D-4. Monitor vascularity.' },
+      { key:'d2', lbl:'D-2', phase:'Taper',       pc:'hold', c:dC,             p:dP,  f:t1F, w:tW,       cardio:cv('d2'), notes:'Increase dietary fat. Keep carbs low.' },
+      { key:'d1', lbl:'D-1', phase:'Taper',       pc:'hold', c:d1C,            p:dP,  f:t2F, w:tW,       cardio:cv('d1'), notes:'Easy to digest foods. Full body pump. Drink to thirst.' },
+      { key:'d0', lbl:'D-0', phase:'Shoot Day',   pc:'shoot',c:`${d0Min}–${d1C}`, cNum:d1C, p:d0P, f:d0F, w:d0W, cardio:cv('d0'), isShoot:true,
+        notes:`Graze every 2–3hrs based on visual. 1g Na per 1000kcal 10–20min before pump-up. ${fmtL(d0W)} post-weigh then drink to thirst.` },
+    ]
+  }
+
+  /* ─── State ─────────────────────────────────────────────────────────────── */
+  let _waterLoad  = false
+  let _goalType   = 'Photoshoot'
+  let _method     = 'Back Load'
+
+  /* ─── Screen helpers ────────────────────────────────────────────────────── */
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+    document.getElementById(id).classList.add('active')
+    window.scrollTo(0,0)
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     PASSWORD GATE
+  ═══════════════════════════════════════════════════════════════ */
+  if (sessionStorage.getItem(PW_KEY) === '1') showScreen('form-screen')
+
+  function attemptUnlock() {
+    const val = document.getElementById('pw-input').value
+    if (val === CORRECT) {
+      sessionStorage.setItem(PW_KEY, '1')
+      showScreen('form-screen')
+    } else {
+      const inp = document.getElementById('pw-input')
+      const wrap = document.getElementById('pw-wrap')
+      document.getElementById('pw-error').style.display = 'block'
+      inp.classList.add('error')
+      wrap.classList.add('shake')
+      setTimeout(() => { wrap.classList.remove('shake'); inp.classList.remove('error') }, 500)
+      inp.value = ''
+    }
+  }
+
+  document.getElementById('pw-btn').addEventListener('click', attemptUnlock)
+  document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key==='Enter') attemptUnlock() })
+
+  /* ═══════════════════════════════════════════════════════════════
+     TOGGLE WIDGETS
+  ═══════════════════════════════════════════════════════════════ */
+  function initToggle(id, onChange) {
+    const tog = document.getElementById(id)
+    tog.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        tog.querySelectorAll('button').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        onChange(btn.dataset.val)
+      })
+    })
+  }
+
+  initToggle('tog-goal',   v => { _goalType = v })
+  initToggle('tog-method', v => { _method   = v })
+
+  const waterBtn = document.getElementById('water-load-btn')
+  waterBtn.addEventListener('click', () => {
+    _waterLoad = !_waterLoad
+    waterBtn.classList.toggle('active', _waterLoad)
+    document.getElementById('water-load-icon').textContent = _waterLoad ? '✓' : '○'
+  })
+
+  /* ═══════════════════════════════════════════════════════════════
+     FORM RESET
+  ═══════════════════════════════════════════════════════════════ */
+  document.getElementById('btn-form-reset').addEventListener('click', () => {
+    document.getElementById('f-name').value   = ''
+    document.getElementById('f-date').value   = ''
+    document.getElementById('f-bw').value     = ''
+    document.getElementById('f-bf').value     = ''
+    document.getElementById('f-macros').value = ''
+    document.getElementById('f-days').value   = '5'
+    document.getElementById('f-cardio').value = 'LISS only'
+
+    _goalType  = 'Photoshoot'
+    _method    = 'Back Load'
+    _waterLoad = false
+
+    document.getElementById('tog-goal').querySelectorAll('button').forEach((b,i) => b.classList.toggle('active', i===0))
+    document.getElementById('tog-method').querySelectorAll('button').forEach((b,i) => b.classList.toggle('active', i===0))
+    waterBtn.classList.remove('active')
+    document.getElementById('water-load-icon').textContent = '○'
+
+    document.querySelectorAll('.field-error').forEach(e => e.style.display='none')
+    document.querySelectorAll('.field-input').forEach(i => i.classList.remove('error'))
+  })
+
+  /* ═══════════════════════════════════════════════════════════════
+     GENERATE PROTOCOL
+  ═══════════════════════════════════════════════════════════════ */
+  document.getElementById('btn-generate').addEventListener('click', generate)
+
+  function generate() {
+    const name   = document.getElementById('f-name').value.trim()
+    const date   = document.getElementById('f-date').value
+    const bwStr  = document.getElementById('f-bw').value
+    const bfStr  = document.getElementById('f-bf').value
+    const macros = document.getElementById('f-macros').value
+    const cardio = document.getElementById('f-cardio').value
+
+    let valid = true
+    function setErr(id, errId, show) {
+      document.getElementById(id).classList.toggle('error', show)
+      document.getElementById(errId).style.display = show ? 'block' : 'none'
+      if (show) valid = false
+    }
+
+    setErr('f-name', 'err-name', !name)
+    setErr('f-date', 'err-date', !date)
+    const bw = parseFloat(bwStr)
+    const bf = parseFloat(bfStr)
+    setErr('f-bw', 'err-bw', !bwStr || isNaN(bw) || bw <= 0)
+    setErr('f-bf', 'err-bf', !bfStr || isNaN(bf) || bf < 1 || bf > 50)
+
+    if (!valid) return
+
+    const LBM     = bw * (1 - bf / 100)
+    const calc    = _method === 'Front Load' ? calcFrontLoad : calcBackLoad
+    const proto   = calc(bw, LBM, cardio)
+    const daysOut = getDaysOut(date)
+    const pm      = parseMacros(macros)
+
+    renderResults({ name, date, bw, bf, LBM, cardio, macros: pm, proto, daysOut })
+    showScreen('results-screen')
+  }
+
+  document.getElementById('btn-new-protocol').addEventListener('click', () => showScreen('form-screen'))
+
+  /* ═══════════════════════════════════════════════════════════════
+     RENDER RESULTS
+  ═══════════════════════════════════════════════════════════════ */
+  function renderResults({ name, date, bw, bf, LBM, macros, proto, daysOut }) {
+    const fatMass      = bw * (bf / 100)
+    const proteinFloor = r(LBM * 2.2)
+    const initials     = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)
+    const daysClass    = daysOut !== null && daysOut < 7 ? 'warn-out' : ''
+    const daysLabel    = daysOut !== null ? `${daysOut} days out` : '—'
+
+    let html = ''
+
+    /* ── Warning banner ── */
+    if (daysOut !== null && daysOut < 7) {
+      html += `<div class="banner banner-warn">
+        <div class="banner-icon">⚠️</div>
+        <div>
+          <div class="banner-title">Less than 7 days out</div>
+          <div class="banner-body">Protocol has been compressed. Monitor daily and contact Dave.</div>
+        </div>
+      </div>`
+    }
+
+    /* ── AIS banner ── */
+    if (_waterLoad) {
+      html += `<div class="banner banner-info">
+        <div>
+          <div class="banner-title">AIS WATER LOAD ADD-ON ACTIVE</div>
+          <div class="banner-body">3 days pre-depletion at 100ml/kg/day, then restrict to 15ml/kg on restriction day.
+          This upregulates renal excretion, increasing net fluid loss on restriction day by ~39% vs control (Reale et al.).</div>
+        </div>
+      </div>`
+    }
+
+    /* ── Client header card ── */
+    html += `<div class="client-card">
+      <div class="client-avatar">${initials}</div>
+      <div style="flex:1;min-width:180px">
+        <div class="client-name">${esc(name)}</div>
+        <div class="client-meta">
+          ${esc(_goalType)} &nbsp;·&nbsp; ${fmtShootDate(date)}
+          &nbsp;·&nbsp; <span class="days-out ${daysClass}">${daysLabel}</span>
+        </div>
+      </div>
+      <div class="client-tags">
+        <span class="tag tag-accent">${esc(_method)}</span>
+        ${_waterLoad ? '<span class="tag tag-blue">AIS Water Load</span>' : ''}
+      </div>
+    </div>`
+
+    /* ── Metrics grid ── */
+    html += `<div class="metrics-grid">
+      <div class="metric-card"><div class="metric-label">Lean Body Mass</div><div class="metric-value accent">${r(LBM)}<span class="metric-unit">kg</span></div></div>
+      <div class="metric-card"><div class="metric-label">Fat Mass</div><div class="metric-value">${r(fatMass)}<span class="metric-unit">kg</span></div></div>
+      <div class="metric-card"><div class="metric-label">Glycogen Target</div><div class="metric-value">~700<span class="metric-unit">g</span></div></div>
+      <div class="metric-card"><div class="metric-label">Protein Floor</div><div class="metric-value">${proteinFloor}<span class="metric-unit">g/day</span></div></div>
+    </div>`
+
+    /* ── Macro comparison ── */
+    if (macros) {
+      const baseline = proto[0]
+      const cmp = [
+        { label:'Protein', cur: macros.protein, pro: baseline.p },
+        { label:'Carbs',   cur: macros.carbs,   pro: typeof baseline.c === 'number' ? baseline.c : baseline.cNum },
+        { label:'Fat',     cur: macros.fat,      pro: baseline.f },
+      ].filter(m => m.cur !== null)
+
+      if (cmp.length) {
+        html += `<div class="macro-compare">
+          <div class="macro-compare-label">Current Targets vs D-7 Protocol</div>
+          <div class="macro-compare-grid">`
+        cmp.forEach(m => {
+          const diff = m.cur && m.pro ? ((m.cur - m.pro) / m.pro) * 100 : null
+          const big = diff !== null && Math.abs(diff) > 20
+          html += `<div class="macro-chip${big ? ' big-diff' : ''}">
+            <div class="macro-chip-name">${m.label}</div>
+            <div class="macro-chip-vals">
+              <span style="color:#fff">${m.cur}g</span>
+              <span style="color:#444;margin:0 6px">→</span>
+              <span style="color:${big ? '#F59E0B' : '#00C9A7'}">${m.pro}g</span>
+            </div>
+            ${big ? `<div class="macro-chip-diff">${diff > 0 ? '+' : ''}${r(diff)}% vs protocol</div>` : ''}
+          </div>`
+        })
+        html += `</div></div>`
+      }
+    }
+
+    /* ── Protocol table ── */
+    html += `<div class="protocol-card">
+      <div class="protocol-card-header">7-Day Protocol</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th>Day</th><th>Date</th><th>Phase</th><th>Carbs</th>
+            <th>Protein</th><th>Fat</th><th>Kcals</th><th>Water</th>
+            <th>Cardio</th><th>Key Notes</th>
+          </tr></thead>
+          <tbody>`
+
+    proto.forEach((d, i) => {
+      const dateStr = dayDate(date, 7 - i)
+      const cNum    = typeof d.c === 'number' ? d.c : d.cNum
+      const k       = kcal(cNum, d.p, d.f)
+      const carbFmt = typeof d.c === 'string' ? d.c : `${d.c}g`
+      html += `<tr>
+        <td class="td-day">${d.lbl}</td>
+        <td class="td-date">${dateStr}</td>
+        <td><span class="phase-badge phase-${d.pc}">${d.phase}</span></td>
+        <td class="td-carbs">${carbFmt}</td>
+        <td>${d.p}g</td>
+        <td>${d.f}g</td>
+        <td class="td-kcals">${k}</td>
+        <td>${fmtL(d.w)}</td>
+        <td class="td-cardio">${d.cardio}</td>
+        <td class="td-notes">${esc(d.notes)}</td>
+      </tr>`
+    })
+
+    html += `</tbody></table></div></div>`
+
+    /* ── Collapsibles ── */
+    html += collapsible('Carb-Up Food Strategy', `
+      <div class="food-head green">LOAD DAYS — Prioritise</div>
+      <div class="food-text" style="margin-bottom:16px">White rice · Jasmine rice · White potato · Cream of rice · Rice cakes · White bread · Banana · Dates</div>
+      <div class="food-head red">LOAD DAYS — Avoid</div>
+      <div class="food-text" style="margin-bottom:16px">Cruciferous vegetables · High-fibre grains · High fat alongside large carb doses · Alcohol</div>
+      <div class="food-head">SHOOT DAY</div>
+      <div class="food-text">Easy-to-digest carbs every 2–3hrs. Small electrolyte drink 10–15min before pump-up. Sodium ~1g per 1000kcal consumed.</div>
+    `)
+
+    html += collapsible('Supplement Notes', `
+      <ul class="supp-list">
+        <li>Creatine maintenance throughout the entire peaking week</li>
+        <li>No diuretics — water manipulation is protocol-driven</li>
+        <li>Electrolyte drink on shoot morning (before pump-up)</li>
+        <li>Flag any new compounds to Dave before starting the protocol</li>
+      </ul>
+    `)
+
+    html += collapsible('Daily Monitoring Checklist', `
+      <div class="checklist">
+        ${[
+          'Morning weight — same conditions every day (post-toilet, pre-food)',
+          'Front / side / back photo in pump lighting',
+          'Subjective fullness score 1–10',
+          'Send to Dave via WhatsApp each morning from D-7',
+        ].map(item => `<div class="check-item"><span class="check-box">□</span><span>${item}</span></div>`).join('')}
+      </div>
+    `)
+
+    /* ── Action buttons ── */
+    html += `<div class="result-actions">
+      <button type="button" class="btn-copy" id="btn-copy">Copy Protocol for Gamma →</button>
+      <button type="button" class="btn-back" id="btn-back-form">Reset</button>
+    </div>`
+
+    document.getElementById('results-content').innerHTML = html
+
+    /* wire up collapsibles */
+    document.querySelectorAll('.collapsible-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const body = btn.nextElementSibling
+        const isOpen = body.classList.contains('open')
+        body.classList.toggle('open', !isOpen)
+        btn.querySelector('.collapsible-icon').textContent = isOpen ? '+' : '−'
+      })
+    })
+
+    /* copy button */
+    document.getElementById('btn-copy').addEventListener('click', () => {
+      const txt = buildPlainText({ name, date, bw, bf, LBM, fatMass, proteinFloor, proto, daysOut })
+      navigator.clipboard.writeText(txt).then(() => {
+        const btn = document.getElementById('btn-copy')
+        btn.textContent = '✓ Copied!'
+        btn.classList.add('copied')
+        setTimeout(() => { btn.textContent = 'Copy Protocol for Gamma →'; btn.classList.remove('copied') }, 2000)
+      })
+    })
+
+    /* back / reset */
+    document.getElementById('btn-back-form').addEventListener('click', () => showScreen('form-screen'))
+  }
+
+  /* ─── Collapsible helper ─────────────────────────────────────────────────── */
+  function collapsible(title, body) {
+    return `<div class="collapsible">
+      <button type="button" class="collapsible-btn">
+        <span>${title}</span>
+        <span class="collapsible-icon">+</span>
+      </button>
+      <div class="collapsible-body">${body}</div>
+    </div>`
+  }
+
+  /* ─── Build plain text for clipboard ────────────────────────────────────── */
+  function buildPlainText({ name, date, bw, bf, LBM, fatMass, proteinFloor, proto, daysOut }) {
+    const sep = '─'.repeat(56)
+    const lines = [
+      'PERFORMUSCLE — PHYSIQUE PEAKING PROTOCOL',
+      sep,
+      `Client: ${name} | Goal: ${_goalType} | Shoot Date: ${fmtShootDate(date)} | Days Out: ${daysOut ?? '—'}`,
+      '',
+      'BODY COMPOSITION',
+      `Bodyweight: ${bw}kg | BF: ${bf}% | LBM: ${r(LBM)}kg | Fat Mass: ${r(fatMass)}kg`,
+      `Protein Floor: ${proteinFloor}g/day`,
+      '',
+      `PEAKING METHOD: ${_method}${_waterLoad ? ' + AIS Water Load' : ''}`,
+    ]
+
+    if (_waterLoad) {
+      lines.push('')
+      lines.push('AIS WATER LOAD ADD-ON')
+      lines.push('3 days pre-depletion at 100ml/kg/day, then restrict to 15ml/kg on restriction day.')
+      lines.push('Upregulates renal excretion — increases net fluid loss on restriction day by ~39% vs control (Reale et al.).')
+    }
+
+    const cols = ['Day','Date','Phase','Carbs(g)','Protein(g)','Fat(g)','Kcals','Water','Cardio','Notes']
+    const rows = proto.map((d, i) => {
+      const cNum = typeof d.c === 'number' ? d.c : d.cNum
+      return [d.lbl, dayDate(date, 7-i), d.phase, String(d.c), String(d.p), String(d.f), String(kcal(cNum,d.p,d.f)), fmtL(d.w), d.cardio, d.notes].join('\t')
+    })
+
+    lines.push('', '7-DAY PROTOCOL', sep, cols.join('\t'), ...rows)
+    lines.push('', 'CARB-UP FOOD STRATEGY', sep,
+      'LOAD DAYS — Prioritise: White rice, jasmine rice, white potato, cream of rice, rice cakes, white bread, banana, dates',
+      'LOAD DAYS — Avoid: Cruciferous veg, high-fibre grains, high-fat alongside large carb doses, alcohol',
+      'SHOOT DAY: Easy-to-digest carbs every 2–3hrs. Small electrolyte drink 10–15min before pump-up.',
+    )
+    lines.push('', 'SUPPLEMENT NOTES', sep,
+      'Creatine maintenance throughout. No diuretics. Electrolyte drink on shoot morning.',
+      'Flag any new compounds to Dave before protocol.',
+    )
+    lines.push('', 'DAILY MONITORING', sep,
+      '□ Morning weight (same conditions each day)',
+      '□ Front / side / back photo',
+      '□ Subjective fullness score 1–10',
+      '□ Send to Dave via WhatsApp each morning from D-7',
+    )
+    lines.push('', sep, 'Prepared by Coach Dave Marsh | Performuscle | @coachdavemarsh')
+
+    return lines.join('\n')
+  }
+
+  /* ─── XSS helper ────────────────────────────────────────────────────────── */
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+  }
+</script>
+</body>
+</html>
