@@ -12,7 +12,9 @@ const TEST_CONFIG = {
   wingate:      { label: 'Wingate Power',        group: 'Anaerobic', unit: 'W/kg',       key: 'peakPowerPerKg',  color: 'var(--purple)' },
   grip:         { label: 'Grip Strength',        group: 'Strength',  unit: 'kg',         key: 'dominant',        color: 'var(--warn)' },
   one_rm:       { label: '1-Rep Max',            group: 'Strength',  unit: 'kg',         key: 'estimated1rm',    color: 'var(--info)' },
-  body_comp:    { label: 'Body Composition',     group: 'Body Comp', unit: '%',          key: 'body_fat_pct',    color: '#f472b6' },
+  body_comp:          { label: 'Body Composition',     group: 'Body Comp', unit: '%',          key: 'body_fat_pct',    color: '#f472b6' },
+  structural_balance: { label: 'Structural Balance',   group: 'Strength',  unit: 'deficits',   key: 'deficits_count',  color: 'var(--warn)' },
+  relative_strength:  { label: 'Relative Strength',    group: 'Strength',  unit: 'kg/BW',      key: 'bench_ratio',     color: 'var(--info)' },
 }
 
 const GROUPS = ['VO₂ Max', 'Anaerobic', 'Strength', 'Body Comp']
@@ -611,6 +613,149 @@ function StrengthSection({ results }) {
   )
 }
 
+// ─── structural balance section ──────────────────────────────────────────────
+
+function StructuralBalanceSection({ results }) {
+  const sbResults = results
+    .filter(r => r.test_type === 'structural_balance')
+    .sort((a, b) => new Date(b.tested_date) - new Date(a.tested_date))
+
+  const latest = sbResults[0]
+
+  if (sbResults.length === 0) {
+    return (
+      <div className="empty-state" style={{ height: 180 }}>
+        <div className="empty-state-title">No structural balance tests recorded</div>
+        <div className="empty-state-text">Your coach will record your structural balance assessment results here.</div>
+      </div>
+    )
+  }
+
+  const STATUS_COLOR = {
+    'ON TARGET': 'var(--accent)',
+    'CLOSE':     'var(--warn)',
+    'DEFICIT':   'var(--danger)',
+  }
+  const STATUS_BG = {
+    'ON TARGET': 'var(--accent-dim)',
+    'CLOSE':     'rgba(245,158,11,.08)',
+    'DEFICIT':   'rgba(239,68,68,.08)',
+  }
+
+  return (
+    <div>
+      {/* Latest result summary */}
+      {latest && (
+        <div className="card" style={{ padding: '20px 22px', marginBottom: 16, borderLeft: '3px solid var(--warn)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <div className="label" style={{ marginBottom: 6 }}>Structural Balance Assessment</div>
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 42, color: latest.results?.deficits_count > 0 ? 'var(--warn)' : 'var(--accent)', lineHeight: 1 }}>
+                    {latest.results?.deficits_count ?? '—'}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>deficits found</div>
+                </div>
+                {latest.results?.critical_count > 0 && (
+                  <div>
+                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 42, color: 'var(--danger)', lineHeight: 1 }}>
+                      {latest.results.critical_count}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>critical</div>
+                  </div>
+                )}
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 42, color: 'var(--sub)', lineHeight: 1 }}>
+                    {Object.keys(latest.results?.ratios || {}).length}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>ratios assessed</div>
+                </div>
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div className="label" style={{ marginBottom: 4 }}>Test Date</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--sub)' }}>
+                {new Date(latest.tested_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </div>
+              {latest.results?.bench_1rm && (
+                <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
+                  Bench anchor: {latest.results.bench_1rm}kg
+                </div>
+              )}
+              {latest.results?.squat_1rm && (
+                <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+                  Squat anchor: {latest.results.squat_1rm}kg
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Critical warning */}
+          {latest.results?.critical_count > 0 && (
+            <div style={{ padding: '10px 14px', background: 'rgba(239,68,68,.08)', border: '1px solid rgba(239,68,68,.25)', borderRadius: 8, fontSize: 13, color: 'var(--danger)', marginBottom: 16 }}>
+              ⚠ Critical deficit detected — your coach will program correctives before advancing upper body loading.
+            </div>
+          )}
+
+          {/* Ratio breakdown */}
+          {latest.results?.ratios && Object.keys(latest.results.ratios).length > 0 && (
+            <div>
+              <div className="label" style={{ marginBottom: 10 }}>Ratio Breakdown</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {Object.entries(latest.results.ratios).map(([id, data]) => {
+                  if (!data?.status) return null
+                  const color  = STATUS_COLOR[data.status] || 'var(--muted)'
+                  const bg     = STATUS_BG[data.status]    || 'var(--s3)'
+                  const label  = id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+                  return (
+                    <div key={id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 12px', background: 'var(--s3)', border: `1px solid var(--border)`, borderRadius: 6 }}>
+                      <span style={{ fontSize: 13, color: 'var(--sub)' }}>{label}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        {data.pct != null && (
+                          <span style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--sub)' }}>{data.pct}%</span>
+                        )}
+                        <span style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1, color, background: bg, border: `1px solid ${color}44`, borderRadius: 4, padding: '2px 7px' }}>{data.status}</span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {latest.coach_note && (
+            <div style={{ marginTop: 14, padding: '10px 14px', background: 'var(--accent-dim)', border: '1px solid var(--border-accent)', borderRadius: 8, fontSize: 13, color: 'var(--sub)' }}>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1, color: 'var(--accent)', marginRight: 8 }}>COACH NOTE</span>
+              {latest.coach_note}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* History */}
+      {sbResults.length > 1 && (
+        <>
+          <div className="label" style={{ marginBottom: 10 }}>Previous Assessments</div>
+          {sbResults.slice(1).map(r => (
+            <div key={r.id} className="card" style={{ padding: '14px 18px', marginBottom: 8 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, color: 'var(--sub)' }}>
+                  {new Date(r.tested_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </div>
+                <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--muted)' }}>
+                  <span>{r.results?.deficits_count ?? '—'} deficits</span>
+                  <span>{Object.keys(r.results?.ratios || {}).length} ratios</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </>
+      )}
+    </div>
+  )
+}
+
 // ─── overview section ─────────────────────────────────────────────────────────
 
 function OverviewSection({ results }) {
@@ -626,6 +771,7 @@ function OverviewSection({ results }) {
   const latestWingate = getLatest(['wingate'])
   const latestGrip = getLatest(['grip'])
   const latestOneRM = getLatest(['one_rm'])
+  const latestSB = getLatest(['structural_balance'])
 
   const recentTests = [...results]
     .sort((a, b) => new Date(b.tested_date) - new Date(a.tested_date))
@@ -685,6 +831,19 @@ function OverviewSection({ results }) {
           </div>
         )}
 
+        {latestSB && (
+          <div className="stat-card" style={{ borderLeft: '3px solid var(--warn)' }}>
+            <div className="label">Structural Balance</div>
+            <div className="stat-value" style={{ color: latestSB.results?.deficits_count > 0 ? 'var(--warn)' : 'var(--accent)' }}>
+              {latestSB.results?.deficits_count ?? '—'}
+              <span style={{ fontSize: 12, color: 'var(--muted)', marginLeft: 4 }}>deficits</span>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+              {latestSB.results?.critical_count > 0 ? `${latestSB.results.critical_count} critical` : 'No critical deficits'}
+            </div>
+          </div>
+        )}
+
         <div className="stat-card">
           <div className="label">Tests Recorded</div>
           <div className="stat-value">{results.length}</div>
@@ -717,7 +876,7 @@ function OverviewSection({ results }) {
 
 // ─── main component ───────────────────────────────────────────────────────────
 
-const TABS = ['Overview', 'VO₂ Max', 'Anaerobic', 'Strength']
+const TABS = ['Overview', 'VO₂ Max', 'Anaerobic', 'Strength', 'Structural Balance']
 
 export default function TestResults() {
   const { user } = useAuth()
@@ -776,10 +935,11 @@ export default function TestResults() {
         ))}
       </div>
 
-      {tab === 'Overview'  && <OverviewSection results={results} />}
-      {tab === 'VO₂ Max'   && <VO2Section results={results} />}
-      {tab === 'Anaerobic' && <AnaerobicSection results={results} />}
-      {tab === 'Strength'  && <StrengthSection results={results} />}
+      {tab === 'Overview'            && <OverviewSection results={results} />}
+      {tab === 'VO₂ Max'             && <VO2Section results={results} />}
+      {tab === 'Anaerobic'           && <AnaerobicSection results={results} />}
+      {tab === 'Strength'            && <StrengthSection results={results} />}
+      {tab === 'Structural Balance'  && <StructuralBalanceSection results={results} />}
     </div>
   )
 }

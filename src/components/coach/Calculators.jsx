@@ -550,61 +550,263 @@ export default function Calculators() {
       {activeCalc === 'ea'  && <EnergyAvailabilityCalc />}
       {activeCalc === 'wl'  && <WeightLossCalc />}
       {activeCalc === '1rm' && <OneRMCalc />}
-      {activeCalc === 'sb'  && <StructuralBalanceLaunch />}
+      {activeCalc === 'sb'  && <StructuralBalanceCalc />}
     </div>
   )
 }
 
 // ============================================================
-// STRUCTURAL BALANCE LAUNCH CARD
+// STRUCTURAL BALANCE — inline calculator
 // ============================================================
 
-function StructuralBalanceLaunch() {
-  const features = [
-    'Live ratio calculator — upper & lower body anchored correctly',
-    'Status pills: On Target / Close / Deficit calculated in real time',
-    'Auto-generated summary — deficits, priority system & starting block',
-    'Deficit list with specific A-block exercise prescriptions per ratio',
-    'Four-block periodisation plan with active starting block highlighted',
-    'Exercise classification table: Proximal / Mixed / Earned',
-    'Chart.js progression tracking from your entered values',
-    'KG / LB toggle + fully responsive',
-  ]
+function sbEstOrm(weight, reps) {
+  const w = parseFloat(weight)
+  if (!w || w <= 0) return null
+  return w * (1 + reps / 30)
+}
+
+function sbStatus(actual, target) {
+  if (actual === null) return null
+  const pct = actual / target
+  if (pct >= 0.95) return { label: 'ON TARGET', color: 'var(--accent)',  bg: 'var(--accent-dim)' }
+  if (pct >= 0.85) return { label: 'CLOSE',     color: 'var(--warn)',    bg: 'rgba(245,158,11,.08)' }
+  return                  { label: 'DEFICIT',    color: 'var(--danger)',  bg: 'rgba(239,68,68,.08)' }
+}
+
+const SB_UPPER = [
+  { id: 'incline_press',  name: 'Incline DB Press',         target: 65, critical: false },
+  { id: 'close_grip',     name: 'Close Grip Bench Press',   target: 75, critical: false },
+  { id: 'db_military',    name: 'Seated DB Military Press', target: 65, critical: false },
+  { id: 'cable_row',      name: 'Low Cable Row',            target: 75, critical: false },
+  { id: 'ext_rotation',   name: 'External Rotation',        target: 10, critical: false },
+  { id: 'powell_raise',   name: 'Powell Raise',             target: 8,  critical: true  },
+  { id: 'incline_curl',   name: 'Incline DB Curl',          target: 13, critical: false },
+]
+const SB_LOWER = [
+  { id: 'rdl',            name: 'Romanian Deadlift',        target: 90, critical: false },
+  { id: 'calf_raise',     name: 'Standing Calf Raise',      target: 75, critical: false },
+]
+
+function SBRow({ ratio, rawVal, anchorOrm, unit, repMode, onInput }) {
+  const toKg  = w => unit === 'lb' ? (parseFloat(w) || 0) * 0.4536 : (parseFloat(w) || 0)
+  const reps  = repMode === '5rm' ? 5 : repMode === '3rm' ? 3 : 1
+  const orm   = rawVal ? sbEstOrm(toKg(rawVal), reps) : null
+  const pct   = orm !== null && anchorOrm ? (orm / anchorOrm) * 100 : null
+  const st    = sbStatus(pct, ratio.target)
 
   return (
-    <CalcSection title="STRUCTURAL BALANCE CALCULATOR">
-      <div style={{ marginBottom: 24 }}>
-        <p style={{ color: 'var(--sub)', lineHeight: 1.7, marginBottom: 20 }}>
-          Identify muscular imbalances across 7 key strength ratios, generate a prioritised deficit report,
-          and get a four-block corrective programme — all in real time.
-        </p>
-        <ul style={{ listStyle: 'none', padding: 0, marginBottom: 28 }}>
-          {features.map((f, i) => (
-            <li key={i} style={{
-              display: 'flex', alignItems: 'flex-start', gap: 10,
-              padding: '7px 0',
-              borderBottom: i < features.length - 1 ? '1px solid var(--border)' : 'none',
-              fontSize: 14, color: 'var(--sub)',
-            }}>
-              <span style={{ color: 'var(--accent)', fontWeight: 700, flexShrink: 0 }}>✓</span>
-              {f}
-            </li>
-          ))}
-        </ul>
-        <a
-          href="/structural-balance.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 10,
-            background: 'var(--accent)', color: '#060608',
-            padding: '14px 32px', borderRadius: 8,
-            fontFamily: 'var(--font-display)', fontSize: 16,
-            letterSpacing: 2, textDecoration: 'none',
-            fontWeight: 700,
-          }}
-        >
-          LAUNCH CALCULATOR ↗
+    <div style={{
+      display: 'grid', gridTemplateColumns: '1fr 110px 64px 64px 96px',
+      gap: 8, alignItems: 'center', padding: '9px 12px',
+      background: ratio.critical && st?.label === 'DEFICIT' ? 'rgba(239,68,68,.06)' : 'var(--s3)',
+      border: `1px solid ${ratio.critical && st?.label === 'DEFICIT' ? 'rgba(239,68,68,.4)' : 'var(--border)'}`,
+      borderRadius: 8,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 13, color: 'var(--white)' }}>{ratio.name}</span>
+        {ratio.critical && (
+          <span style={{ fontSize: 9, letterSpacing: 1, fontFamily: 'var(--font-display)', color: 'var(--danger)', background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 3, padding: '1px 5px' }}>CRITICAL</span>
+        )}
+      </div>
+      <input type="number" step="0.5" className="input" style={{ width: '100%' }}
+        placeholder={`0 ${unit}`} value={rawVal ?? ''}
+        onChange={e => onInput(e.target.value)} />
+      <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)' }}>
+        {orm && repMode !== '1rm' ? `~${Math.round(orm)}kg` : '—'}
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        {pct !== null
+          ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--sub)' }}>{Math.round(pct)}%</span>
+          : <span style={{ fontSize: 11, color: 'var(--muted)' }}>—</span>}
+      </div>
+      <div style={{ textAlign: 'right' }}>
+        {st
+          ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1, color: st.color, background: st.bg, border: `1px solid ${st.color}44`, borderRadius: 4, padding: '2px 7px' }}>{st.label}</span>
+          : <span style={{ fontSize: 10, color: 'var(--muted)' }}>target {ratio.target}%</span>}
+      </div>
+    </div>
+  )
+}
+
+function StructuralBalanceCalc() {
+  const [repMode, setRepMode] = useState('5rm')
+  const [unit,    setUnit]    = useState('kg')
+  const [benchRaw,    setBenchRaw]    = useState('')
+  const [squatRaw,    setSquatRaw]    = useState('')
+  const [wristFlexRaw, setWristFlexRaw] = useState('')
+  const [hipAbdRaw,    setHipAbdRaw]    = useState('')
+  const [wristExtRaw,  setWristExtRaw]  = useState('')
+  const [hipAddRaw,    setHipAddRaw]    = useState('')
+  const [inputs, setInputs] = useState({})
+  const setInput = (id, val) => setInputs(p => ({ ...p, [id]: val }))
+
+  const reps  = repMode === '5rm' ? 5 : repMode === '3rm' ? 3 : 1
+  const toKg  = w => unit === 'lb' ? (parseFloat(w) || 0) * 0.4536 : (parseFloat(w) || 0)
+
+  const benchOrm     = benchRaw    ? sbEstOrm(toKg(benchRaw), reps)    : null
+  const squatOrm     = squatRaw    ? sbEstOrm(toKg(squatRaw), reps)    : null
+  const wristFlexOrm = wristFlexRaw ? sbEstOrm(toKg(wristFlexRaw), reps) : null
+  const hipAbdOrm    = hipAbdRaw    ? sbEstOrm(toKg(hipAbdRaw),    reps) : null
+  const wristExtOrm  = wristExtRaw  ? sbEstOrm(toKg(wristExtRaw),  reps) : null
+  const hipAddOrm    = hipAddRaw    ? sbEstOrm(toKg(hipAddRaw),    reps) : null
+
+  const wristPct = wristExtOrm && wristFlexOrm ? (wristExtOrm / wristFlexOrm) * 100 : null
+  const hipPct   = hipAddOrm   && hipAbdOrm    ? (hipAddOrm   / hipAbdOrm)    * 100 : null
+  const wristSt  = sbStatus(wristPct, 65)
+  const hipSt    = sbStatus(hipPct,   80)
+
+  const upperResults = SB_UPPER.map(r => {
+    const orm = inputs[r.id] ? sbEstOrm(toKg(inputs[r.id]), reps) : null
+    const pct = orm && benchOrm ? (orm / benchOrm) * 100 : null
+    return { ...r, pct, status: sbStatus(pct, r.target) }
+  })
+  const lowerResults = SB_LOWER.map(r => {
+    const orm = inputs[r.id] ? sbEstOrm(toKg(inputs[r.id]), reps) : null
+    const pct = orm && squatOrm ? (orm / squatOrm) * 100 : null
+    return { ...r, pct, status: sbStatus(pct, r.target) }
+  })
+  const allResults = [
+    ...upperResults,
+    ...(wristPct !== null ? [{ id: 'wrist_ext', name: 'Wrist Extension', pct: wristPct, status: wristSt, critical: false }] : []),
+    ...lowerResults,
+    ...(hipPct !== null   ? [{ id: 'hip_add',   name: 'Hip Adductor',    pct: hipPct,   status: hipSt,   critical: false }] : []),
+  ]
+  const deficits  = allResults.filter(r => r.status?.label === 'DEFICIT')
+  const criticals = deficits.filter(r => r.critical)
+  const hasInput  = benchRaw || squatRaw || Object.keys(inputs).length > 0
+
+  const colHdr = { fontSize: 9, fontFamily: 'var(--font-display)', letterSpacing: 1, color: 'var(--muted)' }
+  const divider = (label, note) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '14px 0 8px' }}>
+      <div style={{ ...colHdr, letterSpacing: 2 }}>{label}</div>
+      <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+      {note && <div style={{ fontSize: 10, color: 'var(--muted)' }}>{note}</div>}
+    </div>
+  )
+
+  return (
+    <CalcSection title="STRUCTURAL BALANCE">
+      {/* Controls */}
+      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 20 }}>
+        <div>
+          <div className="label" style={{ marginBottom: 4 }}>Input Mode</div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {[['1rm','1RM'],['3rm','3RM'],['5rm','5RM']].map(([id, lbl]) => (
+              <button key={id} className={`btn btn-sm ${repMode === id ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setRepMode(id)}>{lbl}</button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="label" style={{ marginBottom: 4 }}>Unit</div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {['kg','lb'].map(u => (
+              <button key={u} className={`btn btn-sm ${unit === u ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => setUnit(u)}>{u.toUpperCase()}</button>
+            ))}
+          </div>
+        </div>
+        {repMode !== '1rm' && (
+          <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+            <div style={{ fontSize: 11, color: 'var(--muted)', padding: '6px 10px', background: 'var(--s3)', border: '1px solid var(--border)', borderRadius: 6 }}>
+              Auto-converting {repMode.toUpperCase()} → 1RM · w × (1 + {repMode === '5rm' ? 5 : 3}/30)
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Column headers */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 64px 64px 96px', gap: 8, padding: '0 12px', marginBottom: 6 }}>
+        <div style={colHdr}>EXERCISE</div>
+        <div style={colHdr}>{repMode === '1rm' ? '1RM' : repMode.toUpperCase()} ({unit})</div>
+        <div style={{ ...colHdr, textAlign: 'center' }}>EST. 1RM</div>
+        <div style={{ ...colHdr, textAlign: 'center' }}>RATIO</div>
+        <div style={{ ...colHdr, textAlign: 'right' }}>STATUS</div>
+      </div>
+
+      {/* ── UPPER BODY ── */}
+      {divider('UPPER BODY', 'Anchor')}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 64px 64px 96px', gap: 8, alignItems: 'center', padding: '9px 12px', background: 'var(--accent-dim)', border: '1px solid var(--border-accent)', borderRadius: 8, marginBottom: 6 }}>
+        <div style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>FLAT BENCH — ANCHOR</div>
+        <input type="number" step="0.5" className="input" style={{ width: '100%' }} placeholder={`0 ${unit}`} value={benchRaw} onChange={e => setBenchRaw(e.target.value)} />
+        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)' }}>{benchOrm && repMode !== '1rm' ? `~${Math.round(benchOrm)}kg` : '—'}</div>
+        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-display)' }}>100%</div>
+        <div />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 12 }}>
+        {SB_UPPER.map(r => <SBRow key={r.id} ratio={r} rawVal={inputs[r.id] ?? null} anchorOrm={benchOrm} unit={unit} repMode={repMode} onInput={v => setInput(r.id, v)} />)}
+      </div>
+
+      {/* ── WRIST RATIO ── */}
+      {divider('WRIST RATIO')}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 64px 64px 96px', gap: 8, alignItems: 'center', padding: '9px 12px', background: 'rgba(96,165,250,.06)', border: '1px solid rgba(96,165,250,.2)', borderRadius: 8 }}>
+          <div style={{ fontSize: 13, color: '#60a5fa' }}>Wrist Flexion — Anchor</div>
+          <input type="number" step="0.5" className="input" style={{ width: '100%' }} placeholder={`0 ${unit}`} value={wristFlexRaw} onChange={e => setWristFlexRaw(e.target.value)} />
+          <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)' }}>{wristFlexOrm && repMode !== '1rm' ? `~${Math.round(wristFlexOrm)}kg` : '—'}</div>
+          <div style={{ textAlign: 'center', fontSize: 12, color: '#60a5fa', fontFamily: 'var(--font-display)' }}>100%</div>
+          <div />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 64px 64px 96px', gap: 8, alignItems: 'center', padding: '9px 12px', background: 'var(--s3)', border: '1px solid var(--border)', borderRadius: 8 }}>
+          <span style={{ fontSize: 13, color: 'var(--white)' }}>Wrist Extension</span>
+          <input type="number" step="0.5" className="input" style={{ width: '100%' }} placeholder={`0 ${unit}`} value={wristExtRaw} onChange={e => setWristExtRaw(e.target.value)} />
+          <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)' }}>{wristExtOrm && repMode !== '1rm' ? `~${Math.round(wristExtOrm)}kg` : '—'}</div>
+          <div style={{ textAlign: 'center' }}>{wristPct !== null ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--sub)' }}>{Math.round(wristPct)}%</span> : <span style={{ fontSize: 11, color: 'var(--muted)' }}>—</span>}</div>
+          <div style={{ textAlign: 'right' }}>{wristSt ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1, color: wristSt.color, background: wristSt.bg, border: `1px solid ${wristSt.color}44`, borderRadius: 4, padding: '2px 7px' }}>{wristSt.label}</span> : <span style={{ fontSize: 10, color: 'var(--muted)' }}>target 65%</span>}</div>
+        </div>
+      </div>
+
+      {/* ── LOWER BODY ── */}
+      {divider('LOWER BODY', 'Anchor')}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 64px 64px 96px', gap: 8, alignItems: 'center', padding: '9px 12px', background: 'var(--accent-dim)', border: '1px solid var(--border-accent)', borderRadius: 8, marginBottom: 6 }}>
+        <div style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>BACK SQUAT — ANCHOR</div>
+        <input type="number" step="0.5" className="input" style={{ width: '100%' }} placeholder={`0 ${unit}`} value={squatRaw} onChange={e => setSquatRaw(e.target.value)} />
+        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)' }}>{squatOrm && repMode !== '1rm' ? `~${Math.round(squatOrm)}kg` : '—'}</div>
+        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-display)' }}>100%</div>
+        <div />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 12 }}>
+        {SB_LOWER.map(r => <SBRow key={r.id} ratio={r} rawVal={inputs[r.id] ?? null} anchorOrm={squatOrm} unit={unit} repMode={repMode} onInput={v => setInput(r.id, v)} />)}
+      </div>
+
+      {/* ── HIP RATIO ── */}
+      {divider('HIP RATIO')}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 64px 64px 96px', gap: 8, alignItems: 'center', padding: '9px 12px', background: 'rgba(96,165,250,.06)', border: '1px solid rgba(96,165,250,.2)', borderRadius: 8 }}>
+          <div style={{ fontSize: 13, color: '#60a5fa' }}>Hip Abductor — Anchor</div>
+          <input type="number" step="0.5" className="input" style={{ width: '100%' }} placeholder={`0 ${unit}`} value={hipAbdRaw} onChange={e => setHipAbdRaw(e.target.value)} />
+          <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)' }}>{hipAbdOrm && repMode !== '1rm' ? `~${Math.round(hipAbdOrm)}kg` : '—'}</div>
+          <div style={{ textAlign: 'center', fontSize: 12, color: '#60a5fa', fontFamily: 'var(--font-display)' }}>100%</div>
+          <div />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 64px 64px 96px', gap: 8, alignItems: 'center', padding: '9px 12px', background: 'var(--s3)', border: '1px solid var(--border)', borderRadius: 8 }}>
+          <span style={{ fontSize: 13, color: 'var(--white)' }}>Hip Adductor</span>
+          <input type="number" step="0.5" className="input" style={{ width: '100%' }} placeholder={`0 ${unit}`} value={hipAddRaw} onChange={e => setHipAddRaw(e.target.value)} />
+          <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)' }}>{hipAddOrm && repMode !== '1rm' ? `~${Math.round(hipAddOrm)}kg` : '—'}</div>
+          <div style={{ textAlign: 'center' }}>{hipPct !== null ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--sub)' }}>{Math.round(hipPct)}%</span> : <span style={{ fontSize: 11, color: 'var(--muted)' }}>—</span>}</div>
+          <div style={{ textAlign: 'right' }}>{hipSt ? <span style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1, color: hipSt.color, background: hipSt.bg, border: `1px solid ${hipSt.color}44`, borderRadius: 4, padding: '2px 7px' }}>{hipSt.label}</span> : <span style={{ fontSize: 10, color: 'var(--muted)' }}>target 80%</span>}</div>
+        </div>
+      </div>
+
+      {/* ── Summary ── */}
+      {hasInput && allResults.length > 0 && (
+        <div style={{ padding: '14px 18px', background: 'var(--s3)', border: '1px solid var(--border)', borderRadius: 10, marginBottom: 16, display: 'flex', gap: 28, flexWrap: 'wrap' }}>
+          <div><div className="label" style={{ marginBottom: 4 }}>ASSESSED</div><span style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: 'var(--accent)' }}>{allResults.length}</span></div>
+          <div><div className="label" style={{ marginBottom: 4 }}>DEFICITS</div><span style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: deficits.length ? 'var(--warn)' : 'var(--accent)' }}>{deficits.length}</span></div>
+          {criticals.length > 0 && (
+            <div><div className="label" style={{ marginBottom: 4 }}>CRITICAL</div><span style={{ fontFamily: 'var(--font-display)', fontSize: 26, color: 'var(--danger)' }}>{criticals.length}</span></div>
+          )}
+          {criticals.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', padding: '6px 12px', background: 'rgba(239,68,68,.08)', border: '1px solid rgba(239,68,68,.25)', borderRadius: 8, fontSize: 12, color: 'var(--danger)', flex: 1 }}>
+              ⚠ Powell Raise deficit — address before upper body loading progression.
+            </div>
+          )}
+        </div>
+      )}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <a href="/coach/testing" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', padding: '6px 12px', border: '1px solid var(--border-accent)', borderRadius: 6, background: 'var(--accent-dim)' }}>
+          Save to client record → Testing
         </a>
       </div>
     </CalcSection>

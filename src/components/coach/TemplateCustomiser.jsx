@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { EXERCISE_LIBRARY, EXERCISE_BY_NAME } from '../../data/exerciseLibrary.js'
-import { createProgramFromTemplate } from '../../lib/supabase.js'
+import { createProgramFromTemplate, supabase } from '../../lib/supabase.js'
 import { volumeByMuscleGroup } from '../../lib/calculators.js'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -801,6 +801,33 @@ function Step3({ template, clients, swapMap, overrideMap, previewSessions, onCre
             style={{ ...inputStyle, padding: '10px 12px', fontSize: 14 }}
           />
         </div>
+
+        {/* Structural balance assessment */}
+        <div>
+          <label style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: '0.07em', color: 'var(--muted)', display: 'block', marginBottom: 6 }}>
+            ASSESSMENTS
+          </label>
+          <button
+            type="button"
+            onClick={() => setStep3State(s => ({ ...s, sbAssessment: !s.sbAssessment }))}
+            style={{
+              width: '100%', padding: '10px 14px', border: `1px solid ${step3State.sbAssessment ? 'rgba(0,200,150,.4)' : 'var(--border)'}`,
+              borderRadius: 8, background: step3State.sbAssessment ? 'var(--accent-dim)' : 'var(--s3)',
+              color: step3State.sbAssessment ? 'var(--accent)' : 'var(--sub)', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 10, fontFamily: 'var(--font-body)', fontSize: 13, textAlign: 'left',
+            }}
+          >
+            <span style={{ width: 16, height: 16, border: `2px solid ${step3State.sbAssessment ? 'var(--accent)' : 'var(--muted)'}`, borderRadius: 4, background: step3State.sbAssessment ? 'var(--accent)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 10, color: '#000' }}>
+              {step3State.sbAssessment ? '✓' : ''}
+            </span>
+            Schedule Structural Balance Assessment
+          </button>
+          {step3State.sbAssessment && (
+            <div style={{ marginTop: 6, padding: '8px 12px', background: 'var(--accent-dim)', border: '1px solid var(--border-accent)', borderRadius: 6, fontSize: 12, color: 'var(--sub)', lineHeight: 1.5 }}>
+              A pending assessment will be added to the client's Results hub. Complete it via Testing → Structural Balance.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -823,6 +850,7 @@ export default function TemplateCustomiser({ template, clients, onClose, onCreat
     totalWeeks: template.default_weeks,
     assignClientId: '',
     assignStartDate: new Date().toISOString().split('T')[0],
+    sbAssessment: false,
     creating: false,
     error: null,
   })
@@ -850,6 +878,15 @@ export default function TemplateCustomiser({ template, clients, onClose, onCreat
       if (err) {
         setStep3State(s => ({ ...s, error: err.message || String(err), creating: false }))
       } else {
+        if (step3State.sbAssessment) {
+          await supabase.from('test_results').insert({
+            client_id: step3State.assignClientId,
+            test_type: 'structural_balance',
+            results: { status: 'pending', program_name: step3State.progName },
+            tested_date: step3State.assignStartDate,
+            coach_note: `Structural balance assessment scheduled with programme: ${step3State.progName}`,
+          })
+        }
         onCreated(step3State.progName)
       }
     } catch (e) {
@@ -1020,6 +1057,35 @@ export default function TemplateCustomiser({ template, clients, onClose, onCreat
                     onChange={e => setStep3State(s => ({ ...s, assignStartDate: e.target.value }))}
                     style={{ ...inputStyle, padding: '10px 12px', fontSize: 14 }}
                   />
+                </div>
+
+                <div>
+                  <label style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: '0.07em', color: 'var(--muted)', display: 'block', marginBottom: 6 }}>
+                    ASSESSMENTS
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setStep3State(s => ({ ...s, sbAssessment: !s.sbAssessment }))}
+                    style={{
+                      width: '100%', padding: '10px 14px',
+                      border: `1px solid ${step3State.sbAssessment ? 'rgba(0,200,150,.4)' : 'var(--border)'}`,
+                      borderRadius: 8,
+                      background: step3State.sbAssessment ? 'var(--accent-dim)' : 'var(--s3)',
+                      color: step3State.sbAssessment ? 'var(--accent)' : 'var(--sub)',
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
+                      fontFamily: 'var(--font-body)', fontSize: 13, textAlign: 'left',
+                    }}
+                  >
+                    <span style={{ width: 16, height: 16, border: `2px solid ${step3State.sbAssessment ? 'var(--accent)' : 'var(--muted)'}`, borderRadius: 4, background: step3State.sbAssessment ? 'var(--accent)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 10, color: '#000' }}>
+                      {step3State.sbAssessment ? '✓' : ''}
+                    </span>
+                    Schedule Structural Balance Assessment
+                  </button>
+                  {step3State.sbAssessment && (
+                    <div style={{ marginTop: 6, padding: '8px 12px', background: 'var(--accent-dim)', border: '1px solid var(--border-accent)', borderRadius: 6, fontSize: 12, color: 'var(--sub)', lineHeight: 1.5 }}>
+                      A pending entry will appear in the client's Results hub. Complete it via Testing → Structural Balance.
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
