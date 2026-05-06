@@ -574,7 +574,6 @@ function sbStatus(actual, target) {
 }
 
 const SB_UPPER = [
-  { id: 'flat_bench',     name: 'Flat Bench Press',         target: 120, critical: false },
   { id: 'sup_pullup',     name: 'Supinated Pull Up',         target: 100, critical: false },
   { id: 'pronated_curl',  name: 'Pronated Barbell Curl',     target: 32,  critical: false },
   { id: 'incline_curl',   name: 'Incline DB Curl',           target: 27,  critical: false },
