@@ -574,16 +574,15 @@ function sbStatus(actual, target) {
 }
 
 const SB_UPPER = [
-  { id: 'incline_press',  name: 'Incline DB Press',         target: 65, critical: false },
-  { id: 'close_grip',     name: 'Close Grip Bench Press',   target: 75, critical: false },
-  { id: 'db_military',    name: 'Seated DB Military Press', target: 65, critical: false },
-  { id: 'cable_row',      name: 'Low Cable Row',            target: 75, critical: false },
-  { id: 'ext_rotation',   name: 'External Rotation',        target: 10, critical: false },
-  { id: 'powell_raise',   name: 'Powell Raise',             target: 8,  critical: true  },
-  { id: 'incline_curl',   name: 'Incline DB Curl',          target: 13, critical: false },
+  { id: 'flat_bench',     name: 'Flat Bench Press',         target: 120, critical: false },
+  { id: 'sup_pullup',     name: 'Supinated Pull Up',         target: 100, critical: false },
+  { id: 'pronated_curl',  name: 'Pronated Barbell Curl',     target: 32,  critical: false },
+  { id: 'incline_curl',   name: 'Incline DB Curl',           target: 27,  critical: false },
+  { id: 'powell_raise',   name: 'Powell Raise',              target: 8,   critical: true  },
 ]
 const SB_LOWER = [
   { id: 'rdl',            name: 'Romanian Deadlift',        target: 90, critical: false },
+  { id: 'leg_curl',       name: 'Lying Leg Curl',           target: 52, critical: false },
   { id: 'calf_raise',     name: 'Standing Calf Raise',      target: 75, critical: false },
 ]
 
@@ -727,7 +726,7 @@ function StructuralBalanceCalc() {
       {/* ── UPPER BODY ── */}
       {divider('UPPER BODY', 'Anchor')}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 110px 64px 64px 96px', gap: 8, alignItems: 'center', padding: '9px 12px', background: 'var(--accent-dim)', border: '1px solid var(--border-accent)', borderRadius: 8, marginBottom: 6 }}>
-        <div style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>FLAT BENCH — ANCHOR</div>
+        <div style={{ fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>CLOSE GRIP BENCH — ANCHOR</div>
         <input type="number" step="0.5" className="input" style={{ width: '100%' }} placeholder={`0 ${unit}`} value={benchRaw} onChange={e => setBenchRaw(e.target.value)} />
         <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)' }}>{benchOrm && repMode !== '1rm' ? `~${Math.round(benchOrm)}kg` : '—'}</div>
         <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-display)' }}>100%</div>
