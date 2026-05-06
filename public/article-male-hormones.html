@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Testosterone Truth | Coach Dave Marsh</title>
+  <meta name="description" content="Thousands of men are walking around with suboptimal testosterone and have no idea. Here's the honest, practical guide to understanding your hormones — and what to do about it." />
+  <meta property="og:title" content="The Testosterone Truth | Coach Dave Marsh" />
+  <meta property="og:description" content="The conversation your GP probably isn't having with you." />
+  <meta property="og:type" content="article" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:        #060608;
+      --accent:     #00C896;
+      --accent-hi:  #00FFB8;
+      --white:      #F5F6FA;
+      --muted:      #5e5e70;
+      --card-bg:    #111118;
+      --border:     rgba(255,255,255,0.08);
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--ink);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6,6,8,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 60px;
+    }
+    .nav__logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav__back {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav__back:hover { color: var(--white); }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 24px 48px;
+    }
+    .hero__tag {
+      display: inline-block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      background: rgba(0,200,150,0.1);
+      border: 1px solid rgba(0,200,150,0.25);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .hero__title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(42px, 7vw, 72px);
+      line-height: 1.0;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+    }
+    .hero__title em {
+      color: var(--accent);
+      font-style: normal;
+    }
+    .hero__subtitle {
+      font-size: 20px;
+      color: var(--muted);
+      font-weight: 400;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+    .hero__meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+      color: var(--muted);
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero__meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* ── Article Body ── */
+    .article {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 24px 120px;
+    }
+
+    .article p {
+      font-size: 17px;
+      line-height: 1.85;
+      color: #d4d4e0;
+      margin-bottom: 24px;
+    }
+
+    .article h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      margin: 56px 0 16px;
+      padding-top: 8px;
+    }
+
+    .article h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--white);
+      margin: 36px 0 12px;
+    }
+
+    .article strong {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .article em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .article ul, .article ol {
+      margin: 20px 0 28px 0;
+      padding-left: 0;
+      list-style: none;
+    }
+    .article ul li, .article ol li {
+      font-size: 17px;
+      color: #d4d4e0;
+      line-height: 1.7;
+      padding: 8px 0 8px 28px;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+    }
+    .article ul li:last-child, .article ol li:last-child { border-bottom: none; }
+    .article ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .article ol { counter-reset: list; }
+    .article ol li::before {
+      counter-increment: list;
+      content: counter(list);
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    /* ── Pull Quote / Callout ── */
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: rgba(0,200,150,0.06);
+      padding: 20px 24px;
+      margin: 36px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .callout p {
+      font-size: 18px !important;
+      color: var(--white) !important;
+      font-style: italic;
+      margin: 0 !important;
+      line-height: 1.6 !important;
+    }
+
+    /* ── Key Facts Box ── */
+    .key-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin: 40px 0;
+    }
+    .key-box__title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .key-box ul { margin: 0; }
+    .key-box ul li { border-color: rgba(255,255,255,0.05); }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 56px 0;
+    }
+
+    /* ── CTA Block ── */
+    .cta-block {
+      background: linear-gradient(135deg, rgba(0,200,150,0.08) 0%, rgba(0,200,150,0.03) 100%);
+      border: 1px solid rgba(0,200,150,0.2);
+      border-radius: 16px;
+      padding: 48px 40px;
+      text-align: center;
+      margin-top: 64px;
+    }
+    .cta-block h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+      padding-top: 0;
+      margin-top: 0;
+    }
+    .cta-block p {
+      font-size: 16px !important;
+      color: var(--muted) !important;
+      max-width: 480px;
+      margin: 0 auto 32px !important;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--ink);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.12em;
+      padding: 16px 40px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .cta-btn:hover {
+      background: var(--accent-hi);
+      transform: translateY(-1px);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 40px 24px;
+      font-size: 13px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .nav { padding: 0 16px; }
+      .hero { padding: 48px 16px 32px; }
+      .article { padding: 32px 16px 80px; }
+      .cta-block { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <a href="/" class="nav__logo">Coach Dave Marsh</a>
+    <a href="/" class="nav__back">← Back to Home</a>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero__tag">Health &amp; Hormones</div>
+    <h1 class="hero__title">The <em>Testosterone</em> Truth</h1>
+    <p class="hero__subtitle">Why thousands of men are walking around as a diminished version of themselves — and the honest conversation your GP probably isn't having with you.</p>
+    <div class="hero__meta">
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        12 min read
+      </span>
+      <span>Coach Dave Marsh</span>
+      <span>Health | Function | Performance</span>
+    </div>
+  </header>
+
+  <!-- Article -->
+  <article class="article">
+
+    <p>Let me ask you something.</p>
+
+    <p>Do you feel like yourself? Not who you were ten years ago necessarily — but genuinely, fully yourself. Energy there when you need it. Drive switched on. Recovering from training like a man who looks after himself. Mood stable. Motivated. Actually wanting to be present in your own life.</p>
+
+    <p>Or does it feel more like you're running at 60%? Getting through the day rather than living it. Training but not progressing the way you should. Tired even when you've slept. Low in motivation for things you used to care about. Not quite yourself — but you can't put your finger on why.</p>
+
+    <p>If the second one hit closer to home, I want you to read this carefully. Because what I'm about to share is the conversation I have with men every single week — and it's one that changes things.</p>
+
+    <h2>The Problem Nobody's Talking About</h2>
+
+    <p>We live in a world that has quietly normalised men feeling terrible. Tired? You're busy. Low libido? You're stressed. Can't build muscle despite training consistently? Train harder. Can't recover? Sleep more. Anxious, flat, struggling to find motivation? That's just modern life.</p>
+
+    <p>Except it isn't. And a lot of men — far more than you'd think — are dealing with suboptimal testosterone levels and have absolutely no idea that's what's happening to them.</p>
+
+    <p>I'm not talking about rock-bottom levels that show up obviously on a blood test. I'm talking about levels that are technically within the "normal" range but are far from optimal for <em>you</em> as an individual. Levels that have quietly eroded your baseline over months or years. A slow decline you've adapted to without realising, until one day you look back and wonder where your edge went.</p>
+
+    <div class="callout">
+      <p>"The reference range on your blood test is not a measure of where your testosterone should be to feel optimal. It's a measure of where the average man is today. And the average man today does not feel great."</p>
+    </div>
+
+    <p>This isn't about chasing some hyped-up version of masculinity or trying to turn the clock back to being 22. This is about health, function, and performance — feeling like the person you're meant to be, and having the biology to back it up.</p>
+
+    <h2>What Testosterone Actually Does</h2>
+
+    <p>Most men think testosterone is just about sex drive and muscle mass. It's much bigger than that. Testosterone is the cornerstone of male physical and mental health — and when it's not where it should be, the effects are widespread.</p>
+
+    <ul>
+      <li><strong>Mood and mental health</strong> — testosterone directly influences dopamine, the neurotransmitter that drives motivation, pleasure and reward. Low testosterone and low mood are deeply connected</li>
+      <li><strong>Body composition</strong> — testosterone is the primary driver of muscle protein synthesis and plays a significant role in fat regulation. Low levels make it extremely hard to build muscle and easy to accumulate fat, particularly around the midsection</li>
+      <li><strong>Energy and recovery</strong> — red blood cell production, mitochondrial function, and cellular recovery are all influenced by testosterone. If you're training and not recovering, your hormones need investigating</li>
+      <li><strong>Cognitive function</strong> — focus, clarity, drive and the ability to handle stress are all shaped in part by your testosterone status</li>
+      <li><strong>Bone density and cardiovascular health</strong> — long-term testosterone deficiency increases risk of osteoporosis and cardiovascular disease. This is a health issue, not just a performance one</li>
+      <li><strong>Sexual health and function</strong> — libido, erectile function, and fertility are all downstream of your testosterone levels</li>
+    </ul>
+
+    <p>When I frame it like that, it becomes obvious why feeling "a bit off" in multiple areas at once might not be a coincidence.</p>
+
+    <h2>Recognising the Signs</h2>
+
+    <p>Here's what I hear from men who come to me with this, over and over again:</p>
+
+    <ul>
+      <li>"I could go weeks without sex and honestly not care"</li>
+      <li>"I just want to crash on the sofa when I get home"</li>
+      <li>"I'm completely wiped out for days after the gym"</li>
+      <li>"I've lost the drive I used to have — for training, for work, for everything"</li>
+      <li>"No matter how well I eat and train, I can't build muscle"</li>
+      <li>"I wake up tired even after a full night's sleep"</li>
+      <li>"I feel like I've lost my edge — my 'mojo'"</li>
+    </ul>
+
+    <p>The challenge is that every single one of these symptoms can also be explained away by stress, lifestyle, or just "getting older." Which is exactly why so many men go years without getting to the root of it. They adapt, they cope, they chalk it up to life.</p>
+
+    <p>And their GP tells them their bloods are "normal" — which they are, relative to a declining average. That's the part that frustrates me most.</p>
+
+    <h2>Blood Work — What You Actually Need to Know</h2>
+
+    <p>Most men who get their testosterone checked are told a single number — total testosterone — and sent on their way with a thumbs up or a prescription. That single number tells you almost nothing on its own.</p>
+
+    <p>Here's what you need to understand about the key markers:</p>
+
+    <div class="key-box">
+      <div class="key-box__title">Key Blood Markers to Request</div>
+      <ul>
+        <li><strong>Total Testosterone</strong> — a starting point, but not the whole picture. The majority of testosterone in your blood is bound to proteins and therefore inactive</li>
+        <li><strong>Free Testosterone</strong> — this is the active, bioavailable testosterone your body can actually use. This is the number that most closely corresponds with how you feel. It's the one most labs overlook</li>
+        <li><strong>SHBG (Sex Hormone Binding Globulin)</strong> — the protein that binds testosterone and takes it out of circulation. High SHBG can leave you with suboptimal free T even if total T looks fine</li>
+        <li><strong>LH &amp; FSH</strong> — these tell you whether low testosterone is a problem with the testicles (primary) or a signalling issue from the brain (secondary). Critically important for understanding root cause</li>
+        <li><strong>Oestradiol (E2)</strong> — testosterone converts to oestrogen in the body. The ratio matters. Both too high and too low cause problems</li>
+        <li><strong>Prolactin</strong> — elevated prolactin suppresses testosterone and tanks dopamine. It's commonly missed</li>
+        <li><strong>Full Thyroid Panel (TSH, Free T3, Free T4)</strong> — thyroid function and testosterone are deeply interconnected. Poor thyroid function is one of the most commonly missed pieces of the puzzle</li>
+        <li><strong>DHEA-S</strong> — an important adrenal hormone with its own role in energy, mood, libido and metabolism that shares many symptoms with low testosterone</li>
+      </ul>
+    </div>
+
+    <p>The reference ranges on these tests are calibrated to the average. And as I said — the average man in 2025 is not healthy. Reference ranges for testosterone have dropped significantly over the last 20 years as average levels have declined. Being "within range" is not the same as being optimal.</p>
+
+    <p>The goal is never to chase a number in isolation. The goal is to get levels to where <em>you</em> function optimally — judged by how you feel, how you perform, and how you look, in the context of your blood markers together as a full picture.</p>
+
+    <h2>What TRT Actually Is — And Isn't</h2>
+
+    <p>Testosterone Replacement Therapy gets a lot of bad press, a lot of misinformation, and a lot of hype — usually from opposite ends of the spectrum. Let me cut through it.</p>
+
+    <p>TRT is exactly what the name says. If your body is not producing optimal testosterone — whether due to age, genetics, lifestyle damage, or medical condition — TRT replaces it with an exogenous (external) source of the same hormone your body makes naturally.</p>
+
+    <p>It is not a steroid cycle. It is not performance enhancing drug use. It is hormone replacement therapy — the same category of medicine women have used for decades.</p>
+
+    <p>What TRT <strong>will</strong> do, when properly managed:</p>
+    <ul>
+      <li>Restore your testosterone to an optimal range</li>
+      <li>Resolve symptoms that were caused by the deficiency</li>
+      <li>Improve body composition, energy, mood, libido, and cognitive function</li>
+      <li>Protect long-term bone density and cardiovascular health</li>
+    </ul>
+
+    <p>What TRT <strong>won't</strong> do:</p>
+    <ul>
+      <li>Fix problems that were never caused by low testosterone</li>
+      <li>Replace good training, nutrition, sleep and stress management</li>
+      <li>Work in isolation if you have other hormonal deficiencies (thyroid, DHEA, etc.) that haven't been addressed</li>
+    </ul>
+
+    <div class="callout">
+      <p>"TRT will not solve any problem that was not caused by low testosterone. It is one piece of the puzzle — a foundational one — but never the whole picture."</p>
+    </div>
+
+    <p>TRT is also a long-term commitment. Once you begin, you're working with your body's hormone system in a new way. It shuts down the HPG axis — the signalling pathway between the brain and the testes — because the body senses external testosterone and stops making its own. This is why coming on and off TRT is not something you approach casually, and why finding the right practitioner who takes the full picture seriously is so important.</p>
+
+    <h2>How TRT is Administered</h2>
+
+    <p>There are several methods, and each has trade-offs. The most common and most effective is <strong>subcutaneous or intramuscular injection</strong> of testosterone cypionate or enanthate. Injections allow for consistent, predictable levels and give you control over dose and frequency.</p>
+
+    <ul>
+      <li><strong>Injections (cypionate / enanthate)</strong> — most effective, most controllable. Typically administered twice weekly to maintain stable levels and avoid hormonal peaks and troughs</li>
+      <li><strong>Topical gels / creams</strong> — convenient, but absorption varies significantly between individuals. Transfer risk to partners and children. Harder to dial in for some</li>
+      <li><strong>Pellets</strong> — implanted under the skin, releasing testosterone over months. Less flexibility to adjust dose once implanted</li>
+      <li><strong>Oral testosterone (newer options)</strong> — gaining traction, though bioavailability and consistency vary</li>
+    </ul>
+
+    <p>The method matters because consistency matters. Stable hormone levels produce stable results. Big swings in testosterone — whether from infrequent large injections or inconsistent gel use — create a rollercoaster of symptoms that makes it almost impossible to dial in properly.</p>
+
+    <p>The goal is to mimic the body's natural rhythm as closely as possible. More frequent, smaller doses generally produce the most stable results and fewest side effects.</p>
+
+    <h2>Getting Dialled In</h2>
+
+    <p>Here's where most men — and honestly, a lot of clinics — get it wrong.</p>
+
+    <p>Starting TRT is straightforward. Optimising it is nuanced. The two most common mistakes are:</p>
+
+    <ol>
+      <li><strong>Chasing the highest possible testosterone level</strong> — more is not always better. Optimal is the goal. For some men that's mid-range, for others it's higher. Symptoms and blood work together determine this — not a number on a chart</li>
+      <li><strong>Ignoring what happens downstream</strong> — testosterone converts to oestrogen (via aromatase), and this conversion needs monitoring. Some men need to manage this, some don't. Managing it badly — particularly with unnecessary aromatase inhibitors — causes its own problems</li>
+    </ol>
+
+    <p>The dialling-in process takes time. Most men notice significant improvements in energy and mood within the first 4–6 weeks. Body composition, libido, and recovery take longer — often 3–6 months before you're at a true optimum. Blood work should be reassessed at 6–8 weeks and again at 3–4 months after initiation, then regularly maintained.</p>
+
+    <h2>The Supporting Cast</h2>
+
+    <p>Testosterone is the foundation, but it rarely stands alone. There are other hormones and systems that matter, and if they're deficient, no amount of testosterone optimisation will get you where you want to be:</p>
+
+    <ul>
+      <li><strong>Thyroid</strong> — the most commonly missed piece. Sub-optimal thyroid function will undermine the benefits of TRT and shares many of the same symptoms. A full thyroid panel is non-negotiable</li>
+      <li><strong>DHEA</strong> — important for mood, libido, metabolism and immune function. Frequently low in men with testosterone deficiency</li>
+      <li><strong>HCG</strong> — often prescribed alongside TRT to maintain testicular function and preserve fertility. There's a lot of noise around HCG. The short version: it has its place, but it's often over-prescribed. Assess your actual goals — including fertility — before committing to it</li>
+      <li><strong>Pregnenolone</strong> — a neurosteroid that underpins cognitive function. Especially worth investigating if there's a history of head injury or significant psychological stress</li>
+    </ul>
+
+    <p>This is why working with someone who looks at the full picture — not just a single testosterone number — makes all the difference between a protocol that transforms how you feel and one that just ticks a clinical box.</p>
+
+    <hr class="divider" />
+
+    <h2>Where to Start</h2>
+
+    <p>If any of this resonated with you, here are the practical first steps:</p>
+
+    <ol>
+      <li><strong>Get a comprehensive blood panel</strong> — not just total testosterone. Push for free testosterone, SHBG, LH, FSH, oestradiol, prolactin, full thyroid (TSH, free T3, free T4), and DHEA-S. Private testing is often the easiest route to get everything in one go</li>
+      <li><strong>Get it assessed by someone who understands the full picture</strong> — not just whether you're "in range," but where your levels sit relative to optimal, and what the pattern of markers tells you about root cause</li>
+      <li><strong>Address lifestyle fundamentals first</strong> — chronic sleep deprivation, high stress, poor nutrition, excess body fat, and sedentary behaviour all suppress testosterone. These aren't excuses to avoid the conversation — they're part of it</li>
+      <li><strong>If TRT is the right move, approach it seriously</strong> — work with a qualified practitioner, commit to the process, and understand that optimisation takes months, not days</li>
+    </ol>
+
+    <p>You don't have to accept feeling like a diminished version of yourself as the inevitable cost of adult life. But you do have to take it seriously, ask the right questions, and get the right support.</p>
+
+    <p>That's what I'm here for.</p>
+
+    <!-- CTA -->
+    <div class="cta-block">
+      <h2>Ready to Take This Seriously?</h2>
+      <p>If you're working with me as a client, the full education series on male hormones and TRT is inside your app. If you'd like to explore coaching, let's talk.</p>
+      <a href="/#coaching" class="cta-btn">Work With Coach Dave</a>
+    </div>
+
+  </article>
+
+  <footer class="footer">
+    <p>© 2025 Coach Dave Marsh &nbsp;·&nbsp; <a href="/">coachdavemarsh.net</a></p>
+    <p style="margin-top:8px; font-size:12px;">This article is for educational purposes only and does not constitute medical advice. Always consult a qualified healthcare professional before making any changes to your health protocol.</p>
+  </footer>
+
+</body>
+</html>
