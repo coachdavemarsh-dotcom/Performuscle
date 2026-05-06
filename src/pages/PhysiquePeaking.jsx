@@ -838,3 +838,10 @@ export default function PhysiquePeaking() {
     </>
   )
 }
+
+// Named export used by the coach app route (already behind ProtectedRoute — no password gate needed)
+// Sets the sessionStorage flag so PhysiquePeaking's own auth check is satisfied on mount.
+export function PhysiquePeakingContent({ appMode = false }) {
+  sessionStorage.setItem('pp_auth', '1')
+  return <PhysiquePeaking />
+}
