@@ -330,6 +330,283 @@ The most durable motivation comes from identity, not goals. "I want to lose 10kg
 **The Non-Negotiable Rule**
 Never miss twice. Miss a session? Fine — life happens. Miss two in a row? The habit is breaking. Whatever it takes, get the next one done. The streak does not have to be perfect — it just has to restart immediately.`,
   },
+
+  // ── Hormones ──────────────────────────────────────────────────────────────
+
+  {
+    id: 'b_testosterone_foundation', category: 'hormones', contentType: 'article', unlockWeek: 0,
+    title: 'Testosterone: Why It\'s the Foundation of Male Health',
+    summary: 'Testosterone is far more than a sex hormone. Understanding what it does — and what happens when it\'s low — changes everything.',
+    readTime: '6 min', tag: 'Foundations', tagColor: '#f472b6',
+    articleBody: `**More Than Muscle**
+Most people associate testosterone with muscle and libido. That's a tiny piece of the picture. Testosterone is the master regulator of male physiology — it governs energy metabolism, mood, cognition, cardiovascular health, bone density, insulin sensitivity, and recovery. When it's at optimal levels, everything works as it should. When it's not, the knock-on effects touch every system in the body.
+
+**How Testosterone Is Made: The HPG Axis**
+Your brain, specifically the hypothalamus, sends a signal down to the pituitary gland telling it to release two hormones: LH (Luteinising Hormone) and FSH (Follicle Stimulating Hormone). LH travels to the testicles and tells the Leydig cells to produce testosterone. This entire signalling chain is called the HPG axis — hypothalamus, pituitary, gonads.
+
+It works like a thermostat. When testosterone levels are high enough, the brain senses it and dials back the signal. When levels drop, the signal increases. This feedback loop is elegant when it works, and the source of the problem when it doesn't.
+
+**The Decline Is Real — and It's Getting Worse**
+Testosterone reference ranges have fallen significantly over the last two decades. What was considered "mid-range" ten years ago would be flagged as low today by most lab standards. This isn't good news — it means population averages are declining, and reference ranges are being recalculated to reflect a sicker population, not an optimal one.
+
+The takeaway: being "within range" on a blood test does not mean your testosterone is optimal. It means you're not in the bottom percentage of an increasingly compromised population.
+
+**What Optimal Actually Looks Like**
+Optimal testosterone isn't a number — it's a feeling. It's waking up with energy, recovering well from training, maintaining a healthy sex drive, thinking clearly under pressure, and feeling emotionally steady. When those things are absent consistently, it's worth investigating why — and testosterone is one of the first places to look.
+
+**The Bottom Line**
+Testosterone is foundational. It's not a shortcut, it's not a performance enhancer for those who don't need it — it's a fundamental biological requirement for male health. Understanding how it works is the first step to understanding your own body.`,
+  },
+
+  {
+    id: 'b_low_t_symptoms', category: 'hormones', contentType: 'article', unlockWeek: 0,
+    title: 'Recognising Low Testosterone: The Full Picture',
+    summary: 'Low T doesn\'t just mean low libido. The symptom profile is broader, more subtle, and more damaging than most men realise.',
+    readTime: '5 min', tag: 'Symptoms', tagColor: '#f472b6',
+    articleBody: `**Why Symptoms Get Missed**
+Low testosterone rarely announces itself clearly. It tends to creep in gradually — the slow erosion of drive, recovery, and vitality over months or years. By the time most men seek help, they've often been living with it for a long time without connecting the dots.
+
+The most common symptoms I see in clinical practice are depression and low mood, anxiety, erectile dysfunction or reduced sexual desire, persistent fatigue, and poor recovery from training. But the list extends well beyond these five.
+
+**The Broader Symptom Profile**
+- Feeling emotionally flat — little enjoyment from things that used to matter
+- Low stress threshold — easily overwhelmed by things that didn't used to phase you
+- Poor sleep despite being tired — waking during the night and lying there
+- Taking days to physically recover from a training session
+- No matter how hard you train or how well you eat, muscle won't come
+- Brain fog — reduced sharpness, poor concentration
+- Loss of competitive drive or masculine identity
+- Reduced morning erections or complete absence
+
+**The Physical Consequences Over Time**
+If left unaddressed, chronically low testosterone contributes to muscle loss, increased visceral fat, worsening insulin resistance, and reduced bone density. These aren't just quality-of-life issues — they're long-term health risks.
+
+**When Low T Affects Development**
+For younger men who haven't had optimal testosterone during their late teens and early twenties, the effects go deeper. Testosterone during those years drives not just physical development — muscle building capacity, posture, metabolic function — but also psychological development: confidence, stress resilience, and the ability to engage socially without anxiety.
+
+**Low T Can Be a Symptom Too**
+It's important to understand that low testosterone can be both a cause and a consequence. Obesity, chronic stress, poor sleep, and unresolved health conditions can all suppress testosterone production. This means the most important first step is always a thorough assessment — not just of your hormones, but of the broader picture.
+
+**The Pattern I See Most**
+The thing that most often brings men to seek help — beyond sexual issues — is being completely wiped out after training. Two or three days of fatigue after a session that should feel manageable. That's usually the moment men realise this isn't just in their heads, and something is genuinely wrong.`,
+  },
+
+  {
+    id: 'b_hormone_bloodwork', category: 'hormones', contentType: 'article', unlockWeek: 1,
+    title: 'Your Hormone Blood Work Decoded',
+    summary: 'A guide to the markers that actually matter — and why most standard panels miss the full picture.',
+    readTime: '8 min', tag: 'Blood Work', tagColor: '#f472b6',
+    articleBody: `**Why Standard Blood Tests Often Fall Short**
+When most GPs order a testosterone test, they check one number — total testosterone — and compare it to a reference range that gets recalculated every few years to reflect a declining population. This tells you almost nothing useful. A thorough hormone assessment requires context: multiple markers, their relationship to each other, and an understanding of what they mean for how you actually feel.
+
+Here's what to know about the key markers.
+
+**Total Testosterone**
+This tells you the total amount of testosterone circulating in your blood. It's useful as a starting point but incomplete on its own, because the majority of testosterone in circulation is bound to proteins and not biologically active. Reference ranges vary significantly between labs and have been dropping steadily. Being "in range" is not the same as being optimal.
+
+**Free Testosterone**
+This is the biologically active fraction — the testosterone that's actually available to exert its effects on your tissues. Free testosterone is far more closely correlated with how you feel than total testosterone. It's the primary target when optimising hormone levels. A man can have a "normal" total testosterone but low free testosterone and still experience every symptom of deficiency.
+
+**SHBG (Sex Hormone Binding Globulin)**
+SHBG is a protein that binds to testosterone and reduces how much is free and available. High SHBG means more of your total testosterone is bound up and inactive. SHBG tends to rise with age and can be elevated by extended periods of ketogenic eating. Low SHBG, on the other hand, can be a sign of insulin resistance or thyroid issues — it's a signal worth investigating, not fixing in isolation.
+
+**Estradiol**
+Yes, men need estrogen. Estradiol is essential for bone health, cardiovascular function, mood, and sexual health. The goal isn't to suppress it — it's to keep it in an appropriate balance relative to testosterone. Very low estradiol causes joint pain, poor cognitive function, and low libido just as low testosterone does. The obsession with "crashing estrogen" that you'll find in online forums is largely misguided.
+
+**Prolactin**
+Prolactin is primarily known as a lactation hormone, but in men it plays an important role in reproductive health. Elevated prolactin suppresses the HPG axis, reducing testosterone. Mild elevations can result from chronic stress, poor sleep, or hypothyroidism. Significantly elevated prolactin — well above the top of range — warrants an MRI to rule out a benign pituitary growth called a prolactinoma.
+
+**DHEA**
+DHEA is a precursor hormone produced largely by the adrenal glands and is important for mood, libido, metabolism, and immune function. Low DHEA shares many symptoms with low testosterone and is often part of the same deficiency picture. It's frequently overlooked but worth measuring and addressing.
+
+**Thyroid (TSH, Free T3, Free T4)**
+Thyroid function and testosterone are deeply interconnected. An underactive thyroid is one of the most common reasons TRT doesn't work as expected. Testing TSH alone is inadequate — a full panel including Free T3 and Free T4 is needed to properly assess thyroid function. T3 is the primary active hormone governing energy metabolism. An unaddressed thyroid issue can undermine everything else.
+
+**Supporting Markers**
+- **CRP** — An inflammation marker. Chronic inflammation suppresses testosterone production and impairs recovery.
+- **Fasting Insulin / HbA1c** — Insulin resistance is a major driver of low testosterone and poor hormonal health overall.
+- **Liver Enzymes** — The liver metabolises hormones. Poor liver health compromises both natural testosterone production and how well the body handles TRT.
+- **Vitamin D** — A proxy for sun exposure and a critical co-factor in the endocrine system.
+- **Full Blood Count** — Anaemia mimics low testosterone symptoms and should always be ruled out.
+
+**The Key Takeaway**
+Blood work is a tool, not a verdict. Numbers only make sense in context — alongside your symptoms, lifestyle, and the full panel. One number in isolation tells you almost nothing. The whole picture tells you everything.`,
+  },
+
+  {
+    id: 'b_trt_basics', category: 'hormones', contentType: 'article', unlockWeek: 1,
+    title: 'TRT: What It Is, and Whether It\'s Right for You',
+    summary: 'Testosterone Replacement Therapy explained honestly — who it helps, who should wait, and why it\'s not a decision to take lightly.',
+    readTime: '7 min', tag: 'TRT Basics', tagColor: '#f472b6',
+    articleBody: `**What TRT Actually Does**
+Testosterone Replacement Therapy replaces your body's own testosterone production with an external source. When your brain detects that testosterone is being supplied from outside, it dials back the internal signal — this is the HPG axis shutting down, which we covered in a previous module. Your testicles stop producing testosterone and go dormant. You are now dependent on exogenous testosterone to maintain your levels.
+
+This is a significant and ongoing intervention. It's not a supplement. It's not something you cycle on and off. It's a medical treatment that, for the right person with a genuine deficiency, can be genuinely life-changing. For the wrong person, it creates new problems without solving the original ones.
+
+**Primary Hypogonadism: Clear-Cut**
+Primary hypogonadism means the testicles themselves are failing to produce adequate testosterone. The pituitary is doing its job — LH is elevated, the signal is being sent — but the hardware can't respond. This can result from age-related testicular decline, injury, illness, or other factors.
+
+If you have elevated LH with low testosterone, your body has already maxed out its own production. The only path forward is replacement. This is the clearest indication for TRT.
+
+**Secondary Hypogonadism: More Complex**
+Secondary hypogonadism means the pituitary isn't signalling the testicles properly. LH is low or suppressed, and as a result, testosterone is low. The hardware is potentially fine — the problem is upstream.
+
+Common causes include: chronic stress, obesity, significant caloric restriction, heavy alcohol use, history of anabolic steroid use, head injuries, PTSD, and auto-immune conditions. When the body is under chronic stress, it prioritises survival over reproductive function. Testosterone production gets downregulated as a result.
+
+In these cases, the right first question is always: can the root cause be addressed? If the answer is yes and the intervention is realistic, that should come first. But many of these states don't fully reverse even when the root cause is resolved — and some people simply cannot address the root cause without improving their hormonal environment first. This is why secondary hypogonadism requires careful individual assessment, not a blanket protocol.
+
+**The Question I Always Ask**
+Before recommending TRT for anyone with secondary hypogonadism, I want to know: are you doing everything within your control? Are you eating to support your health, training consistently, sleeping adequately, managing your stress load, getting sunlight, and not suppressing your system with alcohol or other substances?
+
+If the answer is genuinely yes, and levels are still suboptimal and symptoms are present — then the conversation about TRT is worth having.
+
+**TRT Will Not Fix What It Didn't Cause**
+This is perhaps the most important thing to understand. Testosterone will make most men feel better because most men have suboptimal testosterone. But if your primary problems are anxiety from an unresolved trauma, depression from a life situation that needs changing, or fatigue from sleep apnoea — testosterone will not fix those things. It is not a panacea, and approaching it as one is a recipe for disappointment.
+
+**Working with the Right Practitioner**
+TRT is a medical intervention that requires proper supervision, comprehensive blood work, and an informed provider who understands the full endocrine picture — not just a practitioner who will put you on a standard protocol and adjust the dose based on your total testosterone alone. The practitioner relationship matters as much as the protocol.`,
+  },
+
+  {
+    id: 'b_trt_administration', category: 'hormones', contentType: 'article', unlockWeek: 2,
+    title: 'TRT Administration: Why How You Take It Matters',
+    summary: 'The delivery method and frequency of TRT are just as important as the dose. Most men start on sub-optimal protocols.',
+    readTime: '6 min', tag: 'Protocol', tagColor: '#f472b6',
+    articleBody: `**Not All Methods Are Equal**
+The route of administration for testosterone significantly affects how stable your levels are, how you feel day to day, and how manageable the therapy is long-term. Some methods simply don't work well for most people — and unfortunately, they're often the ones prescribed first.
+
+**What Doesn't Work Well**
+
+*Pellets* are implanted under the skin and release testosterone slowly over months. In theory this sounds convenient. In practice: the dose is difficult to adjust, infection risk exists, and levels are often suboptimal — particularly as the pellets approach the end of their release period. Useful for livestock. Not ideal for men.
+
+*Standard gels and patches* suffer from poor and inconsistent absorption, and the low concentrations available mean you can't reach optimal levels without impractical amounts. Patches often cause skin reactions. Transference to partners and children is a genuine concern with gels.
+
+*Long-acting injectable undecanoate (Nebido/Reandron)* promises four injections per year. The half-life simply doesn't support this frequency. Most men end up severely deficient before each injection is due, experiencing the highs of the first week and then dropping back to where they started — or lower. It can be used more frequently than prescribed, but that defeats the convenience selling point and is rarely done in practice.
+
+**What Works: Testosterone Cypionate and Enanthate**
+These are currently the gold standard for TRT. They're widely available, well-studied, and have a moderate half-life that makes dosing manageable. The key principle is frequent, smaller injections rather than large infrequent ones.
+
+**Why Frequency Matters: Understanding Half-Life**
+Testosterone cypionate and enanthate have a half-life of approximately 4–5 days in practice. Standard medical guidelines often recommend one injection every two to three weeks — but this creates a significant problem.
+
+The half-life doesn't mean the testosterone is evenly distributed over that period. It means it's being cleared progressively from the moment you inject. Most men feel a noticeable spike in the first day or two, then a gradual decline, dropping back toward deficient levels well before the next injection is due. This creates a hormonal rollercoaster — mood swings, energy crashes, and inconsistent response.
+
+Twice-weekly injections are the minimum effective frequency for stable levels. Many men do better on every-other-day or even daily small doses. More frequent injections mean smaller peaks and shallower troughs, and far more stable levels day to day.
+
+**Compounded Testosterone Cream**
+A high-concentration compounded cream (typically 20%+) applied to scrotal skin can be an effective alternative to injections for those who can't or won't inject. The scrotal skin has high 5-alpha reductase activity, which means this route of administration produces more DHT relative to estradiol — a characteristic that some men respond very well to. It requires daily application and careful monitoring but is a legitimate option in the right hands.
+
+**The Takeaway**
+The best TRT protocol is the one that keeps your levels stable, matches your lifestyle, and is something you'll actually follow consistently. Frequent smaller doses beat infrequent large ones. Work with your provider to find the frequency and delivery method that suits you — and don't accept "one injection every two weeks" as the only option.`,
+  },
+
+  {
+    id: 'b_dialling_in', category: 'hormones', contentType: 'article', unlockWeek: 2,
+    title: 'Dialling In: Getting Your Levels Right',
+    summary: 'Starting TRT is the easy part. Finding the right dose and protocol for your individual biology takes time, patience, and the right markers.',
+    readTime: '6 min', tag: 'Optimisation', tagColor: '#f472b6',
+    articleBody: `**The First 3 Months**
+The initial phase of TRT is about establishing a stable baseline — not chasing optimal levels. Hormone receptors need time to upregulate in response to testosterone. The body needs time to adapt. Most men experience meaningful improvements within 6–12 weeks, but the full picture of how you're responding won't be clear until you've been consistent for at least 3 months.
+
+Resist the urge to adjust the dose every few weeks based on how you feel day to day. Hormones fluctuate. Stress, sleep, nutrition, and training all influence how you feel on any given day. Give the protocol time to stabilise before drawing conclusions.
+
+**What to Optimise For**
+The primary target is free testosterone — the bioavailable fraction that actually drives your symptom resolution. Total testosterone matters, but free testosterone is what's most closely correlated with how you feel. The goal is to find the dose that gets your free testosterone into a range where symptoms resolve, without pushing levels so high that side effects emerge.
+
+There is no universal "optimal dose." Individual variation is enormous. Some men feel excellent at a relatively modest dose. Others need significantly more to hit the same effect. Genetics, androgen receptor sensitivity, conversion to other hormones, and SHBG all play a role.
+
+**Monitoring Estradiol**
+As testosterone rises, some of it will convert to estradiol via an enzyme called aromatase. This is normal and necessary — estradiol is not the enemy. The goal is not to suppress it but to keep it in an appropriate balance. Too low and you'll experience joint pain, low mood, and poor libido. Too high and you may experience water retention, emotional sensitivity, or sleep disruption.
+
+In most men, estradiol manages itself when the testosterone dose is appropriate. It rarely needs to be aggressively managed, particularly early in therapy.
+
+**Blood Work Timing**
+Test your levels at trough — meaning at the lowest point before your next injection. This gives you a consistent, reproducible measurement. Testing at peak (immediately after injection) tells you your maximum but not your stable baseline, and makes it difficult to compare results over time.
+
+After any dose change, wait at least 6 weeks before re-testing. Hormones don't stabilise overnight, and testing too early gives you an inaccurate picture.
+
+**Patience Is the Protocol**
+The biggest mistake men make on TRT is chasing optimal too quickly. Dose changes, adding ancillaries, switching delivery methods — all before the previous change has had time to work. Each change resets your ability to assess what's working.
+
+The process is: stabilise, assess, adjust, stabilise again. It takes time. It requires patience. But men who follow this approach consistently get the best long-term outcomes.
+
+**When Symptoms Persist Despite Good Levels**
+If your levels look good on paper but you still don't feel right, there are other areas to investigate — thyroid function, DHEA levels, sleep quality, iron status, or other hormonal markers that may be contributing. TRT will not resolve problems it didn't cause. A thorough practitioner will look beyond the testosterone panel when symptoms persist.`,
+  },
+
+  {
+    id: 'b_beyond_testosterone', category: 'hormones', contentType: 'article', unlockWeek: 3,
+    title: 'Beyond Testosterone: The Supporting Cast',
+    summary: 'For some men, testosterone is only part of the answer. DHEA, Pregnenolone, and Thyroid are the hormones most often left unaddressed.',
+    readTime: '7 min', tag: 'Advanced', tagColor: '#f472b6',
+    articleBody: `**The Car Analogy**
+Fixing the engine doesn't fix the whole car. Testosterone is a major component of male hormonal health — but it's one component in a complex system. Many men start TRT and feel dramatically better. Others improve but hit a ceiling they can't get past. For this second group, the answer usually lies in the hormones that work alongside testosterone, not in adjusting the testosterone itself.
+
+**The Hormonal Hierarchy**
+All steroid hormones share a common origin — they're made from cholesterol via a series of enzymatic conversions. At the top of this pathway is pregnenolone, often called the "mother hormone" because it can convert into multiple downstream hormones depending on what the body needs. Below pregnenolone sits DHEA, which then feeds into testosterone, estrogen, and other androgens.
+
+Understanding this hierarchy helps explain why some men feel incomplete on testosterone alone.
+
+**Pregnenolone**
+Pregnenolone is produced primarily in the adrenal glands and brain. It's critical for cognitive function, mood regulation, and neurological health. A deficiency can cause anxiety, depression, memory problems, and anhedonia (the inability to feel pleasure) — symptoms that look almost identical to low testosterone but that testosterone alone cannot resolve.
+
+Pregnenolone deficiency is more common in men with a history of head injuries, PTSD, or prolonged periods of severe stress. If these factors are present and symptoms persist despite optimised testosterone, pregnenolone is worth investigating.
+
+**DHEA**
+DHEA is produced mainly in the adrenal glands and acts on both androgen and oestrogen receptors. It plays an important role in libido, mood, metabolic function, and immune health. Deficiency symptoms include reduced penile sensitivity, delayed orgasm, low mood, and poor energy — all of which overlap significantly with low testosterone.
+
+DHEA levels decline with age and can be low even in younger men under chronic physiological stress. Testing DHEA-S (the sulphate form) gives you a stable, reliable measurement. If levels are consistently low, supplementation under guidance can make a meaningful difference to how you feel.
+
+**Thyroid**
+Thyroid function is one of the most commonly overlooked contributors to poor outcomes on TRT. The thyroid governs energy metabolism at a cellular level — when it's underperforming, everything feels sluggish regardless of testosterone levels.
+
+The problem is that most practitioners check only TSH to assess thyroid. A low or normal TSH doesn't confirm optimal thyroid function — you need Free T3 and Free T4 to get the full picture. T3 is the primary active hormone; T4 is largely a storage form that converts to T3 in peripheral tissue. If this conversion is impaired, or if production is simply insufficient, no amount of testosterone optimisation will fully resolve energy and mood symptoms.
+
+For men who are on TRT and still not feeling right — particularly around energy, body temperature, and recovery — thyroid assessment is one of the first places I look.
+
+**Why These Aren't Add-Ons**
+These hormones aren't optional extras or upgrades to stack on top of TRT. For men with genuine deficiencies, they're essential. Chasing an optimal testosterone dose when the thyroid is underactive or DHEA is depleted is like trying to fine-tune an engine while the fuel system is compromised.
+
+**The Principle**
+Address what's deficient. Measure, don't guess. And understand that hormonal health is a system — optimising one part while ignoring others gives you partial results at best.`,
+  },
+
+  {
+    id: 'b_hcg_myths', category: 'hormones', contentType: 'article', unlockWeek: 3,
+    title: 'HCG: Separating the Facts from the Noise',
+    summary: 'HCG is one of the most oversold and misunderstood adjuncts to TRT. Here\'s what it actually does — and what it doesn\'t.',
+    readTime: '6 min', tag: 'Advanced', tagColor: '#f472b6',
+    articleBody: `**What HCG Is**
+HCG (Human Chorionic Gonadotropin) is a hormone produced by women during pregnancy. It stimulates the LH receptor — the same receptor that Luteinising Hormone acts on in men to signal testosterone production in the testicles. Because of this receptor overlap, HCG can be used in men to keep the testicles active and stimulated while on TRT, since TRT itself shuts down the body's own LH production.
+
+This is the mechanism behind prescribing HCG alongside TRT: keep the testicles stimulated, maintain their size and function, and preserve intratesticular hormone production.
+
+The reality is more complicated.
+
+**The Nuance Most Clinics Skip**
+HCG and LH both bind to the LH receptor, but they don't produce identical effects. Think of it like different keys fitting the same lock — they can both open the door, but the experience on the other side isn't necessarily the same. This is likely why a significant number of men experience side effects from HCG that they never experienced from their own LH. HCG is a potent stimulus and it affects the body differently than the hormone it's supposed to mimic.
+
+**Who Responds Well — and Who Doesn't**
+Based on clinical experience, roughly one third of men feel genuinely better on HCG alongside TRT — improved mood, energy, and a sense of mental clarity. One third feel nothing beyond physical changes (the testicles remain fuller and more active). And one third experience significant side effects: anxiety, insomnia, mood disturbances, sweating, and worsening of sexual function.
+
+For the men in that last group, no reduction in dose resolves it. They simply don't tolerate HCG, and they do better without it. If you fall into this category, the mechanistic argument for why you "should" be on HCG is irrelevant — your experience is the only data point that matters.
+
+**What HCG Does NOT Do**
+There are several persistent myths about HCG worth addressing directly.
+
+*It does not meaningfully raise DHEA or pregnenolone.* This idea comes from an oversimplified reading of the hormonal pathway diagram — the steroidogenic cascade. While LH is one of several signals involved in that pathway, it isn't the primary driver of adrenal DHEA or pregnenolone production, which come from completely separate glands. HCG does not "protect" upstream hormone levels in any clinically significant way.
+
+*It does not reliably protect fertility.* TRT suppresses fertility in some men, not all. HCG at the low doses typically used alongside TRT primarily stimulates the LH receptor and has minimal effect on the FSH receptor — which is what drives sperm production. Men have conceived while on TRT without HCG, and men have been rendered infertile while on TRT with HCG. It is not a reliable contraceptive insurance policy in either direction.
+
+*TRT without HCG will not destroy your testicles.* Yes, the testicles atrophy somewhat — typically 20–30% — when they're no longer being stimulated by LH. But testicular atrophy is not irreversible damage. The testicles receive no LH stimulation from birth until puberty either — and they recover fine when the signal returns. For men where testicular size or discomfort is genuinely problematic, HCG is worth trialling. For men where it isn't — there's no emergency.
+
+**The Practical Approach**
+If you and your practitioner want to trial HCG, do it after testosterone levels have been stabilised and symptoms have begun to improve — not at the start of therapy. That way, any side effects that emerge are clearly attributable to the HCG, not the testosterone.
+
+If HCG is going to cause problems, it usually becomes apparent within days. If it doesn't cause issues in the first week, that's a positive sign. Give it 6–8 weeks to assess the full effect on testicular size and how you feel.
+
+The bottom line: HCG is an option for some men, not a requirement for all. Your individual response is the only reliable guide.`,
+  },
 ]
 
 const CATEGORIES = [
@@ -339,6 +616,7 @@ const CATEGORIES = [
   { id: 'recovery', label: 'Recovery' },
   { id: 'programming', label: 'Programming' },
   { id: 'mindset', label: 'Mindset' },
+  { id: 'hormones', label: 'Hormones' },
 ]
 
 // ============================================================
