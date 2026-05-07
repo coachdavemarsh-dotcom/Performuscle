@@ -9,29 +9,30 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
 
   <style>
     /* ============================================================
        DESIGN TOKENS
     ============================================================ */
     :root {
-      --black:       #060608;
-      --surface:     #0d0d0f;
-      --surface-2:   #131316;
-      --surface-3:   #1a1a1e;
+      --black:       #011125;
+      --surface:     #061830;
+      --surface-2:   #091e38;
+      --surface-3:   #0d2440;
       --accent:      #00C896;
       --accent-hi:   #00FFB8;
       --accent-dim:  rgba(0, 200, 150, 0.12);
       --white:       #F5F6FA;
-      --off-white:   #E8E9EE;
-      --muted:       #6b6b7e;
-      --subtle:      #4a4a58;
+      --off-white:   #d1d3d4;
+      --muted:       #7a7a7d;
+      --subtle:      #4a5568;
       --border:      rgba(255,255,255,0.07);
       --border-hi:   rgba(0,200,150,0.25);
 
       --font-display: 'Bebas Neue', sans-serif;
-      --font-body:    'DM Sans', sans-serif;
+      --font-sub:     'Josefin Sans', sans-serif;
+      --font-body:    'Montserrat', sans-serif;
 
       --max-w:  1280px;
       --pad-h:  clamp(24px, 5vw, 80px);
@@ -73,12 +74,12 @@
        TYPOGRAPHY HELPERS
     ============================================================ */
     .eyebrow {
-      font-family: var(--font-body);
+      font-family: var(--font-sub);
       font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.24em;
+      letter-spacing: 0.30em;
       text-transform: uppercase;
-      color: var(--subtle);
+      color: var(--accent);
       display: flex;
       align-items: center;
       gap: 14px;
@@ -2793,60 +2794,81 @@
         </div>
         <div data-reveal data-reveal-delay="2">
           <p class="body-lg">
-            Evidence-based articles on training, nutrition, recovery, and what it really means to perform at a human level.
+            Honest, evidence-based writing on training, nutrition, hormones and what it actually takes to perform at a high level.
           </p>
         </div>
       </div>
-      <div class="blog__grid">
 
-        <a class="blog-card" href="/article-male-hormones.html" data-reveal style="text-decoration:none;cursor:pointer;">
-          <div class="blog-card__img" style="background:linear-gradient(135deg,#0d1f1a 0%,#0a2e22 100%);display:flex;align-items:center;justify-content:center;">
-            <span style="font-size:48px;">⚡</span>
-          </div>
-          <div class="blog-card__body">
-            <div class="blog-card__cat">Health &amp; Hormones</div>
-            <div class="blog-card__title">The Testosterone<br>Truth</div>
-            <p class="blog-card__excerpt">Why thousands of men are walking around as a diminished version of themselves — and the honest conversation your GP probably isn't having with you.</p>
-            <div class="blog-card__meta">
-              <span class="blog-card__date">12 min read</span>
-              <span class="blog-card__read">Read <span>→</span></span>
-            </div>
-          </div>
-        </a>
-
-        <div class="blog-card" data-reveal data-reveal-delay="2">
-          <div class="blog-card__img">
-            <span class="blog-card__img-placeholder">Post Image Here</span>
-          </div>
-          <div class="blog-card__body">
-            <div class="blog-card__cat">Nutrition</div>
-            <div class="blog-card__title">Fuelling Performance<br>Without Restriction</div>
-            <p class="blog-card__excerpt">How to eat for energy, body composition and cognitive output simultaneously — without tracking every gram.</p>
-            <div class="blog-card__meta">
-              <span class="blog-card__date">Coming Soon</span>
-              <span class="blog-card__read">Read <span>→</span></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="blog-card" data-reveal data-reveal-delay="3">
-          <div class="blog-card__img">
-            <span class="blog-card__img-placeholder">Post Image Here</span>
-          </div>
-          <div class="blog-card__body">
-            <div class="blog-card__cat">Mindset</div>
-            <div class="blog-card__title">Operating With Intent<br>Not Reaction</div>
-            <p class="blog-card__excerpt">Peak performers don't react to their day — they design it. The morning protocols and mental frameworks that separate the best from the rest.</p>
-            <div class="blog-card__meta">
-              <span class="blog-card__date">Coming Soon</span>
-              <span class="blog-card__read">Read <span>→</span></span>
-            </div>
-          </div>
-        </div>
-
+      <!-- Live Substack feed -->
+      <div id="substack-feed" class="blog__grid" style="min-height:200px;">
+        <!-- Skeleton cards shown while loading -->
+        <div class="blog-card blog-card--skeleton"><div class="blog-card__img" style="background:#1a1a24;"></div><div class="blog-card__body"><div style="height:12px;width:60px;background:#222;border-radius:4px;margin-bottom:14px;"></div><div style="height:22px;width:85%;background:#222;border-radius:4px;margin-bottom:10px;"></div><div style="height:16px;width:95%;background:#1a1a1a;border-radius:4px;margin-bottom:6px;"></div><div style="height:16px;width:70%;background:#1a1a1a;border-radius:4px;"></div></div></div>
+        <div class="blog-card blog-card--skeleton"><div class="blog-card__img" style="background:#1a1a24;"></div><div class="blog-card__body"><div style="height:12px;width:60px;background:#222;border-radius:4px;margin-bottom:14px;"></div><div style="height:22px;width:75%;background:#222;border-radius:4px;margin-bottom:10px;"></div><div style="height:16px;width:90%;background:#1a1a1a;border-radius:4px;margin-bottom:6px;"></div><div style="height:16px;width:65%;background:#1a1a1a;border-radius:4px;"></div></div></div>
+        <div class="blog-card blog-card--skeleton"><div class="blog-card__img" style="background:#1a1a24;"></div><div class="blog-card__body"><div style="height:12px;width:60px;background:#222;border-radius:4px;margin-bottom:14px;"></div><div style="height:22px;width:80%;background:#222;border-radius:4px;margin-bottom:10px;"></div><div style="height:16px;width:90%;background:#1a1a1a;border-radius:4px;margin-bottom:6px;"></div><div style="height:16px;width:55%;background:#1a1a1a;border-radius:4px;"></div></div></div>
       </div>
+
+      <!-- Subscribe CTA -->
+      <div data-reveal style="text-align:center;margin-top:48px;">
+        <a href="https://substack.com/@coachdavemarsh" target="_blank" rel="noopener" class="btn-secondary" style="display:inline-flex;align-items:center;gap:10px;">
+          Subscribe on Substack
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+
     </div>
   </section>
+
+  <script>
+  (function () {
+    var feed = document.getElementById('substack-feed');
+
+    function fmtDate(str) {
+      var d = new Date(str);
+      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function trunc(str, max) {
+      if (!str) return '';
+      str = str.trim();
+      return str.length > max ? str.slice(0, max).replace(/\s\S*$/, '') + '...' : str;
+    }
+
+    function card(item) {
+      var imgHtml = item.image
+        ? '<img src="' + item.image + '" alt="' + item.title + '" style="width:100%;height:100%;object-fit:cover;display:block;">'
+        : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#0d1f1a,#0a2e22);display:flex;align-items:center;justify-content:center;"><span style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;letter-spacing:.15em;color:#00C896;">SUBSTACK</span></div>';
+
+      return '<a class="blog-card" href="' + item.link + '" target="_blank" rel="noopener" style="text-decoration:none;cursor:pointer;">'
+        + '<div class="blog-card__img" style="overflow:hidden;">' + imgHtml + '</div>'
+        + '<div class="blog-card__body">'
+        + '<div class="blog-card__cat">Substack</div>'
+        + '<div class="blog-card__title">' + item.title + '</div>'
+        + '<p class="blog-card__excerpt">' + trunc(item.description, 110) + '</p>'
+        + '<div class="blog-card__meta">'
+        + '<span class="blog-card__date">' + fmtDate(item.pubDate) + '</span>'
+        + '<span class="blog-card__read">Read <span>→</span></span>'
+        + '</div></div></a>';
+    }
+
+    function fallback() {
+      feed.innerHTML = '<a class="blog-card" href="https://substack.com/@coachdavemarsh" target="_blank" rel="noopener" style="text-decoration:none;grid-column:1/-1;max-width:480px;margin:0 auto;">'
+        + '<div class="blog-card__img" style="background:linear-gradient(135deg,#0d1f1a,#0a2e22);display:flex;align-items:center;justify-content:center;"><span style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:.15em;color:#00C896;">SUBSTACK</span></div>'
+        + '<div class="blog-card__body"><div class="blog-card__cat">From The Coach</div>'
+        + '<div class="blog-card__title">All Articles on Substack</div>'
+        + '<p class="blog-card__excerpt">Training, nutrition, hormones and performance. Everything in one place.</p>'
+        + '<div class="blog-card__meta"><span class="blog-card__read">Read on Substack <span>→</span></span></div>'
+        + '</div></a>';
+    }
+
+    fetch('/.netlify/functions/substack-feed')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.items || !data.items.length) throw new Error('empty');
+        feed.innerHTML = data.items.map(card).join('');
+      })
+      .catch(fallback);
+  })();
+  </script>
 
 
   <!-- ============================================================

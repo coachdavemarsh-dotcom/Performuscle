@@ -6,17 +6,17 @@
   <title>Performuscle Tools</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink:        #060608;
-      --ink-2:      #0f1014;
-      --ink-3:      #1a1b21;
+      --ink:        #011125;
+      --ink-2:      #061830;
+      --ink-3:      #0d2440;
       --accent:     #00C896;
       --accent-hi:  #00FFB8;
       --accent-dim: rgba(0,200,150,.08);
       --white:      #F5F6FA;
-      --muted:      #5e5e70;
+      --muted:      #7a7a7d;
       --danger:     #EF4444;
       --warn:       #F59E0B;
     }
@@ -24,7 +24,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       background: var(--ink);
       color: var(--white);
       min-height: 100vh;
@@ -111,7 +111,7 @@
       border: 1px solid rgba(255,255,255,.1);
       border-radius: 10px;
       padding: .85rem 3rem .85rem 1rem;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-size: 1rem;
       color: var(--white);
       letter-spacing: .15em;
@@ -203,7 +203,7 @@
     .hub-brand-name span { color: var(--accent); }
 
     .lock-btn {
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-size: .78rem;
       color: var(--muted);
       background: none;
@@ -217,32 +217,52 @@
 
     .hub-body {
       flex: 1;
-      padding: 3rem 1.5rem;
+      padding: 3rem 1.5rem 4rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2rem;
+      gap: 2.5rem;
     }
 
     .hub-header { text-align: center; }
 
+    .hub-eyebrow {
+      display: inline-block;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .30em;
+      color: var(--accent);
+      background: rgba(0,200,150,.08);
+      border: 1px solid rgba(0,200,150,.2);
+      padding: .25rem .9rem;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+
     .hub-header h2 {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.8rem;
-      letter-spacing: .08em;
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      letter-spacing: .04em;
+      line-height: 1;
     }
+
+    .hub-header h2 span { color: var(--accent); }
+
     .hub-header p {
-      font-size: .85rem;
+      font-size: .9rem;
       color: var(--muted);
-      margin-top: .4rem;
+      margin-top: .65rem;
+      max-width: 480px;
+      line-height: 1.6;
     }
 
     .tool-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1rem;
       width: 100%;
-      max-width: 860px;
+      max-width: 920px;
     }
 
     .tool-card {
@@ -448,8 +468,9 @@
   <div class="hub-body">
 
     <div class="hub-header">
-      <h2>COACH TOOLS</h2>
-      <p>Select a tool to open it</p>
+      <div class="hub-eyebrow">Coach Dashboard</div>
+      <h2>PERFORM<span>USCLE</span> TOOLS</h2>
+      <p>Professional calculators and generators. Built for precision coaching.</p>
     </div>
 
     <div class="tool-grid">
@@ -466,7 +487,7 @@
             <line x1="2"  y1="20" x2="22" y2="20"/>
           </svg>
         </div>
-        <div class="card-title">Structural Balance</div>
+        <div class="card-title">Structural Balance Performance Calculator</div>
         <p class="card-desc">Poliquin methodology. Identify strength deficits before they cause injury.</p>
         <div class="card-features">
           <div class="card-feature">Upper &amp; lower body ratio analysis</div>
@@ -486,7 +507,7 @@
             <polyline points="12 6 12 12 16 14"/>
           </svg>
         </div>
-        <div class="card-title">1RM Calculator</div>
+        <div class="card-title">Peak Strength 1RM Performance Calculator</div>
         <p class="card-desc">Multi-formula estimator using Epley, Brzycki, Lander, Lombardi, Mayhew and O'Conner.</p>
         <div class="card-features">
           <div class="card-feature">Six formula comparison + average</div>
@@ -504,7 +525,7 @@
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
         </div>
-        <div class="card-title">Body Composition</div>
+        <div class="card-title">Lean Body Calculator</div>
         <p class="card-desc">Naval body fat percentage and rate of fat loss timeline calculator.</p>
         <div class="card-features">
           <div class="card-feature">Naval BF% (male &amp; female)</div>
@@ -528,7 +549,27 @@
           <div class="card-feature">AIS water load add-on</div>
           <div class="card-feature">Copy protocol for Gamma</div>
         </div>
-        <div class="card-cta">Open Calculator <span class="arrow">→</span></div>
+        <div class="card-cta">Open Tool <span class="arrow">→</span></div>
+      </a>
+
+      <!-- ── Performance Plate Generator ── -->
+      <a href="/meal-planner/" class="tool-card live">
+        <div class="card-badge live-badge"><span class="dot"></span> Live</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/>
+            <path d="M12 6v6l4 2"/>
+            <path d="M8 12H4M20 12h-4M12 8V4M12 20v-4"/>
+          </svg>
+        </div>
+        <div class="card-title">Performance Plate Generator</div>
+        <p class="card-desc">AI-powered meal planner. Build high-performance nutrition plans in seconds.</p>
+        <div class="card-features">
+          <div class="card-feature">AI recipe &amp; meal generation</div>
+          <div class="card-feature">Macro &amp; calorie targets</div>
+          <div class="card-feature">Printable client meal plans</div>
+        </div>
+        <div class="card-cta">Open Generator <span class="arrow">→</span></div>
       </a>
 
     </div>
