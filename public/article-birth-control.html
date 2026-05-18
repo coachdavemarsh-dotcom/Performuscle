@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birth Control and Athletic Performance | Coach Dave Marsh</title>
+  <meta name="description" content="What your GP and your ob-gyn probably aren't telling you about how hormonal birth control affects your training, your body composition, and your performance." />
+  <meta property="og:title" content="Birth Control and Athletic Performance | Coach Dave Marsh" />
+  <meta property="og:description" content="The conversation active women deserve to have." />
+  <meta property="og:type" content="article" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:        #060608;
+      --accent:     #00C896;
+      --accent-hi:  #00FFB8;
+      --white:      #F5F6FA;
+      --muted:      #7a7a7d;
+      --card-bg:    #0d0d0f;
+      --border:     rgba(255,255,255,0.08);
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--ink);
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6,6,8,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 60px;
+    }
+    .nav__logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav__back {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav__back:hover { color: var(--white); }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 24px 48px;
+    }
+    .hero__tag {
+      display: inline-block;
+      font-family: 'Josefin Sans', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.30em;
+      color: var(--accent);
+      background: rgba(0,200,150,0.1);
+      border: 1px solid rgba(0,200,150,0.25);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .hero__title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(42px, 7vw, 72px);
+      line-height: 1.0;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+    }
+    .hero__title em {
+      color: var(--accent);
+      font-style: normal;
+    }
+    .hero__subtitle {
+      font-size: 20px;
+      color: var(--muted);
+      font-weight: 400;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+    .hero__meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+      color: var(--muted);
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero__meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* ── Article Body ── */
+    .article {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 24px 120px;
+    }
+
+    .article p {
+      font-size: 17px;
+      line-height: 1.85;
+      color: #d4d4e0;
+      margin-bottom: 24px;
+    }
+
+    .article h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      margin: 56px 0 16px;
+      padding-top: 8px;
+    }
+
+    .article h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--white);
+      margin: 36px 0 12px;
+    }
+
+    .article strong {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .article em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .article ul, .article ol {
+      margin: 20px 0 28px 0;
+      padding-left: 0;
+      list-style: none;
+    }
+    .article ul li, .article ol li {
+      font-size: 17px;
+      color: #d4d4e0;
+      line-height: 1.7;
+      padding: 8px 0 8px 28px;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+    }
+    .article ul li:last-child, .article ol li:last-child { border-bottom: none; }
+    .article ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .article ol { counter-reset: list; }
+    .article ol li::before {
+      counter-increment: list;
+      content: counter(list);
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    /* ── Pull Quote / Callout ── */
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: rgba(0,200,150,0.06);
+      padding: 20px 24px;
+      margin: 36px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .callout p {
+      font-size: 18px !important;
+      color: var(--white) !important;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 0 !important;
+    }
+
+    /* ── Stat Cards ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 36px 0;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .stat-card__number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-card__label {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ── Comparison Table ── */
+    .bc-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 36px 0;
+      font-size: 15px;
+    }
+    .bc-table th {
+      font-family: 'Josefin Sans', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .bc-table td {
+      padding: 12px 16px;
+      color: #d4d4e0;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .bc-table tr:last-child td { border-bottom: none; }
+    .bc-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-family: 'Josefin Sans', sans-serif;
+      letter-spacing: 0.05em;
+    }
+    .tag--avoid   { background: rgba(255,80,80,0.15);  color: #ff6666; border: 1px solid rgba(255,80,80,0.3); }
+    .tag--caution { background: rgba(255,180,0,0.12);  color: #ffc040; border: 1px solid rgba(255,180,0,0.3); }
+    .tag--ok      { background: rgba(0,200,150,0.10);  color: var(--accent); border: 1px solid rgba(0,200,150,0.3); }
+    .tag--best    { background: rgba(0,200,150,0.20);  color: var(--accent-hi); border: 1px solid rgba(0,255,184,0.4); }
+
+    /* ── Divider ── */
+    .divider {
+      width: 60px;
+      height: 3px;
+      background: var(--accent);
+      margin: 0 0 32px;
+      border-radius: 2px;
+    }
+
+    /* ── CTA ── */
+    .cta-block {
+      background: var(--card-bg);
+      border: 1px solid rgba(0,200,150,0.2);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      margin: 64px 0 0;
+    }
+    .cta-block h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .cta-block p {
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--ink);
+      font-family: 'Josefin Sans', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      padding: 14px 36px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .cta-btn:hover { background: var(--accent-hi); transform: translateY(-1px); }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 48px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 60px 20px 40px; }
+      .article { padding: 40px 20px 80px; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .bc-table { font-size: 13px; }
+      .bc-table th, .bc-table td { padding: 10px 10px; }
+      .cta-block { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="/" class="nav__logo">PERFORMUSCLE</a>
+    <a href="/#tools" class="nav__back">← Back to site</a>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero__tag">WOMEN'S HEALTH</div>
+    <h1 class="hero__title">Birth Control &amp;<br><em>Athletic Performance</em></h1>
+    <p class="hero__subtitle">
+      What your GP and ob/gyn probably aren't telling you about how hormonal birth control affects your training, your body composition, and your recovery.
+    </p>
+    <div class="hero__meta">
+      <span>By Coach Dave Marsh</span>
+      <span>12 min read</span>
+      <span>Performance | Women's Health</span>
+    </div>
+  </header>
+
+  <!-- ARTICLE -->
+  <main class="article">
+    <div class="divider"></div>
+
+    <p>
+      This is a conversation that comes up constantly with my female clients, and almost never with their doctors. A woman asks her ob/gyn whether her birth control is affecting her training. She gets a reassuring answer that everything is fine. But she knows something is off. Her energy is flat. Her recovery is slower. Her progress has stalled. Nobody has a proper explanation for her.
+    </p>
+
+    <p>
+      The reality is that hormonal birth control has real, measurable effects on the physiology of active women, and most of those effects are relevant to training. Gynecologists are experts in reproductive health, not exercise physiology. That gap in knowledge means millions of active women are making decisions about their birth control with incomplete information.
+    </p>
+
+    <p>
+      This article is my attempt to close that gap. Not to tell you what to do, and definitely not to scare you off birth control. It is there for important reasons. But to give you an informed picture so you can have a smarter conversation with your doctor and understand what is actually happening in your body.
+    </p>
+
+    <div class="callout">
+      <p>Around 44% of women use some form of hormonal birth control. In athletic populations, the numbers are similar. The majority are making those choices without ever discussing the training implications with anyone qualified to answer.</p>
+    </div>
+
+    <h2>WHY YOUR HORMONES MATTER FOR TRAINING</h2>
+
+    <p>
+      To understand how birth control affects performance, you first need a basic picture of what your hormones are doing across your menstrual cycle, and why that matters for training.
+    </p>
+
+    <p>
+      The roughly 28-day cycle splits into two halves. The first half, called the follicular phase, is dominated by estrogen. Estrogen is actually your performance-friendly hormone. It improves insulin sensitivity, promotes fat oxidation during exercise, supports muscle repair, reduces inflammation, and helps limit muscle damage. There is even evidence that women make greater strength and muscle gains when they load their hardest training into this estrogen-dominant phase.
+    </p>
+
+    <p>
+      The second half, the luteal phase, is dominated by progesterone. Progesterone has a very different profile. It increases insulin resistance, raises core body temperature, drives hunger up by 90 to 500 calories per day in some women, and blocks many of estrogen's positive effects on muscle. It also directly activates fat-storage enzymes, particularly in the lower body. Progesterone is not your friend in the gym.
+    </p>
+
+    <p>
+      And then there is testosterone. Women produce far less of it than men, but the amounts within the normal female range have a meaningful impact on strength, power, muscle gain, aerobic capacity, and training motivation. Female athletes with higher testosterone levels within the normal range consistently show better performance outcomes. This matters, because here is the issue with hormonal birth control: it reduces testosterone.
+    </p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-card__number">~50%</div>
+        <div class="stat-card__label">Reduction in free testosterone with combined oral BC</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__number">348%</div>
+        <div class="stat-card__label">SHBG increase with the vaginal ring (further lowers free T)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__number">74%</div>
+        <div class="stat-card__label">Athletes who have deliberately used BC to manage their cycle</div>
+      </div>
+    </div>
+
+    <h2>HOW HORMONAL BIRTH CONTROL ACTUALLY WORKS</h2>
+
+    <p>
+      Almost all hormonal birth control works through what is called feedback inhibition. By supplying synthetic versions of estrogen and/or progesterone, BC signals the brain that hormone levels are already sufficient. The brain responds by reducing its own output of the hormones that drive ovulation. As a result, your body also significantly reduces its natural production of estrogen and progesterone.
+    </p>
+
+    <p>
+      Combined BC replaces the reduced estrogen with a synthetic form called ethinyl estradiol, and the reduced progesterone with a synthetic form called a progestin. Progestin-only BC does not replace the estrogen at all, which removes a key driver of muscle repair, fat metabolism, and recovery.
+    </p>
+
+    <p>
+      The secondary consequence, and the one most relevant to training, is what happens to testosterone. BC reduces testosterone through two mechanisms. First, it cuts production directly by lowering the hormones that signal the ovaries and adrenal glands to make testosterone. Second, combined BC raises levels of a binding protein called SHBG, which mops up free testosterone and makes it unavailable to your tissues. Less free testosterone means a reduced anabolic signal to muscle, lower training drive, and in some women, reduced libido.
+    </p>
+
+    <div class="callout">
+      <p>The hormonal IUD (Mirena, Kyleena, etc.) is the one major exception. Its effects are almost entirely local to the uterus. It does not meaningfully raise SHBG and should not impact testosterone levels, aerobic capacity, or training adaptations.</p>
+    </div>
+
+    <h2>THE PROGESTIN PROBLEM</h2>
+
+    <p>
+      Not all progestins are equal, and the differences matter significantly for active women. Progestins are grouped into four generations based on when they were developed and how they behave in the body. The critical variable from a training perspective is how each generation interacts with the androgen receptor, which is where testosterone normally does its work.
+    </p>
+
+    <p>
+      First and second generation progestins have androgenic activity, meaning they bind to the androgen receptor and send a testosterone-like signal. Whether that signal is positive or negative for muscle is not fully resolved. What is clear is that second generation progestins have the highest androgenic activity of any group, and their overall side effect profile makes them less suitable for active women than newer options.
+    </p>
+
+    <p>
+      Third generation progestins are less androgenic. In some aerobic performance research, they appear to have less negative impact than first generation versions. A specific third generation progestin called norgestimate appears in some data to be the better-tolerated option for trained women, though the research is limited.
+    </p>
+
+    <p>
+      Fourth generation progestins, particularly drospirenone found in Yaz and Yasmin, are anti-androgenic. They actively block the androgen receptor. For general use this can be desirable, reducing acne and bloating. But for a woman who is strength training, an anti-androgenic compound blocking the receptor through which testosterone builds muscle is a potential problem. This generation likely has the most negative effect on muscle and strength adaptation.
+    </p>
+
+    <h2>PERFORMANCE: WHAT THE RESEARCH ACTUALLY SHOWS</h2>
+
+    <h3>Aerobic Capacity (VO2 Max)</h3>
+    <p>
+      This is where the evidence is most consistent. Multiple studies have found that BC use reduces VO2 max, the gold standard measure of aerobic fitness. The drop is typically in the range of 3 to 6% acutely, and can reach 11 to 15% over 4 to 6 months of triphasic pill use specifically. Monophasic BC with a third generation progestin appears to have the least impact. For recreational exercisers, this might be unnoticeable. For competitive athletes, a 5% reduction in aerobic capacity is not nothing.
+    </p>
+
+    <h3>Anaerobic Performance</h3>
+    <p>
+      The picture here is more encouraging. Most studies on monophasic BC find no significant impact on anaerobic capacity, sprint performance, or explosive power in the short term. Where things get worse is with triphasic pills specifically, where the high-progestin third week appears to meaningfully impair high-intensity performance. Women on triphasic BC consistently perform better during the pill-free week than the high-progestin week.
+    </p>
+
+    <h3>Strength and Muscle Gain</h3>
+    <p>
+      This is where the research is most frustrating to navigate, because the studies are inconsistent and most are poorly designed. The headline finding is this: despite BC consistently reducing total and free testosterone by around 50%, the impact on strength gains in most studies appears small. Why? Nobody is entirely sure. The leading theories involve synthetic estrogen being potent enough to partially compensate for the testosterone loss through its own effects on muscle remodeling, and some progestins potentially sending a partial anabolic signal through the androgen receptor even if they are not testosterone.
+    </p>
+
+    <p>
+      The anecdotal evidence from high-level strength athletes is more concerning. There are clear patterns of women stalling on BC and then making rapid progress after stopping, with bloodwork confirming testosterone triples when BC is removed. It may be that any negative impact on strength and hypertrophy is only detectable at the elite level where margins are razor thin.
+    </p>
+
+    <h3>Body Composition</h3>
+    <p>
+      Monophasic BC typically causes a 3 to 4 pound increase in water weight due to the estrogen component. For most women this is manageable. Triphasic BC is consistently associated with actual fat gain, likely driven by the high progestin dose in the third week. Depo-Provera is in a category of its own, with one long-term study finding an average of 11 pounds of weight gain over three years, including 9 pounds of actual body fat, and a doubled risk of becoming obese.
+    </p>
+
+    <h3>Bone Mineral Density</h3>
+    <p>
+      At least seven studies have found that combined oral BC negatively impacts bone mineral density, particularly when started at a young age or used long-term. This is significant because women have a relatively narrow window to build peak bone mass, mostly in their teens and twenties. BC interfering with that process has long-term implications for injury risk and bone health. The patch and ring do not appear to share this negative effect, as the mechanism seems to be specific to oral ethinyl estradiol being metabolized in the liver. The hormonal IUD also does not have this effect.
+    </p>
+
+    <h2>THE REAL BENEFITS (AND THEY ARE REAL)</h2>
+
+    <p>
+      None of the above is meant to vilify birth control. There are concrete, meaningful benefits for active women that deserve equal airtime.
+    </p>
+
+    <ul>
+      <li><strong>Cycle control:</strong> Women who experience significant PMS, PMDD, or performance variation across their cycle can use BC to flatten those fluctuations and train more consistently. 12 lost weeks of productive training per year due to a brutal luteal phase is a real problem BC can solve.</li>
+      <li><strong>Reduced anemia risk:</strong> BC can cut monthly blood loss by up to 50%, significantly reducing the risk of iron deficiency anemia, which is already disproportionately common in female athletes.</li>
+      <li><strong>ACL injury reduction:</strong> The spike in estrogen before ovulation weakens ligament and tendon strength, contributing to the 3 to 9 times higher ACL tear rate in women versus men. BC eliminates that spike and may reduce ACL injury risk by up to 20%.</li>
+      <li><strong>Medical treatment:</strong> PCOS, endometriosis, PMDD, and other conditions often require BC as a frontline treatment. The performance considerations are secondary to health.</li>
+    </ul>
+
+    <h2>WHICH BIRTH CONTROL IS BEST FOR ACTIVE WOMEN?</h2>
+
+    <p>
+      Based on the available research, here is a framework ranked from least to most disruptive to training performance. This is not medical advice. Always work with your doctor. But this gives you a starting point for an informed conversation.
+    </p>
+
+    <table class="bc-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Impact on Training</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Depo-Provera (injection)</strong></td>
+          <td>Worst body composition effects of any BC. Significant fat gain, negative effects on bone density, high-potency first-gen progestin with continuous dosing.</td>
+          <td><span class="tag tag--avoid">AVOID</span></td>
+        </tr>
+        <tr>
+          <td><strong>Triphasic pill</strong></td>
+          <td>Consistent fat gain, reduced VO2 max over months of use, performance impaired during high-progestin week 3. Avoid if performance matters.</td>
+          <td><span class="tag tag--avoid">AVOID</span></td>
+        </tr>
+        <tr>
+          <td><strong>4th gen progestin pill (e.g. Yaz/Yasmin)</strong></td>
+          <td>Anti-androgenic. Good for skin and water retention, but potentially the worst option for women wanting to build muscle and strength.</td>
+          <td><span class="tag tag--caution">CAUTION</span></td>
+        </tr>
+        <tr>
+          <td><strong>Mini-pill (progestin only)</strong></td>
+          <td>Removes estrogen signaling entirely. Limited cycle control. Reduces SHBG slightly, preserving some free testosterone, but overall profile not ideal.</td>
+          <td><span class="tag tag--caution">CAUTION</span></td>
+        </tr>
+        <tr>
+          <td><strong>Vaginal ring (NuvaRing)</strong></td>
+          <td>Raises SHBG significantly (348%), reducing free testosterone more than oral BC. No evidence on direct performance impact but hormonal profile is concerning.</td>
+          <td><span class="tag tag--caution">CAUTION</span></td>
+        </tr>
+        <tr>
+          <td><strong>Monophasic pill (2nd or 3rd gen)</strong></td>
+          <td>Consistent hormone levels, no high-progestin week. Third gen (especially norgestimate) shows least impact on aerobic capacity in research. Small water weight gain likely.</td>
+          <td><span class="tag tag--ok">OK</span></td>
+        </tr>
+        <tr>
+          <td><strong>The patch</strong></td>
+          <td>More convenient than daily pill. Raises SHBG more than oral BC but less than the ring. No bone density downside. Reasonable option where convenience is priority.</td>
+          <td><span class="tag tag--ok">OK</span></td>
+        </tr>
+        <tr>
+          <td><strong>Nexplanon implant</strong></td>
+          <td>Progestin-only but third-generation. Reduces total testosterone ~15%, lowers SHBG (preserving more free T). No estrogen, which is a negative, but overall a reasonable progestin-only choice.</td>
+          <td><span class="tag tag--ok">OK</span></td>
+        </tr>
+        <tr>
+          <td><strong>Hormonal IUD (Mirena, Kyleena, etc.)</strong></td>
+          <td>Effects almost entirely local. Does not raise SHBG, does not reduce testosterone, does not impact VO2 max or training adaptation. Best option from a performance standpoint.</td>
+          <td><span class="tag tag--best">BEST</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>PRACTICAL TAKEAWAYS FOR TRAINING</h2>
+
+    <p>
+      Here is what I would tell any of my female clients who are on or considering hormonal birth control:
+    </p>
+
+    <ol>
+      <li><strong>If performance is a priority and you have a choice,</strong> the hormonal IUD is the standout option. It provides reliable contraception without the systemic hormonal effects that affect training. Talk to your doctor about whether it is suitable for you.</li>
+      <li><strong>If you want oral BC,</strong> a monophasic pill with a second or third generation progestin is a better choice than a triphasic pill. Ask specifically whether you are on monophasic or triphasic. The distinction matters.</li>
+      <li><strong>Avoid Depo-Provera</strong> if you care about body composition, bone density, or performance. The evidence against it is strong and consistent.</li>
+      <li><strong>If you are on BC and your progress has stalled,</strong> it may be worth a hormone panel to see where your free testosterone sits. This is not to suggest coming off BC, but to understand your hormonal environment and adjust training strategy accordingly.</li>
+      <li><strong>If you are using BC for cycle control specifically,</strong> continuous use (skipping the pill-free week) tends to provide more stable hormone levels than the standard 21-day-on/7-day-off protocol, which can be a reasonable strategy for athletes who want to train consistently.</li>
+      <li><strong>If you must use progestin-only BC,</strong> adding 25 to 30g of soy protein or 50 to 100mg of isolated phytoestrogens daily may partially replace the estrogen signaling you have lost. Neither is a banned substance.</li>
+    </ol>
+
+    <div class="callout">
+      <p>The bottom line is not that birth control is bad for athletes. It is that some forms of birth control are considerably worse than others, and most women are never given that distinction. The conversation you have with your doctor should include not just efficacy and side effects, but what the options mean for your training goals.</p>
+    </div>
+
+    <h2>A NOTE ON INDIVIDUAL VARIATION</h2>
+
+    <p>
+      One thing the research consistently shows is enormous variation between individual women. Two women on the same pill can have completely opposite experiences in terms of their body composition, energy, and training response. The average effects I have described are exactly that, averages. Your individual response may be better or worse.
+    </p>
+
+    <p>
+      If you have noticed changes in your training, recovery, or body composition that coincided with starting or changing birth control, that observation is valid and worth investigating. Track it. Talk to your doctor. Ask about options. You are not imagining it, and you deserve answers.
+    </p>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This article is for educational purposes only and does not constitute medical advice. All decisions about hormonal birth control should be made in consultation with a qualified medical professional. Individual responses to hormonal contraception vary significantly.
+    </div>
+
+    <div class="cta-block">
+      <h3>Train Smarter Around Your Physiology</h3>
+      <p>If you want programming and coaching that actually accounts for how your body works, I work with women on building performance-centred plans that fit your life.</p>
+      <a href="/#coaching" class="cta-btn">ENQUIRE ABOUT COACHING</a>
+    </div>
+
+  </main>
+
+</body>
+</html>

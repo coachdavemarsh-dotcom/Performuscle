@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Energy Availability Calculator | Coach Dave Marsh</title>
+  <meta name="description" content="Find out if your calorie intake is actually supporting your training — or quietly wrecking your hormones, recovery, and performance. Free EA calculator." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink:        #060608;
+      --ink-2:      #0d0d0f;
+      --ink-3:      #1a1a1e;
+      --accent:     #00C896;
+      --accent-hi:  #00FFB8;
+      --accent-dim: rgba(0,200,150,.08);
+      --white:      #F5F6FA;
+      --muted:      #7a7a7d;
+      --danger:     #EF4444;
+      --warn:       #F59E0B;
+      --sub:        #a0a0b0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--ink);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    .site-nav {
+      background: rgba(6,6,8,.92); border-bottom: 1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100;
+      padding: .85rem 1.5rem; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { display: flex; align-items: center; gap: .6rem; }
+    .nav-brand .icon {
+      width: 30px; height: 30px; border-radius: 7px;
+      background: var(--accent-dim); border: 1px solid rgba(0,200,150,.2);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-brand .icon svg { width: 17px; height: 17px; }
+    .nav-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .07em; }
+    .nav-brand-name span { color: var(--accent); }
+    .nav-cta {
+      font-family: 'Josefin Sans', sans-serif; font-size: .72rem; font-weight: 600;
+      letter-spacing: .15em; color: var(--ink); background: var(--accent);
+      border: none; border-radius: 8px; padding: .45rem 1.1rem; cursor: pointer;
+      text-decoration: none; transition: background .2s;
+    }
+    .nav-cta:hover { background: var(--accent-hi); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 3.5rem 1.5rem 2.5rem;
+      max-width: 820px; margin: 0 auto; text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-block; font-family: 'Josefin Sans', sans-serif; font-size: .7rem;
+      font-weight: 600; letter-spacing: .3em; color: var(--accent);
+      background: rgba(0,200,150,.08); border: 1px solid rgba(0,200,150,.2);
+      padding: .3rem 1rem; border-radius: 20px; margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 7vw, 4rem);
+      line-height: 1.05; letter-spacing: .03em; margin-bottom: 1rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-sub {
+      font-size: .95rem; color: var(--sub); line-height: 1.7;
+      max-width: 560px; margin: 0 auto 2rem;
+    }
+
+    /* ── TRUST BADGES ── */
+    .trust-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2.5rem;
+      font-family: 'Josefin Sans', sans-serif; font-size: .68rem;
+      font-weight: 600; letter-spacing: .15em; color: var(--muted);
+    }
+    .trust-row span { display: flex; align-items: center; gap: .4rem; }
+
+    /* ── CALCULATOR WRAP ── */
+    .calc-wrap { max-width: 820px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+    .calc-card {
+      background: var(--ink-2); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 16px; padding: 2rem 1.75rem; margin-bottom: 1.5rem;
+    }
+    .card-heading {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .08em;
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: .6rem;
+    }
+    .card-heading-num {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--accent);
+      color: var(--ink); font-size: .85rem; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; flex-shrink: 0;
+    }
+
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+    .input-group { display: flex; flex-direction: column; gap: .5rem; }
+    .input-label {
+      font-family: 'Josefin Sans', sans-serif; font-size: .72rem;
+      font-weight: 600; letter-spacing: .2em; color: var(--muted);
+    }
+    .input-field {
+      background: var(--ink-3); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: .8rem 1rem;
+      font-family: 'Montserrat', sans-serif; font-size: .95rem; color: var(--white);
+      outline: none; transition: border-color .2s; width: 100%;
+    }
+    .input-field:focus { border-color: var(--accent); }
+    .input-field::placeholder { color: var(--muted); font-size: .85rem; }
+    .input-hint { font-size: .72rem; color: var(--muted); line-height: 1.5; }
+
+    .toggle-group { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .toggle-label {
+      font-family: 'Josefin Sans', sans-serif; font-size: .7rem; font-weight: 600;
+      letter-spacing: .2em; color: var(--muted);
+    }
+    .toggle-row {
+      display: flex; background: var(--ink-3); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px; padding: 3px; gap: 3px;
+    }
+    .toggle-btn {
+      flex: 1; padding: .4rem .75rem; border-radius: 6px; border: none; cursor: pointer;
+      font-family: 'Josefin Sans', sans-serif; font-size: .7rem; font-weight: 600;
+      letter-spacing: .1em; transition: all .15s;
+      background: transparent; color: var(--muted);
+    }
+    .toggle-btn.active { background: var(--accent); color: var(--ink); }
+
+    .calc-btn {
+      width: 100%; padding: 1rem 1rem; background: var(--accent); color: var(--ink);
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .1em;
+      border: none; border-radius: 12px; cursor: pointer; transition: background .2s, transform .1s;
+      margin-top: 1.25rem;
+    }
+    .calc-btn:hover { background: var(--accent-hi); }
+    .calc-btn:active { transform: scale(.98); }
+
+    /* ── RESULTS ── */
+    #results { display: none; }
+
+    .result-hero {
+      border-radius: 14px; padding: 2rem 1.75rem; margin-bottom: 1.25rem;
+      position: relative; overflow: hidden;
+    }
+    .result-hero::before {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 180px; height: 180px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%);
+    }
+    .result-hero.status-optimal { background: rgba(0,200,150,.1); border: 1px solid rgba(0,200,150,.35); }
+    .result-hero.status-low     { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.35); }
+    .result-hero.status-reds    { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.35); }
+
+    .result-label {
+      font-family: 'Josefin Sans', sans-serif; font-size: .7rem; font-weight: 600;
+      letter-spacing: .25em; margin-bottom: .5rem;
+    }
+    .status-optimal .result-label { color: var(--accent); }
+    .status-low     .result-label { color: var(--warn); }
+    .status-reds    .result-label { color: var(--danger); }
+
+    .result-ea-value {
+      font-family: 'Bebas Neue', sans-serif; font-size: 4.5rem; line-height: 1;
+      letter-spacing: .02em; margin-bottom: .3rem;
+    }
+    .status-optimal .result-ea-value { color: var(--accent); }
+    .status-low     .result-ea-value { color: var(--warn); }
+    .status-reds    .result-ea-value { color: var(--danger); }
+
+    .result-unit { font-size: .8rem; color: var(--muted); margin-bottom: .5rem; }
+    .result-status-badge {
+      display: inline-block; font-family: 'Josefin Sans', sans-serif; font-size: .75rem;
+      font-weight: 600; letter-spacing: .1em; padding: .3rem .9rem; border-radius: 20px;
+      margin-bottom: .75rem;
+    }
+    .status-optimal .result-status-badge { background: rgba(0,200,150,.15); color: var(--accent); border: 1px solid rgba(0,200,150,.3); }
+    .status-low     .result-status-badge { background: rgba(245,158,11,.12); color: var(--warn);   border: 1px solid rgba(245,158,11,.3); }
+    .status-reds    .result-status-badge { background: rgba(239,68,68,.12);  color: var(--danger); border: 1px solid rgba(239,68,68,.3); }
+
+    .result-message { font-size: .9rem; line-height: 1.65; }
+    .status-optimal .result-message { color: rgba(0,200,150,.85); }
+    .status-low     .result-message { color: rgba(245,158,11,.85); }
+    .status-reds    .result-message { color: rgba(239,68,68,.85); }
+
+    /* ── STAT CARDS ── */
+    .stat-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem; margin-bottom: 1.25rem;
+    }
+    .stat-card {
+      background: var(--ink-2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px;
+      padding: 1.25rem 1rem; text-align: center;
+    }
+    .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: .3rem; }
+    .stat-label { font-size: .72rem; color: var(--muted); line-height: 1.4; }
+
+    /* ── EA SCALE ── */
+    .ea-scale { background: var(--ink-2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+    .ea-scale-label { font-family: 'Josefin Sans', sans-serif; font-size: .7rem; font-weight: 600; letter-spacing: .2em; color: var(--muted); margin-bottom: .75rem; }
+    .ea-bar-wrap { position: relative; height: 14px; border-radius: 8px; overflow: visible; background: var(--ink-3); margin-bottom: .5rem; }
+    .ea-bar-segment { position: absolute; top: 0; height: 100%; }
+    .ea-bar-reds    { left: 0;    width: 40%; background: rgba(239,68,68,.5);  border-radius: 8px 0 0 8px; }
+    .ea-bar-low     { left: 40%;  width: 30%; background: rgba(245,158,11,.5); }
+    .ea-bar-optimal { left: 70%;  width: 30%; background: rgba(0,200,150,.5);  border-radius: 0 8px 8px 0; }
+    .ea-bar-marker  {
+      position: absolute; top: 50%; transform: translateX(-50%) translateY(-50%);
+      width: 20px; height: 20px; background: var(--white); border-radius: 50%;
+      border: 3px solid var(--ink); box-shadow: 0 0 0 2px var(--accent);
+      transition: left .5s cubic-bezier(.34,1.56,.64,1); z-index: 2;
+    }
+    .ea-bar-labels { display: flex; justify-content: space-between; font-size: .68rem; color: var(--muted); }
+
+    /* ── RECOMMENDATION ── */
+    .rec-box {
+      background: var(--ink-2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px;
+      padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;
+    }
+    .rec-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: .06em; margin-bottom: .75rem; }
+    .rec-item { display: flex; gap: .75rem; margin-bottom: .65rem; align-items: flex-start; font-size: .85rem; color: #c4c4d4; line-height: 1.6; }
+    .rec-item::before { content: '→'; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+    .rec-item strong { color: var(--white); }
+
+    /* ── LEAD CAPTURE ── */
+    .lead-card {
+      background: linear-gradient(135deg, rgba(0,200,150,.06) 0%, rgba(0,200,150,.02) 100%);
+      border: 1px solid rgba(0,200,150,.25); border-radius: 16px;
+      padding: 2.25rem 2rem; margin-top: 1.5rem; text-align: center;
+    }
+    .lead-icon {
+      width: 52px; height: 52px; border-radius: 12px; background: rgba(0,200,150,.1);
+      border: 1px solid rgba(0,200,150,.25); display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 1.25rem;
+    }
+    .lead-icon svg { width: 26px; height: 26px; }
+    .lead-heading {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: .05em;
+      line-height: 1.1; margin-bottom: .75rem;
+    }
+    .lead-heading span { color: var(--accent); }
+    .lead-sub { font-size: .88rem; color: var(--sub); line-height: 1.65; max-width: 460px; margin: 0 auto 1.75rem; }
+
+    .lead-bullets {
+      display: flex; flex-direction: column; gap: .5rem;
+      text-align: left; max-width: 380px; margin: 0 auto 1.75rem;
+    }
+    .lead-bullet { display: flex; align-items: flex-start; gap: .6rem; font-size: .83rem; color: var(--sub); }
+    .lead-bullet::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+    .lead-form { max-width: 420px; margin: 0 auto; }
+    .lead-form input[type="text"],
+    .lead-form input[type="email"] {
+      width: 100%; background: var(--ink-3); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: .85rem 1rem; margin-bottom: .75rem;
+      font-family: 'Montserrat', sans-serif; font-size: .92rem; color: var(--white);
+      outline: none; transition: border-color .2s;
+    }
+    .lead-form input:focus { border-color: var(--accent); }
+    .lead-form input::placeholder { color: var(--muted); }
+
+    .lead-submit {
+      width: 100%; padding: 1rem; background: var(--accent); color: var(--ink);
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .1em;
+      border: none; border-radius: 12px; cursor: pointer; transition: background .2s, transform .1s;
+    }
+    .lead-submit:hover { background: var(--accent-hi); }
+    .lead-submit:active { transform: scale(.98); }
+    .lead-submit:disabled { opacity: .6; cursor: not-allowed; }
+
+    .lead-privacy { font-size: .7rem; color: var(--muted); margin-top: .75rem; line-height: 1.5; }
+
+    /* Thank you state */
+    .thank-you { display: none; text-align: center; padding: 1rem 0; }
+    .thank-you-icon {
+      width: 60px; height: 60px; border-radius: 50%; background: rgba(0,200,150,.12);
+      border: 2px solid var(--accent); display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 1.25rem;
+    }
+    .thank-you-icon svg { width: 28px; height: 28px; }
+    .thank-you h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: .05em; color: var(--accent); margin-bottom: .5rem; }
+    .thank-you p { font-size: .88rem; color: var(--sub); line-height: 1.65; max-width: 380px; margin: 0 auto; }
+
+    /* ── FOOTER CTA ── */
+    .footer-cta {
+      background: var(--ink-2); border-top: 1px solid rgba(255,255,255,.06);
+      padding: 3rem 1.5rem; text-align: center;
+    }
+    .footer-cta h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); letter-spacing: .04em; margin-bottom: .75rem; }
+    .footer-cta h2 span { color: var(--accent); }
+    .footer-cta p { font-size: .88rem; color: var(--sub); max-width: 420px; margin: 0 auto 1.5rem; line-height: 1.65; }
+    .footer-btn {
+      display: inline-block; font-family: 'Josefin Sans', sans-serif; font-size: .8rem;
+      font-weight: 600; letter-spacing: .15em; color: var(--ink); background: var(--accent);
+      border-radius: 10px; padding: .85rem 2rem; cursor: pointer; transition: background .2s;
+      text-decoration: none;
+    }
+    .footer-btn:hover { background: var(--accent-hi); }
+    .footer-copy { margin-top: 2rem; font-size: .72rem; color: var(--muted); }
+
+    @media (max-width: 540px) {
+      .calc-grid { grid-template-columns: 1fr; }
+      .calc-wrap { padding: 0 1rem 3rem; }
+      .hero { padding: 2.5rem 1rem 1.5rem; }
+      .lead-card { padding: 1.75rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="site-nav">
+  <div class="nav-brand">
+    <div class="icon">
+      <svg viewBox="0 0 36 36" fill="none"><rect x="2" y="14" width="5" height="8" rx="2" fill="#00C896"/><rect x="7" y="11" width="4" height="14" rx="2" fill="#00C896"/><rect x="11" y="16" width="14" height="4" rx="2" fill="#00C896"/><rect x="25" y="11" width="4" height="14" rx="2" fill="#00C896"/><rect x="29" y="14" width="5" height="8" rx="2" fill="#00C896"/></svg>
+    </div>
+    <span class="nav-brand-name">PERFORM<span>USCLE</span></span>
+  </div>
+  <a href="https://coachdavemarsh.net" class="nav-cta">WORK WITH DAVE</a>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-eyebrow">FREE TOOL — COACH DAVE MARSH</div>
+  <h1>Is Your Calorie Intake<br>Actually <span>Supporting</span> Your Training?</h1>
+  <p class="hero-sub">
+    Most athletes and dieters are eating in a range that quietly suppresses hormones, stalls fat loss, and wrecks recovery — without knowing it. This calculator tells you exactly where you stand.
+  </p>
+  <div class="trust-row">
+    <span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Science-based EA formula
+    </span>
+    <span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Gender-specific thresholds
+    </span>
+    <span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Includes steps / NEAT
+    </span>
+    <span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Free — no sign-up required
+    </span>
+  </div>
+</div>
+
+<!-- ── CALCULATOR ── -->
+<div class="calc-wrap">
+
+  <!-- Step 1: Inputs -->
+  <div class="calc-card">
+    <div class="card-heading">
+      <div class="card-heading-num">1</div>
+      ENTER YOUR NUMBERS
+    </div>
+
+    <!-- Gender + Unit toggles -->
+    <div class="toggle-group">
+      <span class="toggle-label">I AM</span>
+      <div class="toggle-row">
+        <button class="toggle-btn" id="btn-male" onclick="setGender('male')">MALE</button>
+        <button class="toggle-btn active" id="btn-female" onclick="setGender('female')">FEMALE</button>
+      </div>
+      <span class="toggle-label" style="margin-left:.5rem;">UNITS</span>
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="btn-kg" onclick="setUnit('kg')">KG</button>
+        <button class="toggle-btn" id="btn-lbs" onclick="setUnit('lbs')">LBS</button>
+      </div>
+    </div>
+
+    <div class="calc-grid">
+      <div class="input-group">
+        <label class="input-label" id="label-bw">BODY WEIGHT (KG)</label>
+        <input class="input-field" id="inp-bw" type="number" placeholder="e.g. 68" min="30" max="250" step="0.1" />
+      </div>
+      <div class="input-group">
+        <label class="input-label">BODY FAT %</label>
+        <input class="input-field" id="inp-bf" type="number" placeholder="e.g. 22" min="5" max="60" step="0.1" />
+        <div class="input-hint">Unsure? Use your best estimate or a recent measurement.</div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">DAILY CALORIE INTAKE</label>
+        <input class="input-field" id="inp-cal" type="number" placeholder="e.g. 1900" min="500" max="6000" step="10" />
+      </div>
+      <div class="input-group">
+        <label class="input-label">EXERCISE CALORIES (KCAL/DAY)</label>
+        <input class="input-field" id="inp-exe" type="number" placeholder="e.g. 350" min="0" max="3000" step="10" />
+        <div class="input-hint">Total from structured training. Divide weekly total by 7 for daily average.</div>
+      </div>
+      <div class="input-group" style="grid-column:1/-1;">
+        <label class="input-label">DAILY STEPS — OPTIONAL</label>
+        <input class="input-field" id="inp-steps" type="number" placeholder="e.g. 8000" min="0" max="40000" step="500" />
+        <div class="input-hint">From your phone or tracker. Adds everyday movement (NEAT) to the calculation for a more accurate result.</div>
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">CALCULATE MY ENERGY AVAILABILITY →</button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+
+    <div class="result-hero" id="result-hero">
+      <div class="result-label">YOUR ENERGY AVAILABILITY SCORE</div>
+      <div class="result-ea-value" id="result-ea-value">—</div>
+      <div class="result-unit">kcal / kg FFM / day</div>
+      <div class="result-status-badge" id="result-badge">—</div>
+      <div class="result-message" id="result-message"></div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-lbm">—</div>
+        <div class="stat-label">Fat-Free Mass<br>(kg)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-available">—</div>
+        <div class="stat-label">Available Energy<br>(kcal after exercise)</div>
+      </div>
+      <div class="stat-card" id="stat-steps-card" style="display:none;">
+        <div class="stat-value" id="stat-steps-kcal">—</div>
+        <div class="stat-label">Steps / NEAT<br>(kcal included)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-target">—</div>
+        <div class="stat-label">Your Target EA<br>(kcal/kg FFM)</div>
+      </div>
+    </div>
+
+    <div class="ea-scale">
+      <div class="ea-scale-label">WHERE YOU SIT ON THE SCALE</div>
+      <div class="ea-bar-wrap">
+        <div class="ea-bar-segment ea-bar-reds"></div>
+        <div class="ea-bar-segment ea-bar-low"></div>
+        <div class="ea-bar-segment ea-bar-optimal"></div>
+        <div class="ea-bar-marker" id="ea-marker" style="left:50%"></div>
+      </div>
+      <div class="ea-bar-labels" id="ea-bar-labels"></div>
+    </div>
+
+    <div class="rec-box" id="rec-box"></div>
+
+    <!-- ── LEAD CAPTURE ── -->
+    <div class="lead-card">
+      <div class="lead-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div class="lead-heading">Get Your Full <span>EA Report</span><br>Emailed to You — Free</div>
+      <p class="lead-sub">I'll send you a personalised breakdown of your result with specific recommendations based on your numbers, your training load, and your goals.</p>
+      <div class="lead-bullets">
+        <div class="lead-bullet">What your EA score means for your specific situation</div>
+        <div class="lead-bullet">Exactly how much to adjust your intake and by when</div>
+        <div class="lead-bullet">Whether your training load is appropriate for your current intake</div>
+        <div class="lead-bullet">RED-S risk assessment and what to watch for</div>
+        <div class="lead-bullet">Next steps tailored to your goal — fat loss, performance, or recomposition</div>
+      </div>
+
+      <!-- Netlify form -->
+      <form class="lead-form" id="lead-form" name="ea-report-request" method="POST" data-netlify="true" onsubmit="handleSubmit(event)">
+        <input type="hidden" name="form-name" value="ea-report-request" />
+        <!-- Hidden result fields populated on submit -->
+        <input type="hidden" name="ea_score"   id="f-ea" />
+        <input type="hidden" name="ea_status"  id="f-status" />
+        <input type="hidden" name="gender"     id="f-gender" />
+        <input type="hidden" name="body_weight" id="f-bw" />
+        <input type="hidden" name="body_fat"   id="f-bf" />
+        <input type="hidden" name="intake_kcal" id="f-cal" />
+        <input type="hidden" name="exercise_kcal" id="f-exe" />
+        <input type="hidden" name="daily_steps" id="f-steps" />
+        <input type="hidden" name="steps_kcal" id="f-steps-kcal" />
+        <input type="hidden" name="fat_free_mass" id="f-lbm" />
+
+        <input type="text"  name="first_name" placeholder="Your first name" required autocomplete="given-name" />
+        <input type="email" name="email"      placeholder="Your email address" required autocomplete="email" />
+        <button type="submit" class="lead-submit" id="lead-submit-btn">SEND ME MY REPORT →</button>
+        <p class="lead-privacy">No spam. Unsubscribe any time. Your data is used only to send your report.</p>
+      </form>
+
+      <!-- Thank you state -->
+      <div class="thank-you" id="thank-you">
+        <div class="thank-you-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3>REPORT ON ITS WAY</h3>
+        <p>Check your inbox — I'll send your personalised EA breakdown within 24 hours. Check your spam folder if you don't see it.</p>
+      </div>
+    </div>
+
+  </div><!-- /results -->
+
+</div><!-- /calc-wrap -->
+
+<!-- ── FOOTER CTA ── -->
+<div class="footer-cta">
+  <h2>Ready to Stop Guessing<br>and <span>Train With a Plan?</span></h2>
+  <p>If you want your nutrition and training dialled in properly — not just an EA score — apply to work with me directly.</p>
+  <a href="https://coachdavemarsh.net/#coaching" class="footer-btn">APPLY FOR COACHING</a>
+  <div class="footer-copy">© Coach Dave Marsh — coachdavemarsh.net</div>
+</div>
+
+<script>
+  let unit   = 'kg'
+  let gender = 'female'
+  let lastEa, lastLbm, lastStepsKcal
+
+  function setGender(g) {
+    gender = g
+    document.getElementById('btn-male').classList.toggle('active', g === 'male')
+    document.getElementById('btn-female').classList.toggle('active', g === 'female')
+  }
+
+  function setUnit(u) {
+    unit = u
+    document.getElementById('btn-kg').classList.toggle('active', u === 'kg')
+    document.getElementById('btn-lbs').classList.toggle('active', u === 'lbs')
+    document.getElementById('label-bw').textContent = u === 'kg' ? 'BODY WEIGHT (KG)' : 'BODY WEIGHT (LBS)'
+    document.getElementById('inp-bw').placeholder   = u === 'kg' ? 'e.g. 68' : 'e.g. 150'
+  }
+
+  function calculate() {
+    let bw    = parseFloat(document.getElementById('inp-bw').value)
+    const bf  = parseFloat(document.getElementById('inp-bf').value)
+    const cal = parseFloat(document.getElementById('inp-cal').value)
+    const exe = parseFloat(document.getElementById('inp-exe').value) || 0
+    const steps = parseFloat(document.getElementById('inp-steps').value) || 0
+
+    if (isNaN(bw) || isNaN(bf) || isNaN(cal)) {
+      alert('Please enter your body weight, body fat %, and daily calorie intake to continue.')
+      return
+    }
+    if (bf < 5 || bf > 60) { alert('Body fat % should be between 5 and 60.'); return }
+
+    if (unit === 'lbs') bw = bw * 0.453592
+
+    const fatMass   = bw * (bf / 100)
+    const lbm       = bw - fatMass
+    const stepsKcal = steps > 0 ? Math.round(steps * (bw / 70) * 0.04) : 0
+    const totalEE   = exe + stepsKcal
+    const available = cal - totalEE
+    const ea        = available / lbm
+
+    lastEa = ea; lastLbm = lbm; lastStepsKcal = stepsKcal
+
+    // Status
+    let status, statusClass, message
+    if (gender === 'male') {
+      if (ea >= 40) {
+        status = 'PERFORMANCE ZONE'; statusClass = 'status-optimal'
+        message = 'Your energy availability is in the performance zone. Testosterone, hormonal function, recovery, and training adaptation are all well supported at this level.'
+      } else if (ea >= 20) {
+        status = 'SUBCLINICAL EA'; statusClass = 'status-low'
+        message = 'Your energy availability is below the performance threshold. Recovery is likely impaired, testosterone suppression is possible, and you may not be adapting to training as well as you could. This needs addressing.'
+      } else {
+        status = 'CLINICAL RED-S'; statusClass = 'status-reds'
+        message = 'Your energy availability is in clinical RED-S territory. This is a serious health concern — testosterone suppression, bone density loss, immune suppression, and muscle catabolism are all significant risks at this level.'
+      }
+    } else {
+      if (ea >= 45) {
+        status = 'OPTIMAL'; statusClass = 'status-optimal'
+        message = 'Your energy availability is in the optimal zone. Hormonal function, bone density, recovery, and performance are all well supported. Keep monitoring if training volume changes.'
+      } else if (ea >= 36) {
+        status = 'LOW EA'; statusClass = 'status-low'
+        message = 'Your energy availability is below optimal for females. Recovery is likely impaired and hormonal disruption is increasingly possible at this level. Your intake needs to come up or your exercise load needs to come down.'
+      } else if (ea >= 30) {
+        status = 'CRITICALLY LOW'; statusClass = 'status-reds'
+        message = 'This is the female danger zone. Between 30–35 kcal/kg FFM/day, menstrual irregularity is very likely and bone density loss begins. This is not a safe dieting state — immediate action is needed.'
+      } else {
+        status = 'CLINICAL RED-S'; statusClass = 'status-reds'
+        message = 'Your energy availability is in clinical RED-S territory. Amenorrhea, bone density loss, immune suppression, and hormonal dysfunction are all serious risks at this level. This needs to be addressed as a health priority.'
+      }
+    }
+
+    // Render hero
+    const hero = document.getElementById('result-hero')
+    hero.className = `result-hero ${statusClass}`
+    document.getElementById('result-ea-value').textContent = ea.toFixed(1)
+    document.getElementById('result-badge').textContent    = status
+    document.getElementById('result-message').textContent  = message
+
+    // Stats
+    document.getElementById('stat-lbm').textContent       = lbm.toFixed(1)
+    document.getElementById('stat-available').textContent  = Math.round(available)
+    document.getElementById('stat-target').textContent     = gender === 'male' ? '40' : '45'
+
+    if (stepsKcal > 0) {
+      document.getElementById('stat-steps-kcal').textContent = stepsKcal
+      document.getElementById('stat-steps-card').style.display = 'block'
+    } else {
+      document.getElementById('stat-steps-card').style.display = 'none'
+    }
+
+    // Scale bar
+    const markerPct = Math.min(Math.max((ea / 75) * 100, 2), 98)
+    document.getElementById('ea-marker').style.left = markerPct + '%'
+    document.getElementById('ea-bar-labels').innerHTML = gender === 'male'
+      ? '<span>&lt;20 CLINICAL</span><span>20 SUBCLINICAL</span><span>40 PERFORMANCE</span><span>60+</span>'
+      : '<span>&lt;30 RED-S</span><span>30 CRITICAL</span><span>36 LOW</span><span>45 OPTIMAL</span>'
+
+    // Recommendation
+    const perfTarget  = gender === 'male' ? 40 : 45
+    const calsToPerf  = Math.round((perfTarget - ea) * lbm)
+    let recHtml = ''
+
+    if (gender === 'male') {
+      if (ea >= 40) {
+        recHtml = `<h3>WHAT THIS MEANS FOR YOU</h3>
+          <div class="rec-item">Your EA of <strong>${ea.toFixed(1)} kcal/kg FFM/day</strong> is in the performance zone — you're fuelling your training appropriately.</div>
+          <div class="rec-item">Watch for creeping restriction — as training volume increases, your intake needs to match. Recheck your EA if you add sessions or reduce food.</div>
+          <div class="rec-item">If goals include fat loss, a modest reduction is possible, but keep EA above 40 to protect performance and hormonal health.</div>`
+      } else if (ea >= 20) {
+        recHtml = `<h3>WHAT NEEDS TO CHANGE</h3>
+          <div class="rec-item">Your EA of <strong>${ea.toFixed(1)} kcal/kg FFM/day</strong> is subclinical. To reach the performance zone (≥40) you need to add approximately <strong>${calsToPerf} kcal/day</strong> to your current intake.</div>
+          <div class="rec-item">Alternatively, reduce your exercise volume — less training without changing intake will also improve EA.</div>
+          <div class="rec-item">Watch for these signs of testosterone suppression: persistent fatigue, low libido, poor recovery between sessions, mood changes.</div>
+          <div class="rec-item">Get your full report emailed below — I'll give you a specific plan based on your numbers.</div>`
+      } else {
+        recHtml = `<h3>THIS NEEDS IMMEDIATE ATTENTION</h3>
+          <div class="rec-item" style="border-left:2px solid var(--danger);padding-left:.75rem;">Your EA of <strong>${ea.toFixed(1)} kcal/kg FFM/day</strong> is in clinical RED-S territory. Do not continue the current approach.</div>
+          <div class="rec-item">To reach a safe minimum (20 kcal/kg FFM), add approximately <strong>${Math.round((20 - ea) * lbm)} kcal/day</strong> immediately.</div>
+          <div class="rec-item">Target: add <strong>${calsToPerf} kcal/day</strong> to reach the performance zone. Do this in staged increases — not all at once.</div>
+          <div class="rec-item">If you are experiencing extreme fatigue, significant strength loss, or frequent illness, seek medical review alongside dietary changes.</div>`
+      }
+    } else {
+      if (ea >= 45) {
+        recHtml = `<h3>WHAT THIS MEANS FOR YOU</h3>
+          <div class="rec-item">Your EA of <strong>${ea.toFixed(1)} kcal/kg FFM/day</strong> is in the optimal zone — you're fuelling your training appropriately.</div>
+          <div class="rec-item">Monitor closely if training volume increases — more exercise without matched intake will reduce EA quickly at this range.</div>
+          <div class="rec-item">If fat loss is a goal, a small reduction is possible while staying above 45. Any cycle changes or persistent fatigue are a signal to increase intake immediately.</div>`
+      } else if (ea >= 36) {
+        recHtml = `<h3>WHAT NEEDS TO CHANGE</h3>
+          <div class="rec-item">Your EA of <strong>${ea.toFixed(1)} kcal/kg FFM/day</strong> is below optimal. To reach the optimal zone (≥45) you need to add approximately <strong>${calsToPerf} kcal/day</strong>.</div>
+          <div class="rec-item">Alternatively, reduce your exercise energy expenditure by the same amount — dropping one session per week can make a meaningful difference.</div>
+          <div class="rec-item">Watch your menstrual cycle — any change in regularity is a direct signal that your EA is insufficient and needs to be addressed immediately.</div>
+          <div class="rec-item">Get your full report below — I'll give you specific steps based on your numbers.</div>`
+      } else if (ea >= 30) {
+        recHtml = `<h3>THIS IS URGENT — FEMALE DANGER ZONE</h3>
+          <div class="rec-item" style="border-left:2px solid var(--danger);padding-left:.75rem;">Your EA of <strong>${ea.toFixed(1)} kcal/kg FFM/day</strong> is in the critically-low female zone (30–35). Menstrual irregularity is very likely. This is not safe.</div>
+          <div class="rec-item">Minimum: add <strong>${Math.round((36 - ea) * lbm)} kcal/day</strong> to reach the low-EA threshold (36 kcal/kg FFM) — do this now.</div>
+          <div class="rec-item">Full target: add <strong>${calsToPerf} kcal/day</strong> to reach optimal. Do this in staged increases of 200–300 kcal every 5–7 days alongside reducing training.</div>
+          <div class="rec-item">Is your cycle regular right now? Any loss or irregularity means you need to address this today and potentially seek medical review.</div>`
+      } else {
+        recHtml = `<h3>THIS NEEDS IMMEDIATE ATTENTION</h3>
+          <div class="rec-item" style="border-left:2px solid var(--danger);padding-left:.75rem;">Your EA of <strong>${ea.toFixed(1)} kcal/kg FFM/day</strong> is in clinical RED-S territory. Do not continue the current approach.</div>
+          <div class="rec-item">Minimum: add <strong>${Math.round((30 - ea) * lbm)} kcal/day</strong> to reach 30 kcal/kg FFM — do this immediately.</div>
+          <div class="rec-item">Target: add <strong>${calsToPerf} kcal/day</strong> to reach optimal (45 kcal/kg FFM). Stage this in 250–350 kcal increases every 5–7 days.</div>
+          <div class="rec-item">If your period has stopped or become irregular, this is a medical situation — seek review from a sports medicine doctor alongside increasing your intake.</div>`
+      }
+    }
+    document.getElementById('rec-box').innerHTML = recHtml
+
+    // Show results
+    const resultsEl = document.getElementById('results')
+    resultsEl.style.display = 'block'
+    setTimeout(() => resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80)
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    const btn = document.getElementById('lead-submit-btn')
+    btn.disabled = true
+    btn.textContent = 'SENDING...'
+
+    // Populate hidden fields with calculated results
+    document.getElementById('f-ea').value         = lastEa ? lastEa.toFixed(1) : 'not calculated'
+    document.getElementById('f-status').value     = document.getElementById('result-badge').textContent
+    document.getElementById('f-gender').value     = gender
+    document.getElementById('f-bw').value         = document.getElementById('inp-bw').value + ' ' + unit
+    document.getElementById('f-bf').value         = document.getElementById('inp-bf').value + '%'
+    document.getElementById('f-cal').value        = document.getElementById('inp-cal').value
+    document.getElementById('f-exe').value        = document.getElementById('inp-exe').value
+    document.getElementById('f-steps').value      = document.getElementById('inp-steps').value
+    document.getElementById('f-steps-kcal').value = lastStepsKcal || 0
+    document.getElementById('f-lbm').value        = lastLbm ? lastLbm.toFixed(1) : ''
+
+    // Submit to Netlify
+    const form = document.getElementById('lead-form')
+    const data = new FormData(form)
+
+    fetch('/', { method: 'POST', body: data })
+      .then(() => {
+        document.getElementById('lead-form').style.display = 'none'
+        document.getElementById('thank-you').style.display = 'block'
+      })
+      .catch(() => {
+        btn.disabled = false
+        btn.textContent = 'SEND ME MY REPORT →'
+        alert('Something went wrong — please try again or email dave@coachdavemarsh.net directly.')
+      })
+  }
+</script>
+
+</body>
+</html>

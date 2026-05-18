@@ -40,15 +40,21 @@ export function leanMass(bodyWeight, bfPercent) {
 
 /**
  * Energy Availability (EA)
- * EA = (Energy Intake - Exercise Energy Expenditure) / Lean Body Mass
+ * EA = (Energy Intake - Exercise Energy Expenditure) / Lean Body Mass (FFM)
  *
  * Thresholds:
- *   Male:   < 30 kcal/kg LBM = RED-S risk, 30-44 = low, >= 45 = optimal
- *   Female: < 30 = RED-S risk, 30-35 = critically low, 36-44 = low, >= 45 = optimal
+ *   Male:   >= 40 kcal/kg FFM = Performance
+ *           20–39 kcal/kg FFM = Subclinical EA
+ *           < 20 kcal/kg FFM  = Clinical RED-S
+ *
+ *   Female: >= 45 kcal/kg FFM = Optimal
+ *           36–44             = Low EA
+ *           30–35             = Critically Low
+ *           < 30              = Clinical RED-S
  *
  * @param {number} intakeKcal - total calories consumed
- * @param {number} exerciseKcal - calories burned from exercise
- * @param {number} leanMassKg - lean body mass in kg
+ * @param {number} exerciseKcal - calories burned from exercise (inc. NEAT if known)
+ * @param {number} leanMassKg - lean body mass / FFM in kg
  * @param {string} [gender='male']
  * @returns {{ ea: number, status: string, color: string }}
  */
@@ -57,18 +63,32 @@ export function energyAvailability(intakeKcal, exerciseKcal, leanMassKg, gender 
   const ea = (intakeKcal - exerciseKcal) / leanMassKg
 
   let status, color
-  if (ea < 30) {
-    status = 'RED-S Risk'
-    color = 'danger'
-  } else if (gender === 'female' && ea < 36) {
-    status = 'Critically Low'
-    color = 'danger'
-  } else if (ea < 45) {
-    status = 'Low EA'
-    color = 'warn'
+
+  if (gender === 'male') {
+    if (ea < 20) {
+      status = 'Clinical RED-S'
+      color  = 'danger'
+    } else if (ea < 40) {
+      status = 'Subclinical EA'
+      color  = 'warn'
+    } else {
+      status = 'Performance'
+      color  = 'accent'
+    }
   } else {
-    status = 'Optimal'
-    color = 'accent'
+    if (ea < 30) {
+      status = 'Clinical RED-S'
+      color  = 'danger'
+    } else if (ea < 36) {
+      status = 'Critically Low'
+      color  = 'danger'
+    } else if (ea < 45) {
+      status = 'Low EA'
+      color  = 'warn'
+    } else {
+      status = 'Optimal'
+      color  = 'accent'
+    }
   }
 
   return { ea: Math.round(ea * 10) / 10, status, color }

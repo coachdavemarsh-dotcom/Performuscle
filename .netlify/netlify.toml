@@ -1,16 +1,15 @@
+functionsDirectory = "/Users/coachdavemarsh/Claude Performuscle/netlify/functions"
+functionsDirectoryOrigin = "config-v1"
 redirectsOrigin = "config"
 plugins = []
 headers = []
-
-[functions]
-
-[functions."*"]
 
 [build]
 publish = "/Users/coachdavemarsh/Claude Performuscle/dist"
 publishOrigin = "config"
 commandOrigin = "config"
 command = "npm run build:netlify"
+functions = "/Users/coachdavemarsh/Claude Performuscle/netlify/functions"
 
 [build.environment]
 
@@ -25,6 +24,10 @@ command = "npm run build:netlify"
 [build.processing.js]
 
 [build.services]
+
+[functions]
+
+[functions."*"]
 
 [[redirects]]
 from = "/api/*"

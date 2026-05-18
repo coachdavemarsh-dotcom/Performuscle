@@ -571,6 +571,573 @@ These hormones aren't optional extras or upgrades to stack on top of TRT. For me
 Address what's deficient. Measure, don't guess. And understand that hormonal health is a system — optimising one part while ignoring others gives you partial results at best.`,
   },
 
+  // ── Women's Health ────────────────────────────────────────────────────────
+
+  {
+    id: 'b_womens_cycle', category: 'womens-health', contentType: 'article', unlockWeek: 0,
+    title: 'Your Cycle Is Not a Liability — It\'s Information',
+    summary: 'The two phases of the menstrual cycle create completely different physiological environments. Understanding both changes how you train and eat.',
+    readTime: '7 min', tag: 'Foundations', tagColor: '#f472b6',
+    articleBody: `**Women Are Not Small Men**
+The fitness industry has been built largely on research done on men, applied to everyone. The result is that most coaching frameworks, most programmes, and most nutrition advice was built for a male hormonal environment. Men are essentially the same every day. Women are not — and that is actually an advantage once you understand it.
+
+During the menstrual cycle, a woman's insulin sensitivity, fuel preference, metabolic rate, hunger, strength, coordination, body weight, and injury risk all shift. Knowing where you are in your cycle is information you can use.
+
+**The Follicular Phase (Days 1–14 approx)**
+The first half of your cycle is dominated by estrogen. Estrogen is genuinely performance-friendly. It improves insulin sensitivity, promotes fat burning during exercise, supports muscle repair, reduces inflammation after hard sessions, and directly supports muscle remodelling. This is where women tend to make their best strength and hypertrophy gains.
+
+Key characteristics of this phase:
+- Better insulin sensitivity — carbohydrates are handled well
+- Lower baseline hunger — closer to your natural set point
+- Faster muscle repair between sessions
+- Better coordination and power output
+- Lower injury risk (until the pre-ovulation estrogen spike)
+
+This is the phase to push your hardest sessions. If you are going to attempt a personal best, add volume, or push intensity, do it here.
+
+**The Luteal Phase (Days 15–28 approx)**
+The second half is dominated by progesterone. Progesterone raises your resting core temperature by about half a degree (increasing perceived effort), drives insulin resistance, activates fat-storage enzymes in the lower body, and drives hunger up by 90 to 500 calories per day above your baseline.
+
+Key characteristics of this phase:
+- Elevated resting core temperature — training feels harder
+- Insulin resistance — muscles less efficient at using carbohydrates
+- Hunger significantly elevated — 90 to 500 kcal/day above normal
+- Body weight may increase 2–5 kg from water retention
+- Coordination and performance often dip mid-to-late luteal phase
+- Injury risk increases slightly due to hormonal effects on connective tissue
+
+The goal in the luteal phase is to maintain — not progress. Keeping intensity reasonable, managing volume, and accepting that some sessions will feel harder than they should is not failure. It is smart training.
+
+**What to Do With This**
+You do not need to track your hormones with blood draws to use your cycle intelligently. Start with a cycle tracking app and notice the pattern. Most women find the shift between phases becomes obvious once they start paying attention. Use that information to adjust your training expectations and nutrition strategy rather than fighting your physiology for two weeks out of every four.`,
+  },
+
+  {
+    id: 'b_womens_fat', category: 'womens-health', contentType: 'article', unlockWeek: 0,
+    title: 'Why Lower Body Fat Is Not a Willpower Problem',
+    summary: 'The physiology of stubborn lower body fat — why it resists the same approaches that work for upper body fat, and what can actually shift it.',
+    readTime: '5 min', tag: 'Body Composition', tagColor: '#f472b6',
+    articleBody: `**It Is Designed to Be Stubborn**
+The most common frustration I hear from female clients is that lower body fat — hips, thighs, glutes — simply does not respond the way the rest of their body does. Diet is consistent. Training is consistent. Upper body leans out. Lower body stays put. This is not a willpower problem. It is a physiological one.
+
+**The Receptor Ratio**
+Fat cells in different parts of the body have different ratios of two key receptors. Beta-2 receptors promote fat release when activated by adrenaline and similar hormones. Alpha-2 receptors do the opposite — they actively block fat release.
+
+Lower body fat in women has a much higher ratio of alpha-2 to beta-2 receptors than upper body or visceral fat. This means that when your body's natural fat-mobilising hormones are circulating — during exercise, fasting, or a caloric deficit — those signals are being actively blocked in the lower body areas. The same stimulus that successfully mobilises fat from your upper body is turned away at the door of your hips and thighs.
+
+**The Hormonal Layer**
+Estrogen directly amplifies this effect. It upregulates the alpha-2 receptors in lower body fat tissue and activates specific fat-storage enzymes (particularly lipoprotein lipase) in those same areas. Progesterone adds another layer in the luteal phase, further promoting storage.
+
+This is an evolutionary feature, not a defect. Lower body fat is a long-term caloric reserve for pregnancy and lactation — and the female endocrine system actively protects it.
+
+**What This Means in Practice**
+Stubborn lower body fat does not respond well to moderate deficits and moderate exercise. The approaches that help mobilise it more effectively include:
+- Extended fasted or low-insulin states (the alpha-2 receptors are less active when insulin is very low)
+- Higher-intensity exercise that drives significant catecholamine release
+- Patience — lower body fat is almost always the last to go
+- Maintaining or building muscle in the lower body to improve the ratio of muscle to fat in that region
+
+Understanding the physiology stops the self-blame and redirects energy toward approaches that can actually work. Lower body fat will shift — it just responds to a different stimulus, and on a longer timeline.`,
+  },
+
+  {
+    id: 'b_birth_control', category: 'womens-health', contentType: 'article', unlockWeek: 0,
+    title: 'Birth Control and Athletic Performance',
+    summary: 'What hormonal birth control actually does to the physiology that drives training — and which options are least disruptive.',
+    readTime: '8 min', tag: 'Hormones', tagColor: '#f472b6',
+    articleBody: `**The Gap Nobody Closes**
+Gynaecologists are not exercise physiologists. Coaches are not gynaecologists. The result is that millions of active women are making decisions about their birth control without anyone connecting the dots to their training.
+
+This is not an argument against birth control. It is an argument for having the right information so you can make an informed choice.
+
+**How Hormonal Birth Control Works**
+Almost all hormonal birth control works through feedback inhibition. By supplying synthetic hormones, it signals the brain that hormone levels are already sufficient. The brain responds by reducing its own output — natural estrogen and progesterone drop significantly as a result.
+
+The critical secondary consequence is what happens to testosterone. Combined oral contraceptives reduce total and free testosterone by around 50% on average through two mechanisms: cutting production directly, and raising SHBG (a binding protein that grabs free testosterone and makes it unavailable to your muscles and tissues).
+
+Less free testosterone means a weaker anabolic signal, lower training drive, and for some women, reduced libido.
+
+**Not All Birth Control Is Equal**
+The type matters enormously.
+
+*Depo-Provera (injection)* — Worst body composition effects of any method. One long-term study found an average of 11 pounds of weight gain over 3 years, 9 of which were fat. Also has the worst effects on bone mineral density. Not recommended for active women who care about performance.
+
+*Triphasic pill* — Varies hormone dose across three phases, including a high-progestin third week. Multiple studies link triphasic pills to reduced VO2 max, fat gain, and performance impairment specifically during week 3. Avoid if performance matters.
+
+*4th generation progestin pill (e.g. Yaz, Yasmin)* — Anti-androgenic. Actively blocks the androgen receptor. Good for acne and water retention; potentially the worst option for women prioritising muscle and strength gains.
+
+*Monophasic pill (2nd or 3rd gen)* — Maintains consistent hormone levels throughout the cycle. Third generation progestins (especially norgestimate) show the least impact on aerobic capacity in the research. A considerably better option than triphasic if you want an oral pill.
+
+*Hormonal IUD (Mirena, Kyleena, etc.)* — The standout option for active women. Its effects are almost entirely local to the uterus. It does not raise SHBG, does not reduce testosterone, does not affect VO2 max or training adaptations. From a performance standpoint, it is the best option available.
+
+**The Practical Framework**
+If performance and body composition are priorities and you have flexibility in your choice, the hormonal IUD is the clear front-runner. If you want an oral pill, ask your doctor specifically about monophasic vs triphasic. If your training has gone backwards since starting or changing birth control, a hormone panel is worth investigating — not necessarily to come off it, but to understand the environment you are working in.`,
+  },
+
+  {
+    id: 'b_energy_availability', category: 'womens-health', contentType: 'article', unlockWeek: 0,
+    title: 'Energy Availability: The Number That Runs Everything',
+    summary: 'The most important concept in female athletic health — and the one most women have never heard of.',
+    readTime: '6 min', tag: 'Health', tagColor: '#f472b6',
+    articleBody: `**What Is Energy Availability?**
+Energy Availability (EA) is the amount of dietary energy left over for all normal bodily functions after accounting for the energy cost of your exercise. It is calculated as:
+
+EA = (Daily Calorie Intake − Exercise Energy Expenditure) ÷ Lean Body Mass
+
+The unit is calories per kilogram of lean body mass per day (kcal/kg LBM/day). This is what your coach uses to ensure your plan is sustainable — not just whether you are in a caloric deficit, but whether the deficit is one your body can actually function within.
+
+**The Critical Threshold**
+The research is clear on the threshold: 30 kcal/kg LBM/day.
+
+Drop consistently below this level and the body begins shutting down non-essential systems to conserve energy. The menstrual cycle is one of the first things to go.
+
+- EA ≥ 45 kcal/kg LBM — Optimal for health and performance
+- EA 30–44 — Low; recovery and hormonal function are impaired
+- EA < 30 — RED-S risk (Relative Energy Deficiency in Sport)
+
+**Why Losing Your Period Is Not Normal**
+Amenorrhea — the loss of the menstrual cycle — is driven by chronically low energy availability, not by low body fat percentage. Women with normal body fat levels can lose their periods if they are training hard enough and not eating enough to cover it.
+
+This happens far more commonly than most people realise, and it is frequently dismissed as a normal adaptation to hard training. It is not. It is a warning signal that the body does not have enough energy to keep functioning normally.
+
+**The Long-Term Consequences**
+The estrogen drop that accompanies amenorrhea directly accelerates bone density loss. Studies have found amenorrheic athletes can have the bone density of women 20 to 30 years older than their chronological age. This is a structural problem that does not bounce back quickly when eating resumes.
+
+Critically: going on hormonal birth control does not fix this. Birth control can restore the appearance of a cycle, but it does not restore the estrogen levels that protect bone when the underlying energy deficit is still present.
+
+**Warning Signs to Watch**
+- Irregular or absent periods
+- Stress fractures or recurrent bone injuries
+- Persistent fatigue that does not resolve with rest
+- Difficulty maintaining or building muscle despite training
+- Recurrent illness — suppressed immune function
+- Mood changes including increased irritability and poor concentration
+
+**How to Fix Low Energy Availability**
+The protocol is straightforward: add approximately 250 to 360 calories per day to your current intake AND reduce training by one session per week. It sounds counterintuitive when the goal is fat loss. But a body in hormonal distress is not going to produce results — and the health consequences of ignoring this are too significant to push through.
+
+If you have any of the warning signs above, raise it with your coach immediately.`,
+  },
+
+  {
+    id: 'b_womens_stress', category: 'womens-health', contentType: 'article', unlockWeek: 1,
+    title: 'Stress, Cortisol, and Why Women Are More Affected',
+    summary: 'The hormonal reality of chronic stress for female athletes — and why it has to be managed as a training variable, not a lifestyle issue.',
+    readTime: '5 min', tag: 'Recovery', tagColor: '#f472b6',
+    articleBody: `**Stress Is a Training Variable**
+Most coaches treat psychological stress as a lifestyle issue, separate from training. It is not. Stress directly affects the hormonal environment that determines how your training produces results — and this effect is more pronounced in women than in men.
+
+**The Gender Difference in Cortisol**
+Women and men respond to the same stressor differently at the hormonal level. Women tend to release cortisol more rapidly, reach higher peak cortisol levels, and clear cortisol from circulation more slowly than men. The practical consequence: women are more susceptible to the chronic cortisol elevation that builds up from persistent life or training stress, and the downstream effects are more pronounced.
+
+**What Chronic High Cortisol Does**
+
+*Water retention:* Cortisol causes the kidneys to retain sodium and water. This shows up as persistent puffiness that does not respond to diet changes and can mask fat loss entirely on the scale for weeks at a time.
+
+*Insulin resistance:* Cortisol antagonises insulin, increasing blood glucose and making fat storage more likely — particularly in the abdomen.
+
+*Hormonal disruption:* High cortisol suppresses GnRH, the signalling hormone that drives the menstrual cycle. This can disrupt or stop periods even when energy availability is otherwise adequate.
+
+*Muscle breakdown:* Cortisol is catabolic. Chronic elevation increases protein breakdown and limits muscle building even when training and nutrition are otherwise in order.
+
+*Sleep disruption:* Elevated evening cortisol disrupts sleep quality, which then further elevates the next day's cortisol. A self-reinforcing cycle.
+
+**Recognising the Pattern**
+If you are doing everything right on paper but progress has stalled — and you are also sleeping poorly, feeling persistently irritable, carrying unusual water retention, and your cycle has gone irregular — this is not a calorie tracking problem. This is a cortisol problem.
+
+The combined effect of high training stress plus high life stress plus a caloric deficit can push the body into a state where fat loss effectively stops despite a deficit that looks correct on paper. The body is in perceived emergency mode and has deprioritised everything except survival.
+
+**What to Do**
+Managing stress means treating it with the same seriousness as training load. When life stress is genuinely high:
+- Reduce training volume rather than pushing through
+- Prioritise sleep above any other recovery method
+- Eat at or closer to maintenance to reduce the total physiological load
+- Address the source of the stress where possible
+
+The version of you that trains at 85% but sleeps well, manages stress, and maintains a healthy cycle will consistently outperform the version running on cortisol and willpower. Every time.`,
+  },
+
+  {
+    id: 'b_dieter_categories', category: 'womens-health', contentType: 'article', unlockWeek: 0,
+    title: 'The 3-Category Dieter Framework: Which One Are You?',
+    summary: 'Your body fat percentage determines how aggressively you can diet, how fast you can lose fat, and what risks you face. This framework changes everything about how dieting should be approached.',
+    readTime: '7 min', tag: 'Framework', tagColor: '#f472b6',
+    articleBody: `**Why Your Body Fat Percentage Changes Everything**
+Most dieting advice treats all women the same. Eat less, move more, lose fat. The problem with that approach is that a woman at 14% body fat and a woman at 34% body fat are in completely different physiological situations. The rules that work brilliantly for one will fail the other — sometimes seriously.
+
+The 3-Category Dieter Framework, developed through Lyle McDonald's extensive work with female physiology, acknowledges what most coaches ignore: how much fat you're carrying determines how aggressively you can diet, how fast you can safely lose, and what happens to your hormones when you don't respect those limits.
+
+**The Three Categories**
+
+**Category 3 — Higher Body Fat (typically >27–28% BF)**
+Category 3 women are typically just starting their fitness journey, returning after a long break, or primarily focused on health and general fat loss rather than physique performance. Body fat stores are substantial, which is actually an advantage for dieting: the body has plenty of stored energy to draw on, hormonal disruption from dieting is uncommon, and larger caloric deficits are tolerated well.
+
+The body simply doesn't panic when a Category 3 dieter eats less. Fat is available in abundance. The physiological systems responsible for reproduction and metabolism are not threatened by a moderate deficit. This is why general weight-loss advice (eat 500 kcal less per day, lose about 0.5 kg per week) tends to work reasonably well for this group.
+
+**Category 2 — Moderate Body Fat (typically 20–27% BF)**
+Category 2 is the most common position for a recreational exerciser or intermediate fitness enthusiast. There's meaningful fat to lose, but the body is starting to become more conservative with its reserves. Deficits can still be moderate — around 300 to 500 kcal per day — and the rate of fat loss can be maintained at roughly 0.5 to 1% of body weight per week without serious hormonal consequences.
+
+This is the sweet spot. The body will still release fat readily, hormonal systems are largely robust, and consistent training produces clear results. Most 8–16 week physique and fat-loss programmes are designed with Category 2 physiology in mind.
+
+**Category 1 — Very Lean (typically <17–18% BF for females)**
+Category 1 is where the rules change dramatically. These are athletes, competitive physique athletes, or women who are already genuinely lean and are trying to get leaner still. The body's fat stores are low enough that it begins treating any significant caloric deficit as a threat to survival.
+
+At low body fat levels, the body shifts from readily burning stored fat to protecting it. Hormonal systems start to shut down. The menstrual cycle — energetically expensive and reproductively non-essential during a perceived famine — is one of the first casualties. Performance degrades. Muscle is increasingly at risk.
+
+Category 1 women cannot diet the way a Category 3 woman does. Doing so causes hormonal disruption, muscle loss, and the clinical syndrome known as RED-S. The rules here are fundamentally different.
+
+**How to Determine Your Category**
+Body fat percentage is the starting point. Use skinfold calipers, DEXA, or if those aren't available, the Naval body fat calculation from the coach tools section gives a reasonable estimate.
+
+As a general guide:
+- Above ~27–28% BF: Category 3
+- Approximately 20–27% BF: Category 2
+- Below ~17–18% BF: Category 1
+
+These ranges are approximate and shift slightly based on athletic history, muscularity, and individual hormonal sensitivity. A woman who has been lean and athletic for years may show Category 1 responses at slightly higher body fat percentages than a woman who recently lost a large amount of weight.
+
+**Why This Matters Practically**
+Getting the category wrong in either direction causes problems.
+
+A Category 3 woman using a Category 1 approach — tiny deficits, aggressive diet breaks, very slow rate of loss — will make unnecessarily slow progress. She has the physiological headroom to push harder.
+
+A Category 1 woman using a Category 3 approach — large deficit, aggressive weekly rate of loss, no regard for hormonal consequences — will lose muscle, disrupt her menstrual cycle, suppress her training performance, and potentially cause long-term health damage. Her body simply does not have the fat reserves to support that kind of deficit.
+
+The framework isn't about making dieting harder or easier. It's about matching the approach to the actual physiology.`,
+  },
+
+  {
+    id: 'b_category_1', category: 'womens-health', contentType: 'article', unlockWeek: 0,
+    title: 'Category 1: Dieting at Low Body Fat',
+    summary: 'Lean women face a completely different set of physiological rules when dieting. Understand the constraints, the risks, and the specific strategies that work at low body fat.',
+    readTime: '8 min', tag: 'Advanced', tagColor: '#f472b6',
+    articleBody: `**Who Is a Category 1 Dieter?**
+A Category 1 dieter is a woman who is already genuinely lean — typically below 17–18% body fat — and who is looking to reduce further. This includes competitive physique athletes in the weeks before a show, high-level sportswomen trying to make weight or hit a performance target, and recreational athletes who are already lean and chasing the final few percent of fat loss.
+
+This is physiologically the most demanding type of dieting. Not because it requires more willpower, but because the body genuinely resists it.
+
+**Why the Body Fights Back at Low Body Fat**
+At higher body fat levels, adipose tissue releases fat relatively readily in response to a caloric deficit. The body treats its fat stores as a large, accessible reserve. As body fat drops, this changes. The body's hormonal signalling begins to register that reserves are getting low and responds by making it progressively harder to mobilise the remaining fat — particularly lower body fat in women, which is the last to go and the most stubbornly protected.
+
+Several things happen simultaneously:
+- Leptin (the satiety and metabolic hormone) drops significantly, increasing hunger and reducing metabolic rate
+- Thyroid hormone output decreases, slowing metabolism further
+- Cortisol rises, which promotes muscle breakdown and fat retention
+- The hypothalamic-pituitary-ovarian axis — the hormonal chain that drives the menstrual cycle — starts to down-regulate
+
+This is not a failure of willpower or adherence. It is a coordinated physiological response to perceived energy scarcity. Understanding that it is biological makes it easier to work with rather than against.
+
+**The Constraints of Category 1 Dieting**
+
+*Rate of Loss*
+The maximum sustainable rate of fat loss for a Category 1 dieter is approximately 200 to 350 grams per week — roughly 0.5 lb/week. Attempting faster loss at this level of leanness means losing muscle, not additional fat, because there simply isn't enough fat available to support a larger deficit. The body breaks down lean tissue to meet the energy gap.
+
+*Deficit Size*
+The caloric deficit needs to be small — typically 200 to 300 kcal per day. This sounds counterintuitively modest. The reason is that energy availability (the fuel left for physiological function after accounting for exercise expenditure) must remain above approximately 30–35 kcal per kg LBM per day. Go below this consistently and hormonal disruption follows.
+
+*Protein*
+Protein requirements are higher in Category 1 dieters than any other group. A minimum of 2.3–2.5 g per kg body weight per day is appropriate during a fat-loss phase, with some recommendations going higher. Muscle preservation at low body fat requires aggressive protein provision because the body is in a catabolic environment.
+
+*Diet Breaks*
+Category 1 dieters need regular periods of eating at maintenance calories — often called diet breaks. Every 4 to 6 weeks of active dieting, a 1 to 2 week period at maintenance allows leptin to recover, cortisol to drop, metabolic rate to stabilise, and hormonal function to reset. Skipping this step leads to the physiological adaptation that makes further fat loss increasingly difficult and eventually impossible.
+
+*Diet Duration*
+Active dieting phases should typically run no longer than 8 to 12 weeks before a structured break. Continuous dieting at low body fat, even with a small deficit, causes cumulative hormonal suppression that ultimately stalls progress entirely.
+
+**Training During Category 1 Dieting**
+Resistance training must be maintained to preserve muscle. However, volume should be managed carefully — high training volume combined with a caloric deficit and low body fat is a recipe for overtraining, injury, and hormonal disruption. Keep intensity high but manage total volume. Cardio adds to total exercise energy expenditure and must be accounted for in energy availability calculations. More cardio means more food is needed, not less, to maintain safe EA.
+
+**Signs the Deficit Is Too Large**
+- Training performance declining significantly
+- Unusual fatigue or poor recovery between sessions
+- Menstrual cycle becoming irregular or disappearing
+- Persistent hunger that does not resolve after several weeks
+- Mood disturbance, irritability, or difficulty concentrating
+- Increasing obsession with food
+
+Any of these signals should prompt an immediate reassessment of food intake, exercise load, and rest adequacy. They are not signs of poor discipline — they are physiological warning signals.
+
+**The Reality of the Timeline**
+Category 1 fat loss is slow by design. A lean woman dieting responsibly might lose 1 to 2 kg of actual fat over an 8-week block — less than most people expect, but more than the body wants to give up without significant cost. Patience and precision are not optional. Rushing this process damages health, performance, and future dieting capacity.`,
+  },
+
+  {
+    id: 'b_category_2_3', category: 'womens-health', contentType: 'article', unlockWeek: 0,
+    title: 'Category 2 and 3: Dieting with More Room to Move',
+    summary: 'Higher body fat stores mean greater physiological flexibility. Here is how Category 2 and Category 3 dieters should structure their approach — and why they can push harder than Category 1.',
+    readTime: '6 min', tag: 'Nutrition', tagColor: '#f472b6',
+    articleBody: `**Category 2: The Intermediate Dieter**
+
+Category 2 encompasses roughly 20 to 27% body fat — the range that covers most recreational exercisers and intermediate-level fitness enthusiasts. This is the most common starting point for structured fat-loss coaching, and in many ways it is the most manageable physiologically.
+
+*Why Category 2 Has More Flexibility*
+At 20–27% body fat, adipose tissue is substantial enough that the body does not panic when you eat less. Leptin levels, while they will drop during a diet, start from a higher baseline and fall less dramatically. The hormonal systems that govern the menstrual cycle and metabolic rate are more resilient. The body will release fat more readily because it correctly registers that reserves are not in short supply.
+
+This does not mean dieting is effortless at Category 2 — hunger, fatigue, and metabolic adaptation still occur. But the physiological fight is considerably less intense than in Category 1.
+
+*Rate of Loss*
+A Category 2 dieter can safely target approximately 0.5 to 1% of body weight per week in fat loss. For a woman weighing 70 kg, that is 350 to 700 grams per week — meaningfully faster than Category 1 and still protective of lean tissue when protein is adequate.
+
+*Deficit Size*
+A caloric deficit of 300 to 500 kcal per day is appropriate for most Category 2 dieters. Some women tolerate slightly larger deficits when starting from the higher end of this body fat range. The key marker is that training performance should remain largely intact and the menstrual cycle should stay regular. If either of these starts to deteriorate, the deficit is too large.
+
+*Protein*
+2.0 to 2.3 g per kg body weight per day is a reasonable target. Higher end of this range when training volume is significant.
+
+*Diet Breaks*
+Category 2 dieters typically do not require diet breaks as frequently as Category 1. An 8 to 16 week dieting phase is often sustainable before a maintenance period is needed, though this varies individually. Watching for signs of hormonal adaptation (cycle changes, persistent fatigue, significant performance decline) is more useful than sticking to a rigid timeline.
+
+*Carb Cycling*
+Category 2 dieters often respond well to carbohydrate cycling — higher carb intake on training days to support performance, lower carb on rest days to create the weekly caloric deficit. This approach maintains training quality better than a flat caloric restriction and takes advantage of the body's sensitivity to carbohydrate-driven insulin signalling at this body fat level.
+
+**Category 3: The Health-First Dieter**
+
+Category 3 dieters are above approximately 27–28% body fat. The physiological landscape here is very different from Category 1 and to a lesser extent Category 2 — and the approach should reflect that.
+
+*Greater Physiological Tolerance for Deficit*
+Abundant fat stores mean the body has extensive reserves to draw on. Large caloric deficits do not represent a physiological threat at Category 3 because the stored energy available is more than sufficient to meet the body's needs. The hormonal consequences that are a real concern in Category 1 are effectively non-existent at Category 3 body fat levels.
+
+This is why general dietary advice — 500 kcal daily deficit, 0.5 kg per week loss — was designed with a Category 3 population in mind. It works because the physiology supports it.
+
+*Rate of Loss*
+A Category 3 dieter can often sustain 0.5 to 1.0 kg per week of actual weight loss, particularly early in the dieting period. As body fat decreases and the woman moves toward Category 2 territory, the approach should be recalibrated accordingly.
+
+*Insulin Sensitivity and Diet Composition*
+Category 3 dieters are more likely to have some degree of insulin resistance, particularly if they are sedentary or carry significant central adiposity. This means:
+- Lower carbohydrate approaches tend to produce better early results
+- Fat loss is closely tied to improving insulin sensitivity through diet and exercise
+- Resistance training produces disproportionately large benefits at this stage — both for fat loss and for metabolic health
+
+*The Health Gains Come First*
+For Category 3 dieters, the biggest physiological benefits of fat loss — improved blood sugar regulation, reduced inflammation, better cardiovascular markers, improved sleep — often show up before any dramatic aesthetic change. Understanding this matters because it reframes early progress: the goal at Category 3 is health improvement that enables the next stage, not a rapid body transformation.
+
+*Transitioning Between Categories*
+As a Category 3 dieter loses fat and moves into Category 2 territory, the approach must change. The larger deficits and aggressive rates of loss that were appropriate at higher body fat need to be wound back. This is not a failure — it is the correct physiological response to a changed situation. Coaching must anticipate this transition rather than waiting for it to become a problem.`,
+  },
+
+  {
+    id: 'b_reds_explained', category: 'womens-health', contentType: 'article', unlockWeek: 1,
+    title: 'RED-S: Relative Energy Deficiency in Sport',
+    summary: 'RED-S is a serious health syndrome affecting lean athletes who chronically under-fuel relative to their exercise output. It is not a problem for overweight individuals — here is what it is, who it affects, and why it matters.',
+    readTime: '7 min', tag: 'Health', tagColor: '#ef4444',
+    articleBody: `**What RED-S Is — and What It Is Not**
+Relative Energy Deficiency in Sport is a clinical syndrome that occurs when a physically active individual consistently consumes insufficient calories to cover both the energy cost of their exercise and the energy demands of the body's essential physiological functions.
+
+The word "relative" in the name is important. RED-S is not simply about eating too little in absolute terms. It is about eating too little relative to energy expenditure — specifically, about energy availability falling below the threshold the body needs to maintain core biological processes.
+
+A critical point that is often misunderstood: RED-S is an athlete problem and a lean-person problem. It does not occur in individuals who carry substantial body fat. The reason is straightforward: body fat is stored energy. Someone carrying 20 to 30 kg of excess fat has a physiological buffer of tens of thousands of calories available at any given time. Even during a caloric deficit, the body can draw on those fat stores to meet the energy needs of critical functions. True cellular energy deficiency simply does not occur under those circumstances.
+
+RED-S requires the combination of high exercise output, restricted caloric intake, and insufficient fat stores to bridge the gap. This is the situation that exists for lean athletes, competitive physique athletes in the final stages of a diet, and Category 1 dieters as described in the framework above.
+
+**The Energy Availability Threshold**
+Energy availability is calculated as:
+
+EA = (Daily Caloric Intake minus Exercise Energy Expenditure) divided by Lean Body Mass in kg
+
+The result is expressed in kcal per kg of lean body mass per day.
+
+At EA of 45 kcal/kg LBM/day or above, the body has sufficient fuel for all physiological functions — exercise recovery, hormonal production, immune function, bone metabolism, and all other systems.
+
+Below 30 kcal/kg LBM/day, the body begins making triage decisions. Non-essential (for immediate survival) systems start to shut down. The menstrual cycle is one of the first casualties in women because reproduction is energetically expensive and non-essential when the body perceives it is in famine.
+
+Women are more sensitive to this threshold than men. The menstrual cycle begins to show disruption at EA levels that a male athlete might sustain without obvious consequences — which is why EA monitoring is especially important in female athlete coaching.
+
+**What RED-S Does to the Body**
+The consequences of chronic low energy availability affect virtually every system:
+
+*Reproductive system*
+Loss of menstrual cycle (amenorrhea) or irregular cycles (oligomenorrhea) is typically the first and most visible sign in women. This is not benign — it indicates suppression of the entire hormonal axis. Estrogen drops, which has downstream consequences for bone, cardiovascular health, and mood.
+
+*Bone*
+Estrogen is essential for bone mineral density. Chronically low estrogen from exercise-induced amenorrhea causes bone loss. This is not the same as normal aging-related bone loss — it is active, accelerated demineralisation that significantly raises the risk of stress fractures during training. Bone loss from RED-S can be partially but not fully recovered even after hormonal function is restored. This makes it one of the most serious long-term consequences.
+
+*Metabolic*
+The body reduces metabolic rate to conserve energy. Thyroid hormone output decreases. This is why some athletes feel permanently cold, fatigued, and mentally sluggish during extended periods of low energy availability — their metabolic engine is running at a fraction of its normal output.
+
+*Cardiovascular*
+Heart rate can drop to unusually low levels (beyond normal athletic bradycardia), blood pressure decreases, and changes in lipid profiles have been documented. The heart itself is a muscle under energy restriction and is not immune to the conservation response.
+
+*Immune*
+Chronic low EA impairs immune function, leaving athletes more susceptible to illness, particularly upper respiratory infections. This is a common observation in athletes during hard training blocks where food intake has not kept pace with energy output.
+
+*Psychological*
+Irritability, depression, anxiety, difficulty concentrating, and increasing preoccupation with food are all documented in RED-S. These are not personality traits — they are neurological consequences of chronic energy restriction affecting neurotransmitter function.
+
+*Performance*
+Despite often feeling driven and highly motivated initially, athletes with RED-S ultimately see performance degrade. Strength and power output decline, reaction time slows, coordination suffers, and the training load that previously produced adaptation now just produces fatigue without recovery.
+
+**Warning Signs to Watch For**
+As a coach, these are the red flags that warrant immediate food intake review:
+- Loss of menstrual cycle, or cycles becoming irregular
+- Stress fractures or bone injuries without adequate trauma to explain them
+- Persistent fatigue that rest does not resolve
+- Significant decline in training performance despite consistent work
+- Frequent illness, repeated infections
+- Mood changes, increased anxiety, persistent low mood
+- Obsessive food restriction behaviour or intense fear of eating
+
+**How RED-S Is Addressed**
+The only intervention that works is increasing energy availability. This means eating more, reducing exercise load, or both. There are no supplements, hormonal interventions, or workarounds that address the root cause. Estrogen replacement, for example, may slow bone loss but does not restore the underlying hormonal function — only restoring adequate energy availability does that.
+
+The conversation around RED-S in coaching can be difficult. Athletes who are in this state are often psychologically invested in not eating more and not training less. Recovery requires rebuilding the relationship with food and movement alongside the physiological restoration — which is why working with a sports psychologist or therapist experienced in this area is often appropriate.
+
+For coaches: if a client shows multiple warning signs, this needs to be addressed as a health priority before any physique or performance goal. EA should be calculated, food intake increased to bring EA above 35 kcal/kg LBM/day as a minimum, and exercise load reviewed. Progress on physique goals stops. Health comes first.`,
+  },
+
+  {
+    id: 'b_cat1_amenorrhea', category: 'womens-health', contentType: 'article', unlockWeek: 1,
+    title: 'Amenorrhea in Category 1 Athletes: Causes and Recovery',
+    summary: 'Loss of the menstrual cycle in lean athletes is one of the most serious signals the body can send. It is not a side effect to train through — here is what causes it and how to restore hormonal function.',
+    readTime: '7 min', tag: 'Advanced', tagColor: '#f472b6',
+    articleBody: `**What Is Exercise-Induced Amenorrhea?**
+Amenorrhea is the absence of menstruation. In the context of sport and dieting, it falls into two types: primary (never having had a cycle) and secondary (loss of a previously regular cycle). Secondary amenorrhea in athletes — defined clinically as the absence of three or more consecutive cycles — is what we are concerned with here.
+
+Exercise-induced or hypothalamic amenorrhea is the loss of the menstrual cycle as a direct consequence of chronic low energy availability. It is the most visible symptom of RED-S and the clearest signal that the body's hormonal axis has been suppressed in response to perceived energy scarcity.
+
+It is important to understand what amenorrhea is not: it is not a neutral adaptation to athletic training. It is not something to be "worked through." It is not an acceptable trade-off for leanness. It is a physiological emergency signal indicating that the body has shut down reproductive function because it does not have sufficient energy to sustain it.
+
+**The Hormonal Mechanism**
+The menstrual cycle is controlled by the hypothalamic-pituitary-ovarian (HPO) axis — a chain of hormonal communication between the hypothalamus, pituitary gland, and ovaries. This axis is extraordinarily sensitive to energy status.
+
+When energy availability drops consistently below approximately 30 kcal per kg of lean body mass per day, the hypothalamus reduces its pulsatile release of GnRH (gonadotropin-releasing hormone). Without adequate GnRH, the pituitary does not release LH and FSH in normal patterns. Without LH and FSH, the ovaries do not receive the signal to develop follicles, ovulate, or produce estrogen and progesterone.
+
+The result is a cascade shutdown of the entire reproductive hormone system. This is not a specific pathology — it is the hypothalamus rationing energy away from a non-survival function. The body treats reproduction as a luxury it cannot currently afford.
+
+**Who Is at Risk**
+Category 1 dieters are the highest-risk group. The combination of:
+- Low body fat (limited hormonal reserve from adipose tissue, which produces estrogen via aromatisation)
+- High exercise energy expenditure
+- Caloric restriction to achieve further fat loss
+
+...creates exactly the conditions the hypothalamus responds to by shutting down the HPO axis.
+
+Risk is also elevated in athletes who:
+- Have a history of very restrictive dieting
+- Are increasing training load significantly without increasing food intake
+- Are in the final preparation phase for a physique competition or weight-class sport
+- Have high psychological stress alongside physical stress
+
+**Consequences Beyond Missing Periods**
+Many athletes dismiss amenorrhea as an inconvenient side effect — "at least I don't have to deal with a cycle." This is a serious misunderstanding of what amenorrhea means physiologically.
+
+Estrogen is not only a reproductive hormone. It is critical for:
+- Bone mineral density maintenance (estrogen inhibits osteoclasts, the cells that break bone down)
+- Cardiovascular health (estrogen has protective effects on the vascular endothelium)
+- Mood regulation and cognitive function
+- Fat mobilisation and metabolic rate regulation
+- Ligament and connective tissue integrity
+
+Three to six months of amenorrhea begins to produce measurable bone density loss. Extended amenorrhea (one to two or more years) can produce bone density levels equivalent to early osteoporosis — in women who are in their twenties and thirties. This bone loss is only partially reversible even after hormonal function is restored.
+
+The ligament laxity associated with low estrogen also significantly raises injury risk. ACL injuries in female athletes, in particular, are more common when estrogen levels are chronically suppressed.
+
+**Restoring the Cycle**
+The single most effective intervention is increasing energy availability. This means:
+- Eating more — specifically, increasing caloric intake to bring EA above 35 kcal/kg LBM/day, aiming for 40–45 over time
+- Reducing exercise load if increasing food alone is insufficient
+- Prioritising rest and sleep, which both support hormonal recovery
+
+Recovery is not instant. The HPO axis can take weeks to months to resume normal function once EA is restored. Most women will see the return of menstruation within 3 to 6 months of sustained adequate energy availability, though individual variation is wide.
+
+During recovery, body weight may increase slightly as the body restores lean tissue and glycogen. This is not fat gain — it is the physiological restoration of function. Resisting this process by restricting food intake or increasing cardio prolongs the hormonal suppression.
+
+Oral contraceptives are sometimes prescribed for amenorrheic athletes, and this requires careful consideration. The pill will produce withdrawal bleeds that appear to be menstrual cycles, but this does not indicate that the HPO axis has recovered. It is artificial hormonal cycling overlaid on suppression. The underlying energy status problem is not addressed. Bone loss will continue despite the apparent cycle.
+
+**The Coach's Role**
+If a client reports cycle loss or increasing irregularity:
+- Immediately calculate energy availability using all three components: intake, exercise EE, and daily steps/NEAT
+- Review whether food intake has kept pace with training load
+- Do not wait to see if it resolves on its own — address the deficit now
+- Be prepared for a difficult conversation: the client may not want to eat more or train less
+- If cycle loss has been ongoing for more than three months, a referral to a sports medicine doctor or endocrinologist familiar with the female athlete triad/RED-S is appropriate
+
+Performance goals are secondary to this. A client cannot achieve long-term physique or performance outcomes while her hormonal axis is shut down. Restoring health is the prerequisite for everything else.`,
+  },
+
+  {
+    id: 'b_quiz_womens', category: 'womens-health', contentType: 'quiz', unlockWeek: 2,
+    title: 'Women\'s Physiology Quiz',
+    summary: 'Test your understanding of the menstrual cycle, energy availability, and how hormones affect training.',
+    readTime: '4 min', tag: 'Quiz', tagColor: '#60a5fa',
+    questions: [
+      {
+        question: 'Which phase of the menstrual cycle is associated with better insulin sensitivity, faster muscle repair, and lower hunger?',
+        options: [
+          { text: 'The luteal phase (days 15–28)', hint: 'The luteal phase is progesterone-dominant, which increases insulin resistance and hunger.' },
+          { text: 'The follicular phase (days 1–14)', hint: 'Correct! Estrogen dominance in the follicular phase supports performance, recovery, and lower hunger.' },
+          { text: 'The premenstrual phase only', hint: 'The premenstrual phase is the late luteal phase — not performance-friendly.' },
+          { text: 'Hormone levels do not change enough to affect training', hint: 'Hormonal changes across the cycle have measurable, significant effects on physiology.' },
+        ],
+        correctIndex: 1,
+        explanation: 'The follicular phase is estrogen-dominant. Estrogen improves insulin sensitivity, promotes fat burning, reduces inflammation, and supports muscle repair — making it the best window for hardest training sessions.',
+      },
+      {
+        question: 'What is the minimum energy availability threshold before menstrual dysfunction typically begins?',
+        options: [
+          { text: '20 kcal/kg LBM/day', hint: 'At this level significant health consequences would already be present.' },
+          { text: '30 kcal/kg LBM/day', hint: 'Correct! Below 30 kcal/kg LBM/day, the body begins shutting down non-essential systems including the menstrual cycle.' },
+          { text: '45 kcal/kg LBM/day', hint: '45 is the optimal target — not the minimum threshold.' },
+          { text: '1,200 calories per day regardless of body composition', hint: 'EA is relative to lean body mass and exercise expenditure — not a fixed calorie number.' },
+        ],
+        correctIndex: 1,
+        explanation: 'EA = (Intake − Exercise EE) ÷ LBM. Below 30 kcal/kg LBM/day, the body begins suppressing non-essential functions. The menstrual cycle is typically one of the first casualties. Optimal EA is 45 kcal/kg LBM/day.',
+      },
+      {
+        question: 'Why is lower body fat in women more resistant to mobilisation than upper body fat?',
+        options: [
+          { text: 'Women have more fat cells in the lower body overall', hint: 'Cell count is not the primary reason for resistance to mobilisation.' },
+          { text: 'The lower body has a higher ratio of alpha-2 to beta-2 adrenoceptors, blocking fat release', hint: 'Correct! Alpha-2 receptors actively inhibit fat mobilisation, and estrogen upregulates them in lower body tissue.' },
+          { text: 'Lower body fat contains more saturated fats which are harder to oxidise', hint: 'This is not the primary mechanism for stubborn lower body fat.' },
+          { text: 'Lower body fat requires more exercise than upper body fat to mobilise', hint: 'The issue is receptor physiology, not exercise volume.' },
+        ],
+        correctIndex: 1,
+        explanation: 'Lower body fat has a high alpha-2:beta-2 receptor ratio. Alpha-2 receptors block adrenaline-driven fat mobilisation. Estrogen upregulates these receptors in lower body tissue and activates fat-storage enzymes there — making this an evolutionary design, not a training problem.',
+      },
+    ],
+  },
+
+  {
+    id: 'b_quiz_category_framework', category: 'womens-health', contentType: 'quiz', unlockWeek: 2,
+    title: 'Dieter Category Framework Quiz',
+    summary: 'Test your understanding of the 3-category framework, RED-S, and how energy availability drives hormonal health in lean athletes.',
+    readTime: '5 min', tag: 'Quiz', tagColor: '#60a5fa',
+    questions: [
+      {
+        question: 'A female client is at approximately 15% body fat and training 6 days per week for a physique competition. She reports her menstrual cycle has become irregular. Which dieter category does she fall into, and what is the primary concern?',
+        options: [
+          { text: 'Category 3 — she needs to increase cardio to accelerate fat loss before the competition', hint: 'Category 3 refers to higher body fat individuals. At 15% BF this client is Category 1, and adding cardio would worsen her situation.' },
+          { text: 'Category 1 — her irregular cycle signals that energy availability has dropped below the safe threshold', hint: 'Correct. At 15% BF she is Category 1, and menstrual irregularity is the clearest warning sign that EA has fallen too low.' },
+          { text: 'Category 2 — irregular cycles are normal for women who train hard and she should continue the programme', hint: 'At 15% BF she is Category 1, not Category 2, and irregular cycles are not a normal consequence of hard training — they signal a physiological problem.' },
+          { text: 'Category 1 — she should stop training entirely until her cycle returns', hint: 'Correct category, but the intervention is increasing food intake and reducing exercise load — not stopping training completely.' },
+        ],
+        correctIndex: 1,
+        explanation: 'At 15% BF this woman is firmly Category 1. Menstrual irregularity is the hypothalamus signalling that energy availability has dropped below what the body can sustain hormonal function on. The intervention is increasing caloric intake to bring EA above 35 kcal/kg LBM/day, not further restriction or more exercise.',
+      },
+      {
+        question: 'Why does RED-S (Relative Energy Deficiency in Sport) not occur in overweight or obese individuals, even if they are training heavily and eating in a deficit?',
+        options: [
+          { text: 'Overweight individuals do not train with sufficient intensity to trigger the syndrome', hint: 'RED-S is about energy availability, not training intensity. Exercise type and intensity are not the determining factors.' },
+          { text: 'The hormonal profile of overweight individuals protects them from energy deficiency', hint: 'This is partially related but not the primary explanation. The core reason is the availability of stored energy.' },
+          { text: 'Body fat stores provide a large reserve of available energy that prevents true cellular energy deficiency', hint: 'Correct. Significant adipose tissue means the body can draw on stored energy to meet physiological needs even during a caloric deficit, preventing the energy scarcity that drives RED-S.' },
+          { text: 'Overweight individuals have higher leptin levels which prevents the hormonal cascade', hint: 'While leptin is relevant to the mechanism, the fundamental reason is that abundant fat stores prevent true energy deficiency at the cellular level.' },
+        ],
+        correctIndex: 2,
+        explanation: 'RED-S requires the combination of high exercise output, restricted intake, and insufficient fat stores to bridge the gap. An overweight person has tens of thousands of calories of stored energy available. Even in a dietary deficit, the body can draw on those fat stores to maintain critical physiological functions. Genuine cellular energy deficiency simply does not occur when substantial fat reserves are present.',
+      },
+      {
+        question: 'A Category 2 client (23% BF) has been dieting for 10 weeks at a 400 kcal daily deficit and is making good progress. Her Category 1 friend tells her she should be taking diet breaks every 4 weeks. Is this advice applicable?',
+        options: [
+          { text: 'Yes — all women need diet breaks every 4 weeks regardless of body fat level', hint: 'Diet break frequency depends on body fat level and hormonal resilience, not a universal 4-week rule.' },
+          { text: 'No — Category 2 dieters typically sustain 8–16 week phases before needing a break, and should use their own hormonal markers as a guide', hint: 'Correct. The 4-week diet break recommendation is specifically for Category 1 dieters. Category 2 dieters have more physiological resilience and can sustain longer phases, guided by their own cycle regularity and performance.' },
+          { text: 'No — Category 2 dieters never need diet breaks', hint: 'Diet breaks may still be appropriate for Category 2 eventually — but the frequency and timing is different from Category 1.' },
+          { text: 'Yes — 400 kcal is too large a deficit for any woman and should be halved immediately', hint: 'A 400 kcal deficit is entirely appropriate for a Category 2 dieter. This recommendation applies to Category 1 where deficits must be much smaller.' },
+        ],
+        correctIndex: 1,
+        explanation: 'Diet break frequency is determined by the physiological stress of the dieting phase, which is directly related to body fat level. Category 1 dieters need frequent breaks because their body is under significant metabolic and hormonal pressure. Category 2 dieters have greater resilience. An 8–16 week phase is typically sustainable at this body fat level. Menstrual regularity and training performance are the best individual guides.',
+      },
+    ],
+  },
+
   {
     id: 'b_hcg_myths', category: 'hormones', contentType: 'article', unlockWeek: 3,
     title: 'HCG: Separating the Facts from the Noise',
@@ -617,6 +1184,7 @@ const CATEGORIES = [
   { id: 'programming', label: 'Programming' },
   { id: 'mindset', label: 'Mindset' },
   { id: 'hormones', label: 'Hormones' },
+  { id: 'womens-health', label: "Women's Health" },
 ]
 
 // ============================================================

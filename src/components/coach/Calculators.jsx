@@ -177,16 +177,70 @@ function NavalBFCalc() {
 // ENERGY AVAILABILITY
 // ============================================================
 
+const EE_GUIDE = [
+  { activity: 'Walking (brisk)',           kcalHr: '200–300' },
+  { activity: 'Cycling (moderate)',         kcalHr: '300–450' },
+  { activity: 'Weight training (moderate)', kcalHr: '200–350' },
+  { activity: 'Weight training (intense)',  kcalHr: '350–500' },
+  { activity: 'Running (8 min/km)',         kcalHr: '400–550' },
+  { activity: 'Running (6 min/km)',         kcalHr: '550–750' },
+  { activity: 'HIIT / Metcon',             kcalHr: '400–600' },
+  { activity: 'Swimming (moderate)',        kcalHr: '350–500' },
+]
+
+const STEPS_GUIDE = [
+  { steps: '3,000',   desc: 'Sedentary',          ref70: '~120' },
+  { steps: '5,000',   desc: 'Lightly active',      ref70: '~200' },
+  { steps: '7,500',   desc: 'Moderately active',   ref70: '~300' },
+  { steps: '10,000',  desc: 'Active target',        ref70: '~400' },
+  { steps: '15,000+', desc: 'Very active / field',  ref70: '~600+' },
+]
+
+function CollapsibleGuide({ open, onToggle, label, children }) {
+  return (
+    <div style={{ marginTop: 4 }}>
+      <button
+        onClick={onToggle}
+        style={{
+          background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+          fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-display)',
+          letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4,
+        }}
+      >
+        <span style={{ fontSize: 9 }}>{open ? '▼' : '▶'}</span>
+        {label}
+      </button>
+      {open && (
+        <div style={{
+          marginTop: 8, background: 'var(--s4)', border: '1px solid var(--border)',
+          borderRadius: 6, overflow: 'hidden',
+        }}>
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function EnergyAvailabilityCalc() {
-  const [gender, setGender] = useState('male')
-  const [intake, setIntake] = useState('')
-  const [exercise, setExercise] = useState('')
-  const [lbmKg, setLbmKg] = useState('')
+  const [gender, setGender]         = useState('male')
+  const [intake, setIntake]         = useState('')
+  const [exercise, setExercise]     = useState('')
+  const [lbmKg, setLbmKg]           = useState('')
+  const [bodyWeight, setBodyWeight] = useState('')
+  const [steps, setSteps]           = useState('')
+  const [eeOpen, setEeOpen]         = useState(false)
+  const [stepsOpen, setStepsOpen]   = useState(false)
+  const [redsOpen, setRedsOpen]     = useState(false)
+
+  const bwKg      = parseFloat(bodyWeight) || 70
+  const stepsKcal = steps ? Math.round(parseFloat(steps) * (bwKg / 70) * 0.04) : 0
+  const totalEE   = (parseFloat(exercise) || 0) + stepsKcal
 
   const result = intake && lbmKg
     ? energyAvailability(
         parseFloat(intake),
-        parseFloat(exercise) || 0,
+        totalEE,
         parseFloat(lbmKg),
         gender
       )
@@ -194,21 +248,31 @@ function EnergyAvailabilityCalc() {
 
   const thresholds = gender === 'male'
     ? [
-        { label: '< 30 kcal/kg LBM', desc: 'RED-S Risk', color: 'var(--danger)' },
-        { label: '30–44 kcal/kg LBM', desc: 'Low EA', color: 'var(--warn)' },
-        { label: '≥ 45 kcal/kg LBM', desc: 'Optimal', color: 'var(--accent)' },
+        { label: '< 20 kcal/kg FFM',  desc: 'Clinical RED-S',  color: 'var(--danger)' },
+        { label: '20–39 kcal/kg FFM', desc: 'Subclinical EA',  color: 'var(--warn)'   },
+        { label: '≥ 40 kcal/kg FFM',  desc: 'Performance',     color: 'var(--accent)' },
       ]
     : [
-        { label: '< 30 kcal/kg LBM', desc: 'RED-S Risk', color: 'var(--danger)' },
-        { label: '30–35 kcal/kg LBM', desc: 'Critically Low', color: 'var(--danger)' },
-        { label: '36–44 kcal/kg LBM', desc: 'Low EA', color: 'var(--warn)' },
-        { label: '≥ 45 kcal/kg LBM', desc: 'Optimal', color: 'var(--accent)' },
+        { label: '< 30 kcal/kg FFM',  desc: 'Clinical RED-S',  color: 'var(--danger)' },
+        { label: '30–35 kcal/kg FFM', desc: 'Critically Low',  color: 'var(--danger)' },
+        { label: '36–44 kcal/kg FFM', desc: 'Low EA',          color: 'var(--warn)'   },
+        { label: '≥ 45 kcal/kg FFM',  desc: 'Optimal',         color: 'var(--accent)' },
       ]
+
+  const rowStyle = {
+    display: 'flex', justifyContent: 'space-between',
+    padding: '5px 10px', borderBottom: '1px solid var(--border)',
+    fontSize: 11,
+  }
 
   return (
     <CalcSection title="Energy Availability">
       <div className="grid-2">
+
+        {/* ── LEFT: Inputs ── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+
+          {/* Gender toggle */}
           <div className="input-group">
             <label className="form-label">Gender</label>
             <div style={{ display: 'flex', gap: 8 }}>
@@ -222,17 +286,83 @@ function EnergyAvailabilityCalc() {
                 </button>
               ))}
             </div>
+            <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>
+              Thresholds differ — females are more vulnerable to hormonal disruption at low EA
+            </div>
           </div>
 
-          <Field label="Energy Intake (kcal)" value={intake} onChange={setIntake} step={50} placeholder="2400" />
-          <Field label="Exercise Energy Expenditure (kcal)" value={exercise} onChange={setExercise} step={50} placeholder="400" />
-          <Field label="Lean Body Mass (kg)" value={lbmKg} onChange={setLbmKg} step={0.5} placeholder="65" />
+          <Field label="Energy Intake (kcal/day)" value={intake} onChange={setIntake} step={50} placeholder="2400" />
 
-          <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4 }}>
-            EA = (Intake − Exercise EE) ÷ Lean Mass
+          {/* Exercise EE + guide */}
+          <div>
+            <Field label="Exercise Energy Expenditure (kcal)" value={exercise} onChange={setExercise} step={50} placeholder="400" />
+            <CollapsibleGuide open={eeOpen} onToggle={() => setEeOpen(v => !v)} label="EXERCISE EE REFERENCE GUIDE">
+              <div style={rowStyle}>
+                <span style={{ color: 'var(--sub)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>ACTIVITY</span>
+                <span style={{ color: 'var(--sub)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>KCAL/HR</span>
+              </div>
+              {EE_GUIDE.map(r => (
+                <div key={r.activity} style={rowStyle}>
+                  <span style={{ color: 'var(--white)' }}>{r.activity}</span>
+                  <span style={{ color: 'var(--accent)' }}>{r.kcalHr}</span>
+                </div>
+              ))}
+              <div style={{ padding: '6px 10px', fontSize: 10, color: 'var(--muted)' }}>
+                Multiply by session duration in hours. Wearable data preferred where available.
+              </div>
+            </CollapsibleGuide>
+          </div>
+
+          {/* Lean body mass */}
+          <div>
+            <Field label="Lean Body Mass (kg)" value={lbmKg} onChange={setLbmKg} step={0.5} placeholder="65" />
+            <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 3 }}>
+              Use the Body Composition calculator to estimate LBM from BF%
+            </div>
+          </div>
+
+          {/* Body weight (for steps calc) */}
+          <Field label="Body Weight (kg) — for NEAT calc" value={bodyWeight} onChange={setBodyWeight} step={0.5} placeholder="80" />
+
+          {/* Steps / NEAT + guide */}
+          <div>
+            <Field label="Daily Steps (NEAT)" value={steps} onChange={setSteps} step={500} placeholder="8000" />
+            {steps && (
+              <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 3 }}>
+                ≈ {stepsKcal} kcal from steps (body-weight scaled)
+              </div>
+            )}
+            <CollapsibleGuide open={stepsOpen} onToggle={() => setStepsOpen(v => !v)} label="STEPS / NEAT REFERENCE GUIDE">
+              <div style={rowStyle}>
+                <span style={{ color: 'var(--sub)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>STEPS</span>
+                <span style={{ color: 'var(--sub)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>DESCRIPTION</span>
+                <span style={{ color: 'var(--sub)', fontFamily: 'var(--font-display)', letterSpacing: 1 }}>~KCAL (70 kg)</span>
+              </div>
+              {STEPS_GUIDE.map(r => (
+                <div key={r.steps} style={rowStyle}>
+                  <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-display)' }}>{r.steps}</span>
+                  <span style={{ color: 'var(--white)' }}>{r.desc}</span>
+                  <span style={{ color: 'var(--muted)' }}>{r.ref70}</span>
+                </div>
+              ))}
+              <div style={{ padding: '6px 10px', fontSize: 10, color: 'var(--muted)' }}>
+                Formula: steps × (body weight kg ÷ 70) × 0.04. Heavier clients burn proportionally more per step.
+              </div>
+            </CollapsibleGuide>
+          </div>
+
+          <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4, lineHeight: 1.5 }}>
+            EA = (Intake − Exercise EE − Steps NEAT) ÷ FFM
+            <br />
+            <span style={{ fontSize: 10, color: 'var(--muted)' }}>
+              {gender === 'male'
+                ? 'Male targets: ≥40 Performance · 20–39 Subclinical · <20 Clinical RED-S'
+                : 'Female targets: ≥45 Optimal · 36–44 Low · 30–35 Critical · <30 RED-S'}
+            </span>
           </div>
         </div>
 
+        {/* ── RIGHT: Results ── */}
         <div>
           <div className="label" style={{ marginBottom: 8 }}>Results</div>
 
@@ -241,7 +371,7 @@ function EnergyAvailabilityCalc() {
               <ResultRow
                 label="Energy Availability"
                 value={result.ea}
-                unit="kcal/kg LBM"
+                unit="kcal/kg FFM"
                 highlight
                 variant={result.color}
               />
@@ -252,10 +382,14 @@ function EnergyAvailabilityCalc() {
                 variant={result.color}
               />
               <ResultRow
-                label="Net Energy"
-                value={Math.round(parseFloat(intake) - (parseFloat(exercise) || 0))}
+                label="Net Energy (after exercise)"
+                value={Math.round(parseFloat(intake) - totalEE)}
                 unit="kcal"
               />
+              {stepsKcal > 0 && (
+                <ResultRow label="Steps NEAT" value={stepsKcal} unit="kcal" />
+              )}
+              <ResultRow label="Total EE (exercise + NEAT)" value={Math.round(totalEE)} unit="kcal" />
             </div>
           ) : (
             <div className="empty-state" style={{ height: 120 }}>
@@ -263,15 +397,52 @@ function EnergyAvailabilityCalc() {
             </div>
           )}
 
-          {/* Thresholds reference */}
+          {/* Thresholds */}
           <div style={{ marginTop: 16 }}>
-            <div className="label" style={{ marginBottom: 8 }}>Thresholds</div>
+            <div className="label" style={{ marginBottom: 8 }}>
+              Thresholds — {gender === 'female' ? 'Female' : 'Male'}
+            </div>
             {thresholds.map(t => (
               <div key={t.desc} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid var(--border)' }}>
                 <span style={{ fontSize: 11, color: t.color, fontFamily: 'var(--font-display)', letterSpacing: 1 }}>{t.desc}</span>
                 <span style={{ fontSize: 11, color: 'var(--muted)' }}>{t.label}</span>
               </div>
             ))}
+          </div>
+
+          {/* RED-S explainer */}
+          <div style={{ marginTop: 16 }}>
+            <CollapsibleGuide open={redsOpen} onToggle={() => setRedsOpen(v => !v)} label="WHAT IS RED-S?">
+              <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{ fontSize: 12, color: 'var(--white)', lineHeight: 1.6 }}>
+                  <strong style={{ color: 'var(--danger)', fontFamily: 'var(--font-display)', letterSpacing: 1, fontSize: 13 }}>
+                    Relative Energy Deficiency in Sport
+                  </strong>
+                  <br />
+                  RED-S occurs when energy intake is chronically insufficient to cover both exercise expenditure and the body's essential physiological functions. The result is a cascade of hormonal, metabolic and health consequences driven by the body rationing energy away from non-survival systems.
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--sub)', lineHeight: 1.6 }}>
+                  <strong style={{ color: 'var(--warn)' }}>Important:</strong> RED-S is a lean-athlete problem. Individuals carrying significant body fat stores have a substantial reserve of available energy — the body can draw on adipose tissue to buffer any dietary deficit. RED-S risk is essentially zero in overweight or obese individuals because stored fat functionally prevents true energy deficiency at the cellular level. The condition is specific to athletes and physique competitors who are already lean and whose fat stores are insufficient to compensate for a large exercise-driven deficit.
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.6 }}>
+                  <strong>Consequences of chronic low EA include:</strong>
+                  <ul style={{ marginTop: 4, paddingLeft: 16 }}>
+                    <li>Menstrual dysfunction / amenorrhea (females)</li>
+                    <li>Suppressed testosterone &amp; libido (males)</li>
+                    <li>Reduced bone mineral density → stress fractures</li>
+                    <li>Impaired immunity, frequent illness</li>
+                    <li>Elevated cortisol, muscle catabolism</li>
+                    <li>Cardiovascular changes (low HR, low BP)</li>
+                    <li>Psychological effects: irritability, depression, disordered eating patterns</li>
+                  </ul>
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--muted)', fontStyle: 'italic' }}>
+                  Category 1 dieters (very lean athletes, &lt;18–20% BF females / &lt;10–12% BF males) are at highest risk.
+                  Male thresholds: ≥40 kcal/kg FFM = Performance, 20–39 = Subclinical EA, &lt;20 = Clinical RED-S.
+                  Female thresholds are stricter — hormonal disruption begins at higher EA levels than males.
+                </div>
+              </div>
+            </CollapsibleGuide>
           </div>
         </div>
       </div>
