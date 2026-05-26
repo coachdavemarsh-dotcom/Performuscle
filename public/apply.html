@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply — Performuscle | From Pain to Peak Performance</title>
+  <meta name="description" content="Elite 1-to-1 coaching for high-achieving humans who refuse to let their body limit their potential. Apply for your Performance Audit today." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       TOKENS
+    ============================================================ */
+    :root {
+      --ink:        #060608;
+      --s1:         #0d0d0f;
+      --s2:         #131316;
+      --s3:         #1a1a1e;
+      --s4:         #212126;
+      --accent:     #00C896;
+      --accent-hi:  #00FFB8;
+      --accent-dim: rgba(0,200,150,0.12);
+      --white:      #F5F6FA;
+      --muted:      #6b6b7e;
+      --border:     rgba(255,255,255,0.07);
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --radius:     6px;
+      --max:        1100px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ============================================================
+       UTILITIES
+    ============================================================ */
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: var(--ink);
+      font-family: var(--font-display); font-size: 18px; letter-spacing: 1px;
+      padding: 14px 36px; border-radius: var(--radius);
+      border: none; cursor: pointer; transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+    }
+    .btn-primary:hover { background: var(--accent-hi); transform: translateY(-1px); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--white);
+      font-family: var(--font-display); font-size: 18px; letter-spacing: 1px;
+      padding: 13px 36px; border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.3); cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .accent { color: var(--accent); }
+    .tag {
+      font-family: var(--font-display); font-size: 13px; letter-spacing: 3px;
+      color: var(--accent); text-transform: uppercase;
+    }
+
+    /* ============================================================
+       STICKY NAV
+    ============================================================ */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(6,6,8,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display); font-size: 22px; letter-spacing: 2px;
+      color: var(--white);
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-cta { font-size: 15px; padding: 10px 24px; }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      background: var(--ink);
+      padding: 80px 0 70px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,200,150,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-display); font-size: 13px; letter-spacing: 4px;
+      color: var(--accent); text-transform: uppercase; margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: var(--font-display); font-size: clamp(52px, 8vw, 96px);
+      line-height: 0.95; letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 em { color: var(--accent); font-style: normal; }
+    .hero-sub {
+      font-size: clamp(17px, 2.2vw, 20px); color: rgba(245,246,250,0.75);
+      max-width: 620px; margin: 0 auto 40px; line-height: 1.55;
+    }
+    .hero-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+
+    /* VSL */
+    .vsl-wrap {
+      max-width: 780px; margin: 0 auto;
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      background: var(--s2);
+      aspect-ratio: 16/9;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .vsl-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      color: var(--muted);
+    }
+    .vsl-placeholder svg { width: 56px; height: 56px; opacity: 0.4; }
+    .vsl-placeholder p { font-family: var(--font-display); letter-spacing: 2px; font-size: 14px; }
+    /* When you have a real video, replace .vsl-wrap content with an iframe */
+
+    /* Social proof strip */
+    .proof-strip {
+      display: flex; gap: 40px; justify-content: center; flex-wrap: wrap;
+      padding: 36px 24px 0;
+    }
+    .proof-item { text-align: center; }
+    .proof-item .num {
+      font-family: var(--font-display); font-size: 36px; color: var(--accent); letter-spacing: 1px;
+    }
+    .proof-item .label { font-size: 13px; color: var(--muted); letter-spacing: 1px; }
+
+    /* ============================================================
+       DIVIDER
+    ============================================================ */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); margin: 0; }
+
+    /* ============================================================
+       PROCESS — dark bg with person silhouette feel
+    ============================================================ */
+    .process {
+      background: var(--s1);
+      padding: 90px 0;
+      position: relative; overflow: hidden;
+    }
+    .process::after {
+      content: '';
+      position: absolute; right: -100px; top: 0; bottom: 0; width: 500px;
+      background: radial-gradient(ellipse at right center, rgba(0,200,150,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-header h2 {
+      font-family: var(--font-display); font-size: clamp(36px, 5vw, 60px);
+      letter-spacing: 2px; text-transform: uppercase; line-height: 1;
+    }
+    .section-header p { color: var(--muted); margin-top: 12px; font-size: 17px; }
+
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .step-card {
+      background: var(--s3);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 32px 28px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .step-card:hover { border-color: rgba(0,200,150,0.4); transform: translateY(-3px); }
+    .step-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: var(--accent-dim); display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .step-icon svg { width: 22px; height: 22px; color: var(--accent); }
+    .step-num {
+      font-family: var(--font-display); font-size: 11px; letter-spacing: 3px;
+      color: var(--accent); text-transform: uppercase; margin-bottom: 8px;
+    }
+    .step-card h3 {
+      font-family: var(--font-display); font-size: 26px; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 10px;
+    }
+    .step-card p { color: rgba(245,246,250,0.65); font-size: 15px; line-height: 1.6; }
+
+    /* ============================================================
+       FOUNDER
+    ============================================================ */
+    .founder {
+      background: var(--ink); padding: 90px 0;
+    }
+    .founder-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+    }
+    .founder-label {
+      font-family: var(--font-display); font-size: 12px; letter-spacing: 4px;
+      color: var(--accent); text-transform: uppercase; margin-bottom: 12px;
+    }
+    .founder h2 {
+      font-family: var(--font-display); font-size: clamp(36px, 4vw, 52px);
+      letter-spacing: 1px; text-transform: uppercase; line-height: 1.05;
+      margin-bottom: 16px;
+    }
+    .founder-bio {
+      color: rgba(245,246,250,0.7); font-size: 16px; line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .achievements { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+    .achievements li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 15px; color: rgba(245,246,250,0.85);
+    }
+    .achievements li::before {
+      content: '';
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--accent-dim); border: 1px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%2300C896' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: center;
+    }
+    .founder-img {
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--border);
+      aspect-ratio: 4/5; background: var(--s3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 14px; letter-spacing: 1px;
+    }
+    .founder-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ============================================================
+       FOR WHO — light section
+    ============================================================ */
+    .for-who {
+      background: #f5f6fa; color: var(--ink);
+      padding: 90px 0;
+    }
+    .for-who .section-header h2 { color: var(--ink); }
+    .for-who .section-header h2 strong { color: #1a3db5; }
+    .for-who .section-header p { color: #5e5e70; }
+
+    .benefits-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .benefit-item {
+      display: flex; align-items: center; gap: 12px;
+      background: white; border: 1px solid #e2e3ea;
+      border-radius: var(--radius); padding: 18px 20px;
+      font-size: 15px; font-weight: 500; color: #1a1a2e;
+      transition: border-color 0.2s;
+    }
+    .benefit-item:hover { border-color: #1a3db5; }
+    .benefit-check {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #1a3db5; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .benefit-check svg { width: 12px; height: 12px; color: white; }
+
+    /* ============================================================
+       RESULTS GRID
+    ============================================================ */
+    .results {
+      background: var(--ink); padding: 90px 0;
+    }
+    .results-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .result-card {
+      background: var(--s3); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      aspect-ratio: 4/3;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 13px; letter-spacing: 1px;
+      position: relative;
+    }
+    .result-card img { width: 100%; height: 100%; object-fit: cover; }
+    .result-card-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 13px; letter-spacing: 1px;
+    }
+    .result-card-placeholder svg { width: 28px; height: 28px; opacity: 0.3; }
+
+    /* ============================================================
+       TESTIMONIAL VIDEOS
+    ============================================================ */
+    .testimonials {
+      background: var(--s1); padding: 90px 0;
+    }
+    .testi-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .testi-card {
+      background: var(--ink); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      aspect-ratio: 16/9;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .testi-card:hover { border-color: rgba(0,200,150,0.4); }
+    .testi-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      color: var(--muted);
+    }
+    .testi-placeholder svg { width: 40px; height: 40px; opacity: 0.3; }
+    .testi-placeholder span { font-size: 12px; letter-spacing: 2px; font-family: var(--font-display); }
+    /* Replace .testi-card contents with iframe for real videos */
+
+    /* ============================================================
+       FAQ
+    ============================================================ */
+    .faq {
+      background: #f5f6fa; color: var(--ink);
+      padding: 90px 0;
+    }
+    .faq .tag { color: #1a3db5; }
+    .faq .section-header h2 { color: var(--ink); }
+    .faq .section-header p { color: #5e5e70; }
+    .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; }
+
+    .faq-item {
+      border-bottom: 1px solid #e2e3ea;
+    }
+    .faq-item:first-child { border-top: 1px solid #e2e3ea; }
+    .faq-btn {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 4px; text-align: left;
+      font-family: var(--font-body); font-size: 16px; font-weight: 500;
+      color: #1a1a2e; transition: color 0.2s;
+    }
+    .faq-btn:hover { color: #1a3db5; }
+    .faq-btn.open { color: #1a3db5; }
+    .faq-icon {
+      width: 24px; height: 24px; flex-shrink: 0;
+      border-radius: 50%; border: 1px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s;
+    }
+    .faq-btn.open .faq-icon { transform: rotate(45deg); }
+    .faq-body {
+      font-size: 15px; color: #5e5e70; line-height: 1.7;
+      max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s;
+      padding: 0 4px;
+    }
+    .faq-body.open { max-height: 400px; padding: 0 4px 20px; }
+
+    /* ============================================================
+       FINAL CTA
+    ============================================================ */
+    .cta-final {
+      background: var(--ink); padding: 100px 0;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-final::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,200,150,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-final h2 {
+      font-family: var(--font-display); font-size: clamp(40px, 6vw, 72px);
+      letter-spacing: 2px; text-transform: uppercase; line-height: 1;
+      margin-bottom: 20px;
+    }
+    .cta-final h2 em { color: var(--accent); font-style: normal; }
+    .cta-final p {
+      color: rgba(245,246,250,0.65); font-size: 18px;
+      max-width: 520px; margin: 0 auto 40px;
+    }
+    .cta-disclaimer {
+      margin-top: 20px; font-size: 13px; color: var(--muted);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--s1); border-top: 1px solid var(--border);
+      padding: 40px 0; text-align: center;
+    }
+    .footer-logo {
+      font-family: var(--font-display); font-size: 20px; letter-spacing: 3px;
+      margin-bottom: 12px; color: var(--white);
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-tagline { font-size: 13px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-top: 20px; }
+    .footer-links a { font-size: 13px; color: var(--muted); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 768px) {
+      .founder-grid { grid-template-columns: 1fr; gap: 40px; }
+      .founder-img { aspect-ratio: 3/2; }
+      .benefits-grid { grid-template-columns: 1fr 1fr; }
+      .results-grid { grid-template-columns: 1fr; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .hero-ctas { flex-direction: column; align-items: center; }
+    }
+    @media (max-width: 480px) {
+      .benefits-grid { grid-template-columns: 1fr; }
+      .proof-strip { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       STICKY NAV
+  ============================================================ -->
+  <nav>
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">Perfor<span>muscle</span></a>
+      <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="btn-primary nav-cta">Apply Now</a>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="hero">
+    <div class="container">
+      <p class="hero-eyebrow">Elite 1-to-1 Coaching</p>
+      <h1>From <em>Pain</em><br>To <em>Peak</em><br>Performance</h1>
+      <p class="hero-sub">
+        The coaching system for high-achieving humans and athletes who refuse to let their body limit their potential.
+      </p>
+      <div class="hero-ctas">
+        <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="btn-primary">Apply For Your Audit →</a>
+        <a href="#process" class="btn-ghost">See How It Works</a>
+      </div>
+
+      <!-- VSL VIDEO — replace contents with your embed -->
+      <div class="vsl-wrap">
+        <!-- PASTE YOUR VIDEO IFRAME HERE, e.g:
+        <iframe src="https://www.youtube.com/embed/YOUR_ID?autoplay=1&mute=1"
+          width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+        -->
+        <div class="vsl-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/>
+          </svg>
+          <p>Insert Your VSL Video Here</p>
+        </div>
+      </div>
+
+      <!-- Social proof -->
+      <div class="proof-strip">
+        <div class="proof-item">
+          <div class="num">100+</div>
+          <div class="label">Lives Transformed</div>
+        </div>
+        <div class="proof-item">
+          <div class="num">5★</div>
+          <div class="label">Client Results</div>
+        </div>
+        <div class="proof-item">
+          <div class="num">10+</div>
+          <div class="label">Years Coaching</div>
+        </div>
+        <div class="proof-item">
+          <div class="num">90</div>
+          <div class="label">Day Reset</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       3-STEP PROCESS
+  ============================================================ -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="section-header">
+        <h2>How We Get You To <span class="accent">Peak Performance</span></h2>
+        <p>A proven three-phase system that gets you from where you are to where you want to be</p>
+      </div>
+      <div class="steps-grid">
+
+        <div class="step-card">
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2m-3.22-6.78-1.42 1.42M6.64 17.36l-1.42 1.42m0-12.02 1.42 1.42m10.72 10.72 1.42 1.42"/>
+            </svg>
+          </div>
+          <div class="step-num">Step 01</div>
+          <h3>Performance Audit</h3>
+          <p>We assess your movement quality, body composition, nutrition, sleep and lifestyle to pinpoint exactly what's holding you back and build your baseline.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 0 2-2h2a2 2 0 0 0 2 2"/>
+            </svg>
+          </div>
+          <div class="step-num">Step 02</div>
+          <h3>Precision Programme</h3>
+          <p>You receive a fully customised training, nutrition and recovery plan built around your body, your schedule and your specific performance goals.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div class="step-num">Step 03</div>
+          <h3>Peak Coaching</h3>
+          <p>Weekly check-ins, form reviews and real-time programme adjustments keep you progressing. Direct access to your coach every step of the way.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ============================================================
+       MEET THE FOUNDER
+  ============================================================ -->
+  <section class="founder" id="about">
+    <div class="container">
+      <div class="founder-grid">
+        <div>
+          <div class="founder-label">Meet Your Coach</div>
+          <h2>Hey, I'm<br><span class="accent">Dave Marsh</span></h2>
+          <p class="founder-bio">
+            I'm an elite performance coach with over 10 years of experience working with athletes, executives and high-achievers. I built Performuscle because I know what it's like to be held back by a body that won't cooperate — and I know exactly how to fix it.
+          </p>
+          <p class="founder-bio">
+            My approach goes beyond training and nutrition. I look at the whole human — movement, health, function and performance — so you don't just look better, you perform at your absolute best in every area of life.
+          </p>
+          <ul class="achievements">
+            <li>Level 3 Personal Trainer &amp; S&amp;C Coach</li>
+            <li>Specialist in body recomposition &amp; athletic performance</li>
+            <li>Pain-to-performance methodology — from chronic pain to elite function</li>
+            <li>100+ clients transformed across 3 countries</li>
+            <li>Featured coach — Health | Function | Performance</li>
+          </ul>
+          <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="btn-primary">Book Your Free Audit →</a>
+        </div>
+        <div class="founder-img">
+          <!-- REPLACE WITH YOUR IMAGE:
+          <img src="/your-photo.jpg" alt="Coach Dave Marsh" />
+          -->
+          <span style="font-size:13px;letter-spacing:1px;color:var(--muted)">Add Your Photo Here</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOR WHO
+  ============================================================ -->
+  <section class="for-who">
+    <div class="container">
+      <div class="section-header">
+        <h2>For <strong>High-Achieving Humans</strong> That Need <strong>Peak Performance</strong></h2>
+        <p>This programme is built for people who demand more from themselves</p>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <span class="benefit-check">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          You're in pain and want to get back to full function
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-check">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          You want to build an elite body composition
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-check">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          You're an athlete who wants to perform at a higher level
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-check">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          You've tried other programmes and they haven't stuck
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-check">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          You're a high-achiever but your body isn't keeping up
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-check">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          You want a coach who treats you as an individual, not a template
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RESULTS
+  ============================================================ -->
+  <section class="results" id="results">
+    <div class="container">
+      <div class="section-header">
+        <p class="tag">Real Results</p>
+        <h2>Client <span class="accent">Transformations</span></h2>
+        <p>Before &amp; afters from real clients who committed to the process</p>
+      </div>
+      <div class="results-grid">
+        <!-- REPLACE THESE WITH YOUR BEFORE/AFTER PHOTOS -->
+        <div class="result-card">
+          <div class="result-card-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            <span>Client Transformation</span>
+          </div>
+        </div>
+        <div class="result-card">
+          <div class="result-card-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            <span>Client Transformation</span>
+          </div>
+        </div>
+        <div class="result-card">
+          <div class="result-card-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            <span>Client Transformation</span>
+          </div>
+        </div>
+        <div class="result-card">
+          <div class="result-card-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            <span>Client Transformation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       VIDEO TESTIMONIALS
+  ============================================================ -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <p class="tag">Hear It From Them</p>
+        <h2>Client <span class="accent">Stories</span></h2>
+        <p>Real people, real results — in their own words</p>
+      </div>
+      <div class="testi-grid">
+        <!-- REPLACE THESE WITH YOUR VIDEO TESTIMONIALS:
+        <div class="testi-card">
+          <iframe src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen width="100%" height="100%"></iframe>
+        </div>
+        -->
+        <div class="testi-card">
+          <div class="testi-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.894L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg>
+            <span>Video Testimonial</span>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.894L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg>
+            <span>Video Testimonial</span>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.894L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg>
+            <span>Video Testimonial</span>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 10l4.553-2.069A1 1 0 0 1 21 8.82v6.36a1 1 0 0 1-1.447.894L15 14M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/></svg>
+            <span>Video Testimonial</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FAQ
+  ============================================================ -->
+  <section class="faq">
+    <div class="container">
+      <div class="section-header">
+        <p class="tag" style="color:#1a3db5">Still Not Sure?</p>
+        <h2>Frequently Asked Questions</h2>
+        <p>Here's what we usually get asked</p>
+      </div>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            How does the coaching actually work?
+            <span class="faq-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1v8M1 5h8"/></svg>
+            </span>
+          </button>
+          <div class="faq-body">
+            We start with a full Performance Audit — assessing your movement, body composition, nutrition and lifestyle. From there I build you a fully customised programme and we meet weekly to review progress, adjust the plan and keep you accountable. You get direct access to me throughout.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            How quickly will I see results?
+            <span class="faq-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1v8M1 5h8"/></svg>
+            </span>
+          </button>
+          <div class="faq-body">
+            Most clients notice improvements in energy, movement quality and performance within the first 2–3 weeks. Visible body composition changes typically show within 6–8 weeks when you follow the programme consistently. The 90-day mark is where the real transformation happens.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            I've tried coaches before — why is this different?
+            <span class="faq-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1v8M1 5h8"/></svg>
+            </span>
+          </button>
+          <div class="faq-body">
+            Most programmes give you a template and leave you to it. I treat every client as an individual. We start by finding out exactly what's holding you back — whether that's poor movement, nutrition gaps, sleep issues or past injuries — and address the root cause. This isn't a cookie-cutter plan.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            Do I need to be an athlete or already fit?
+            <span class="faq-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1v8M1 5h8"/></svg>
+            </span>
+          </button>
+          <div class="faq-body">
+            Not at all. I work with athletes, executives and everyday high-achievers at all levels. Whether you're coming back from injury, starting from scratch or looking to take your performance to the next level — the system is built to meet you where you are.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            What if I have chronic pain or old injuries?
+            <span class="faq-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1v8M1 5h8"/></svg>
+            </span>
+          </button>
+          <div class="faq-body">
+            This is where I specialise. The Pain to Performance methodology was built specifically for people held back by injury and dysfunction. We restore movement quality first, then build performance on top of a solid foundation.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-btn" onclick="toggleFaq(this)">
+            How do I get started?
+            <span class="faq-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M5 1v8M1 5h8"/></svg>
+            </span>
+          </button>
+          <div class="faq-body">
+            Click the Apply button and book your free Performance Audit call. We'll spend 30 minutes understanding where you are, where you want to be, and whether we're the right fit. No pressure, no hard sell — just an honest conversation.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FINAL CTA
+  ============================================================ -->
+  <section class="cta-final">
+    <div class="container">
+      <p class="tag" style="margin-bottom:16px">Ready To Start?</p>
+      <h2>Stop Living In <em>Pain.</em><br>Start Performing At Your <em>Peak.</em></h2>
+      <p>Book your free Performance Audit call. Limited spots available each month.</p>
+      <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="btn-primary" style="font-size:20px;padding:18px 48px;">
+        Apply For Your Free Audit →
+      </a>
+      <p class="cta-disclaimer">Free 30-minute call · No obligation · Limited spots</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <div class="container">
+      <div class="footer-logo">Perfor<span>muscle</span></div>
+      <div class="footer-tagline">Health &nbsp;|&nbsp; Function &nbsp;|&nbsp; Performance</div>
+      <div class="footer-links">
+        <a href="https://coachdavemarsh.net">Main Site</a>
+        <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener">Book a Call</a>
+        <a href="mailto:coachdavemarsh@gmail.com">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       FAQ ACCORDION JS
+  ============================================================ -->
+  <script>
+    function toggleFaq(btn) {
+      const body = btn.nextElementSibling
+      const isOpen = btn.classList.contains('open')
+      // Close all
+      document.querySelectorAll('.faq-btn').forEach(b => {
+        b.classList.remove('open')
+        b.nextElementSibling.classList.remove('open')
+      })
+      // Open clicked if it was closed
+      if (!isOpen) {
+        btn.classList.add('open')
+        body.classList.add('open')
+      }
+    }
+  </script>
+
+</body>
+</html>
