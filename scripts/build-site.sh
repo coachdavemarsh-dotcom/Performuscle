@@ -43,6 +43,7 @@ echo "  → Copying tool pages..."
 [ -f "public/article-womens-health.html" ]    && cp public/article-womens-health.html    dist/article-womens-health.html
 [ -f "public/energy-availability.html" ]     && cp public/energy-availability.html     dist/energy-availability.html
 [ -f "public/ea-calculator.html" ]          && cp public/ea-calculator.html          dist/ea-calculator.html
+[ -f "public/endurance-calculator.html" ]   && cp public/endurance-calculator.html   dist/endurance-calculator.html
 
 # ── Meal planner ──────────────────────────────────────────────────────────────
 echo "  → Building meal planner..."
@@ -66,4 +67,5 @@ echo "    Article: Hormones    →  dist/article-male-hormones.html"
 echo "    Article: BC & Perf   →  dist/article-birth-control.html"
 echo "    Article: Women's H.  →  dist/article-womens-health.html"
 echo "    Energy Availability  →  dist/energy-availability.html
-    EA Calculator (public) →  dist/ea-calculator.html"
+    EA Calculator (public) →  dist/ea-calculator.html
+    Endurance Calculator →  dist/endurance-calculator.html"
