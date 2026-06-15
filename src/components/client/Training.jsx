@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { useClient } from '../../hooks/useClient.js'
 import { supabase, insertNotification } from '../../lib/supabase.js'
-import { getWeekSessions, upsertSetLog, completeSession, upsertConditioningLog, getConditioningLog } from '../../lib/supabase.js'
-import { epley } from '../../lib/calculators.js'
+import { getWeekSessions, upsertSetLog, completeSession, upsertConditioningLog, getConditioningLog, getLatestTestResult } from '../../lib/supabase.js'
+import { epley, resolveEnduranceTarget } from '../../lib/calculators.js'
 import { EXERCISE_BY_NAME } from '../../data/exerciseLibrary.js'
 import MovementPrep from '../shared/MovementPrep.jsx'
 import ProgressionCard from '../shared/ProgressionCard.jsx'
@@ -982,6 +982,12 @@ function SessionComplete({ session, totalSets, condResult }) {
         return [
           { label: 'Total Time', value: condResult.total_time, wide: true },
         ]
+      case 'endurance':
+        return [
+          { label: 'Duration', value: condResult.total_time, wide: true },
+          ...(condResult.distance_km ? [{ label: 'Distance', value: `${condResult.distance_km} km` }] : []),
+          ...(condResult.avg_hr ? [{ label: 'Avg HR', value: `${condResult.avg_hr} bpm` }] : []),
+        ]
       default:
         return [
           { label: 'Sets Done', value: totalSets },
@@ -996,6 +1002,7 @@ function SessionComplete({ session, totalSets, condResult }) {
     for_time: 'var(--warn)',
     hyrox: '#f472b6',
     mixed: 'var(--danger)',
+    endurance: '#60a5fa',
   }[condResult?.type] || 'var(--accent)'
 
   return (
@@ -1111,6 +1118,7 @@ const SESSION_TYPE_META = {
   for_time:  { label: 'For Time',     icon: '⏩', color: 'var(--warn)' },
   hyrox:     { label: 'HYROX',        icon: '🏃', color: '#f472b6' },
   mixed:     { label: 'Mixed Modal',  icon: '🔀', color: 'var(--danger)' },
+  endurance: { label: 'Endurance',    icon: '🏃', color: '#60a5fa' },
 }
 
 // ─── conditioning timer ───────────────────────────────────────────────────────
@@ -1939,6 +1947,150 @@ function MixedModalView({ session, clientId, onFinish }) {
   )
 }
 
+// ─── endurance session ────────────────────────────────────────────────────────
+
+const ENDURANCE_MODALITY_ICON = { run: '🏃', bike: '🚴', swim: '🏊' }
+
+function EnduranceSegmentRow({ seg, latestResults }) {
+  const color = '#60a5fa'
+
+  if (seg.repeat) {
+    const work = resolveEnduranceTarget(seg.work?.target, latestResults)
+    const recovery = resolveEnduranceTarget(seg.recovery?.target, latestResults)
+    return (
+      <div className="card" style={{ padding: '12px 16px', marginBottom: 10, borderLeft: `3px solid ${color}99` }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--white)', marginBottom: 6 }}>
+          {seg.repeat}× {seg.label}
+        </div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 12 }}>
+          <div>
+            <span style={{ color: 'var(--muted)' }}>Work: {seg.work?.duration_min} min @ </span>
+            <span style={{ color: work?.available ? color : 'var(--warn)' }}>
+              {work?.available ? `${work.label} (${work.display})` : work?.message}
+            </span>
+          </div>
+          <div>
+            <span style={{ color: 'var(--muted)' }}>Recovery: {seg.recovery?.duration_min} min @ </span>
+            <span style={{ color: recovery?.available ? color : 'var(--warn)' }}>
+              {recovery?.available ? `${recovery.label} (${recovery.display})` : recovery?.message}
+            </span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const target = resolveEnduranceTarget(seg.target, latestResults)
+  return (
+    <div className="card" style={{ padding: '12px 16px', marginBottom: 10, borderLeft: `3px solid ${color}99` }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--white)' }}>{seg.label}</div>
+        <div style={{ fontSize: 12, color: 'var(--muted)' }}>{seg.duration_min} min</div>
+      </div>
+      {target && (
+        <div style={{ fontSize: 12, marginTop: 4, color: target.available ? color : 'var(--warn)' }}>
+          {target.available ? `${target.label} · ${target.display}` : target.message}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function EnduranceView({ session, clientId, onFinish }) {
+  const cfg = session.conditioning_config || {}
+  const segments = cfg.segments || []
+  const [notes, setNotes] = useState('')
+  const [distanceKm, setDistanceKm] = useState('')
+  const [avgHr, setAvgHr] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [latestResults, setLatestResults] = useState(null)
+  const timer = useTimer('stopwatch')
+  const color = '#60a5fa'
+
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      const types = ['tt_5km', 'vo2_rhr', 'lactate_threshold', 'ftp_cycling', 'css_swim']
+      const rows = await Promise.all(types.map(t => getLatestTestResult(clientId, t)))
+      if (cancelled) return
+      const map = {}
+      types.forEach((t, i) => { map[t] = rows[i].data })
+      setLatestResults(map)
+    }
+    load()
+    return () => { cancelled = true }
+  }, [clientId])
+
+  async function handleFinish() {
+    setSaving(true)
+    const distance_km = distanceKm ? Number(distanceKm) : null
+    const avg_hr = avgHr ? Number(avgHr) : null
+    await upsertConditioningLog({
+      session_id: session.id,
+      client_id: clientId,
+      result: { type: 'endurance', total_time: timer.formatted, distance_km, avg_hr, modality: cfg.modality },
+      notes,
+    })
+    await completeSession(session.id)
+    setSaving(false)
+    onFinish({ type: 'endurance', total_time: timer.formatted, distance_km, avg_hr, modality: cfg.modality })
+  }
+
+  return (
+    <div>
+      <div className="card" style={{ padding: '14px 18px', marginBottom: 20, borderLeft: `3px solid ${color}` }}>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div>
+            <div className="label" style={{ color }}>ENDURANCE</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 15, color: 'var(--white)', letterSpacing: 1 }}>
+              {ENDURANCE_MODALITY_ICON[cfg.modality] || '🏃'} {cfg.title || 'Endurance Session'}
+            </div>
+          </div>
+          <div style={{ flex: 1 }} />
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: timer.running ? color : 'var(--muted)' }}>{timer.formatted}</div>
+            {!timer.running ? (
+              <button className="btn btn-ghost btn-sm" style={{ borderColor: color, color }} onClick={() => timer.start()}>START</button>
+            ) : (
+              <button className="btn btn-ghost btn-sm" onClick={timer.pause}>PAUSE</button>
+            )}
+            <button className="btn btn-ghost btn-sm" onClick={handleFinish} disabled={saving} style={{ borderColor: color, color }}>
+              {saving ? '…' : 'Finish'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {cfg.coach_note && <div className="coach-note" style={{ marginBottom: 16 }}>{cfg.coach_note}</div>}
+
+      {segments.map((seg, idx) => (
+        <EnduranceSegmentRow key={idx} seg={seg} latestResults={latestResults} />
+      ))}
+
+      <div className="card" style={{ padding: '14px 16px', marginTop: 8, marginBottom: 8 }}>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          <div>
+            <div className="label" style={{ marginBottom: 6 }}>Distance (km)</div>
+            <input className="input input-sm" type="number" step="0.1" style={{ width: 120 }}
+              value={distanceKm} onChange={e => setDistanceKm(e.target.value)} />
+          </div>
+          <div>
+            <div className="label" style={{ marginBottom: 6 }}>Avg HR (bpm)</div>
+            <input className="input input-sm" type="number" style={{ width: 120 }}
+              value={avgHr} onChange={e => setAvgHr(e.target.value)} />
+          </div>
+        </div>
+      </div>
+
+      <div className="card" style={{ padding: '14px 16px' }}>
+        <div className="label" style={{ marginBottom: 8 }}>Session Notes</div>
+        <textarea className="input" rows={2} placeholder="How did it feel?…" style={{ resize: 'vertical' }}
+          value={notes} onChange={e => setNotes(e.target.value)} />
+      </div>
+    </div>
+  )
+}
+
 // ─── week session picker ──────────────────────────────────────────────────────
 
 function WeekSessionPicker({ sessions, selectedId, onSelect }) {
@@ -2274,6 +2426,7 @@ export default function Training() {
       {session && sessionType === 'for_time' && <ForTimeView  session={session} clientId={user.id} onFinish={handleCondFinish} />}
       {session && sessionType === 'hyrox'    && <HYROXView    session={session} clientId={user.id} onFinish={handleCondFinish} />}
       {session && sessionType === 'mixed'    && <MixedModalView session={session} clientId={user.id} onFinish={handleCondFinish} />}
+      {session && sessionType === 'endurance' && <EnduranceView session={session} clientId={user.id} onFinish={handleCondFinish} />}
 
       {/* ─── Video modal ────────────────────────────────────────────────────── */}
       {videoExercise && (

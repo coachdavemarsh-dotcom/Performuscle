@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { useCoach } from '../../hooks/useCoach.js'
-import { STRENGTH_STANDARDS, STRENGTH_LEVELS, relativeStrengthLevel } from '../../lib/calculators.js'
+import { STRENGTH_STANDARDS, STRENGTH_LEVELS, relativeStrengthLevel,
+  deriveHRZones, deriveLTHRZones, calcVDOT, derivePaceZones, predictRaceTimes,
+  calcFTP, deriveFTPZones, calcCSS, deriveSwimZones, formatTime,
+} from '../../lib/calculators.js'
 
 // ============================================================
 // SHARED UI
@@ -652,9 +655,11 @@ function GripStrengthTest({ saveProps = {} }) {
 function HRFitness({ saveProps = {} }) {
   const [age, setAge] = useState('')
   const [restingHr, setRestingHr] = useState('')
+  const [hrv, setHrv] = useState('')
 
   const maxHr = age ? 220 - parseInt(age) : null
   const hrr = maxHr && restingHr ? maxHr - parseInt(restingHr) : null
+  const hrZones = restingHr && maxHr ? deriveHRZones(parseInt(restingHr), maxHr) : null
 
   // Uth–Sørensen–Overgaard–Pedersen formula
   const vo2 = restingHr && maxHr
@@ -680,6 +685,8 @@ function HRFitness({ saveProps = {} }) {
           <Field label="Age" value={age} onChange={setAge} step={1} placeholder="30" />
           <Field label="Resting Heart Rate (bpm)" value={restingHr} onChange={setRestingHr} step={1} placeholder="58"
             note="Measured on waking, before getting out of bed ideally" />
+          <Field label="HRV (optional, ms)" value={hrv} onChange={setHrv} step={1} placeholder="65"
+            note="Morning heart rate variability reading, if available" />
         </div>
 
         <div>
@@ -691,24 +698,19 @@ function HRFitness({ saveProps = {} }) {
               {maxHr && <ResultRow label="Age-Predicted Max HR (220−age)" value={maxHr} unit="bpm" />}
               {hrr && <ResultRow label="HR Reserve (HRR)" value={hrr} unit="bpm" />}
               {vo2 && <ResultRow label="Estimated VO₂ Max" value={vo2} unit="mL/kg/min" highlight note="Uth–Sørensen formula" />}
+              {hrv && <ResultRow label="HRV" value={hrv} unit="ms" />}
               {vo2 && <SaveResultButton {...saveProps} testType="vo2_rhr"
-                results={{ vo2, restingHr: parseInt(restingHr), maxHr, hrr, category: hrCategory?.label, age }}
+                results={{ vo2, restingHr: parseInt(restingHr), maxHr, hrr, category: hrCategory?.label, age, hrv: hrv ? parseInt(hrv) : null }}
                 disabled={!vo2} />}
 
-              {maxHr && hrr && (
+              {hrZones && (
                 <div style={{ marginTop: 12 }}>
                   <div className="label" style={{ marginBottom: 8 }}>Karvonen Training Zones</div>
-                  {[
-                    { label: 'Zone 1 — Recovery', pct: '50–60%', lo: 0.5, hi: 0.6, color: 'var(--muted)' },
-                    { label: 'Zone 2 — Aerobic Base', pct: '60–70%', lo: 0.6, hi: 0.7, color: 'var(--accent)' },
-                    { label: 'Zone 3 — Aerobic Dev.', pct: '70–80%', lo: 0.7, hi: 0.8, color: 'var(--accent)' },
-                    { label: 'Zone 4 — Threshold', pct: '80–90%', lo: 0.8, hi: 0.9, color: 'var(--warn)' },
-                    { label: 'Zone 5 — Max / VO₂ Max', pct: '90–100%', lo: 0.9, hi: 1.0, color: 'var(--danger)' },
-                  ].map(z => (
+                  {hrZones.map(z => (
                     <div key={z.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 10px', borderBottom: '1px solid var(--border)' }}>
                       <span style={{ fontSize: 11, color: z.color, fontFamily: 'var(--font-display)', letterSpacing: 1 }}>{z.label}</span>
                       <span style={{ fontSize: 11, color: 'var(--white)', fontFamily: 'var(--font-display)' }}>
-                        {Math.round(parseInt(restingHr) + z.lo * hrr)}–{Math.round(parseInt(restingHr) + z.hi * hrr)} bpm
+                        {z.loBpm}–{z.hiBpm} bpm
                       </span>
                     </div>
                   ))}
@@ -718,6 +720,254 @@ function HRFitness({ saveProps = {} }) {
           ) : (
             <div className="empty-state" style={{ height: 80 }}>
               <div className="empty-state-text">Enter resting HR to calculate</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </TestSection>
+  )
+}
+
+// ============================================================
+// ENDURANCE TESTING
+// ============================================================
+
+// ─── Lactate Threshold (30-Min Time Trial) ────────────────────────────────────
+
+function LactateThresholdTest({ saveProps = {} }) {
+  const [sport, setSport] = useState('run')
+  const [lthr, setLthr] = useState('')
+
+  const lthrVal = lthr ? parseInt(lthr) : null
+  const zones = lthrVal ? deriveLTHRZones(lthrVal) : null
+
+  return (
+    <TestSection title="Lactate Threshold (30-Min Time Trial)"
+      subtitle="Client performs a 10min warm-up, then 30 minutes at the hardest sustainable pace. LTHR = average HR for the final 20 minutes.">
+      <div className="grid-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="input-group">
+            <label className="form-label">Sport</label>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {['run', 'bike'].map(s => (
+                <button key={s} className={`btn btn-sm ${sport === s ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setSport(s)}>
+                  {s.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+          <Field label="Average HR — Final 20 Minutes (bpm)" value={lthr} onChange={setLthr} step={1} placeholder="165"
+            note="This becomes the client's Lactate Threshold Heart Rate (LTHR)" />
+
+          <div style={{ padding: '10px 12px', background: 'var(--s4)', borderRadius: 6, border: '1px solid var(--border)', fontSize: 11, color: 'var(--muted)', lineHeight: 1.6 }}>
+            <strong style={{ color: 'var(--sub)' }}>Zones:</strong><br />
+            Friel 7-zone model, calculated as % of LTHR.
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="label" style={{ marginBottom: 4 }}>Training Zones</div>
+          {lthrVal ? (
+            <>
+              <ResultRow label="LTHR" value={lthrVal} unit="bpm" highlight variant="warn" />
+              <SaveResultButton {...saveProps} testType="lactate_threshold"
+                results={{ sport, lthr: lthrVal }}
+                disabled={!lthrVal} />
+              <div style={{ marginTop: 8 }}>
+                {zones.map(z => (
+                  <div key={z.zone} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 10px', borderBottom: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: 11, color: z.color, fontFamily: 'var(--font-display)', letterSpacing: 1 }}>Z{z.zone} — {z.label}</span>
+                    <span style={{ fontSize: 11, color: 'var(--white)', fontFamily: 'var(--font-display)' }}>{z.loBpm}–{z.hiBpm} bpm</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="empty-state" style={{ height: 80 }}>
+              <div className="empty-state-text">Enter average HR to calculate zones</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </TestSection>
+  )
+}
+
+// ─── 5K Time Trial ─────────────────────────────────────────────────────────────
+
+function FiveKTimeTrialTest({ saveProps = {} }) {
+  const [minutes, setMinutes] = useState('')
+  const [seconds, setSeconds] = useState('')
+  const [avgHr, setAvgHr] = useState('')
+
+  const timeSec = (minutes || seconds) ? (parseInt(minutes || 0) * 60 + parseInt(seconds || 0)) : null
+  const vdot = timeSec ? calcVDOT(5000, timeSec) : null
+  const paceZones = vdot ? derivePaceZones(vdot) : null
+  const predictions = timeSec ? predictRaceTimes(timeSec) : null
+
+  return (
+    <TestSection title="5K Time Trial"
+      subtitle="Client runs 5km as fast as possible on a flat, accurately measured course or track.">
+      <div className="grid-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="grid-2">
+            <Field label="Minutes" value={minutes} onChange={setMinutes} step={1} placeholder="22" />
+            <Field label="Seconds" value={seconds} onChange={setSeconds} step={1} placeholder="0" />
+          </div>
+          <Field label="Average HR (optional, bpm)" value={avgHr} onChange={setAvgHr} step={1} placeholder="172" />
+
+          <div style={{ padding: '10px 12px', background: 'var(--s4)', borderRadius: 6, border: '1px solid var(--border)', fontSize: 11, color: 'var(--muted)', lineHeight: 1.6 }}>
+            <strong style={{ color: 'var(--sub)' }}>Formula:</strong><br />
+            VDOT derived from Daniels' Running Formula.<br />
+            Race predictions use Riegel's formula.
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="label" style={{ marginBottom: 4 }}>Results</div>
+          {timeSec ? (
+            <>
+              <ResultRow label="5K Pace" value={formatTime(timeSec / 5)} unit="/km" highlight variant="accent" />
+              <ResultRow label="VDOT" value={vdot} highlight variant="accent" note="Estimated aerobic fitness score" />
+              {avgHr && <ResultRow label="Average HR" value={avgHr} unit="bpm" />}
+
+              <SaveResultButton {...saveProps} testType="tt_5km"
+                results={{
+                  timeSec,
+                  pacePerKm: formatTime(timeSec / 5),
+                  vdot,
+                  predictions,
+                  avgHr: avgHr ? parseInt(avgHr) : null,
+                }}
+                disabled={!timeSec} />
+
+              <div className="label" style={{ marginTop: 12, marginBottom: 4 }}>Predicted Race Times</div>
+              <ResultRow label="10K" value={formatTime(predictions['10km'])} />
+              <ResultRow label="Half Marathon" value={formatTime(predictions.half_marathon)} />
+              <ResultRow label="Marathon" value={formatTime(predictions.marathon)} />
+
+              <div className="label" style={{ marginTop: 12, marginBottom: 4 }}>Training Pace Zones</div>
+              {paceZones.map(z => (
+                <ResultRow key={z.zone} label={`${z.zone} — ${z.label}`} value={z.pacePerKm} unit="/km" note={z.desc} />
+              ))}
+            </>
+          ) : (
+            <div className="empty-state" style={{ height: 80 }}>
+              <div className="empty-state-text">Enter 5K time to calculate VDOT and pace zones</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </TestSection>
+  )
+}
+
+// ─── FTP Test (20-Minute) ───────────────────────────────────────────────────────
+
+function FTPTest({ saveProps = {} }) {
+  const [avgPower, setAvgPower] = useState('')
+  const [bodyMass, setBodyMass] = useState('')
+
+  const avgPowerVal = avgPower ? parseFloat(avgPower) : null
+  const ftp = avgPowerVal ? calcFTP(avgPowerVal) : null
+  const ftpPerKg = ftp && bodyMass ? Math.round((ftp / parseFloat(bodyMass)) * 100) / 100 : null
+  const zones = ftp ? deriveFTPZones(ftp) : null
+
+  return (
+    <TestSection title="FTP Test (20-Minute)"
+      subtitle="Client rides 20 minutes at maximum sustainable power after a thorough warm-up.">
+      <div className="grid-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <Field label="Average Power — 20 Minutes (W)" value={avgPower} onChange={setAvgPower} step={1} placeholder="250" />
+          <Field label="Body Mass (kg)" value={bodyMass} onChange={setBodyMass} step={0.5} placeholder="75" />
+
+          <div style={{ padding: '10px 12px', background: 'var(--s4)', borderRadius: 6, border: '1px solid var(--border)', fontSize: 11, color: 'var(--muted)', lineHeight: 1.6 }}>
+            <strong style={{ color: 'var(--sub)' }}>Formula:</strong><br />
+            FTP = 20-minute average power × 0.95
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="label" style={{ marginBottom: 4 }}>Results</div>
+          {ftp ? (
+            <>
+              <ResultRow label="FTP" value={ftp} unit="W" highlight variant="accent" />
+              {ftpPerKg && <ResultRow label="FTP / kg" value={ftpPerKg} unit="W/kg" highlight />}
+              <SaveResultButton {...saveProps} testType="ftp_cycling"
+                results={{ avgPower20: avgPowerVal, ftp, ftpPerKg, bodyMass: bodyMass ? parseFloat(bodyMass) : null }}
+                disabled={!ftp} />
+
+              <div className="label" style={{ marginTop: 12, marginBottom: 4 }}>Power Training Zones</div>
+              {zones.map(z => (
+                <div key={z.zone} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 10px', borderBottom: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: 11, color: z.color, fontFamily: 'var(--font-display)', letterSpacing: 1 }}>Z{z.zone} — {z.label}</span>
+                  <span style={{ fontSize: 11, color: 'var(--white)', fontFamily: 'var(--font-display)' }}>{z.loW}–{z.hiW} W</span>
+                </div>
+              ))}
+            </>
+          ) : (
+            <div className="empty-state" style={{ height: 80 }}>
+              <div className="empty-state-text">Enter average power to calculate FTP and zones</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </TestSection>
+  )
+}
+
+// ─── CSS Swim Test (200m / 400m) ────────────────────────────────────────────────
+
+function CSSSwimTest({ saveProps = {} }) {
+  const [min200, setMin200] = useState('')
+  const [sec200, setSec200] = useState('')
+  const [min400, setMin400] = useState('')
+  const [sec400, setSec400] = useState('')
+
+  const time200 = (min200 || sec200) ? parseInt(min200 || 0) * 60 + parseInt(sec200 || 0) : null
+  const time400 = (min400 || sec400) ? parseInt(min400 || 0) * 60 + parseInt(sec400 || 0) : null
+  const css = time200 && time400 ? calcCSS(time200, time400) : null
+  const zones = css ? deriveSwimZones(css) : null
+
+  return (
+    <TestSection title="Critical Swim Speed (CSS) Test"
+      subtitle="Client swims a 400m time trial and (after recovery) a 200m time trial.">
+      <div className="grid-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="label" style={{ marginBottom: -4 }}>200m Time Trial</div>
+          <div className="grid-2">
+            <Field label="Minutes" value={min200} onChange={setMin200} step={1} placeholder="3" />
+            <Field label="Seconds" value={sec200} onChange={setSec200} step={1} placeholder="0" />
+          </div>
+          <div className="label" style={{ marginBottom: -4 }}>400m Time Trial</div>
+          <div className="grid-2">
+            <Field label="Minutes" value={min400} onChange={setMin400} step={1} placeholder="6" />
+            <Field label="Seconds" value={sec400} onChange={setSec400} step={1} placeholder="15" />
+          </div>
+
+          <div style={{ padding: '10px 12px', background: 'var(--s4)', borderRadius: 6, border: '1px solid var(--border)', fontSize: 11, color: 'var(--muted)', lineHeight: 1.6 }}>
+            <strong style={{ color: 'var(--sub)' }}>Formula:</strong><br />
+            CSS pace (per 100m) = (400m time − 200m time) ÷ 2
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="label" style={{ marginBottom: 4 }}>Results</div>
+          {css ? (
+            <>
+              <ResultRow label="CSS Pace" value={formatTime(css)} unit="/100m" highlight variant="accent" />
+              <SaveResultButton {...saveProps} testType="css_swim"
+                results={{ time200, time400, cssPer100: css }}
+                disabled={!css} />
+
+              <div className="label" style={{ marginTop: 12, marginBottom: 4 }}>Swim Training Zones</div>
+              {zones.map(z => (
+                <ResultRow key={z.zone} label={z.label} value={`${formatTime(z.loPer100)}–${formatTime(z.hiPer100)}`} unit="/100m" note={z.desc} />
+              ))}
+            </>
+          ) : (
+            <div className="empty-state" style={{ height: 80 }}>
+              <div className="empty-state-text">Enter both time trials to calculate CSS and zones</div>
             </div>
           )}
         </div>
@@ -1346,6 +1596,10 @@ const TABS = [
   { id: 'relative', label: 'Relative Strength', group: 'Strength' },
   { id: 'balance', label: 'Structural Balance', group: 'Strength' },
   { id: 'rhr', label: 'Resting HR', group: 'Cardiovascular' },
+  { id: 'lthr', label: 'Lactate Threshold', group: 'Endurance' },
+  { id: 'tt5k', label: '5K Time Trial', group: 'Endurance' },
+  { id: 'ftp', label: 'FTP Test', group: 'Endurance' },
+  { id: 'css', label: 'CSS Swim Test', group: 'Endurance' },
 ]
 
 export default function Testing() {
@@ -1429,6 +1683,10 @@ export default function Testing() {
       {activeTab === 'relative' && <RelativeStrengthTest saveProps={saveProps} clients={clients} selectedClient={selectedClient} />}
       {activeTab === 'balance'  && <StructuralBalanceTest saveProps={saveProps} clients={clients} selectedClient={selectedClient} />}
       {activeTab === 'rhr'      && <HRFitness    saveProps={saveProps} />}
+      {activeTab === 'lthr'     && <LactateThresholdTest saveProps={saveProps} />}
+      {activeTab === 'tt5k'     && <FiveKTimeTrialTest saveProps={saveProps} />}
+      {activeTab === 'ftp'      && <FTPTest      saveProps={saveProps} />}
+      {activeTab === 'css'      && <CSSSwimTest  saveProps={saveProps} />}
     </div>
   )
 }

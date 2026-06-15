@@ -24,6 +24,8 @@ const GOAL_COLORS = {
   Hypertrophy: { bg: 'rgba(140,60,220,0.15)', text: '#c084fc' },
   Strength: { bg: 'rgba(50,100,220,0.15)', text: '#93c5fd' },
   'Fat Loss': { bg: 'rgba(245,120,0,0.18)', text: '#fb923c' },
+  Endurance: { bg: 'rgba(96,165,250,0.15)', text: '#60a5fa' },
+  HYROX: { bg: 'rgba(244,114,182,0.15)', text: '#f472b6' },
 };
 
 const DIFFICULTY_COLORS = {

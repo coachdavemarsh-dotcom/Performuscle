@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { supabase } from '../../lib/supabase.js'
+import {
+  deriveHRZones, deriveLTHRZones, derivePaceZones, predictRaceTimes,
+  deriveFTPZones, deriveSwimZones, formatTime, rollingAverage,
+} from '../../lib/calculators.js'
 
 // ─── test type config ─────────────────────────────────────────────────────────
 
@@ -15,9 +19,13 @@ const TEST_CONFIG = {
   body_comp:          { label: 'Body Composition',     group: 'Body Comp', unit: '%',          key: 'body_fat_pct',    color: '#f472b6' },
   structural_balance: { label: 'Structural Balance',   group: 'Strength',  unit: 'deficits',   key: 'deficits_count',  color: 'var(--warn)' },
   relative_strength:  { label: 'Relative Strength',    group: 'Strength',  unit: 'kg/BW',      key: 'bench_ratio',     color: 'var(--info)' },
+  lactate_threshold:  { label: 'Lactate Threshold',    group: 'Endurance', unit: 'bpm',        key: 'lthr',            color: 'var(--warn)' },
+  tt_5km:             { label: '5K Time Trial',        group: 'Endurance', unit: 'min/km',     key: 'pacePerKm',       color: 'var(--accent)' },
+  ftp_cycling:        { label: 'FTP Test',             group: 'Endurance', unit: 'W',          key: 'ftp',             color: 'var(--info)' },
+  css_swim:           { label: 'CSS Swim Test',        group: 'Endurance', unit: 'sec/100m',   key: 'cssPer100',       color: 'var(--info)' },
 }
 
-const GROUPS = ['VO₂ Max', 'Anaerobic', 'Strength', 'Body Comp']
+const GROUPS = ['VO₂ Max', 'Anaerobic', 'Strength', 'Body Comp', 'Endurance']
 
 // ─── classification helpers ───────────────────────────────────────────────────
 
@@ -226,10 +234,16 @@ function VO2Section({ results }) {
     .filter(r => r.results?.vo2)
     .map(r => ({ date: r.tested_date, value: r.results.vo2 }))
 
+  const hrvEntries = vo2Results
+    .filter(r => r.results?.hrv)
+    .map(r => ({ date: r.tested_date, weight: r.results.hrv }))
+  const hrvTrendPoints = rollingAverage(hrvEntries)
+    .map(e => ({ date: e.date, value: e.avg }))
+
   // Training zones from latest result
   const restingHr = latest?.results?.restingHr
   const maxHr = latest?.results?.maxHr
-  const hrr = latest?.results?.hrr
+  const hrZones = restingHr && maxHr ? deriveHRZones(restingHr, maxHr) : null
 
   return (
     <div>
@@ -280,6 +294,14 @@ function VO2Section({ results }) {
               <TrendChart points={trendPoints} color="var(--accent)" unit="mL/kg/min" />
             </div>
           )}
+
+          {/* HRV trend */}
+          {hrvTrendPoints.length >= 2 && (
+            <div style={{ marginTop: 16 }}>
+              <div className="label" style={{ marginBottom: 8 }}>HRV Trend (rolling average, ms)</div>
+              <TrendChart points={hrvTrendPoints} color="var(--info)" unit="ms" />
+            </div>
+          )}
         </div>
       )}
 
@@ -315,38 +337,28 @@ function VO2Section({ results }) {
       </div>
 
       {/* Training zones (if RHR test was used) */}
-      {restingHr && maxHr && hrr && (
+      {hrZones && (
         <div className="card" style={{ padding: '16px 20px', marginBottom: 16 }}>
           <div className="label" style={{ marginBottom: 12 }}>Your Karvonen Training Zones</div>
-          {[
-            { label: 'Zone 1 — Recovery', lo: 0.5, hi: 0.6, color: 'var(--muted)', desc: 'Active recovery. Walking, easy cycling.' },
-            { label: 'Zone 2 — Aerobic Base', lo: 0.6, hi: 0.7, color: 'var(--accent)', desc: 'Fat burning, aerobic base building. Most training here.' },
-            { label: 'Zone 3 — Aerobic Dev.', lo: 0.7, hi: 0.8, color: 'var(--accent)', desc: 'Improves aerobic capacity and efficiency.' },
-            { label: 'Zone 4 — Threshold', lo: 0.8, hi: 0.9, color: 'var(--warn)', desc: 'Lactate threshold work. Hard but controlled.' },
-            { label: 'Zone 5 — Max', lo: 0.9, hi: 1.0, color: 'var(--danger)', desc: 'VO₂ max intervals. Short, very intense.' },
-          ].map(z => {
-            const loHr = Math.round(restingHr + z.lo * hrr)
-            const hiHr = Math.round(restingHr + z.hi * hrr)
-            return (
-              <div key={z.label} style={{
-                display: 'flex', alignItems: 'center', gap: 12,
-                padding: '10px 12px', marginBottom: 6,
-                background: 'var(--s3)', borderRadius: 6,
-                border: `1px solid var(--border)`,
-                borderLeft: `3px solid ${z.color}`,
-              }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1, color: z.color }}>
-                    {z.label}
-                  </div>
-                  <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>{z.desc}</div>
+          {hrZones.map(z => (
+            <div key={z.label} style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              padding: '10px 12px', marginBottom: 6,
+              background: 'var(--s3)', borderRadius: 6,
+              border: `1px solid var(--border)`,
+              borderLeft: `3px solid ${z.color}`,
+            }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1, color: z.color }}>
+                  {z.label}
                 </div>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, color: 'var(--white)', flexShrink: 0 }}>
-                  {loHr}–{hiHr} <span style={{ fontSize: 10, color: 'var(--muted)' }}>bpm</span>
-                </div>
+                <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>{z.desc}</div>
               </div>
-            )
-          })}
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, color: 'var(--white)', flexShrink: 0 }}>
+                {z.loBpm}–{z.hiBpm} <span style={{ fontSize: 10, color: 'var(--muted)' }}>bpm</span>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -756,6 +768,389 @@ function StructuralBalanceSection({ results }) {
   )
 }
 
+// ─── shared zone table ─────────────────────────────────────────────────────────
+
+function ZoneTable({ title, zones, renderRange }) {
+  if (!zones) return null
+  return (
+    <div className="card" style={{ padding: '16px 20px', marginBottom: 16 }}>
+      <div className="label" style={{ marginBottom: 12 }}>{title}</div>
+      {zones.map(z => (
+        <div key={z.zone ?? z.label} style={{
+          display: 'flex', alignItems: 'center', gap: 12,
+          padding: '10px 12px', marginBottom: 6,
+          background: 'var(--s3)', borderRadius: 6,
+          border: `1px solid var(--border)`,
+          borderLeft: `3px solid ${z.color}`,
+        }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1, color: z.color }}>
+              {z.label}
+            </div>
+            {z.desc && <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>{z.desc}</div>}
+          </div>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, color: 'var(--white)', flexShrink: 0, textAlign: 'right' }}>
+            {renderRange(z)}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ─── lactate threshold section ────────────────────────────────────────────────
+
+function LactateThresholdSection({ results }) {
+  const ltResults = results
+    .filter(r => r.test_type === 'lactate_threshold')
+    .sort((a, b) => new Date(a.tested_date) - new Date(b.tested_date))
+
+  const latest = ltResults[ltResults.length - 1]
+  const previous = ltResults[ltResults.length - 2]
+  const latestLthr = latest?.results?.lthr
+  const prevLthr = previous?.results?.lthr
+
+  const trendPoints = ltResults
+    .filter(r => r.results?.lthr)
+    .map(r => ({ date: r.tested_date, value: r.results.lthr }))
+
+  const ltZones = latestLthr ? deriveLTHRZones(latestLthr) : null
+
+  return (
+    <div>
+      {latestLthr && (
+        <div className="card" style={{ padding: '20px 22px', marginBottom: 16, borderLeft: '3px solid var(--warn)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+            <div>
+              <div className="label" style={{ marginBottom: 4 }}>Lactate Threshold Heart Rate</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 48, color: 'var(--warn)', lineHeight: 1 }}>
+                  {latestLthr}
+                </div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--muted)' }}>bpm</div>
+                <TrendBadge current={latestLthr} previous={prevLthr} />
+              </div>
+              {latest?.results?.sport && (
+                <div style={{ marginTop: 8, fontSize: 12, color: 'var(--muted)' }}>
+                  Tested on: {latest.results.sport === 'bike' ? 'Bike' : 'Run'}
+                </div>
+              )}
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div className="label" style={{ marginBottom: 4 }}>Tested</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--sub)' }}>
+                {new Date(latest.tested_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </div>
+            </div>
+          </div>
+
+          {trendPoints.length >= 2 && (
+            <div>
+              <div className="label" style={{ marginBottom: 8 }}>LTHR Progress</div>
+              <TrendChart points={trendPoints} color="var(--warn)" unit="bpm" />
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="card" style={{ padding: '16px 20px', marginBottom: 16, borderLeft: '3px solid var(--s5)' }}>
+        <div className="label" style={{ marginBottom: 10 }}>What Lactate Threshold Means</div>
+        <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.8 }}>
+          Lactate threshold is the effort level above which lactate starts accumulating in your blood faster than your body can clear it. Training zones built from your LTHR target the right intensities to raise that threshold — building a bigger aerobic engine before tapping into harder, less sustainable efforts.
+        </div>
+      </div>
+
+      <ZoneTable
+        title="Your Lactate Threshold Zones"
+        zones={ltZones}
+        renderRange={z => <>{z.loBpm}–{z.hiBpm} <span style={{ fontSize: 10, color: 'var(--muted)' }}>bpm</span></>}
+      />
+
+      <div className="label" style={{ marginBottom: 10 }}>Test History</div>
+      {ltResults.length === 0 ? (
+        <div className="empty-state" style={{ height: 120 }}>
+          <div className="empty-state-title">No lactate threshold tests recorded</div>
+          <div className="empty-state-text">Your coach will record results after your threshold test.</div>
+        </div>
+      ) : (
+        [...ltResults].reverse().map(r => <ResultCard key={r.id} result={r} />)
+      )}
+    </div>
+  )
+}
+
+// ─── run performance section ──────────────────────────────────────────────────
+
+function RunPerformanceSection({ results }) {
+  const runResults = results
+    .filter(r => r.test_type === 'tt_5km')
+    .sort((a, b) => new Date(a.tested_date) - new Date(b.tested_date))
+
+  const latest = runResults[runResults.length - 1]
+  const previous = runResults[runResults.length - 2]
+  const latestTime = latest?.results?.timeSec
+  const prevTime = previous?.results?.timeSec
+  const vdot = latest?.results?.vdot
+  const predictions = latest?.results?.predictions
+
+  const trendPoints = runResults
+    .filter(r => r.results?.timeSec)
+    .map(r => ({ date: r.tested_date, value: Math.round(r.results.timeSec / 5) }))
+
+  const paceZones = vdot ? derivePaceZones(vdot) : null
+
+  return (
+    <div>
+      {latestTime && (
+        <div className="card" style={{ padding: '20px 22px', marginBottom: 16, borderLeft: '3px solid var(--accent)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+            <div>
+              <div className="label" style={{ marginBottom: 4 }}>5K Time Trial</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 48, color: 'var(--accent)', lineHeight: 1 }}>
+                  {formatTime(latestTime)}
+                </div>
+                <TrendBadge current={latestTime} previous={prevTime} higherIsBetter={false} />
+              </div>
+              <div style={{ marginTop: 8, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+                  Pace: <span style={{ color: 'var(--sub)' }}>{formatTime(latestTime / 5)}/km</span>
+                </div>
+                {vdot && (
+                  <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+                    VDOT: <span style={{ color: 'var(--sub)' }}>{vdot}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div className="label" style={{ marginBottom: 4 }}>Tested</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--sub)' }}>
+                {new Date(latest.tested_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </div>
+            </div>
+          </div>
+
+          {/* Predicted race times */}
+          {predictions && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 16 }}>
+              {[
+                { label: '10K', value: predictions['10km'] },
+                { label: 'Half Marathon', value: predictions.half_marathon },
+                { label: 'Marathon', value: predictions.marathon },
+              ].map(p => (
+                <div key={p.label} style={{ padding: '10px 14px', background: 'var(--s3)', borderRadius: 6, border: '1px solid var(--border)' }}>
+                  <div className="label" style={{ fontSize: 8, marginBottom: 4 }}>Predicted {p.label}</div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, color: 'var(--white)' }}>
+                    {formatTime(p.value)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {trendPoints.length >= 2 && (
+            <div>
+              <div className="label" style={{ marginBottom: 8 }}>Pace Progress (sec/km — lower is faster)</div>
+              <TrendChart points={trendPoints} color="var(--accent)" unit="sec/km" />
+            </div>
+          )}
+        </div>
+      )}
+
+      <ZoneTable
+        title="Your Daniels Training Pace Zones"
+        zones={paceZones}
+        renderRange={z => <>{z.pacePerKm} <span style={{ fontSize: 10, color: 'var(--muted)' }}>/km</span></>}
+      />
+
+      <div className="label" style={{ marginBottom: 10 }}>Test History</div>
+      {runResults.length === 0 ? (
+        <div className="empty-state" style={{ height: 120 }}>
+          <div className="empty-state-title">No 5K time trials recorded</div>
+          <div className="empty-state-text">Your coach will record results after your time trial.</div>
+        </div>
+      ) : (
+        [...runResults].reverse().map(r => <ResultCard key={r.id} result={r} />)
+      )}
+    </div>
+  )
+}
+
+// ─── FTP section ──────────────────────────────────────────────────────────────
+
+function FTPSection({ results }) {
+  const ftpResults = results
+    .filter(r => r.test_type === 'ftp_cycling')
+    .sort((a, b) => new Date(a.tested_date) - new Date(b.tested_date))
+
+  const latest = ftpResults[ftpResults.length - 1]
+  const previous = ftpResults[ftpResults.length - 2]
+  const latestFtp = latest?.results?.ftp
+  const prevFtp = previous?.results?.ftp
+
+  const trendPoints = ftpResults
+    .filter(r => r.results?.ftp)
+    .map(r => ({ date: r.tested_date, value: r.results.ftp }))
+
+  const ftpZones = latestFtp ? deriveFTPZones(latestFtp) : null
+
+  return (
+    <div>
+      {latestFtp && (
+        <div className="card" style={{ padding: '20px 22px', marginBottom: 16, borderLeft: '3px solid var(--info)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+            <div>
+              <div className="label" style={{ marginBottom: 4 }}>Functional Threshold Power</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 48, color: 'var(--info)', lineHeight: 1 }}>
+                  {latestFtp}
+                </div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--muted)' }}>W</div>
+                <TrendBadge current={latestFtp} previous={prevFtp} />
+              </div>
+              {latest?.results?.ftpPerKg && (
+                <div style={{ marginTop: 8, fontSize: 12, color: 'var(--muted)' }}>
+                  {latest.results.ftpPerKg} <span>W/kg</span>
+                </div>
+              )}
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div className="label" style={{ marginBottom: 4 }}>Tested</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--sub)' }}>
+                {new Date(latest.tested_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </div>
+            </div>
+          </div>
+
+          {trendPoints.length >= 2 && (
+            <div>
+              <div className="label" style={{ marginBottom: 8 }}>FTP Progress</div>
+              <TrendChart points={trendPoints} color="var(--info)" unit="W" />
+            </div>
+          )}
+        </div>
+      )}
+
+      <ZoneTable
+        title="Your Coggan Power Zones"
+        zones={ftpZones}
+        renderRange={z => <>{z.loW}–{z.hiW} <span style={{ fontSize: 10, color: 'var(--muted)' }}>W</span></>}
+      />
+
+      <div className="label" style={{ marginBottom: 10 }}>Test History</div>
+      {ftpResults.length === 0 ? (
+        <div className="empty-state" style={{ height: 120 }}>
+          <div className="empty-state-title">No FTP tests recorded</div>
+          <div className="empty-state-text">Your coach will record results after your FTP test.</div>
+        </div>
+      ) : (
+        [...ftpResults].reverse().map(r => <ResultCard key={r.id} result={r} />)
+      )}
+    </div>
+  )
+}
+
+// ─── swim section ─────────────────────────────────────────────────────────────
+
+function SwimSection({ results }) {
+  const swimResults = results
+    .filter(r => r.test_type === 'css_swim')
+    .sort((a, b) => new Date(a.tested_date) - new Date(b.tested_date))
+
+  const latest = swimResults[swimResults.length - 1]
+  const previous = swimResults[swimResults.length - 2]
+  const latestCss = latest?.results?.cssPer100
+  const prevCss = previous?.results?.cssPer100
+
+  const trendPoints = swimResults
+    .filter(r => r.results?.cssPer100)
+    .map(r => ({ date: r.tested_date, value: r.results.cssPer100 }))
+
+  const swimZones = latestCss ? deriveSwimZones(latestCss) : null
+
+  return (
+    <div>
+      {latestCss && (
+        <div className="card" style={{ padding: '20px 22px', marginBottom: 16, borderLeft: '3px solid var(--info)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+            <div>
+              <div className="label" style={{ marginBottom: 4 }}>Critical Swim Speed</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 48, color: 'var(--info)', lineHeight: 1 }}>
+                  {formatTime(latestCss)}
+                </div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--muted)' }}>/100m</div>
+                <TrendBadge current={latestCss} previous={prevCss} higherIsBetter={false} />
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div className="label" style={{ marginBottom: 4 }}>Tested</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--sub)' }}>
+                {new Date(latest.tested_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </div>
+            </div>
+          </div>
+
+          {trendPoints.length >= 2 && (
+            <div>
+              <div className="label" style={{ marginBottom: 8 }}>CSS Progress (sec/100m — lower is faster)</div>
+              <TrendChart points={trendPoints} color="var(--info)" unit="sec/100m" />
+            </div>
+          )}
+        </div>
+      )}
+
+      <ZoneTable
+        title="Your Swim Training Zones"
+        zones={swimZones}
+        renderRange={z => <>{formatTime(z.loPer100)}–{formatTime(z.hiPer100)} <span style={{ fontSize: 10, color: 'var(--muted)' }}>/100m</span></>}
+      />
+
+      <div className="label" style={{ marginBottom: 10 }}>Test History</div>
+      {swimResults.length === 0 ? (
+        <div className="empty-state" style={{ height: 120 }}>
+          <div className="empty-state-title">No CSS swim tests recorded</div>
+          <div className="empty-state-text">Your coach will record results after your swim test.</div>
+        </div>
+      ) : (
+        [...swimResults].reverse().map(r => <ResultCard key={r.id} result={r} />)
+      )}
+    </div>
+  )
+}
+
+// ─── endurance section (combines LTHR, run, FTP, swim) ──────────────────────────
+
+function EnduranceSection({ results }) {
+  const [sub, setSub] = useState('Run')
+  const SUBS = ['Run', 'Lactate Threshold', 'FTP', 'Swim']
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 16, flexWrap: 'wrap' }}>
+        {SUBS.map(s => (
+          <button key={s} onClick={() => setSub(s)} style={{
+            fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1.5,
+            color: sub === s ? 'var(--white)' : 'var(--muted)',
+            background: sub === s ? 'var(--s4)' : 'var(--s3)',
+            border: `1px solid ${sub === s ? 'var(--border-accent)' : 'var(--border)'}`,
+            borderRadius: 6, cursor: 'pointer', padding: '6px 14px',
+            transition: 'color .2s, background .2s',
+          }}>
+            {s.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {sub === 'Run'               && <RunPerformanceSection results={results} />}
+      {sub === 'Lactate Threshold'  && <LactateThresholdSection results={results} />}
+      {sub === 'FTP'                && <FTPSection results={results} />}
+      {sub === 'Swim'               && <SwimSection results={results} />}
+    </div>
+  )
+}
+
 // ─── overview section ─────────────────────────────────────────────────────────
 
 function OverviewSection({ results }) {
@@ -876,7 +1271,7 @@ function OverviewSection({ results }) {
 
 // ─── main component ───────────────────────────────────────────────────────────
 
-const TABS = ['Overview', 'VO₂ Max', 'Anaerobic', 'Strength', 'Structural Balance']
+const TABS = ['Overview', 'VO₂ Max', 'Endurance', 'Anaerobic', 'Strength', 'Structural Balance']
 
 export default function TestResults() {
   const { user } = useAuth()
@@ -937,6 +1332,7 @@ export default function TestResults() {
 
       {tab === 'Overview'            && <OverviewSection results={results} />}
       {tab === 'VO₂ Max'             && <VO2Section results={results} />}
+      {tab === 'Endurance'           && <EnduranceSection results={results} />}
       {tab === 'Anaerobic'           && <AnaerobicSection results={results} />}
       {tab === 'Strength'            && <StrengthSection results={results} />}
       {tab === 'Structural Balance'  && <StructuralBalanceSection results={results} />}

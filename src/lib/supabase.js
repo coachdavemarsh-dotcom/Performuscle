@@ -456,6 +456,22 @@ export async function insertMeasurement(measurement) {
 }
 
 // ============================================================
+// TEST RESULT HELPERS
+// ============================================================
+
+export async function getLatestTestResult(clientId, testType) {
+  const { data, error } = await supabase
+    .from('test_results')
+    .select('*')
+    .eq('client_id', clientId)
+    .eq('test_type', testType)
+    .order('tested_date', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  return { data, error }
+}
+
+// ============================================================
 // STORAGE HELPERS
 // ============================================================
 
@@ -532,6 +548,8 @@ export async function createProgramFromTemplate(programData, templateSessions) {
     day_label: s.day_label,
     week_number: s.week_number,
     session_type: s.session_type,
+    conditioning_config: s.conditioning_config || null,
+    movement_prep: s.movement_prep || null,
     is_completed: false,
   }))
   console.log('[CPT] step 2 — inserting', sessionsToInsert.length, 'sessions')
@@ -552,7 +570,7 @@ export async function createProgramFromTemplate(programData, templateSessions) {
       s => s.day_label === session.day_label && s.week_number === session.week_number
     )
     if (!templateSession) return
-    templateSession.exercises.forEach(ex => {
+    ;(templateSession.exercises || []).forEach(ex => {
       exercisesToInsert.push({
         session_id: session.id,
         name: ex.name,

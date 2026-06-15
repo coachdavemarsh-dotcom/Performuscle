@@ -452,6 +452,270 @@ export function relativeStrengthLevel(lift, orm, bodyweight, gender = 'male') {
   }
 }
 
+// ============================================================
+// ENDURANCE — TRAINING ZONES & PERFORMANCE PREDICTION
+// ============================================================
+
+/**
+ * Karvonen heart rate zones (5-zone model)
+ * @param {number} restingHr - bpm
+ * @param {number} maxHr - bpm
+ * @returns {Array<{zone, label, lo, hi, color, desc, loBpm, hiBpm}>|null}
+ */
+export function deriveHRZones(restingHr, maxHr) {
+  if (!restingHr || !maxHr || maxHr <= restingHr) return null
+  const hrr = maxHr - restingHr
+  const ZONES = [
+    { zone: 1, label: 'Zone 1 — Recovery',     lo: 0.50, hi: 0.60, color: 'var(--muted)',  desc: 'Active recovery. Walking, easy cycling.' },
+    { zone: 2, label: 'Zone 2 — Aerobic Base', lo: 0.60, hi: 0.70, color: 'var(--accent)', desc: 'Fat burning, aerobic base building. Most training here.' },
+    { zone: 3, label: 'Zone 3 — Aerobic Dev.', lo: 0.70, hi: 0.80, color: 'var(--accent)', desc: 'Improves aerobic capacity and efficiency.' },
+    { zone: 4, label: 'Zone 4 — Threshold',    lo: 0.80, hi: 0.90, color: 'var(--warn)',   desc: 'Lactate threshold work. Hard but controlled.' },
+    { zone: 5, label: 'Zone 5 — Max',          lo: 0.90, hi: 1.00, color: 'var(--danger)', desc: 'VO₂ max intervals. Short, very intense.' },
+  ]
+  return ZONES.map(z => ({
+    ...z,
+    loBpm: Math.round(restingHr + z.lo * hrr),
+    hiBpm: Math.round(restingHr + z.hi * hrr),
+  }))
+}
+
+/**
+ * Lactate threshold heart rate zones (Friel 7-zone model, run/bike)
+ * @param {number} lthr - lactate threshold heart rate (bpm)
+ * @returns {Array<{zone, label, color, desc, loBpm, hiBpm}>|null}
+ */
+export function deriveLTHRZones(lthr) {
+  if (!lthr) return null
+  const ZONES = [
+    { zone: '1',  label: 'Recovery',            pctLo: 0,    pctHi: 0.85, color: 'var(--muted)',  desc: 'Easy aerobic / recovery.' },
+    { zone: '2',  label: 'Aerobic / Endurance', pctLo: 0.85, pctHi: 0.89, color: 'var(--accent)', desc: 'Long steady aerobic work.' },
+    { zone: '3',  label: 'Tempo',               pctLo: 0.90, pctHi: 0.94, color: 'var(--accent)', desc: 'Steady, moderately hard.' },
+    { zone: '4',  label: 'Sub-Threshold (LT)',  pctLo: 0.95, pctHi: 0.99, color: 'var(--warn)',   desc: 'Comfortably hard, just under threshold.' },
+    { zone: '5a', label: 'Super-Threshold',     pctLo: 1.00, pctHi: 1.02, color: 'var(--warn)',   desc: 'Threshold intervals.' },
+    { zone: '5b', label: 'Aerobic Capacity',    pctLo: 1.03, pctHi: 1.06, color: 'var(--danger)', desc: 'VO₂max intervals.' },
+    { zone: '5c', label: 'Anaerobic Capacity',  pctLo: 1.07, pctHi: 1.15, color: 'var(--danger)', desc: 'Short, very hard repetitions.' },
+  ]
+  return ZONES.map(z => ({
+    ...z,
+    loBpm: Math.round(lthr * z.pctLo),
+    hiBpm: Math.round(lthr * z.pctHi),
+  }))
+}
+
+/**
+ * VDOT estimate from a race / time-trial performance (Daniels' Running Formula)
+ * @param {number} distanceM - distance in metres
+ * @param {number} timeSec - time in seconds
+ * @returns {number|null} VDOT
+ */
+export function calcVDOT(distanceM, timeSec) {
+  if (!distanceM || !timeSec) return null
+  const v = distanceM / (timeSec / 60) // velocity, m/min
+  const t = timeSec / 60               // time, min
+  const vo2 = -4.60 + 0.182258 * v + 0.000104 * v * v
+  const pctMax = 0.8 + 0.1894393 * Math.exp(-0.012778 * t) + 0.2989558 * Math.exp(-0.1932605 * t)
+  return Math.round((vo2 / pctMax) * 10) / 10
+}
+
+/**
+ * Inverse of the Daniels VO2 formula — velocity (m/min) that elicits a given VO2.
+ */
+export function velocityForVO2(vo2) {
+  const a = 0.000104, b = 0.182258, c = -4.60 - vo2
+  return (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a)
+}
+
+/**
+ * Convert velocity (m/min) to a pace string "M:SS" per km
+ */
+export function paceFromVelocity(vMinPerKm) {
+  if (!vMinPerKm) return '—'
+  const minPerKm = 1000 / vMinPerKm
+  const min = Math.floor(minPerKm)
+  const sec = Math.round((minPerKm - min) * 60)
+  return `${min}:${sec.toString().padStart(2, '0')}`
+}
+
+/**
+ * Daniels training pace zones derived from VDOT
+ * @param {number} vdot
+ * @returns {Array<{zone, label, color, desc, pacePerKm}>|null}
+ */
+export function derivePaceZones(vdot) {
+  if (!vdot) return null
+  const ZONES = [
+    { zone: 'E', label: 'Easy / Long Run',    pct: 0.70,  color: 'var(--muted)',  desc: 'Conversational pace, builds aerobic base.' },
+    { zone: 'M', label: 'Marathon Pace',      pct: 0.84,  color: 'var(--accent)', desc: 'Steady, sustainable race effort.' },
+    { zone: 'T', label: 'Threshold',          pct: 0.88,  color: 'var(--warn)',   desc: 'Comfortably hard tempo / cruise intervals.' },
+    { zone: 'I', label: 'Interval (VO₂ Max)', pct: 0.975, color: 'var(--danger)', desc: '3–5min hard reps with equal recovery.' },
+    { zone: 'R', label: 'Repetition (Speed)', pct: 1.05,  color: 'var(--danger)', desc: 'Short, fast reps for economy & speed.' },
+  ]
+  return ZONES.map(z => {
+    const v = velocityForVO2(vdot * z.pct)
+    return { ...z, pacePerKm: paceFromVelocity(v) }
+  })
+}
+
+/**
+ * Riegel formula — predict time for a different distance from a known performance
+ * @param {number} timeSec - known time, seconds
+ * @param {number} distFromM - known distance, metres
+ * @param {number} distToM - target distance, metres
+ * @param {number} [exponent=1.06] - fatigue factor
+ * @returns {number|null} predicted time in seconds
+ */
+export function riegelPredict(timeSec, distFromM, distToM, exponent = 1.06) {
+  if (!timeSec || !distFromM || !distToM) return null
+  return Math.round(timeSec * Math.pow(distToM / distFromM, exponent))
+}
+
+/**
+ * Predict 10km / half marathon / marathon times from a 5km time trial
+ * @param {number} time5kSec
+ * @returns {{'5km': number, '10km': number, half_marathon: number, marathon: number}|null}
+ */
+export function predictRaceTimes(time5kSec) {
+  if (!time5kSec) return null
+  return {
+    '5km': time5kSec,
+    '10km': riegelPredict(time5kSec, 5000, 10000),
+    half_marathon: riegelPredict(time5kSec, 5000, 21097.5),
+    marathon: riegelPredict(time5kSec, 5000, 42195, 1.08),
+  }
+}
+
+/**
+ * Functional Threshold Power (FTP) from a 20-minute test
+ * @param {number} avgPower20min - average power, watts
+ * @returns {number|null} FTP, watts
+ */
+export function calcFTP(avgPower20min) {
+  if (!avgPower20min) return null
+  return Math.round(avgPower20min * 0.95)
+}
+
+/**
+ * Coggan power training zones from FTP
+ * @param {number} ftp - watts
+ * @returns {Array<{zone, label, color, loW, hiW}>|null}
+ */
+export function deriveFTPZones(ftp) {
+  if (!ftp) return null
+  const ZONES = [
+    { zone: '1', label: 'Active Recovery',     pctLo: 0,    pctHi: 0.55, color: 'var(--muted)' },
+    { zone: '2', label: 'Endurance',           pctLo: 0.56, pctHi: 0.75, color: 'var(--accent)' },
+    { zone: '3', label: 'Tempo',               pctLo: 0.76, pctHi: 0.90, color: 'var(--accent)' },
+    { zone: '4', label: 'Lactate Threshold',   pctLo: 0.91, pctHi: 1.05, color: 'var(--warn)' },
+    { zone: '5', label: 'VO₂ Max',             pctLo: 1.06, pctHi: 1.20, color: 'var(--danger)' },
+    { zone: '6', label: 'Anaerobic Capacity',  pctLo: 1.21, pctHi: 1.50, color: 'var(--danger)' },
+    { zone: '7', label: 'Neuromuscular Power', pctLo: 1.51, pctHi: 2.50, color: 'var(--danger)' },
+  ]
+  return ZONES.map(z => ({
+    ...z,
+    loW: Math.round(ftp * z.pctLo),
+    hiW: Math.round(ftp * z.pctHi),
+  }))
+}
+
+/**
+ * Critical Swim Speed (CSS) pace from 200m and 400m time trials
+ * @param {number} time200Sec
+ * @param {number} time400Sec
+ * @returns {number|null} CSS pace, seconds per 100m
+ */
+export function calcCSS(time200Sec, time400Sec) {
+  if (!time200Sec || !time400Sec || time400Sec <= time200Sec) return null
+  return Math.round(((time400Sec - time200Sec) / 2) * 10) / 10
+}
+
+/**
+ * Swim training pace zones from CSS (% of CSS pace — a lower % is a faster pace)
+ * @param {number} cssPer100Sec - CSS pace, seconds per 100m
+ * @returns {Array<{zone, label, color, desc, loPer100, hiPer100}>|null}
+ */
+export function deriveSwimZones(cssPer100Sec) {
+  if (!cssPer100Sec) return null
+  const ZONES = [
+    { zone: 'Recovery',  label: 'Recovery / Drills',  pctLo: 1.12, pctHi: 1.20, color: 'var(--muted)',  desc: 'Technique, easy recovery swimming.' },
+    { zone: 'Endurance', label: 'Endurance / Aerobic', pctLo: 1.04, pctHi: 1.10, color: 'var(--accent)', desc: 'Long steady swims.' },
+    { zone: 'CSS',       label: 'CSS / Threshold',     pctLo: 0.99, pctHi: 1.02, color: 'var(--warn)',   desc: 'Sustainable race pace intervals.' },
+    { zone: 'VO2max',    label: 'VO₂ Max',             pctLo: 0.95, pctHi: 0.98, color: 'var(--danger)', desc: 'Short, fast intervals.' },
+    { zone: 'Sprint',    label: 'Sprint / Speed',      pctLo: 0.88, pctHi: 0.94, color: 'var(--danger)', desc: 'All-out speed work.' },
+  ]
+  return ZONES.map(z => ({
+    ...z,
+    loPer100: Math.round(cssPer100Sec * z.pctLo * 10) / 10,
+    hiPer100: Math.round(cssPer100Sec * z.pctHi * 10) / 10,
+  }))
+}
+
+/**
+ * Format a duration in seconds as "M:SS" or "H:MM:SS"
+ * @param {number} totalSec
+ * @returns {string}
+ */
+export function formatTime(totalSec) {
+  if (totalSec === null || totalSec === undefined || isNaN(totalSec)) return '—'
+  const sign = totalSec < 0 ? '-' : ''
+  const abs = Math.abs(Math.round(totalSec))
+  const h = Math.floor(abs / 3600)
+  const m = Math.floor((abs % 3600) / 60)
+  const s = abs % 60
+  if (h > 0) return `${sign}${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+  return `${sign}${m}:${s.toString().padStart(2, '0')}`
+}
+
+/**
+ * Resolve an endurance session target (e.g. { metric: 'pace', zone: 'T' }) into a
+ * displayable training zone using the client's latest test results.
+ * @param {{metric: 'pace'|'hr'|'power'|'css', zone: string|number}} target
+ * @param {Object} latestResults - map of test_type -> latest test_results row (or null)
+ * @returns {{available: true, label, display, zone}|{available: false, message}|null}
+ */
+export function resolveEnduranceTarget(target, latestResults = {}) {
+  if (!target) return null
+  const { metric, zone } = target
+
+  switch (metric) {
+    case 'pace': {
+      const vdot = latestResults.tt_5km?.results?.vdot
+      if (!vdot) return { available: false, message: 'Complete a 5K Time Trial to unlock pace targets' }
+      const z = derivePaceZones(vdot).find(zz => zz.zone === zone)
+      if (!z) return { available: false, message: `Pace zone "${zone}" not found` }
+      return { available: true, label: z.label, display: `${z.pacePerKm}/km`, zone: z }
+    }
+    case 'hr': {
+      const lthr = latestResults.lactate_threshold?.results?.lthr
+      if (lthr) {
+        const z = deriveLTHRZones(lthr).find(zz => zz.zone === zone)
+        if (z) return { available: true, label: z.label, display: `${z.loBpm}-${z.hiBpm} bpm`, zone: z }
+      }
+      const { restingHr, maxHr } = latestResults.vo2_rhr?.results || {}
+      if (restingHr && maxHr) {
+        const z = deriveHRZones(restingHr, maxHr).find(zz => zz.zone === zone)
+        if (z) return { available: true, label: z.label, display: `${z.loBpm}-${z.hiBpm} bpm`, zone: z }
+      }
+      return { available: false, message: 'Complete a Resting HR or Lactate Threshold test to unlock HR targets' }
+    }
+    case 'power': {
+      const ftp = latestResults.ftp_cycling?.results?.ftp
+      if (!ftp) return { available: false, message: 'Complete an FTP Test to unlock power targets' }
+      const z = deriveFTPZones(ftp).find(zz => zz.zone === zone)
+      if (!z) return { available: false, message: `Power zone "${zone}" not found` }
+      return { available: true, label: z.label, display: `${z.loW}-${z.hiW}W`, zone: z }
+    }
+    case 'css': {
+      const css = latestResults.css_swim?.results?.cssPer100
+      if (!css) return { available: false, message: 'Complete a CSS Swim Test to unlock swim pace targets' }
+      const z = deriveSwimZones(css).find(zz => zz.zone === zone)
+      if (!z) return { available: false, message: `Swim zone "${zone}" not found` }
+      return { available: true, label: z.label, display: `${formatTime(z.loPer100)}-${formatTime(z.hiPer100)}/100m`, zone: z }
+    }
+    default:
+      return { available: false, message: 'Unknown target metric' }
+  }
+}
+
 // ─── Menstrual Cycle Phase Calculator ─────────────────────────────────────────
 // Used by CycleTracker.jsx and coach client profile views.
 
