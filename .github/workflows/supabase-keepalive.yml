@@ -1,0 +1,28 @@
+name: Supabase Keepalive
+
+on:
+  schedule:
+    # Runs every 3 days at 09:00 UTC — prevents free-tier project from pausing
+    - cron: '0 9 */3 * *'
+  workflow_dispatch: # allow manual trigger from GitHub Actions UI
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            "https://opccfbudpovmxfmpanvj.supabase.co/rest/v1/profiles?select=id&limit=1")
+
+          echo "HTTP status: $HTTP_CODE"
+
+          if [[ "$HTTP_CODE" == "200" || "$HTTP_CODE" == "206" ]]; then
+            echo "Supabase keepalive ping succeeded."
+          else
+            echo "ERROR: Supabase ping returned HTTP $HTTP_CODE — project may be paused."
+            echo "Restore at: https://supabase.com/dashboard/project/opccfbudpovmxfmpanvj"
+            exit 1
+          fi
