@@ -162,6 +162,13 @@ const icons = {
       <path d="M6 8.5l-2 4M10 8.5l2 4"/>
     </svg>
   ),
+  zones: (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" width="20" height="20">
+      <circle cx="8" cy="8" r="6.5"/>
+      <circle cx="8" cy="8" r="3.5"/>
+      <circle cx="8" cy="8" r="0.75" fill="currentColor" stroke="none"/>
+    </svg>
+  ),
 }
 
 // ─── nav definitions ──────────────────────────────────────────────────────────
@@ -175,15 +182,16 @@ const clientPrimary = [
 ]
 
 const clientSecondary = [
-  { to: '/habits',       label: 'Habits',       icon: 'habits'       },
-  { to: '/mobility',     label: 'Mobility',     icon: 'mobility'     },
-  { to: '/supplements',  label: 'Supplements',  icon: 'supplements'  },
-  { to: '/protocols',    label: 'Protocols',    icon: 'protocols'    },
-  { to: '/goalmap',      label: 'Goal Map',     icon: 'goalmap'      },
-  { to: '/results',      label: 'Results',      icon: 'results'      },
-  { to: '/education',    label: 'Education',    icon: 'education'    },
-  { to: '/learn',        label: 'Learn',        icon: 'learn'        },
-  { to: '/cycle',        label: 'Cycle',        icon: 'cycle'        },
+  { to: '/habits',          label: 'Habits',       icon: 'habits'       },
+  { to: '/mobility',        label: 'Mobility',     icon: 'mobility'     },
+  { to: '/supplements',     label: 'Supplements',  icon: 'supplements'  },
+  { to: '/protocols',       label: 'Protocols',    icon: 'protocols'    },
+  { to: '/goalmap',         label: 'Goal Map',     icon: 'goalmap'      },
+  { to: '/results',         label: 'Results',      icon: 'results'      },
+  { to: '/training-zones',  label: 'My Zones',     icon: 'zones'        },
+  { to: '/education',       label: 'Education',    icon: 'education'    },
+  { to: '/learn',           label: 'Learn',        icon: 'learn'        },
+  { to: '/cycle',           label: 'Cycle',        icon: 'cycle'        },
 ]
 
 const coachPrimary = [
