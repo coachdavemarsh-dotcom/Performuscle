@@ -471,6 +471,18 @@ export async function getLatestTestResult(clientId, testType) {
   return { data, error }
 }
 
+const ENDURANCE_TEST_TYPES = ['tt_5km', 'vo2_rhr', 'lactate_threshold', 'ftp_cycling', 'css_swim']
+
+export async function getAllLatestTestResults(clientId) {
+  const results = await Promise.all(
+    ENDURANCE_TEST_TYPES.map(testType => getLatestTestResult(clientId, testType))
+  )
+  return ENDURANCE_TEST_TYPES.reduce((acc, testType, i) => {
+    acc[testType] = results[i].data
+    return acc
+  }, {})
+}
+
 // ============================================================
 // STORAGE HELPERS
 // ============================================================

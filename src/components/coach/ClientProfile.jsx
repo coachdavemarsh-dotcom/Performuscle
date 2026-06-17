@@ -11,6 +11,7 @@ import {
 import { navalBF, leanMass, estimateTDEE } from '../../lib/calculators.js'
 import BWChart from '../shared/BWChart.jsx'
 import CoachNutritionPanel from './CoachNutritionPanel.jsx'
+import TrainingZonesPanel from '../shared/TrainingZonesPanel.jsx'
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -631,7 +632,7 @@ function TrainingTab({ programs }) {
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 
-const TABS = ['Overview', 'Check-ins', 'Progress', 'Training', 'Nutrition']
+const TABS = ['Overview', 'Check-ins', 'Progress', 'Training', 'Nutrition', 'Zones']
 
 export default function ClientProfile() {
   const { clientId } = useParams()
@@ -764,6 +765,7 @@ export default function ClientProfile() {
       {tab === 'Progress'   && <ProgressTab  checkIns={checkIns} measurements={measurements} profile={profile} />}
       {tab === 'Training'   && <TrainingTab  programs={programs} />}
       {tab === 'Nutrition'  && <CoachNutritionPanel clientId={clientId} clientProfile={profile} coachId={coachProfile?.id} onUpdated={load} />}
+      {tab === 'Zones'      && <TrainingZonesPanel clientId={clientId} />}
     </div>
   )
 }

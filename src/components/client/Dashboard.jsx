@@ -659,6 +659,7 @@ export default function Dashboard() {
             { to: '/checkin',   icon: '📋',  label: 'Check-In',    sub: 'Weekly report' },
             { to: '/goalmap',   icon: '📈',  label: 'Goal Map',    sub: '6-month plan' },
             { to: '/results',   icon: '📊',  label: 'My Results',  sub: `${testResults.length} tests` },
+            { to: '/training-zones', icon: '🎯', label: 'My Zones', sub: 'Current targets' },
             { to: '/education', icon: '🎓',  label: 'Education',   sub: 'Learn & grow' },
           ].map(n => (
             <Link key={n.to} to={n.to} style={{ textDecoration: 'none' }}>
