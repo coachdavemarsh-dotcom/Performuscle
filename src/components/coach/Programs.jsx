@@ -2041,6 +2041,7 @@ function CreateProgramModal({ clients, onClose, onCreated, preselectedClientId =
   const [selectedTemplate, setSelectedTemplate] = useState(null)
   const [selectedFullTemplate, setSelectedFullTemplate] = useState(null)
   const [loadingClient, setLoadingClient] = useState(false)
+  const [templateTab, setTemplateTab] = useState('strength')
 
   // Auto-fill client data from their profile when client is selected
   useEffect(() => {
@@ -2156,40 +2157,123 @@ function CreateProgramModal({ clients, onClose, onCreated, preselectedClientId =
         {/* Template picker */}
         <div style={{ marginBottom: 18 }}>
           <div className="label" style={{ marginBottom: 10 }}>Quick Start — Choose a Template</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-            {PROGRAMME_TEMPLATES.map(tpl => (
+
+          {/* Template type tabs */}
+          <div style={{ display: 'flex', gap: 4, marginBottom: 10, borderBottom: '1px solid var(--border)' }}>
+            {[
+              { key: 'strength', label: 'STRENGTH' },
+              { key: 'endurance', label: 'ENDURANCE' },
+              { key: 'hyrox', label: 'HYROX' },
+            ].map(tab => (
               <button
-                key={tpl.id}
+                key={tab.key}
                 type="button"
-                onClick={() => applyTemplate(tpl)}
+                onClick={() => setTemplateTab(tab.key)}
                 style={{
-                  padding: '10px 12px', borderRadius: 8, cursor: 'pointer', textAlign: 'left',
-                  background: selectedTemplate === tpl.id ? `${tpl.color}18` : 'var(--s3)',
-                  border: `1.5px solid ${selectedTemplate === tpl.id ? tpl.color + '55' : 'var(--border)'}`,
-                  transition: 'all .15s',
-                  boxShadow: selectedTemplate === tpl.id ? `0 0 12px ${tpl.color}18` : 'none',
+                  fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1.5,
+                  color: templateTab === tab.key ? 'var(--accent)' : 'var(--muted)',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  padding: '6px 12px',
+                  borderBottom: templateTab === tab.key ? '2px solid var(--accent)' : '2px solid transparent',
+                  marginBottom: -1, transition: 'color .15s',
                 }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
-                  <div style={{ fontSize: 16 }}>{tpl.icon}</div>
-                  {tpl.fullTemplateId && (
-                    <span style={{
-                      fontSize: 8, fontFamily: 'var(--font-display)', letterSpacing: 0.5,
-                      padding: '2px 5px', borderRadius: 3,
-                      background: 'rgba(0,200,150,.15)', color: 'var(--accent)',
-                      border: '1px solid rgba(0,200,150,.3)',
-                    }}>AUTO-BUILD</span>
-                  )}
-                </div>
-                <div style={{
-                  fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1,
-                  color: selectedTemplate === tpl.id ? tpl.color : 'var(--sub)',
-                  marginBottom: 3,
-                }}>{tpl.label}</div>
-                <div style={{ fontSize: 10, color: 'var(--muted)', lineHeight: 1.4 }}>{tpl.description}</div>
-              </button>
+              >{tab.label}</button>
             ))}
           </div>
+
+          {/* Strength / Body Comp templates */}
+          {templateTab === 'strength' && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+              {PROGRAMME_TEMPLATES.map(tpl => (
+                <button
+                  key={tpl.id}
+                  type="button"
+                  onClick={() => applyTemplate(tpl)}
+                  style={{
+                    padding: '10px 12px', borderRadius: 8, cursor: 'pointer', textAlign: 'left',
+                    background: selectedTemplate === tpl.id ? `${tpl.color}18` : 'var(--s3)',
+                    border: `1.5px solid ${selectedTemplate === tpl.id ? tpl.color + '55' : 'var(--border)'}`,
+                    transition: 'all .15s',
+                    boxShadow: selectedTemplate === tpl.id ? `0 0 12px ${tpl.color}18` : 'none',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                    <div style={{ fontSize: 16 }}>{tpl.icon}</div>
+                    {tpl.fullTemplateId && (
+                      <span style={{
+                        fontSize: 8, fontFamily: 'var(--font-display)', letterSpacing: 0.5,
+                        padding: '2px 5px', borderRadius: 3,
+                        background: 'rgba(0,200,150,.15)', color: 'var(--accent)',
+                        border: '1px solid rgba(0,200,150,.3)',
+                      }}>AUTO-BUILD</span>
+                    )}
+                  </div>
+                  <div style={{
+                    fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1,
+                    color: selectedTemplate === tpl.id ? tpl.color : 'var(--sub)',
+                    marginBottom: 3,
+                  }}>{tpl.label}</div>
+                  <div style={{ fontSize: 10, color: 'var(--muted)', lineHeight: 1.4 }}>{tpl.description}</div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Endurance & HYROX templates — pulled from PROGRAM_TEMPLATES */}
+          {(templateTab === 'endurance' || templateTab === 'hyrox') && (() => {
+            const goalLabel = templateTab === 'endurance' ? 'Endurance' : 'HYROX'
+            const filtered = PROGRAM_TEMPLATES.filter(t => t.goal === goalLabel)
+            return (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+                {filtered.map(t => {
+                  const tplColor = t.color || (templateTab === 'hyrox' ? '#f472b6' : '#60a5fa')
+                  const isSelected = selectedTemplate === t.id
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => applyTemplate({
+                        id: t.id,
+                        fullTemplateId: t.id,
+                        color: tplColor,
+                        defaults: {
+                          name: t.name,
+                          total_weeks: t.weeks,
+                          goal_type: t.goal_type || templateTab,
+                          phase: t.phase || '',
+                        },
+                      })}
+                      style={{
+                        padding: '10px 12px', borderRadius: 8, cursor: 'pointer', textAlign: 'left',
+                        background: isSelected ? `${tplColor}18` : 'var(--s3)',
+                        border: `1.5px solid ${isSelected ? tplColor + '55' : 'var(--border)'}`,
+                        transition: 'all .15s',
+                        boxShadow: isSelected ? `0 0 12px ${tplColor}18` : 'none',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                        <div style={{ fontSize: 16 }}>{t.icon}</div>
+                        <span style={{
+                          fontSize: 8, fontFamily: 'var(--font-display)', letterSpacing: 0.5,
+                          padding: '2px 5px', borderRadius: 3,
+                          background: 'rgba(0,200,150,.15)', color: 'var(--accent)',
+                          border: '1px solid rgba(0,200,150,.3)',
+                        }}>AUTO-BUILD</span>
+                      </div>
+                      <div style={{
+                        fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1,
+                        color: isSelected ? tplColor : 'var(--sub)',
+                        marginBottom: 3,
+                      }}>{t.name}</div>
+                      <div style={{ fontSize: 10, color: 'var(--muted)', lineHeight: 1.4 }}>
+                        {t.days} days/wk · {t.weeks} wks · {t.difficulty}
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )
+          })()}
         </div>
 
         <div style={{ height: 1, background: 'var(--border)', marginBottom: 18 }} />
