@@ -1000,6 +1000,538 @@ const ENDURANCE_TRI_WEEKS = [
       ] } },
 ]
 
+// ─── 70.3 / Half Ironman periodisation table ─────────────────────────────────
+// Phases: Foundation (1-4) → Base (5-10) → Build (11-16) → Peak (17-18) → Taper (19-20)
+// Long ride builds 65 → 220 min. Long run builds 35 → 100 min (half marathon prep).
+// All zone references pull live from test results (FTP, VDOT/5K, CSS).
+
+const TRI_703_WEEKS = [
+  // Week 1 — Foundation
+  { phase: 'Foundation', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 25, swim2Min: 20, bikeMin: 40, longBikeMin: 65, longRunMin: 35,
+    brickBikeMin: 50, brickRunMin: 10,
+    quality: { title: 'Easy Run', coach_note: 'First week — easy aerobic effort, settle in.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Easy run', duration_min: 19, target: { metric: 'hr', zone: 2 } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 2 — Foundation
+  { phase: 'Foundation', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 28, swim2Min: 20, bikeMin: 45, longBikeMin: 75, longRunMin: 38,
+    brickBikeMin: 55, brickRunMin: 12,
+    quality: { title: 'Steady Run', coach_note: 'Steady aerobic effort — conversational pace throughout.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Steady', duration_min: 22, target: { metric: 'pace', zone: 'E' } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 3 — Foundation
+  { phase: 'Foundation', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 30, swim2Min: 20, bikeMin: 45, longBikeMin: 80, longRunMin: 42,
+    brickBikeMin: 60, brickRunMin: 12,
+    quality: { title: 'Steady Run', coach_note: 'Build on last week — same effort, slightly longer.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Steady', duration_min: 25, target: { metric: 'pace', zone: 'E' } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 4 — Foundation (deload)
+  { phase: 'Foundation', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 25, swim2Min: 18, bikeMin: 40, longBikeMin: 65, longRunMin: 35,
+    brickBikeMin: 50, brickRunMin: 10,
+    quality: { title: 'Easy Aerobic Run', coach_note: 'Deload week — reduced volume, keep it relaxed.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Easy', duration_min: 19, target: { metric: 'hr', zone: 2 } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 5 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 35, swim2Min: 22, bikeMin: 55, longBikeMin: 90, longRunMin: 48,
+    brickBikeMin: 70, brickRunMin: 15,
+    quality: { title: 'Steady Run', coach_note: 'Settle into marathon pace — controlled and sustainable.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Steady', duration_min: 28, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 6 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 38, swim2Min: 24, bikeMin: 60, longBikeMin: 100, longRunMin: 52,
+    brickBikeMin: 75, brickRunMin: 15,
+    quality: { title: 'Steady State Intervals', coach_note: 'Repeatable steady efforts — same pace every rep.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Steady state intervals', repeat: 3,
+          work: { duration_min: 10, target: { metric: 'pace', zone: 'M' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 7 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 40, swim2Min: 25, bikeMin: 60, longBikeMin: 110, longRunMin: 58,
+    brickBikeMin: 80, brickRunMin: 18,
+    quality: { title: 'Tempo Run', coach_note: '"Comfortably hard" — a step up from steady pace.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo', duration_min: 25, target: { metric: 'pace', zone: 'T' } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 8 — Base (cutback)
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 35, swim2Min: 22, bikeMin: 55, longBikeMin: 90, longRunMin: 48,
+    brickBikeMin: 70, brickRunMin: 15,
+    quality: { title: 'Easy Aerobic Run', coach_note: 'Cutback week — reduced volume, let the body absorb.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Easy', duration_min: 30, target: { metric: 'hr', zone: 2 } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 9 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 42, swim2Min: 26, bikeMin: 65, longBikeMin: 120, longRunMin: 62,
+    brickBikeMin: 85, brickRunMin: 18,
+    quality: { title: 'Tempo Intervals', coach_note: 'Threshold reps — hold the same effort every rep.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo intervals', repeat: 3,
+          work: { duration_min: 10, target: { metric: 'pace', zone: 'T' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 10 — Base (peak base volume)
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 45, swim2Min: 28, bikeMin: 70, longBikeMin: 130, longRunMin: 68,
+    brickBikeMin: 90, brickRunMin: 20,
+    quality: { title: 'Race-Pace Run', coach_note: 'Lock in half marathon race pace — strong but sustainable.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Race-pace', duration_min: 30, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 11 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 45, swim2Min: 28, bikeMin: 65, longBikeMin: 130, longRunMin: 68,
+    brickBikeMin: 90, brickRunMin: 20,
+    quality: { title: 'Tempo Intervals', coach_note: 'Build block starts — threshold reps, controlled pace.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo intervals', repeat: 4,
+          work: { duration_min: 8, target: { metric: 'pace', zone: 'T' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 12 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 48, swim2Min: 28, bikeMin: 70, longBikeMin: 140, longRunMin: 72,
+    brickBikeMin: 95, brickRunMin: 22,
+    quality: { title: 'VO2max Intervals', coach_note: 'Hard but controlled — hold pace through the last rep.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'VO2max intervals', repeat: 5,
+          work: { duration_min: 3, target: { metric: 'pace', zone: 'I' } },
+          recovery: { duration_min: 2.5, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 13 — Build (cutback)
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 40, swim2Min: 25, bikeMin: 60, longBikeMin: 110, longRunMin: 58,
+    brickBikeMin: 80, brickRunMin: 18,
+    quality: { title: 'Tempo Run', coach_note: 'Cutback week — volume drops, but keep the intensity.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo', duration_min: 25, target: { metric: 'pace', zone: 'T' } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 14 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 50, swim2Min: 30, bikeMin: 75, longBikeMin: 155, longRunMin: 78,
+    brickBikeMin: 100, brickRunMin: 22,
+    quality: { title: 'Race-Pace Long Intervals', coach_note: 'Half marathon race-pace blocks — settle in and hold.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Race-pace intervals', repeat: 3,
+          work: { duration_min: 12, target: { metric: 'pace', zone: 'M' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 15 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 50, swim2Min: 30, bikeMin: 75, longBikeMin: 165, longRunMin: 82,
+    brickBikeMin: 110, brickRunMin: 25,
+    quality: { title: 'Tempo Intervals', coach_note: 'Peak build week — biggest sessions. Recover well.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo intervals', repeat: 5,
+          work: { duration_min: 7, target: { metric: 'pace', zone: 'T' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 16 — Build (transition to Peak)
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 48, swim2Min: 28, bikeMin: 70, longBikeMin: 155, longRunMin: 80,
+    brickBikeMin: 105, brickRunMin: 22,
+    quality: { title: 'Race-Pace Run', coach_note: 'Hold race pace for the full block — this is your target effort.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Race-pace', duration_min: 35, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 7, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 17 — Peak
+  { phase: 'Peak', strengthRepRange: '5-6', strengthSets: 3,
+    swimMin: 50, swim2Min: 28, bikeMin: 70, longBikeMin: 200, longRunMin: 90,
+    brickBikeMin: 120, brickRunMin: 25,
+    quality: { title: 'Race-Pace Long Intervals', coach_note: 'Longest race-pace efforts of the block — peak week.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Race-pace long intervals', repeat: 2,
+          work: { duration_min: 18, target: { metric: 'pace', zone: 'M' } },
+          recovery: { duration_min: 3, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 7, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 18 — Peak
+  { phase: 'Peak', strengthRepRange: '5-6', strengthSets: 3,
+    swimMin: 48, swim2Min: 26, bikeMin: 65, longBikeMin: 220, longRunMin: 100,
+    brickBikeMin: 130, brickRunMin: 25,
+    quality: { title: 'Race-Pace Run', coach_note: 'Longest race-pace run before taper — hold form to the end.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Race-pace', duration_min: 38, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 7, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 19 — Taper
+  { phase: 'Taper', strengthRepRange: '5-6', strengthSets: 2,
+    swimMin: 30, swim2Min: 20, bikeMin: 50, longBikeMin: 120, longRunMin: 55,
+    brickBikeMin: 75, brickRunMin: 15,
+    quality: { title: 'Sharpening Intervals', coach_note: 'Taper week — short and sharp, keep the legs feeling fast.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Sharpening intervals', repeat: 4,
+          work: { duration_min: 3, target: { metric: 'pace', zone: 'I' } },
+          recovery: { duration_min: 2.5, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 20 — Race week
+  { phase: 'Race', strengthRepRange: '5-6', strengthSets: 2,
+    swimMin: 20, swim2Min: 15, bikeMin: 35, longBikeMin: 60, longRunMin: 30,
+    brickBikeMin: 40, brickRunMin: 10,
+    quality: { title: 'Race-Week Shakeout', coach_note: 'Race week — short, fast, and fresh. Trust your training. Good luck!',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Race-pace', duration_min: 14, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+]
+
+// ─── Full Ironman periodisation table ────────────────────────────────────────
+// Phases: Foundation (1-4) → Base (5-12) → Build (13-20) → Race Prep (21-24) → Peak (25-26) → Taper (27-28)
+// Long ride builds 75 → 300 min (5 h). Long run builds 40 → 180 min (marathon prep).
+// All zones pull live from FTP, VDOT, and CSS test results.
+
+const TRI_IRONMAN_WEEKS = [
+  // Week 1 — Foundation
+  { phase: 'Foundation', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 30, swim2Min: 22, bikeMin: 50, longBikeMin: 75, longRunMin: 40,
+    brickBikeMin: 60, brickRunMin: 12,
+    quality: { title: 'Easy Run', coach_note: 'First week — easy aerobic effort across all three disciplines.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Easy run', duration_min: 22, target: { metric: 'hr', zone: 2 } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 2 — Foundation
+  { phase: 'Foundation', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 32, swim2Min: 22, bikeMin: 52, longBikeMin: 85, longRunMin: 44,
+    brickBikeMin: 65, brickRunMin: 12,
+    quality: { title: 'Steady Run', coach_note: 'Steady aerobic effort — conversational pace.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Steady', duration_min: 26, target: { metric: 'pace', zone: 'E' } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 3 — Foundation
+  { phase: 'Foundation', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 35, swim2Min: 24, bikeMin: 55, longBikeMin: 95, longRunMin: 48,
+    brickBikeMin: 70, brickRunMin: 14,
+    quality: { title: 'Steady Run', coach_note: 'Build on last week — same effort, slightly longer.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Steady', duration_min: 30, target: { metric: 'pace', zone: 'E' } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 4 — Foundation (deload)
+  { phase: 'Foundation', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 28, swim2Min: 20, bikeMin: 48, longBikeMin: 75, longRunMin: 38,
+    brickBikeMin: 60, brickRunMin: 12,
+    quality: { title: 'Easy Aerobic Run', coach_note: 'Deload week — reduced volume, keep it relaxed.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Easy', duration_min: 22, target: { metric: 'hr', zone: 2 } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 5 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 38, swim2Min: 25, bikeMin: 60, longBikeMin: 105, longRunMin: 52,
+    brickBikeMin: 80, brickRunMin: 15,
+    quality: { title: 'Steady Run', coach_note: 'Marathon pace — controlled and comfortable.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Steady', duration_min: 34, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 6 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 40, swim2Min: 26, bikeMin: 65, longBikeMin: 115, longRunMin: 58,
+    brickBikeMin: 85, brickRunMin: 18,
+    quality: { title: 'Steady State Intervals', coach_note: 'Repeatable steady-state reps — same effort every interval.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Steady state intervals', repeat: 3,
+          work: { duration_min: 12, target: { metric: 'pace', zone: 'M' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 7 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 42, swim2Min: 26, bikeMin: 65, longBikeMin: 125, longRunMin: 62,
+    brickBikeMin: 90, brickRunMin: 18,
+    quality: { title: 'Tempo Run', coach_note: '"Comfortably hard" — settle into threshold pace.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo', duration_min: 28, target: { metric: 'pace', zone: 'T' } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 8 — Base (cutback)
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 36, swim2Min: 23, bikeMin: 58, longBikeMin: 100, longRunMin: 50,
+    brickBikeMin: 78, brickRunMin: 15,
+    quality: { title: 'Easy Aerobic Run', coach_note: 'Cutback week — let the body absorb the training.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Easy', duration_min: 34, target: { metric: 'hr', zone: 2 } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 9 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 45, swim2Min: 28, bikeMin: 70, longBikeMin: 140, longRunMin: 68,
+    brickBikeMin: 95, brickRunMin: 20,
+    quality: { title: 'Tempo Intervals', coach_note: 'Threshold reps — hold the same effort every rep.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo intervals', repeat: 3,
+          work: { duration_min: 12, target: { metric: 'pace', zone: 'T' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 10 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 48, swim2Min: 28, bikeMin: 72, longBikeMin: 155, longRunMin: 75,
+    brickBikeMin: 100, brickRunMin: 22,
+    quality: { title: 'Marathon-Pace Run', coach_note: 'Lock in marathon rhythm — the foundation of Ironman running.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Marathon-pace', duration_min: 40, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 11 — Base
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 50, swim2Min: 30, bikeMin: 75, longBikeMin: 165, longRunMin: 80,
+    brickBikeMin: 105, brickRunMin: 22,
+    quality: { title: 'Tempo Run', coach_note: 'Hold threshold pace for the full block — quality over quantity.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo', duration_min: 35, target: { metric: 'pace', zone: 'T' } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 12 — Base (cutback)
+  { phase: 'Base', strengthRepRange: '10-12', strengthSets: 3,
+    swimMin: 42, swim2Min: 25, bikeMin: 62, longBikeMin: 120, longRunMin: 62,
+    brickBikeMin: 88, brickRunMin: 18,
+    quality: { title: 'Easy Aerobic Run', coach_note: 'Cutback week — deep base block complete.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Easy', duration_min: 44, target: { metric: 'hr', zone: 2 } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 13 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 52, swim2Min: 30, bikeMin: 75, longBikeMin: 175, longRunMin: 85,
+    brickBikeMin: 110, brickRunMin: 25,
+    quality: { title: 'Tempo Intervals', coach_note: 'Build block — threshold reps, controlled and repeatable.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo intervals', repeat: 4,
+          work: { duration_min: 10, target: { metric: 'pace', zone: 'T' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 14 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 55, swim2Min: 30, bikeMin: 78, longBikeMin: 185, longRunMin: 90,
+    brickBikeMin: 115, brickRunMin: 26,
+    quality: { title: 'VO2max Intervals', coach_note: 'Hard but controlled — hold pace through the last rep.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'VO2max intervals', repeat: 5,
+          work: { duration_min: 3, target: { metric: 'pace', zone: 'I' } },
+          recovery: { duration_min: 3, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 15 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 55, swim2Min: 32, bikeMin: 80, longBikeMin: 200, longRunMin: 95,
+    brickBikeMin: 120, brickRunMin: 28,
+    quality: { title: 'Marathon-Pace Long Intervals', coach_note: 'Race-pace blocks — settle in and hold form.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Marathon-pace intervals', repeat: 3,
+          work: { duration_min: 15, target: { metric: 'pace', zone: 'M' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 16 — Build (cutback)
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 46, swim2Min: 26, bikeMin: 65, longBikeMin: 155, longRunMin: 75,
+    brickBikeMin: 98, brickRunMin: 22,
+    quality: { title: 'Tempo Run', coach_note: 'Cutback week — volume drops, keep the intensity.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo', duration_min: 32, target: { metric: 'pace', zone: 'T' } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 17 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 58, swim2Min: 32, bikeMin: 80, longBikeMin: 215, longRunMin: 105,
+    brickBikeMin: 130, brickRunMin: 30,
+    quality: { title: 'Tempo Intervals', coach_note: 'Sustained threshold work — mental strength as much as physical.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo intervals', repeat: 5,
+          work: { duration_min: 10, target: { metric: 'pace', zone: 'T' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 18 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 60, swim2Min: 32, bikeMin: 82, longBikeMin: 225, longRunMin: 110,
+    brickBikeMin: 135, brickRunMin: 30,
+    quality: { title: 'Marathon-Pace Run', coach_note: 'Longest sustained marathon-pace run in the build block.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Marathon-pace', duration_min: 55, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 19 — Build
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 62, swim2Min: 32, bikeMin: 82, longBikeMin: 235, longRunMin: 115,
+    brickBikeMin: 140, brickRunMin: 32,
+    quality: { title: 'VO2max Intervals', coach_note: 'Keep the intensity — hold pace through every rep.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'VO2max intervals', repeat: 6,
+          work: { duration_min: 3, target: { metric: 'pace', zone: 'I' } },
+          recovery: { duration_min: 3, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 20 — Build (cutback)
+  { phase: 'Build', strengthRepRange: '6-8', strengthSets: 4,
+    swimMin: 50, swim2Min: 27, bikeMin: 68, longBikeMin: 180, longRunMin: 88,
+    brickBikeMin: 112, brickRunMin: 25,
+    quality: { title: 'Steady Run', coach_note: 'Cutback week — flush the legs, stay aerobic.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Steady', duration_min: 52, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 21 — Race Prep
+  { phase: 'Race Prep', strengthRepRange: '5-6', strengthSets: 3,
+    swimMin: 65, swim2Min: 34, bikeMin: 85, longBikeMin: 255, longRunMin: 130,
+    brickBikeMin: 150, brickRunMin: 35,
+    quality: { title: 'Marathon-Pace Long Intervals', coach_note: 'Race Prep begins — peak volume incoming. Stay fuelled and sleep well.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Marathon-pace long intervals', repeat: 3,
+          work: { duration_min: 18, target: { metric: 'pace', zone: 'M' } },
+          recovery: { duration_min: 2, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 22 — Race Prep
+  { phase: 'Race Prep', strengthRepRange: '5-6', strengthSets: 3,
+    swimMin: 68, swim2Min: 34, bikeMin: 85, longBikeMin: 270, longRunMin: 145,
+    brickBikeMin: 155, brickRunMin: 35,
+    quality: { title: 'Tempo Run', coach_note: 'Hold threshold pace — your run off the bike will thank you.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Tempo', duration_min: 45, target: { metric: 'pace', zone: 'T' } },
+        { label: 'Cool-down', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 23 — Race Prep
+  { phase: 'Race Prep', strengthRepRange: '5-6', strengthSets: 3,
+    swimMin: 70, swim2Min: 35, bikeMin: 85, longBikeMin: 285, longRunMin: 160,
+    brickBikeMin: 160, brickRunMin: 38,
+    quality: { title: 'Marathon-Pace Run', coach_note: 'Longest marathon-pace block of the entire programme.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Marathon-pace', duration_min: 70, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 24 — Race Prep (cutback)
+  { phase: 'Race Prep', strengthRepRange: '5-6', strengthSets: 3,
+    swimMin: 58, swim2Min: 28, bikeMin: 72, longBikeMin: 210, longRunMin: 110,
+    brickBikeMin: 130, brickRunMin: 28,
+    quality: { title: 'Easy Aerobic Run', coach_note: 'Cutback week — biggest block is done. Absorb it well.',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Easy', duration_min: 60, target: { metric: 'hr', zone: 2 } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 25 — Peak
+  { phase: 'Peak', strengthRepRange: '5-6', strengthSets: 3,
+    swimMin: 68, swim2Min: 32, bikeMin: 82, longBikeMin: 300, longRunMin: 170,
+    brickBikeMin: 165, brickRunMin: 38,
+    quality: { title: 'Race-Pace Long Intervals', coach_note: 'Longest race-pace run of the programme — then the taper begins.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Race-pace long intervals', repeat: 2,
+          work: { duration_min: 28, target: { metric: 'pace', zone: 'M' } },
+          recovery: { duration_min: 3, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 7, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 26 — Peak
+  { phase: 'Peak', strengthRepRange: '5-6', strengthSets: 3,
+    swimMin: 65, swim2Min: 30, bikeMin: 78, longBikeMin: 285, longRunMin: 165,
+    brickBikeMin: 160, brickRunMin: 38,
+    quality: { title: 'Marathon-Pace Run', coach_note: 'Hold race pace for the full block — trust the training.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Marathon-pace', duration_min: 75, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 27 — Taper
+  { phase: 'Taper', strengthRepRange: '5-6', strengthSets: 2,
+    swimMin: 40, swim2Min: 22, bikeMin: 55, longBikeMin: 150, longRunMin: 80,
+    brickBikeMin: 90, brickRunMin: 20,
+    quality: { title: 'Sharpening Intervals', coach_note: 'Taper week — short and sharp, keep the legs feeling fresh and fast.',
+      segments: [
+        { label: 'Warm-up', duration_min: 10, target: { metric: 'hr', zone: 1 } },
+        { label: 'Sharpening intervals', repeat: 4,
+          work: { duration_min: 3, target: { metric: 'pace', zone: 'I' } },
+          recovery: { duration_min: 3, target: { metric: 'hr', zone: 1 } } },
+        { label: 'Cool-down', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+      ] } },
+  // Week 28 — Race week
+  { phase: 'Race', strengthRepRange: '5-6', strengthSets: 2,
+    swimMin: 22, swim2Min: 15, bikeMin: 35, longBikeMin: 60, longRunMin: 30,
+    brickBikeMin: 40, brickRunMin: 10,
+    quality: { title: 'Race-Week Shakeout', coach_note: 'Race week — short, sharp, and confident. You have done the work. Good luck!',
+      segments: [
+        { label: 'Warm-up', duration_min: 8, target: { metric: 'hr', zone: 1 } },
+        { label: 'Race-pace', duration_min: 14, target: { metric: 'pace', zone: 'M' } },
+        { label: 'Cool-down', duration_min: 5, target: { metric: 'hr', zone: 1 } },
+      ] } },
+]
+
 // Canonical 8-station HYROX library — mirrors HYROX_STATIONS in coach/Programs.jsx
 const HYROX_STATIONS = [
   { id: '1', name: 'SkiErg',            distance: '1000m',    load_m: '—',      load_f: '—',      target: '' },
@@ -1283,6 +1815,76 @@ function buildTriBrick(w, dayNum = 5) {
       ],
     },
   }
+}
+
+function buildTriLongRide(w, dayNum = 5) {
+  const base = { day_label: `Day ${dayNum} — Long Ride`, session_type: 'endurance', exercises: [] }
+  if (w.phase === 'Foundation' || w.phase === 'Base') {
+    return { ...base, conditioning_config: {
+      modality: 'bike', title: 'Long Endurance Ride',
+      coach_note: 'Zone 2 throughout — the engine-builder session. Stay aerobic and keep fuel topped up.',
+      segments: [
+        { label: 'Warm-up', duration_min: 15, target: { metric: 'power', zone: '1' } },
+        { label: 'Endurance', duration_min: w.longBikeMin - 25, target: { metric: 'power', zone: '2' } },
+        { label: 'Cool-down', duration_min: 10, target: { metric: 'power', zone: '1' } },
+      ],
+    } }
+  }
+  if (w.phase === 'Build' || w.phase === 'Race Prep') {
+    return { ...base, conditioning_config: {
+      modality: 'bike', title: 'Long Ride with Race-Pace Blocks',
+      coach_note: 'Start aerobic, insert race-pace blocks mid-ride — simulate what the bike leg will feel like.',
+      segments: [
+        { label: 'Warm-up', duration_min: 15, target: { metric: 'power', zone: '2' } },
+        { label: 'Endurance', duration_min: Math.round((w.longBikeMin - 55) * 0.4), target: { metric: 'power', zone: '2' } },
+        { label: 'Race-pace blocks', repeat: 3,
+          work: { duration_min: Math.round((w.longBikeMin - 55) * 0.15), target: { metric: 'power', zone: '4' } },
+          recovery: { duration_min: 5, target: { metric: 'power', zone: '2' } } },
+        { label: 'Cool-down', duration_min: 15, target: { metric: 'power', zone: '1' } },
+      ],
+    } }
+  }
+  // Peak / Taper / Race
+  return { ...base, conditioning_config: {
+    modality: 'bike', title: 'Race-Simulation Ride',
+    coach_note: 'Ride at race effort — strong, controlled, and steady. Save enough for the run.',
+    segments: [
+      { label: 'Warm-up', duration_min: 15, target: { metric: 'power', zone: '2' } },
+      { label: 'Race effort', duration_min: w.longBikeMin - 30, target: { metric: 'power', zone: '3' } },
+      { label: 'Cool-down', duration_min: 15, target: { metric: 'power', zone: '1' } },
+    ],
+  } }
+}
+
+function buildTriLongRun(w, dayNum = 4) {
+  const base = { day_label: `Day ${dayNum} — Long Run`, session_type: 'endurance', exercises: [] }
+  if (w.phase === 'Foundation' || w.phase === 'Base') {
+    return { ...base, conditioning_config: {
+      modality: 'run', title: 'Long Aerobic Run',
+      coach_note: 'Easy aerobic effort — the goal is time on feet, not pace. Keep it conversational.',
+      segments: [
+        { label: 'Long run', duration_min: w.longRunMin, target: { metric: 'hr', zone: 2 } },
+      ],
+    } }
+  }
+  if (w.phase === 'Build' || w.phase === 'Race Prep') {
+    return { ...base, conditioning_config: {
+      modality: 'run', title: 'Progression Long Run',
+      coach_note: 'Start easy and finish at marathon pace — progressive effort, negative split.',
+      segments: [
+        { label: 'Easy', duration_min: Math.round(w.longRunMin * 0.55), target: { metric: 'hr', zone: 2 } },
+        { label: 'Marathon-pace finish', duration_min: Math.round(w.longRunMin * 0.45), target: { metric: 'pace', zone: 'M' } },
+      ],
+    } }
+  }
+  // Peak / Taper / Race
+  return { ...base, conditioning_config: {
+    modality: 'run', title: 'Long Run',
+    coach_note: 'Easy aerobic effort — legs stay fresh for race week.',
+    segments: [
+      { label: 'Long run', duration_min: w.longRunMin, target: { metric: 'hr', zone: 2 } },
+    ],
+  } }
 }
 
 function buildHyroxStrengthLower(w, dayNum = 1) {
@@ -7885,6 +8487,124 @@ const RAW_PROGRAM_TEMPLATES = [
           buildHyroxCompromisedRun(w, 2),
           buildHyroxStrengthUpper(w, 3),
           buildHyroxSimulation(w, 4),
+        ].forEach(d => sessions.push({ ...d, week_number: week }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── 6-Month HYROX Build — 5 Days/Week ──────────────────────────────────────
+  {
+    id: 'tri-703-20wk-5day',
+    name: '20-Week 70.3 — 5 Days/Week',
+    description: 'A testing-driven 70.3 Half Ironman plan (1.9km swim / 90km bike / 21.1km run). Foundation → Base → Build → Peak → Taper periodization across 20 weeks. Each week: endurance swim, threshold bike, strength, long run, and a brick session. FTP power zones, VDOT run-pace zones, and CSS swim zones all pull live from your latest test results and adjust automatically as you retest.',
+    goal_type: 'triathlon',
+    phase: 'Triathlon Periodization',
+    default_weeks: 20,
+    days_per_week: 5,
+    difficulty: 'intermediate',
+    icon: '🏊',
+    color: '#38bdf8',
+    tags: ['endurance', 'triathlon', 'swim', 'bike', 'run', '70.3', 'half-ironman'],
+    generateSessions: (weeks) => {
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        const w = TRI_703_WEEKS[Math.min(week, TRI_703_WEEKS.length) - 1]
+        ;[
+          buildTriSwimEndurance(w, 1),
+          buildTriBikeQuality(w, 2),
+          buildEnduranceStrengthA(w, 3),
+          buildTriLongRun(w, 4),
+          buildTriBrick(w, 5),
+        ].forEach(d => sessions.push({ ...d, week_number: week }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── 20-Week 70.3 Half Ironman — 6 Days/Week ────────────────────────────────
+  {
+    id: 'tri-703-20wk-6day',
+    name: '20-Week 70.3 — 6 Days/Week',
+    description: 'The 6-day 70.3 Half Ironman plan adds a dedicated long ride session and a quality run day to the 5-day structure, giving each discipline its own focused block each week. Foundation → Base → Build → Peak → Taper across 20 weeks. FTP power zones, VDOT run-pace zones, and CSS swim zones pull live from your latest test results.',
+    goal_type: 'triathlon',
+    phase: 'Triathlon Periodization',
+    default_weeks: 20,
+    days_per_week: 6,
+    difficulty: 'intermediate',
+    icon: '🏊',
+    color: '#38bdf8',
+    tags: ['endurance', 'triathlon', 'swim', 'bike', 'run', '70.3', 'half-ironman'],
+    generateSessions: (weeks) => {
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        const w = TRI_703_WEEKS[Math.min(week, TRI_703_WEEKS.length) - 1]
+        ;[
+          buildTriSwimEndurance(w, 1),
+          buildTriBikeQuality(w, 2),
+          buildEnduranceStrengthA(w, 3),
+          buildEnduranceQualityRun(w, 4),
+          buildTriLongRide(w, 5),
+          buildTriBrick(w, 6),
+        ].forEach(d => sessions.push({ ...d, week_number: week }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── 28-Week Full Ironman — 5 Days/Week ─────────────────────────────────────
+  {
+    id: 'tri-ironman-28wk-5day',
+    name: '28-Week Full Ironman — 5 Days/Week',
+    description: 'A testing-driven full Ironman plan (3.8km swim / 180km bike / 42.2km run). Foundation → Base → Build → Race Prep → Peak → Taper across 28 weeks. Each week: endurance swim, long ride, strength, long run, and a brick session. FTP power zones, VDOT marathon-pace zones, and CSS swim zones pull live from your latest test results and adjust as you retest.',
+    goal_type: 'triathlon',
+    phase: 'Ironman Periodization',
+    default_weeks: 28,
+    days_per_week: 5,
+    difficulty: 'advanced',
+    icon: '🔱',
+    color: '#818cf8',
+    tags: ['endurance', 'triathlon', 'swim', 'bike', 'run', 'ironman', 'full-ironman'],
+    generateSessions: (weeks) => {
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        const w = TRI_IRONMAN_WEEKS[Math.min(week, TRI_IRONMAN_WEEKS.length) - 1]
+        ;[
+          buildTriSwimEndurance(w, 1),
+          buildTriLongRide(w, 2),
+          buildEnduranceStrengthFull(w, 3),
+          buildTriLongRun(w, 4),
+          buildTriBrick(w, 5),
+        ].forEach(d => sessions.push({ ...d, week_number: week }))
+      }
+      return sessions
+    },
+  },
+
+  // ─── 28-Week Full Ironman — 6 Days/Week ─────────────────────────────────────
+  {
+    id: 'tri-ironman-28wk-6day',
+    name: '28-Week Full Ironman — 6 Days/Week',
+    description: 'The 6-day full Ironman plan adds a second swim session (technique + speed) and a dedicated quality run day for athletes who can handle higher volume. Foundation → Base → Build → Race Prep → Peak → Taper across 28 weeks. FTP power zones, VDOT run-pace zones, and CSS swim zones all pull live from your latest test results.',
+    goal_type: 'triathlon',
+    phase: 'Ironman Periodization',
+    default_weeks: 28,
+    days_per_week: 6,
+    difficulty: 'advanced',
+    icon: '🔱',
+    color: '#818cf8',
+    tags: ['endurance', 'triathlon', 'swim', 'bike', 'run', 'ironman', 'full-ironman'],
+    generateSessions: (weeks) => {
+      const sessions = []
+      for (let week = 1; week <= weeks; week++) {
+        const w = TRI_IRONMAN_WEEKS[Math.min(week, TRI_IRONMAN_WEEKS.length) - 1]
+        ;[
+          buildTriSwimEndurance(w, 1),
+          buildTriLongRide(w, 2),
+          buildEnduranceStrengthA(w, 3),
+          buildTriSwimTechnique(w, 4),
+          buildEnduranceQualityRun(w, 5),
+          buildTriBrick(w, 6),
         ].forEach(d => sessions.push({ ...d, week_number: week }))
       }
       return sessions

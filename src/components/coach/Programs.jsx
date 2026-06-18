@@ -2172,7 +2172,7 @@ function CreateProgramModal({ clients, onClose, onCreated, preselectedClientId =
               { key: 'corrective',  label: 'CORRECTIVE' },
               { key: 'endurance',   label: 'ENDURANCE' },
               { key: 'hyrox',       label: 'HYROX' },
-              { key: 'ironman',     label: 'IRONMAN' },
+              { key: 'triathlon',   label: 'TRIATHLON' },
             ].map(tab => (
               <button
                 key={tab.key}
@@ -2228,15 +2228,19 @@ function CreateProgramModal({ clients, onClose, onCreated, preselectedClientId =
             </div>
           )}
 
-          {/* Endurance / HYROX / Ironman templates — pulled from PROGRAM_TEMPLATES */}
-          {['endurance', 'hyrox', 'ironman'].includes(templateTab) && (() => {
+          {/* Endurance / HYROX / Triathlon templates — pulled from PROGRAM_TEMPLATES */}
+          {['endurance', 'hyrox', 'triathlon'].includes(templateTab) && (() => {
             const filtered = PROGRAM_TEMPLATES.filter(t => {
               if (templateTab === 'hyrox') return t.goal === 'HYROX'
-              if (templateTab === 'ironman') return t.id.startsWith('sprint-tri')
-              // endurance = running only (excludes triathlon)
+              if (templateTab === 'triathlon') return (
+                t.id.startsWith('sprint-tri') ||
+                t.id.startsWith('tri-703') ||
+                t.id.startsWith('tri-ironman')
+              )
+              // endurance = running only (excludes all triathlon)
               return t.goal === 'Endurance' && !t.id.startsWith('sprint-tri')
             })
-            const tplColorMap = { hyrox: '#f472b6', ironman: '#a78bfa', endurance: '#60a5fa' }
+            const tplColorMap = { hyrox: '#f472b6', triathlon: '#38bdf8', endurance: '#60a5fa' }
             const defaultColor = tplColorMap[templateTab]
             return (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
