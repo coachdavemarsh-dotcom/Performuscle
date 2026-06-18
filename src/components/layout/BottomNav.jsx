@@ -169,6 +169,11 @@ const icons = {
       <circle cx="8" cy="8" r="0.75" fill="currentColor" stroke="none"/>
     </svg>
   ),
+  performance: (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" width="20" height="20">
+      <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
+    </svg>
+  ),
 }
 
 // ─── nav definitions ──────────────────────────────────────────────────────────
@@ -188,7 +193,8 @@ const clientSecondary = [
   { to: '/protocols',       label: 'Protocols',    icon: 'protocols'    },
   { to: '/goalmap',         label: 'Goal Map',     icon: 'goalmap'      },
   { to: '/results',         label: 'Results',      icon: 'results'      },
-  { to: '/training-zones',  label: 'My Zones',     icon: 'zones'        },
+  { to: '/training-zones',  label: 'My Zones',      icon: 'zones'       },
+  { to: '/performance',     label: 'Performance',   icon: 'performance'  },
   { to: '/education',       label: 'Education',    icon: 'education'    },
   { to: '/learn',           label: 'Learn',        icon: 'learn'        },
   { to: '/cycle',           label: 'Cycle',        icon: 'cycle'        },

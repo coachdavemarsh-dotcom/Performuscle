@@ -209,6 +209,11 @@ const icons = {
       <circle cx="8" cy="8" r="0.75" fill="currentColor" stroke="none"/>
     </svg>
   ),
+  performance: (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
+    </svg>
+  ),
 }
 
 const clientNav = [
@@ -224,6 +229,7 @@ const clientNav = [
   { to: '/goalmap', label: 'Goal Map', icon: 'goalmap' },
   { to: '/results', label: 'My Results', icon: 'results' },
   { to: '/training-zones', label: 'My Zones', icon: 'zones' },
+  { to: '/performance', label: 'Performance Hub', icon: 'performance' },
   { to: '/cycle', label: 'Cycle', icon: 'cycle' },
   { to: '/supplements', label: 'Supplements', icon: 'supplements' },
   { to: '/protocols', label: 'Protocols', icon: 'protocols' },

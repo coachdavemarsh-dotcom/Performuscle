@@ -15,6 +15,7 @@ import GoalMap from './components/client/GoalMap.jsx'
 import CycleTracker from './components/client/CycleTracker.jsx'
 import TestResults from './components/client/TestResults.jsx'
 import TrainingZones from './components/client/TrainingZones.jsx'
+import PerformanceDashboard from './components/client/PerformanceDashboard.jsx'
 
 // Coach pages
 import CoachDashboard from './components/coach/CoachDashboard.jsx'
@@ -120,6 +121,7 @@ function AppRoutes() {
         <Route path="cycle" element={<CycleTracker />} />
         <Route path="results" element={<TestResults />} />
         <Route path="training-zones" element={<TrainingZones />} />
+        <Route path="performance" element={<PerformanceDashboard />} />
         <Route path="supplements" element={<Supplements />} />
         <Route path="protocols" element={<Protocols />} />
         <Route path="mobility" element={<Mobility />} />
