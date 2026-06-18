@@ -11,12 +11,11 @@ import Habits from './components/client/Habits.jsx'
 import Progress from './components/client/Progress.jsx'
 import CheckIn from './components/client/CheckIn.jsx'
 import Education from './components/client/Education.jsx'
-import GoalMap from './components/client/GoalMap.jsx'
+import MyPlan from './components/client/MyPlan.jsx'
 import CycleTracker from './components/client/CycleTracker.jsx'
 import TestResults from './components/client/TestResults.jsx'
 import TrainingZones from './components/client/TrainingZones.jsx'
 import PerformanceDashboard from './components/client/PerformanceDashboard.jsx'
-import MyRoadmap from './components/client/MyRoadmap.jsx'
 
 // Coach pages
 import CoachDashboard from './components/coach/CoachDashboard.jsx'
@@ -119,12 +118,12 @@ function AppRoutes() {
         <Route path="progress" element={<Progress />} />
         <Route path="checkin" element={<CheckIn />} />
         <Route path="education" element={<Education />} />
-        <Route path="goalmap" element={<GoalMap />} />
+        <Route path="goalmap" element={<Navigate to="/roadmap" replace />} />
         <Route path="cycle" element={<CycleTracker />} />
         <Route path="results" element={<TestResults />} />
         <Route path="training-zones" element={<TrainingZones />} />
         <Route path="performance" element={<PerformanceDashboard />} />
-        <Route path="roadmap" element={<MyRoadmap />} />
+        <Route path="roadmap" element={<MyPlan />} />
         <Route path="supplements" element={<Supplements />} />
         <Route path="protocols" element={<Protocols />} />
         <Route path="mobility" element={<Mobility />} />

@@ -665,7 +665,7 @@ export default function Dashboard() {
             { to: '/training',  icon: '🏋️', label: 'Training',    sub: program ? `Week ${currentWeek}` : 'No programme' },
             { to: '/nutrition', icon: '🥗',  label: 'Nutrition',   sub: 'Log meals' },
             { to: '/checkin',   icon: '📋',  label: 'Check-In',    sub: 'Weekly report' },
-            { to: '/goalmap',   icon: '📈',  label: 'Goal Map',    sub: '6-month plan' },
+            { to: '/roadmap',   icon: '📈',  label: 'My Plan',     sub: 'Roadmap & goals' },
             { to: '/results',   icon: '📊',  label: 'My Results',  sub: `${testResults.length} tests` },
             { to: '/training-zones', icon: '🎯', label: 'My Zones', sub: 'Current targets' },
             { to: '/education', icon: '🎓',  label: 'Education',   sub: 'Learn & grow' },
