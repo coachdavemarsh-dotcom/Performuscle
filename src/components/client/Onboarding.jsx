@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase.js'
 import { useAuth } from '../../hooks/useAuth.jsx'
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
 // ─── Naval BF% formula (US Navy method, measurements in cm) ──────────────────
 
 function navalBF(gender, heightCm, waistCm, neckCm, hipsCm) {
@@ -1325,7 +1327,7 @@ function ProgressBar({ current, total, part, partTotal }) {
 // ─── main component ───────────────────────────────────────────────────────────
 
 export default function Onboarding() {
-  const { user, profile, refreshProfile } = useAuth()
+  const { user, session, profile, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const [step, setStep]         = useState(0)
   const [saving, setSaving]     = useState(false)
@@ -1524,13 +1526,12 @@ export default function Onboarding() {
 
       if (profileError) throw profileError
 
-      // 4b — auto-link to coach if invited via coach invite
-      const coachId = user.user_metadata?.coach_id
-      if (coachId) {
-        await supabase.from('clients').upsert(
-          { coach_id: coachId, client_id: user.id },
-          { onConflict: 'coach_id,client_id' }
-        )
+      // 4b — auto-link to coach via server (service role bypasses RLS)
+      if (user.user_metadata?.coach_id) {
+        await fetch(`${API}/api/emails/link-client`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        })
       }
 
       // 5 — save assessment

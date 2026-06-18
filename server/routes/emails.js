@@ -239,6 +239,27 @@ router.get('/pending-invites', requireAuth, requireCoach, async (req, res) => {
   }
 })
 
+// ─── POST /api/emails/link-client ────────────────────────────────────────────
+// Called by the client at end of onboarding to create their clients row.
+// Uses service role key to bypass RLS (coach_id != auth.uid() from client JWT).
+// coach_id comes from immutable user_metadata set at invite time — safe.
+router.post('/link-client', requireAuth, async (req, res) => {
+  try {
+    const coachId = req.user.user_metadata?.coach_id
+    if (!coachId) return res.json({ ok: true, skipped: true })
+
+    const { error } = await supabaseAdmin.from('clients').upsert(
+      { coach_id: coachId, client_id: req.user.id, status: 'active' },
+      { onConflict: 'coach_id,client_id' }
+    )
+    if (error) throw error
+    res.json({ ok: true })
+  } catch (err) {
+    console.error('[Email Route] link-client:', err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // ─── POST /api/emails/resend-invite ─────────────────────────────────────────
 // Called by coach to resend the invite link to an existing client
 // Body: { clientId }
