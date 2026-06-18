@@ -1020,37 +1020,12 @@ function StepMovement({ data, update, onNext, onBack }) {
   const [area, setArea] = useState('hip')
   const current = ROM_AREAS.find(a => a.id === area)
 
-  function updateROM(areaId, testId, side, value) {
-    const key = side ? `${testId}_${side}` : testId
-    update('rom', {
-      ...data.rom,
-      [areaId]: { ...(data.rom?.[areaId] || {}), [key]: value },
-    })
-  }
-
-  function getROM(areaId, testId, side) {
-    const key = side ? `${testId}_${side}` : testId
-    return data.rom?.[areaId]?.[key] || ''
-  }
-
-  const pctNormal = (value, normal) => {
-    if (!value) return null
-    const pct = Math.round((parseFloat(value) / normal) * 100)
-    return pct
-  }
-
-  const pctColor = (pct) => {
-    if (pct >= 90) return 'var(--accent)'
-    if (pct >= 75) return 'var(--warn)'
-    return 'var(--danger)'
-  }
-
   return (
     <div>
       <div style={{ marginBottom: 16 }}>
         <div style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 2, color: '#f472b6', marginBottom: 4 }}>PART 2 OF 2 — ASSESSMENT</div>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, letterSpacing: 2, color: 'var(--white)', marginBottom: 4 }}>MOBILITY SCREEN</h2>
-        <p style={{ fontSize: 12, color: 'var(--muted)' }}>Range of motion across hips, shoulders, and spine. Estimate is fine — exact goniometry not required.</p>
+        <p style={{ fontSize: 12, color: 'var(--muted)' }}>Watch the demo, then record yourself performing each movement and upload the video below. Your coach will assess your range of motion from the footage.</p>
       </div>
 
       {/* Area tabs */}
@@ -1068,89 +1043,52 @@ function StepMovement({ data, update, onNext, onBack }) {
         ))}
       </div>
 
-      {/* Instructions + demo video */}
+      {/* Demo video */}
       <div style={{ padding: '10px 14px', background: 'var(--s3)', borderRadius: 8, border: '1px solid var(--border)', marginBottom: 14 }}>
         <p style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 10, lineHeight: 1.6 }}>{current.instructions}</p>
         <DemoVideo youtubeId={current.youtubeId} searchQuery={current.youtubeSearch} label={`${current.label} Assessment Demo`} />
       </div>
 
-      {/* ROM inputs */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16, maxHeight: 340, overflowY: 'auto' }}>
-        {current.tests.map(test => {
-          if (test.bilateral) {
-            const lVal = getROM(area, test.id, 'l')
-            const rVal = getROM(area, test.id, 'r')
-            const lPct = pctNormal(lVal, test.normal)
-            const rPct = pctNormal(rVal, test.normal)
-            return (
-              <div key={test.id} style={{
-                padding: '10px 14px', background: 'var(--s3)',
-                borderRadius: 8, border: '1px solid var(--border)',
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                  <div>
-                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: .5, color: 'var(--white)' }}>{test.name}</div>
-                    <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>{test.cue}</div>
-                  </div>
-                  <div style={{ fontSize: 9, color: 'var(--muted)' }}>Normal: {test.normal}°</div>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                  {[{ side: 'l', label: 'Left', val: lVal, pct: lPct }, { side: 'r', label: 'Right', val: rVal, pct: rPct }].map(s => (
-                    <div key={s.side}>
-                      <div style={{ fontSize: 9, color: 'var(--muted)', marginBottom: 4 }}>{s.label}</div>
-                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                        <input className="input input-sm" type="number" step="1" min="0" max="200"
-                          value={s.val} placeholder="°"
-                          onChange={e => updateROM(area, test.id, s.side, e.target.value)}
-                          style={{ flex: 1 }} />
-                        {s.pct !== null && (
-                          <span style={{
-                            fontFamily: 'var(--font-display)', fontSize: 10,
-                            color: pctColor(s.pct), minWidth: 36, textAlign: 'right',
-                          }}>
-                            {s.pct}%
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          }
-
-          const val = getROM(area, test.id, null)
-          const pct = pctNormal(val, test.normal)
-          return (
+      {/* Movements to perform — read-only reference */}
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1.5, color: 'var(--muted)', marginBottom: 8 }}>
+          MOVEMENTS TO INCLUDE IN YOUR VIDEO
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {current.tests.map(test => (
             <div key={test.id} style={{
               padding: '10px 14px', background: 'var(--s3)',
               borderRadius: 8, border: '1px solid var(--border)',
               display: 'flex', alignItems: 'center', gap: 12,
             }}>
+              <div style={{
+                width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)',
+                flexShrink: 0, marginTop: 1,
+              }} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: .5, color: 'var(--white)' }}>{test.name}</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: .5, color: 'var(--white)' }}>
+                  {test.name}{test.bilateral ? ' — Left & Right' : ''}
+                </div>
                 <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>{test.cue}</div>
               </div>
-              <div style={{ fontSize: 9, color: 'var(--muted)', flexShrink: 0 }}>Normal: {test.normal}°</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <input className="input input-sm" type="number" step="1" min="0" max="200"
-                  value={val} placeholder="°"
-                  onChange={e => updateROM(area, test.id, null, e.target.value)}
-                  style={{ width: 64 }} />
-                {pct !== null && (
-                  <span style={{ fontFamily: 'var(--font-display)', fontSize: 10, color: pctColor(pct), minWidth: 36, textAlign: 'right' }}>
-                    {pct}%
-                  </span>
-                )}
-              </div>
             </div>
-          )
-        })}
+          ))}
+        </div>
       </div>
 
-      {/* Photo upload for this area */}
+      {/* Coach assessment notice */}
+      <div style={{
+        padding: '10px 14px', marginBottom: 16,
+        background: 'rgba(0,200,150,0.06)', borderRadius: 8,
+        border: '1px solid var(--border-accent)',
+        fontSize: 11, color: 'var(--muted)', lineHeight: 1.6,
+      }}>
+        📋 <strong style={{ color: 'var(--white)' }}>Your coach will add the measurements.</strong> Just upload your video — no numbers needed from you.
+      </div>
+
+      {/* Video upload — primary action */}
       <div style={{ marginBottom: 16 }}>
-        <div className="label" style={{ marginBottom: 8, fontSize: 8 }}>UPLOAD PHOTO / VIDEO — {current.label.toUpperCase()} (OPTIONAL)</div>
+        <div className="label" style={{ marginBottom: 8, fontSize: 8 }}>UPLOAD YOUR {current.label.toUpperCase()} ASSESSMENT VIDEO</div>
         <VideoUploadBtn
           file={data[`${area}_media`]}
           onFile={f => update(`${area}_media`, f)}
