@@ -37,6 +37,8 @@ export default defineConfig({
         // Take over immediately — don't wait for tabs to close
         skipWaiting:  true,
         clientsClaim: true,
+        // Bundle is >2 MiB — raise the precache limit to 4 MiB
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         // Cache app shell and static assets (exclude standalone tool pages)
         globPatterns:         ['**/*.{js,css,ico,png,svg,woff2}'],
         // Don't cache Supabase, Stripe, or standalone HTML tool pages
