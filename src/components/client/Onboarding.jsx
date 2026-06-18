@@ -1550,13 +1550,14 @@ export default function Onboarding() {
         },
       })
 
-      await refreshProfile()
       // Clear the draft now that onboarding is complete
       if (storageKey) {
         localStorage.removeItem(storageKey)
         localStorage.removeItem(`${storageKey}_step`)
       }
-      setTimeout(() => navigate('/dashboard', { replace: true }), 2500)
+      // Hard redirect so the auth guard re-fetches the profile fresh from
+      // Supabase and sees onboarding_complete: true before entering the app
+      setTimeout(() => window.location.replace('/dashboard'), 2500)
 
     } catch (err) {
       setError(err.message)
