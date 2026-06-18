@@ -8,6 +8,7 @@ import webhooksRouter from './routes/webhooks.js'
 import emailRouter from './routes/emails.js'
 import aiRouter from './routes/ai.js'
 import mealPlannerRouter from './routes/mealPlanner.js'
+import garminRouter from './routes/garmin.js'
 import { startReminderCron } from './lib/reminderCron.js'
 import { startBirthdayCron } from './lib/birthdayCron.js'
 
@@ -83,6 +84,7 @@ app.use('/api/webhooks', webhooksRouter)
 app.use('/api/emails', emailRouter)
 app.use('/api', aiRouter)
 app.use('/api', mealPlannerRouter)
+app.use('/api/garmin', garminRouter)
 
 // 404 handler
 app.use((req, res) => {

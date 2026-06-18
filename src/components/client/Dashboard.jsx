@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth.jsx'
 import { useClient } from '../../hooks/useClient.js'
 import { getMeasurements, getHabitLogsRange, supabase } from '../../lib/supabase.js'
 import { navalBF, periodisedNutrition } from '../../lib/calculators.js'
+import GarminConnect from './GarminConnect.jsx'
 
 // ─── Featured Content hero banner ────────────────────────────────────────────
 function FeaturedContentBanner({ coachId }) {
@@ -679,6 +680,11 @@ export default function Dashboard() {
             </Link>
           ))}
         </div>
+      </div>
+
+      {/* Garmin connection */}
+      <div className="section-gap">
+        <GarminConnect />
       </div>
 
       {/* Recent check-ins */}
