@@ -1942,6 +1942,7 @@ function ProgramCard({ program, onClick }) {
 const PROGRAMME_TEMPLATES = [
   {
     id: 'week1_gbc',
+    category: 'corrective',
     label: 'Week 1 GBC Baseline',
     icon: '📐',
     color: 'var(--accent)',
@@ -1956,6 +1957,7 @@ const PROGRAMME_TEMPLATES = [
   },
   {
     id: 'structural_balance',
+    category: 'corrective',
     label: 'Structural Balance',
     icon: '⚖️',
     color: '#f472b6',
@@ -1970,6 +1972,7 @@ const PROGRAMME_TEMPLATES = [
   },
   {
     id: 'gbc_fat_loss',
+    category: 'hypertrophy',
     label: 'GBC Fat Loss',
     icon: '🔥',
     color: 'var(--info)',
@@ -1984,6 +1987,7 @@ const PROGRAMME_TEMPLATES = [
   },
   {
     id: 'hypertrophy',
+    category: 'hypertrophy',
     label: 'Hypertrophy Base',
     icon: '💪',
     color: 'var(--accent)',
@@ -1998,6 +2002,7 @@ const PROGRAMME_TEMPLATES = [
   },
   {
     id: 'strength',
+    category: 'strength',
     label: 'Strength Phase',
     icon: '🏋️',
     color: 'var(--purple)',
@@ -2012,6 +2017,7 @@ const PROGRAMME_TEMPLATES = [
   },
   {
     id: 'full_26',
+    category: 'strength',
     label: '26-Week Transformation',
     icon: '🗺️',
     color: 'var(--warn)',
@@ -2159,21 +2165,24 @@ function CreateProgramModal({ clients, onClose, onCreated, preselectedClientId =
           <div className="label" style={{ marginBottom: 10 }}>Quick Start — Choose a Template</div>
 
           {/* Template type tabs */}
-          <div style={{ display: 'flex', gap: 4, marginBottom: 10, borderBottom: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', gap: 0, marginBottom: 10, borderBottom: '1px solid var(--border)', overflowX: 'auto' }}>
             {[
-              { key: 'strength', label: 'STRENGTH' },
-              { key: 'endurance', label: 'ENDURANCE' },
-              { key: 'hyrox', label: 'HYROX' },
+              { key: 'strength',    label: 'STRENGTH' },
+              { key: 'hypertrophy', label: 'HYPERTROPHY' },
+              { key: 'corrective',  label: 'CORRECTIVE' },
+              { key: 'endurance',   label: 'ENDURANCE' },
+              { key: 'hyrox',       label: 'HYROX' },
+              { key: 'ironman',     label: 'IRONMAN' },
             ].map(tab => (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => setTemplateTab(tab.key)}
                 style={{
-                  fontFamily: 'var(--font-display)', fontSize: 9, letterSpacing: 1.5,
+                  fontFamily: 'var(--font-display)', fontSize: 8, letterSpacing: 1.2,
                   color: templateTab === tab.key ? 'var(--accent)' : 'var(--muted)',
                   background: 'none', border: 'none', cursor: 'pointer',
-                  padding: '6px 12px',
+                  padding: '6px 10px', whiteSpace: 'nowrap',
                   borderBottom: templateTab === tab.key ? '2px solid var(--accent)' : '2px solid transparent',
                   marginBottom: -1, transition: 'color .15s',
                 }}
@@ -2181,10 +2190,10 @@ function CreateProgramModal({ clients, onClose, onCreated, preselectedClientId =
             ))}
           </div>
 
-          {/* Strength / Body Comp templates */}
-          {templateTab === 'strength' && (
+          {/* Local templates — Strength / Hypertrophy / Corrective */}
+          {['strength', 'hypertrophy', 'corrective'].includes(templateTab) && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-              {PROGRAMME_TEMPLATES.map(tpl => (
+              {PROGRAMME_TEMPLATES.filter(tpl => tpl.category === templateTab).map(tpl => (
                 <button
                   key={tpl.id}
                   type="button"
@@ -2219,14 +2228,20 @@ function CreateProgramModal({ clients, onClose, onCreated, preselectedClientId =
             </div>
           )}
 
-          {/* Endurance & HYROX templates — pulled from PROGRAM_TEMPLATES */}
-          {(templateTab === 'endurance' || templateTab === 'hyrox') && (() => {
-            const goalLabel = templateTab === 'endurance' ? 'Endurance' : 'HYROX'
-            const filtered = PROGRAM_TEMPLATES.filter(t => t.goal === goalLabel)
+          {/* Endurance / HYROX / Ironman templates — pulled from PROGRAM_TEMPLATES */}
+          {['endurance', 'hyrox', 'ironman'].includes(templateTab) && (() => {
+            const filtered = PROGRAM_TEMPLATES.filter(t => {
+              if (templateTab === 'hyrox') return t.goal === 'HYROX'
+              if (templateTab === 'ironman') return t.id.startsWith('sprint-tri')
+              // endurance = running only (excludes triathlon)
+              return t.goal === 'Endurance' && !t.id.startsWith('sprint-tri')
+            })
+            const tplColorMap = { hyrox: '#f472b6', ironman: '#a78bfa', endurance: '#60a5fa' }
+            const defaultColor = tplColorMap[templateTab]
             return (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
                 {filtered.map(t => {
-                  const tplColor = t.color || (templateTab === 'hyrox' ? '#f472b6' : '#60a5fa')
+                  const tplColor = t.color || defaultColor
                   const isSelected = selectedTemplate === t.id
                   return (
                     <button
