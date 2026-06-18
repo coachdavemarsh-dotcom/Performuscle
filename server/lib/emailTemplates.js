@@ -68,7 +68,7 @@ function wrap(bodyContent) {
 // Shared CTA button
 function ctaButton(label, url, opts = {}) {
   const bg  = opts.bg  || BRAND.accent
-  const fg  = opts.fg  || '#ffffff'
+  const fg  = opts.fg  || '#060608'
   return `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:28px 0 0;">
       <tr>
@@ -293,7 +293,9 @@ export function clientInvite({
             <td style="padding:14px 18px;">
               <table role="presentation" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td style="width:32px;height:32px;background:${BRAND.accent};border-radius:50%;text-align:center;vertical-align:middle;font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:15px;color:#060608;font-weight:bold;">${s.num}</td>
+                  <td style="width:36px;min-width:36px;max-width:36px;vertical-align:middle;">
+                    <div style="width:36px;height:36px;background:${BRAND.accent};border-radius:50%;text-align:center;line-height:36px;font-family:'Bebas Neue',Impact,'Arial Narrow',sans-serif;font-size:16px;color:#060608;font-weight:bold;overflow:hidden;">${s.num}</div>
+                  </td>
                   <td style="padding-left:14px;font-size:14px;color:${BRAND.text};line-height:1.5;">${s.text}</td>
                 </tr>
               </table>
