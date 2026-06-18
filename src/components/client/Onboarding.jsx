@@ -5,8 +5,6 @@ import { useAuth } from '../../hooks/useAuth.jsx'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-
 // ─── Naval BF% formula (US Navy method, measurements in cm) ──────────────────
 
 function navalBF(gender, heightCm, waistCm, neckCm, hipsCm) {
