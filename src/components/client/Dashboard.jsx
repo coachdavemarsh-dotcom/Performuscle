@@ -5,6 +5,8 @@ import { useClient } from '../../hooks/useClient.js'
 import { getMeasurements, getHabitLogsRange, supabase } from '../../lib/supabase.js'
 import { navalBF, periodisedNutrition } from '../../lib/calculators.js'
 import GarminConnect from './GarminConnect.jsx'
+import TerraConnect from './TerraConnect.jsx'
+import DailyEnergyCard from './DailyEnergyCard.jsx'
 
 // ─── Featured Content hero banner ────────────────────────────────────────────
 function FeaturedContentBanner({ coachId }) {
@@ -604,6 +606,11 @@ export default function Dashboard() {
         <FeaturedContentBanner coachId={clientRecord.coach_id} />
       )}
 
+      {/* Daily energy card — shows when Terra wearable is connected */}
+      <div className="section-gap">
+        <DailyEnergyCard />
+      </div>
+
       {/* Top stats row */}
       <div className="stats-grid section-gap">
         <Stat label="Body Weight"  value={latestWeight || profile?.current_weight || '—'} unit="kg" sub="Latest logged" />
@@ -682,8 +689,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Garmin connection */}
-      <div className="section-gap">
+      {/* Wearable connections */}
+      <div className="section-gap" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <TerraConnect />
         <GarminConnect />
       </div>
 
