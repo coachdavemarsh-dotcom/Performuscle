@@ -4,6 +4,7 @@ import { useClient } from '../../hooks/useClient.js'
 import { supabase, insertNotification } from '../../lib/supabase.js'
 import { getWeekSessions, upsertSetLog, completeSession, upsertConditioningLog, getConditioningLog, getLatestTestResult } from '../../lib/supabase.js'
 import { epley, resolveEnduranceTarget } from '../../lib/calculators.js'
+import { sessionToFitSteps, buildFitWorkout, downloadFitFile } from '../../lib/fitExport.js'
 import { EXERCISE_BY_NAME } from '../../data/exerciseLibrary.js'
 import MovementPrep from '../shared/MovementPrep.jsx'
 import ProgressionCard from '../shared/ProgressionCard.jsx'
@@ -2047,7 +2048,18 @@ function EnduranceView({ session, clientId, onFinish }) {
             </div>
           </div>
           <div style={{ flex: 1 }} />
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              className="btn btn-ghost btn-sm"
+              title="Download structured workout for Garmin Connect"
+              style={{ fontSize: 10, letterSpacing: 0.5, opacity: latestResults ? 1 : 0.4 }}
+              onClick={() => {
+                if (!latestResults) return
+                const steps = sessionToFitSteps(cfg, latestResults)
+                const bytes = buildFitWorkout(cfg.title || session.day_label || 'Workout', cfg.modality, steps)
+                downloadFitFile(bytes, cfg.title || session.day_label || 'workout')
+              }}
+            >⌚ Garmin</button>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: timer.running ? color : 'var(--muted)' }}>{timer.formatted}</div>
             {!timer.running ? (
               <button className="btn btn-ghost btn-sm" style={{ borderColor: color, color }} onClick={() => timer.start()}>START</button>
