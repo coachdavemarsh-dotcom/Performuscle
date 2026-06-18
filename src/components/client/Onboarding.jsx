@@ -1295,12 +1295,14 @@ function StepAllSet({ saving, error }) {
           <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.8, maxWidth: 320, margin: '0 auto 24px' }}>
             Profile complete and assessment submitted. Your coach will review your posture photos and FMS scores before building your programme.
           </p>
-          <a href="/dashboard" style={{
-            display: 'inline-block',
-            background: 'var(--accent)', color: '#060608',
-            fontFamily: 'var(--font-display)', fontSize: 13, letterSpacing: 1.5,
-            padding: '14px 36px', borderRadius: 8, textDecoration: 'none',
-          }}>GO TO DASHBOARD →</a>
+          <button
+            onClick={() => window.location.replace('/dashboard')}
+            style={{
+              background: 'var(--accent)', color: '#060608',
+              fontFamily: 'var(--font-display)', fontSize: 13, letterSpacing: 1.5,
+              padding: '14px 36px', borderRadius: 8, border: 'none', cursor: 'pointer',
+            }}
+          >GO TO DASHBOARD →</button>
         </>
       )}
     </div>
