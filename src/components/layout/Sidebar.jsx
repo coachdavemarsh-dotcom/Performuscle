@@ -214,6 +214,22 @@ const icons = {
       <path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z"/>
     </svg>
   ),
+  roadmap: (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M2 12C4 12 4 4 8 4s4 8 6 8"/>
+      <circle cx="8" cy="4" r="1.5" fill="currentColor" stroke="none"/>
+      <circle cx="14" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+    </svg>
+  ),
+  periodisation: (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="1" y="5" width="3" height="8" rx="1"/>
+      <rect x="5" y="3" width="3" height="10" rx="1"/>
+      <rect x="9" y="1" width="3" height="12" rx="1"/>
+      <path d="M13 7v6"/>
+      <circle cx="13" cy="6" r="1.5" fill="currentColor" stroke="none"/>
+    </svg>
+  ),
 }
 
 const clientNav = [
@@ -230,6 +246,7 @@ const clientNav = [
   { to: '/results', label: 'My Results', icon: 'results' },
   { to: '/training-zones', label: 'My Zones', icon: 'zones' },
   { to: '/performance', label: 'Performance Hub', icon: 'performance' },
+  { to: '/roadmap',     label: 'My Roadmap',      icon: 'roadmap'     },
   { to: '/cycle', label: 'Cycle', icon: 'cycle' },
   { to: '/supplements', label: 'Supplements', icon: 'supplements' },
   { to: '/protocols', label: 'Protocols', icon: 'protocols' },
@@ -248,6 +265,7 @@ const coachNav = [
   { to: '/coach/calculators', label: 'Calculators', icon: 'calc' },
   { to: '/coach/content', label: 'Content Hub', icon: 'content' },
   { to: '/coach/technique-lab', label: 'Technique Lab', icon: 'technique' },
+  { to: '/coach/periodisation', label: 'Periodisation', icon: 'periodisation' },
   { to: '/coach/clients', label: 'Client Database', icon: 'database' },
   { to: '/coach/stripe', label: 'Billing', icon: 'stripe' },
 ]

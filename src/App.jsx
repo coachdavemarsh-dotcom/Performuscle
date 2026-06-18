@@ -16,6 +16,7 @@ import CycleTracker from './components/client/CycleTracker.jsx'
 import TestResults from './components/client/TestResults.jsx'
 import TrainingZones from './components/client/TrainingZones.jsx'
 import PerformanceDashboard from './components/client/PerformanceDashboard.jsx'
+import MyRoadmap from './components/client/MyRoadmap.jsx'
 
 // Coach pages
 import CoachDashboard from './components/coach/CoachDashboard.jsx'
@@ -31,6 +32,7 @@ import ContentHub from './components/coach/ContentHub.jsx'
 import ClientProfile from './components/coach/ClientProfile.jsx'
 import TechniqueLab from './components/coach/TechniqueLab.jsx'
 import ClientDatabase from './components/coach/ClientDatabase.jsx'
+import PeriodisationPlanner from './components/coach/PeriodisationPlanner.jsx'
 import Supplements from './components/client/Supplements.jsx'
 import Protocols from './components/client/Protocols.jsx'
 import Mobility from './components/client/Mobility.jsx'
@@ -122,6 +124,7 @@ function AppRoutes() {
         <Route path="results" element={<TestResults />} />
         <Route path="training-zones" element={<TrainingZones />} />
         <Route path="performance" element={<PerformanceDashboard />} />
+        <Route path="roadmap" element={<MyRoadmap />} />
         <Route path="supplements" element={<Supplements />} />
         <Route path="protocols" element={<Protocols />} />
         <Route path="mobility" element={<Mobility />} />
@@ -185,6 +188,10 @@ function AppRoutes() {
         <Route
           path="coach/clients"
           element={<ProtectedRoute coachOnly><ClientDatabase /></ProtectedRoute>}
+        />
+        <Route
+          path="coach/periodisation"
+          element={<ProtectedRoute coachOnly><PeriodisationPlanner /></ProtectedRoute>}
         />
         <Route
           path="coach/physique-peaking"

@@ -904,3 +904,35 @@ export async function enableCycleTracking(userId, { cycleLength = 28, periodLeng
     .eq('id', userId)
   if (error) throw error
 }
+
+// ─── Event Plans (Periodisation) ─────────────────────────────────────────────
+
+export async function getEventPlansForCoach(coachId) {
+  return supabase
+    .from('event_plans')
+    .select('*, profiles!event_plans_client_id_fkey(id, full_name, avatar_url)')
+    .eq('coach_id', coachId)
+    .neq('status', 'archived')
+    .order('event_date')
+}
+
+export async function getEventPlansForClient(clientId) {
+  return supabase
+    .from('event_plans')
+    .select('*')
+    .eq('client_id', clientId)
+    .in('status', ['approved', 'active', 'completed'])
+    .order('event_date')
+}
+
+export async function upsertEventPlan(plan) {
+  return supabase
+    .from('event_plans')
+    .upsert({ ...plan, updated_at: new Date().toISOString() })
+    .select()
+    .single()
+}
+
+export async function deleteEventPlan(id) {
+  return supabase.from('event_plans').delete().eq('id', id)
+}
