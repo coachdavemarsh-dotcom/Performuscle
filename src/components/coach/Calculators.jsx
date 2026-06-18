@@ -10,6 +10,14 @@ import {
   lombardi,
   estimateTDEE,
   fmt,
+  calcVDOT,
+  derivePaceZones,
+  predictRaceTimes,
+  calcFTP,
+  deriveFTPZones,
+  calcCSS,
+  deriveSwimZones,
+  formatTime,
 } from '../../lib/calculators.js'
 
 // ============================================================
@@ -684,6 +692,213 @@ function OneRMCalc() {
 }
 
 // ============================================================
+// VDOT / RACE PREDICTOR
+// ============================================================
+
+function timeToSecs(mm, ss) {
+  const m = parseInt(mm) || 0
+  const s = parseInt(ss) || 0
+  return m * 60 + s
+}
+
+function VDOTCalc() {
+  const [mins, setMins]   = useState('')
+  const [secs, setSecs]   = useState('')
+
+  const totalSec = timeToSecs(mins, secs)
+  const vdot     = totalSec > 0 ? calcVDOT(5000, totalSec) : null
+  const zones    = vdot ? derivePaceZones(vdot) : null
+  const preds    = totalSec > 0 ? predictRaceTimes(totalSec) : null
+
+  return (
+    <CalcSection title="VDOT / Race Predictor">
+      <div style={{ display: 'flex', gap: 12, marginBottom: 16, alignItems: 'flex-end' }}>
+        <Field label="5K Time — Minutes" value={mins} onChange={setMins} type="number" step={1} placeholder="22" />
+        <Field label="Seconds" value={secs} onChange={setSecs} type="number" step={1} placeholder="30" />
+      </div>
+
+      {vdot && (
+        <>
+          <ResultRow label="VDOT Score" value={vdot.toFixed(1)} highlight />
+
+          {preds && (
+            <div className="card" style={{ padding: '14px 18px', marginTop: 16, marginBottom: 16 }}>
+              <div className="label" style={{ marginBottom: 10 }}>Race Predictions</div>
+              {[
+                { label: '10K',        sec: preds.tenK },
+                { label: 'Half Marathon', sec: preds.halfMarathon },
+                { label: 'Marathon',   sec: preds.marathon },
+              ].map(r => (
+                <ResultRow key={r.label} label={r.label} value={formatTime(r.sec)} />
+              ))}
+            </div>
+          )}
+
+          {zones && (
+            <div style={{ marginTop: 16 }}>
+              <div className="label" style={{ marginBottom: 8 }}>Training Pace Zones</div>
+              {zones.map(z => (
+                <div key={z.zone} style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '8px 12px', marginBottom: 6,
+                  background: 'var(--s3)', borderRadius: 6,
+                  border: '1px solid var(--border)',
+                  borderLeft: `3px solid ${z.color}`,
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1, color: z.color }}>{z.label}</div>
+                    {z.desc && <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>{z.desc}</div>}
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--white)', textAlign: 'right' }}>
+                    {z.pacePerKm}<span style={{ fontSize: 10, color: 'var(--muted)' }}>/km</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {!vdot && (
+        <div className="empty-state" style={{ height: 160 }}>
+          <div className="empty-state-text">Enter a 5K time to generate VDOT, race predictions, and all training pace zones</div>
+        </div>
+      )}
+    </CalcSection>
+  )
+}
+
+// ============================================================
+// FTP POWER ZONES
+// ============================================================
+
+function FTPCalc() {
+  const [power20, setPower20] = useState('')
+  const [weight,  setWeight]  = useState('')
+
+  const ftp   = power20 ? calcFTP(parseFloat(power20)) : null
+  const zones = ftp ? deriveFTPZones(ftp) : null
+  const wpkg  = ftp && weight ? (ftp / parseFloat(weight)).toFixed(2) : null
+
+  return (
+    <CalcSection title="FTP Power Zones">
+      <div style={{ display: 'flex', gap: 12, marginBottom: 16, alignItems: 'flex-end' }}>
+        <Field label="20-Min Avg Power (W)" value={power20} onChange={setPower20} step={1} placeholder="250" />
+        <Field label="Body Weight (kg) — optional" value={weight} onChange={setWeight} step={0.1} placeholder="75" />
+      </div>
+
+      {ftp && (
+        <>
+          <ResultRow label="FTP (95% of 20-min)" value={`${ftp}W`} highlight />
+          {wpkg && <ResultRow label="W/kg" value={wpkg} />}
+
+          {zones && (
+            <div style={{ marginTop: 16 }}>
+              <div className="label" style={{ marginBottom: 8 }}>Power Zones</div>
+              {zones.map(z => (
+                <div key={z.zone} style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '8px 12px', marginBottom: 6,
+                  background: 'var(--s3)', borderRadius: 6,
+                  border: '1px solid var(--border)',
+                  borderLeft: `3px solid ${z.color}`,
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1, color: z.color }}>{z.label}</div>
+                    {z.desc && <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>{z.desc}</div>}
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--white)', textAlign: 'right' }}>
+                    {z.loW}–{z.hiW}<span style={{ fontSize: 10, color: 'var(--muted)' }}>W</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {!ftp && (
+        <div className="empty-state" style={{ height: 160 }}>
+          <div className="empty-state-text">Enter your 20-minute average power to calculate FTP and all 7 power zones</div>
+        </div>
+      )}
+    </CalcSection>
+  )
+}
+
+// ============================================================
+// CSS SWIM ZONES
+// ============================================================
+
+function CSSCalc() {
+  const [m200mins, setM200mins] = useState('')
+  const [m200secs, setM200secs] = useState('')
+  const [m400mins, setM400mins] = useState('')
+  const [m400secs, setM400secs] = useState('')
+
+  const t200 = timeToSecs(m200mins, m200secs)
+  const t400 = timeToSecs(m400mins, m400secs)
+  const css   = t200 > 0 && t400 > 0 ? calcCSS(t200, t400) : null
+  const zones = css ? deriveSwimZones(css) : null
+
+  return (
+    <CalcSection title="CSS Swim Zones">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div>
+          <div className="label" style={{ marginBottom: 8 }}>200m Time Trial</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Field label="Min" value={m200mins} onChange={setM200mins} type="number" step={1} placeholder="3" />
+            <Field label="Sec" value={m200secs} onChange={setM200secs} type="number" step={1} placeholder="10" />
+          </div>
+        </div>
+        <div>
+          <div className="label" style={{ marginBottom: 8 }}>400m Time Trial</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Field label="Min" value={m400mins} onChange={setM400mins} type="number" step={1} placeholder="7" />
+            <Field label="Sec" value={m400secs} onChange={setM400secs} type="number" step={1} placeholder="0" />
+          </div>
+        </div>
+      </div>
+
+      {css && (
+        <>
+          <ResultRow label="CSS (per 100m)" value={formatTime(css)} highlight />
+
+          {zones && (
+            <div style={{ marginTop: 16 }}>
+              <div className="label" style={{ marginBottom: 8 }}>Swim Training Zones</div>
+              {zones.map(z => (
+                <div key={z.zone} style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '8px 12px', marginBottom: 6,
+                  background: 'var(--s3)', borderRadius: 6,
+                  border: '1px solid var(--border)',
+                  borderLeft: `3px solid ${z.color}`,
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, letterSpacing: 1, color: z.color }}>{z.label}</div>
+                    {z.desc && <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>{z.desc}</div>}
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--white)', textAlign: 'right' }}>
+                    {formatTime(z.loPer100)}–{formatTime(z.hiPer100)}<span style={{ fontSize: 10, color: 'var(--muted)' }}>/100m</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {!css && (
+        <div className="empty-state" style={{ height: 160 }}>
+          <div className="empty-state-text">Enter 200m and 400m time trial results to calculate CSS and all swim training zones</div>
+        </div>
+      )}
+    </CalcSection>
+  )
+}
+
+// ============================================================
 // MAIN PAGE
 // ============================================================
 
@@ -691,18 +906,21 @@ export default function Calculators() {
   const [activeCalc, setActiveCalc] = useState('bf')
 
   const calcs = [
-    { id: 'bf',  label: 'Naval BF%' },
-    { id: 'ea',  label: 'Energy Availability' },
-    { id: 'wl',  label: 'Weight Loss Rate' },
-    { id: '1rm', label: '1RM Calculator' },
-    { id: 'sb',  label: 'Structural Balance' },
+    { id: 'bf',    label: 'Naval BF%' },
+    { id: 'ea',    label: 'Energy Availability' },
+    { id: 'wl',    label: 'Weight Loss Rate' },
+    { id: '1rm',   label: '1RM Calculator' },
+    { id: 'sb',    label: 'Structural Balance' },
+    { id: 'vdot',  label: 'VDOT / Pace' },
+    { id: 'ftp',   label: 'FTP Power Zones' },
+    { id: 'css',   label: 'CSS Swim Zones' },
   ]
 
   return (
     <div>
       <div className="page-header">
         <div className="page-title">Calculators</div>
-        <div className="page-subtitle">Coaching tools — BF%, Energy Availability, Weight Loss, 1RM, Structural Balance</div>
+        <div className="page-subtitle">Coaching tools — BF%, Energy Availability, Weight Loss, 1RM, Structural Balance, VDOT, FTP, CSS</div>
       </div>
 
       <div className="tabs">
@@ -717,11 +935,14 @@ export default function Calculators() {
         ))}
       </div>
 
-      {activeCalc === 'bf'  && <NavalBFCalc />}
-      {activeCalc === 'ea'  && <EnergyAvailabilityCalc />}
-      {activeCalc === 'wl'  && <WeightLossCalc />}
-      {activeCalc === '1rm' && <OneRMCalc />}
-      {activeCalc === 'sb'  && <StructuralBalanceCalc />}
+      {activeCalc === 'bf'   && <NavalBFCalc />}
+      {activeCalc === 'ea'   && <EnergyAvailabilityCalc />}
+      {activeCalc === 'wl'   && <WeightLossCalc />}
+      {activeCalc === '1rm'  && <OneRMCalc />}
+      {activeCalc === 'sb'   && <StructuralBalanceCalc />}
+      {activeCalc === 'vdot' && <VDOTCalc />}
+      {activeCalc === 'ftp'  && <FTPCalc />}
+      {activeCalc === 'css'  && <CSSCalc />}
     </div>
   )
 }
