@@ -1255,7 +1255,17 @@ function StepBaseline({ data, onNext, onBack }) {
 
 // ─── step: all set ────────────────────────────────────────────────────────────
 
-function StepAllSet({ saving, error }) {
+function StepAllSet({ saving, error, onSave, profileComplete }) {
+  // If we land here with no error and not currently saving but profile isn't
+  // marked complete yet, the previous save attempt failed silently — retry.
+  const retried = useRef(false)
+  useEffect(() => {
+    if (!saving && !error && !profileComplete && !retried.current) {
+      retried.current = true
+      onSave?.()
+    }
+  }, [saving, error, profileComplete, onSave])
+
   return (
     <div style={{ textAlign: 'center', padding: '20px 0' }}>
       {saving ? (
@@ -1621,7 +1631,7 @@ export default function Onboarding() {
             {currentStepId === 'fms'      && <StepFMS data={data} update={update} onNext={nextStep} onBack={prevStep} videoUrls={coachVideos} />}
             {currentStepId === 'movement'  && <StepMovement data={data} update={update} onNext={nextStep} onBack={prevStep} />}
             {currentStepId === 'baseline'  && <StepBaseline data={data} onNext={nextStep} onBack={prevStep} />}
-            {currentStepId === 'done'      && <StepAllSet saving={saving} error={error} />}
+            {currentStepId === 'done'      && <StepAllSet saving={saving} error={error} onSave={handleComplete} profileComplete={profile?.onboarding_complete} />}
           </div>
         </div>
       </div>
