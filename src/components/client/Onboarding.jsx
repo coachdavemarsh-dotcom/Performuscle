@@ -1256,15 +1256,12 @@ function StepBaseline({ data, onNext, onBack }) {
 // ─── step: all set ────────────────────────────────────────────────────────────
 
 function StepAllSet({ saving, error, onSave, profileComplete }) {
-  // If we land here with no error and not currently saving but profile isn't
-  // marked complete yet, the previous save attempt failed silently — retry.
-  const retried = useRef(false)
-  useEffect(() => {
-    if (!saving && !error && !profileComplete && !retried.current) {
-      retried.current = true
-      onSave?.()
+  const handleGo = async () => {
+    if (!profileComplete) {
+      await onSave?.()
     }
-  }, [saving, error, profileComplete, onSave])
+    window.location.replace('/dashboard')
+  }
 
   return (
     <div style={{ textAlign: 'center', padding: '20px 0' }}>
@@ -1280,6 +1277,14 @@ function StepAllSet({ saving, error, onSave, profileComplete }) {
         <div>
           <div style={{ fontSize: 36, marginBottom: 16 }}>⚠️</div>
           <div style={{ color: 'var(--danger)', fontSize: 13 }}>{error}</div>
+          <button
+            onClick={handleGo}
+            style={{
+              marginTop: 16, background: 'var(--accent)', color: '#060608',
+              fontFamily: 'var(--font-display)', fontSize: 13, letterSpacing: 1.5,
+              padding: '14px 36px', borderRadius: 8, border: 'none', cursor: 'pointer',
+            }}
+          >RETRY & GO TO DASHBOARD →</button>
         </div>
       ) : (
         <>
@@ -1306,7 +1311,7 @@ function StepAllSet({ saving, error, onSave, profileComplete }) {
             Profile complete and assessment submitted. Your coach will review your posture photos and FMS scores before building your programme.
           </p>
           <button
-            onClick={() => window.location.replace('/dashboard')}
+            onClick={handleGo}
             style={{
               background: 'var(--accent)', color: '#060608',
               fontFamily: 'var(--font-display)', fontSize: 13, letterSpacing: 1.5,
