@@ -21,6 +21,10 @@ create policy "Clients can view own test results"
   on test_results for select
   using (client_id = auth.uid());
 
+create policy "Clients can insert own test results"
+  on test_results for insert
+  with check (client_id = auth.uid());
+
 create policy "Coaches can manage client test results"
   on test_results for all
   using (

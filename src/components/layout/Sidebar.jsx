@@ -242,6 +242,7 @@ const clientNav = [
   { to: '/progress', label: 'Progress', icon: 'progress' },
   { to: '/checkin', label: 'Check-In', icon: 'checkin' },
   { to: '/education', label: 'Education Hub', icon: 'education' },
+  { to: '/testing', label: 'My Testing', icon: 'testing' },
   { to: '/results', label: 'My Results', icon: 'results' },
   { to: '/training-zones', label: 'My Zones', icon: 'zones' },
   { to: '/performance', label: 'Performance Hub', icon: 'performance' },
