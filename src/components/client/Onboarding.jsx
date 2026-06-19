@@ -1502,8 +1502,9 @@ export default function Onboarding() {
         uploadFile('assessment-videos', data.spine_media,    'rom/spine_'),
       ])
 
-      // 4 — save profile
-      const { error: profileError } = await supabase.from('profiles').update({
+      // 4 — save profile (upsert so new invited users without a row get one created)
+      const { error: profileError } = await supabase.from('profiles').upsert({
+        id:                     user.id,
         full_name:              data.full_name,
         date_of_birth:          data.date_of_birth || null,
         gender:                 data.gender,
@@ -1530,7 +1531,7 @@ export default function Onboarding() {
         systolic_bp:            data.systolic_bp ? parseInt(data.systolic_bp) : null,
         diastolic_bp:           data.diastolic_bp ? parseInt(data.diastolic_bp) : null,
         onboarding_complete:    true,
-      }).eq('id', user.id)
+      }, { onConflict: 'id' })
 
       if (profileError) throw profileError
 
@@ -1564,9 +1565,9 @@ export default function Onboarding() {
         localStorage.removeItem(storageKey)
         localStorage.removeItem(`${storageKey}_step`)
       }
-      // Hard redirect so the auth guard re-fetches the profile fresh from
-      // Supabase and sees onboarding_complete: true before entering the app
-      setTimeout(() => window.location.replace('/dashboard'), 2500)
+      // Show success screen with button — user clicks to hard-redirect so the
+      // auth guard re-fetches the profile fresh and sees onboarding_complete: true
+      setSaving(false)
 
     } catch (err) {
       setError(err.message)
