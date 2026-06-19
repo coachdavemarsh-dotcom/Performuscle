@@ -1552,10 +1552,15 @@ export default function Onboarding() {
 
       // 4b — auto-link to coach via server (service role bypasses RLS)
       if (user.user_metadata?.coach_id) {
-        await fetch(`${API}/api/emails/link-client`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${session?.access_token}` },
-        })
+        const { data: { session: freshSession } } = await supabase.auth.getSession()
+        const token = freshSession?.access_token
+        if (token) {
+          const res = await fetch(`${API}/api/emails/link-client`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          if (!res.ok) console.warn('[link-client] server returned', res.status)
+        }
       }
 
       // 5 — save assessment
