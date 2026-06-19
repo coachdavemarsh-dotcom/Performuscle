@@ -2004,7 +2004,7 @@ function EnduranceView({ session, clientId, onFinish }) {
   const [distanceKm, setDistanceKm] = useState('')
   const [avgHr, setAvgHr] = useState('')
   const [saving, setSaving] = useState(false)
-  const [latestResults, setLatestResults] = useState(null)
+  const [latestResults, setLatestResults] = useState({})
   const timer = useTimer('stopwatch')
   const color = '#60a5fa'
 

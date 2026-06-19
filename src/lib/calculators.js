@@ -674,6 +674,7 @@ export function formatTime(totalSec) {
  */
 export function resolveEnduranceTarget(target, latestResults = {}) {
   if (!target) return null
+  if (!latestResults) return { available: false, message: 'Loading…' }
   const { metric, zone } = target
 
   switch (metric) {
