@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performance Fuel Calculator | Performuscle</title>
+  <meta name="description" content="Free performance nutrition calculator. Carb loading, intra-workout fuelling, electrolytes, and recovery nutrition — personalised to your weight, activity, duration, and intensity." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:         #060608;
+      --ink-2:       #0f1014;
+      --ink-3:       #1a1b21;
+      --ink-4:       #22242c;
+      --accent:      #00C896;
+      --accent-hi:   #00FFB8;
+      --accent-dim:  rgba(0,200,150,.08);
+      --white:       #F5F6FA;
+      --sub:         #b0b3c6;
+      --muted:       #5e5e70;
+      --danger:      #EF4444;
+      --warn:        #F59E0B;
+      --info:        #60a5fa;
+      --pink:        #f472b6;
+      --violet:      #a78bfa;
+      --border:      rgba(255,255,255,.07);
+      --border-md:   rgba(255,255,255,.12);
+      --border-acc:  rgba(0,200,150,.25);
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --radius:       10px;
+    }
+
+    html { font-size: 16px; }
+    body {
+      background: var(--ink);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: .9375rem;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hi); }
+
+    /* Header */
+    .header {
+      background: var(--ink-2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-brand { display: flex; align-items: center; gap: .625rem; text-decoration: none; }
+    .header-brand svg { width: 26px; height: 26px; flex-shrink: 0; }
+    .wordmark { font-family: var(--font-display); font-size: 1.375rem; letter-spacing: .04em; color: var(--white); line-height: 1; }
+    .wordmark span { color: var(--accent); }
+    .header-back { display: flex; align-items: center; gap: .375rem; font-size: .8125rem; font-weight: 500; color: var(--muted); transition: color .15s; }
+    .header-back:hover { color: var(--white); }
+    .header-back svg { width: 14px; height: 14px; }
+
+    /* Page shell */
+    .page { max-width: 960px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+
+    .page-title { font-family: var(--font-display); font-size: 2.5rem; letter-spacing: .04em; line-height: 1; margin-bottom: .375rem; }
+    .page-subtitle { color: var(--muted); font-size: .875rem; margin-bottom: 2rem; }
+
+    /* Card */
+    .card {
+      background: var(--ink-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: .875rem;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    /* Pill buttons */
+    .pill-group { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .pill {
+      padding: .5rem .875rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: .75rem;
+      letter-spacing: .04em;
+      background: var(--ink-4);
+      color: var(--sub);
+      border: 1px solid var(--border);
+      transition: all .15s;
+      line-height: 1;
+    }
+    .pill:hover { border-color: var(--border-md); color: var(--white); }
+    .pill.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-hi));
+      color: var(--ink);
+      border-color: transparent;
+      box-shadow: 0 0 12px rgba(0,200,150,.25);
+    }
+    .pill small { display: block; font-family: var(--font-body); font-size: .65rem; font-weight: 400; letter-spacing: 0; color: rgba(6,6,8,.6); margin-top: 1px; }
+    .pill:not(.active) small { color: var(--muted); }
+
+    /* Weight input */
+    .weight-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .weight-label { font-size: .875rem; color: var(--sub); flex-shrink: 0; min-width: 80px; }
+    .weight-input {
+      background: var(--ink-4); border: 1px solid var(--border-md);
+      border-radius: 6px; color: var(--white); font-family: var(--font-display);
+      font-size: 1.5rem; letter-spacing: .04em; padding: .5rem .875rem;
+      width: 120px; outline: none; transition: border-color .15s;
+    }
+    .weight-input:focus { border-color: var(--accent); }
+    .weight-input::placeholder { color: var(--muted); }
+    .weight-unit { font-family: var(--font-display); color: var(--muted); font-size: .875rem; }
+
+    .field-label {
+      font-family: var(--font-display);
+      font-size: .625rem;
+      letter-spacing: .15em;
+      color: var(--muted);
+      margin-bottom: .625rem;
+    }
+    .field-group { margin-bottom: 1.25rem; }
+
+    /* Calculate button */
+    .calc-btn {
+      width: 100%;
+      padding: .875rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hi));
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      letter-spacing: .1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      margin-top: .5rem;
+    }
+    .calc-btn:hover { opacity: .9; transform: translateY(-1px); }
+    .calc-btn:active { transform: translateY(0); }
+
+    /* Results tabs */
+    .results { display: none; }
+    .results.visible { display: block; }
+
+    .tab-bar {
+      display: flex;
+      gap: .375rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .tab-btn {
+      padding: .5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: .75rem;
+      letter-spacing: .08em;
+      background: var(--ink-4);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      transition: all .15s;
+    }
+    .tab-btn:hover { color: var(--white); border-color: var(--border-md); }
+    .tab-btn.active { background: var(--ink-3); color: var(--white); border-color: var(--border-md); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Result content */
+    .section-eyebrow {
+      font-family: var(--font-display);
+      font-size: .5rem;
+      letter-spacing: .2em;
+      color: var(--muted);
+      margin-bottom: .25rem;
+    }
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      letter-spacing: .06em;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .big-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .625rem; margin-bottom: .25rem; }
+    .big-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .5rem; margin-bottom: .25rem; }
+
+    .stat-card {
+      padding: .875rem 1rem;
+      background: var(--ink-4);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-label { font-family: var(--font-display); font-size: .5rem; letter-spacing: .18em; color: var(--muted); margin-bottom: .375rem; }
+    .stat-value { font-family: var(--font-display); line-height: 1; }
+    .stat-unit { font-size: .5625rem; color: var(--muted); margin-top: .1875rem; }
+
+    .macro-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .625rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .macro-row:last-of-type { border-bottom: none; }
+    .macro-name { font-size: .8125rem; color: var(--sub); }
+    .macro-sub { font-size: .625rem; color: var(--muted); margin-top: .125rem; }
+    .macro-val { font-family: var(--font-display); font-size: 1.375rem; }
+    .macro-unit { font-size: .6875rem; color: var(--muted); margin-left: .1875rem; }
+
+    .food-list {
+      margin-top: .875rem;
+      padding: .75rem .875rem;
+      background: var(--ink-4);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .food-list-label { font-family: var(--font-display); font-size: .5rem; letter-spacing: .15em; color: var(--muted); margin-bottom: .5rem; }
+    .food-tags { display: flex; flex-wrap: wrap; gap: .375rem; }
+    .food-tag {
+      font-size: .6875rem;
+      padding: .1875rem .5625rem;
+      border-radius: 4px;
+      background: var(--ink-3);
+      color: var(--sub);
+      border: 1px solid var(--border);
+    }
+
+    .tip-box {
+      margin-top: .875rem;
+      padding: .625rem .875rem;
+      border-radius: 8px;
+      font-size: .75rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .tip-box strong { color: var(--white); }
+
+    .info-panel {
+      padding: .875rem 1rem;
+      background: var(--ink-4);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: .75rem;
+    }
+    .info-panel-label { font-family: var(--font-display); font-size: .5rem; letter-spacing: .15em; color: var(--muted); margin-bottom: .625rem; }
+
+    /* Electrolyte bar */
+    .elec-bar { margin-bottom: .875rem; }
+    .elec-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .3125rem; }
+    .elec-name { font-size: .8125rem; color: var(--sub); }
+    .elec-note { font-size: .625rem; color: var(--muted); margin-left: .5rem; }
+    .elec-val { font-family: var(--font-display); font-size: 1rem; }
+    .elec-unit { font-size: .625rem; color: var(--muted); margin-left: .125rem; }
+    .bar-track { height: 5px; background: var(--ink-4); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+
+    /* Load phase cards */
+    .load-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      padding: 1rem 1.125rem;
+      border-radius: 8px;
+      background: var(--ink-4);
+      border: 1px solid var(--border);
+      border-left-width: 3px;
+      margin-bottom: .625rem;
+    }
+    .load-day { font-family: var(--font-display); font-size: .625rem; letter-spacing: .15em; margin-bottom: .25rem; }
+    .load-note { font-size: .6875rem; color: var(--muted); line-height: 1.5; }
+    .load-num { font-family: var(--font-display); font-size: 1.875rem; line-height: 1; text-align: right; }
+    .load-unit { font-size: .625rem; color: var(--muted); }
+
+    /* empty state */
+    .empty { text-align: center; padding: 2.5rem 1.25rem; }
+    .empty-icon { font-size: 2rem; margin-bottom: .75rem; }
+    .empty-title { font-family: var(--font-display); font-size: 1rem; letter-spacing: .06em; color: var(--white); margin-bottom: .5rem; }
+    .empty-body { font-size: .8125rem; color: var(--muted); line-height: 1.7; max-width: 300px; margin: 0 auto; }
+
+    /* Multi-carb alert */
+    .multicarb-box {
+      margin-top: .75rem;
+      padding: .75rem .875rem;
+      background: rgba(245,158,11,.06);
+      border: 1px solid rgba(245,158,11,.2);
+      border-radius: 8px;
+    }
+    .multicarb-label { font-family: var(--font-display); font-size: .5rem; letter-spacing: .15em; color: var(--warn); margin-bottom: .375rem; }
+    .multicarb-body { font-size: .75rem; color: var(--sub); line-height: 1.7; }
+
+    /* Reference bar */
+    .ref-bar {
+      background: var(--ink-2);
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      margin-top: 2rem;
+      font-size: .75rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 600px) {
+      .big-grid { grid-template-columns: 1fr 1fr; }
+      .big-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+      .page { padding: 1.5rem .875rem 4rem; }
+      .page-title { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <a href="/" class="header-brand">
+    <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="26" height="26" rx="6" fill="#00C896"/>
+      <path d="M6 9h3.5M16.5 9H20M6 13h14M6 17h14" stroke="#060608" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="13" cy="9" r="2" fill="#060608"/>
+    </svg>
+    <span class="wordmark">PERFORM<span>USCLE</span></span>
+  </a>
+  <a href="/coach-tools.html" class="header-back">
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M9 2L4 7l5 5"/>
+    </svg>
+    All Tools
+  </a>
+</header>
+
+<!-- Page -->
+<main class="page">
+  <h1 class="page-title">PERFORMANCE FUEL</h1>
+  <p class="page-subtitle">Carb loading · peri-workout nutrition · electrolytes · recovery — personalised to your session</p>
+
+  <!-- Inputs card -->
+  <div class="card">
+    <div class="card-title">SESSION DETAILS</div>
+
+    <!-- Weight -->
+    <div class="field-group">
+      <div class="field-label">BODY WEIGHT</div>
+      <div class="weight-row">
+        <input class="weight-input" type="number" id="weight" value="75" min="30" max="200" step="0.5" placeholder="75" />
+        <span class="weight-unit">kg</span>
+      </div>
+    </div>
+
+    <!-- Activity type -->
+    <div class="field-group">
+      <div class="field-label">ACTIVITY TYPE</div>
+      <div class="pill-group" id="activity-group">
+        <button class="pill" data-val="strength" onclick="pick('activity','strength')">🏋️ Strength</button>
+        <button class="pill" data-val="hiit" onclick="pick('activity','hiit')">⚡ HIIT</button>
+        <button class="pill active" data-val="run" onclick="pick('activity','run')">🏃 Running</button>
+        <button class="pill" data-val="cycle" onclick="pick('activity','cycle')">🚴 Cycling</button>
+        <button class="pill" data-val="swim" onclick="pick('activity','swim')">🏊 Swimming</button>
+        <button class="pill" data-val="team" onclick="pick('activity','team')">⚽ Team Sport</button>
+      </div>
+    </div>
+
+    <!-- Duration -->
+    <div class="field-group">
+      <div class="field-label">SESSION DURATION</div>
+      <div class="pill-group" id="duration-group">
+        <button class="pill" data-val="30" onclick="pick('duration','30')">30 min</button>
+        <button class="pill" data-val="45" onclick="pick('duration','45')">45 min</button>
+        <button class="pill active" data-val="60" onclick="pick('duration','60')">60 min</button>
+        <button class="pill" data-val="90" onclick="pick('duration','90')">90 min</button>
+        <button class="pill" data-val="120" onclick="pick('duration','120')">2 hrs</button>
+        <button class="pill" data-val="180" onclick="pick('duration','180')">3 hrs+</button>
+        <button class="pill" data-val="240" onclick="pick('duration','240')">4 hrs+</button>
+      </div>
+    </div>
+
+    <!-- Intensity -->
+    <div class="field-group">
+      <div class="field-label">INTENSITY</div>
+      <div class="pill-group" id="intensity-group">
+        <button class="pill" data-val="easy" onclick="pick('intensity','easy')">Easy <small>RPE 4–5</small></button>
+        <button class="pill active" data-val="moderate" onclick="pick('intensity','moderate')">Moderate <small>RPE 6–7</small></button>
+        <button class="pill" data-val="hard" onclick="pick('intensity','hard')">Hard <small>RPE 8–9</small></button>
+        <button class="pill" data-val="race" onclick="pick('intensity','race')">Race / Max <small>RPE 10</small></button>
+      </div>
+    </div>
+
+    <!-- Heat -->
+    <div class="field-group">
+      <div class="field-label">CONDITIONS</div>
+      <div class="pill-group" id="heat-group">
+        <button class="pill" data-val="cool" onclick="pick('heat','cool')">❄️ Cool <small>&lt;15°C</small></button>
+        <button class="pill active" data-val="moderate" onclick="pick('heat','moderate')">🌤️ Moderate <small>15–25°C</small></button>
+        <button class="pill" data-val="hot" onclick="pick('heat','hot')">☀️ Hot <small>25–35°C</small></button>
+        <button class="pill" data-val="very_hot" onclick="pick('heat','very_hot')">🔥 Very Hot <small>&gt;35°C / Humid</small></button>
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="runCalc()">CALCULATE MY FUEL PLAN →</button>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="pre"   onclick="switchTab('pre')">↑ PRE-WORKOUT</button>
+      <button class="tab-btn"        data-tab="intra" onclick="switchTab('intra')">⚡ INTRA</button>
+      <button class="tab-btn"        data-tab="post"  onclick="switchTab('post')">↓ POST</button>
+      <button class="tab-btn"        data-tab="load"  onclick="switchTab('load')">📊 CARB LOAD</button>
+      <button class="tab-btn"        data-tab="elec"  onclick="switchTab('elec')">⚗️ ELECTROLYTES</button>
+    </div>
+
+    <!-- Pre-workout -->
+    <div class="tab-panel active card" id="panel-pre">
+      <div class="section-eyebrow" id="pre-eyebrow">WINDOW</div>
+      <div class="section-heading" id="pre-heading"></div>
+
+      <div class="big-grid" id="pre-big-grid">
+        <div class="stat-card">
+          <div class="stat-label">CARBOHYDRATES</div>
+          <div class="stat-value" id="pre-carbs" style="font-size:2.25rem; color:var(--accent)"></div>
+          <div class="stat-unit" id="pre-carbs-sub"></div>
+          <div class="stat-unit" id="pre-carbs-gkg"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">PROTEIN</div>
+          <div class="stat-value" id="pre-protein" style="font-size:2.25rem; color:var(--info)"></div>
+          <div class="stat-unit">grams</div>
+          <div class="stat-unit">light — easy to digest</div>
+        </div>
+      </div>
+
+      <div class="macro-row">
+        <div><div class="macro-name">Fluid</div><div class="macro-sub">2 hrs before · top up with 200–300ml 20 min before</div></div>
+        <div><span class="macro-val" id="pre-fluid" style="color:var(--info)"></span><span class="macro-unit">ml</span></div>
+      </div>
+      <div class="macro-row">
+        <div><div class="macro-name">Fat</div><div class="macro-sub">Slow gastric emptying — avoid high fat meals pre-session</div></div>
+        <div><span class="macro-val" style="color:var(--warn)">Keep low</span></div>
+      </div>
+
+      <div class="food-list">
+        <div class="food-list-label">IDEAL PRE-WORKOUT FOODS</div>
+        <div class="food-tags" id="pre-foods"></div>
+      </div>
+
+      <div class="tip-box" style="background:rgba(0,200,150,.06);border:1px solid rgba(0,200,150,.15);">
+        💡 If eating <strong>1 hour or less</strong> before training, stick to simple carbs only (no fat, minimal protein). Avoid high-fibre foods to prevent GI discomfort.
+      </div>
+    </div>
+
+    <!-- Intra-workout -->
+    <div class="tab-panel card" id="panel-intra">
+      <div id="intra-empty" class="empty" style="display:none;">
+        <div class="empty-icon">⚡</div>
+        <div class="empty-title">NO INTRA-WORKOUT FUEL NEEDED</div>
+        <div class="empty-body">For sessions under 45 minutes, endogenous glycogen stores are sufficient. Stay hydrated with water.</div>
+      </div>
+      <div id="intra-content">
+        <div class="section-eyebrow">PER HOUR OF TRAINING</div>
+        <div class="section-heading">DURING YOUR SESSION</div>
+
+        <div class="big-grid-3">
+          <div class="stat-card">
+            <div class="stat-label">CARBS</div>
+            <div class="stat-value" id="intra-carbs-hr" style="font-size:1.5rem; color:var(--accent)"></div>
+            <div class="stat-unit">g/hr</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">SODIUM</div>
+            <div class="stat-value" id="intra-sodium-hr" style="font-size:1.5rem; color:var(--warn)"></div>
+            <div class="stat-unit">mg/hr</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">FLUID</div>
+            <div class="stat-value" id="intra-fluid-hr" style="font-size:1.5rem; color:var(--info)"></div>
+            <div class="stat-unit">ml/hr</div>
+          </div>
+        </div>
+
+        <div class="macro-row">
+          <div><div class="macro-name">Potassium</div><div class="macro-sub">Lost in sweat — replenish during long sessions</div></div>
+          <div><span class="macro-val" id="intra-potassium" style="color:var(--accent-hi)"></span><span class="macro-unit">mg/hr</span></div>
+        </div>
+        <div class="macro-row" id="intra-total-row">
+          <div><div class="macro-name">Total carbs this session</div><div class="macro-sub">Spread evenly across the session</div></div>
+          <div><span class="macro-val" id="intra-carbs-total" style="color:var(--accent)"></span><span class="macro-unit">g total</span></div>
+        </div>
+
+        <div id="multicarb-box" class="multicarb-box" style="display:none;">
+          <div class="multicarb-label">MULTI-CARB PROTOCOL RECOMMENDED</div>
+          <div class="multicarb-body">For sessions over 2.5 hrs consuming 60g+/hr, use a <strong>2:1 glucose:fructose</strong> ratio. This saturates separate intestinal transporters, maximising absorption up to 90g/hr (Jeukendrup 2011).</div>
+        </div>
+
+        <div class="food-list">
+          <div class="food-list-label">INTRA-WORKOUT OPTIONS</div>
+          <div class="food-tags" id="intra-foods"></div>
+        </div>
+
+        <div class="tip-box" style="background:rgba(0,200,150,.06);border:1px solid rgba(0,200,150,.15);">
+          💡 Sip fluid <strong>regularly, not all at once</strong>. Sodium in sports drinks helps fluid retention and maintains the drive to drink.
+        </div>
+      </div>
+    </div>
+
+    <!-- Post-workout -->
+    <div class="tab-panel card" id="panel-post">
+      <div class="section-eyebrow" id="post-eyebrow">WITHIN</div>
+      <div class="section-heading" id="post-heading">RECOVERY WINDOW</div>
+
+      <div class="big-grid">
+        <div class="stat-card">
+          <div class="stat-label">PROTEIN</div>
+          <div class="stat-value" id="post-protein" style="font-size:2.25rem; color:var(--pink)"></div>
+          <div class="stat-unit">grams</div>
+          <div class="stat-unit">leucine-rich source</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">CARBOHYDRATES</div>
+          <div class="stat-value" id="post-carbs" style="font-size:2.25rem; color:var(--accent)"></div>
+          <div class="stat-unit">grams</div>
+          <div class="stat-unit" id="post-carbs-gkg"></div>
+        </div>
+      </div>
+
+      <div class="macro-row">
+        <div><div class="macro-name">Rehydration target</div><div class="macro-sub">Replace 1.5× estimated sweat loss over 2–4 hrs</div></div>
+        <div><span class="macro-val" id="post-fluid" style="color:var(--info)"></span><span class="macro-unit">ml</span></div>
+      </div>
+      <div class="macro-row">
+        <div><div class="macro-name">Sodium to replenish</div><div class="macro-sub">Add to food or use electrolyte drink</div></div>
+        <div><span class="macro-val" id="post-sodium" style="color:var(--warn)"></span><span class="macro-unit">mg</span></div>
+      </div>
+
+      <div class="food-list">
+        <div class="food-list-label">IDEAL POST-WORKOUT FOODS</div>
+        <div class="food-tags" id="post-foods"></div>
+      </div>
+
+      <div class="tip-box" style="background:rgba(244,114,182,.06);border:1px solid rgba(244,114,182,.15);">
+        💡 Co-ingesting carbs and protein post-workout <strong>does not impair MPS</strong> but does accelerate glycogen resynthesis. Aim for leucine ≥2–3g in your protein source.
+      </div>
+    </div>
+
+    <!-- Carb load -->
+    <div class="tab-panel card" id="panel-load">
+      <div id="load-empty" class="empty" style="display:none;">
+        <div class="empty-icon">📊</div>
+        <div class="empty-title">NOT REQUIRED FOR THIS SESSION</div>
+        <div class="empty-body">Carb loading is beneficial for endurance events lasting <strong>90+ minutes at hard or race intensity</strong>. Adjust your session settings to see a loading protocol.</div>
+      </div>
+      <div id="load-content">
+        <div class="section-eyebrow">PRE-EVENT PROTOCOL</div>
+        <div class="section-heading" style="color:var(--info)">CARBOHYDRATE LOADING</div>
+        <div id="load-cards"></div>
+        <div class="food-list">
+          <div class="food-list-label">LOADING FOODS — LOW FIBRE, HIGH CARB</div>
+          <div class="food-tags" id="load-foods"></div>
+        </div>
+        <div class="tip-box" style="background:rgba(99,179,237,.06);border:1px solid rgba(99,179,237,.15);">
+          ⚠️ <strong>Nothing new on race day.</strong> Only consume foods you have tested in training. Avoid high-fat, high-fibre, and high-protein meals in the 24hrs before to prevent GI distress.
+        </div>
+      </div>
+    </div>
+
+    <!-- Electrolytes -->
+    <div class="tab-panel card" id="panel-elec">
+      <div class="section-eyebrow">DAILY TARGETS FOR YOUR TRAINING LOAD</div>
+      <div class="section-heading" style="color:var(--warn)">ELECTROLYTES</div>
+
+      <div id="elec-bars" style="margin-bottom:1.25rem;"></div>
+
+      <div class="info-panel">
+        <div class="info-panel-label">ESTIMATED SESSION LOSSES</div>
+        <div class="big-grid-3">
+          <div class="stat-card" style="background:var(--ink-3);">
+            <div class="stat-label" style="font-size:.45rem;">SODIUM</div>
+            <div class="stat-value" id="elec-loss-na" style="font-size:1.125rem; color:var(--white)"></div>
+            <div class="stat-unit">mg lost</div>
+          </div>
+          <div class="stat-card" style="background:var(--ink-3);">
+            <div class="stat-label" style="font-size:.45rem;">POTASSIUM</div>
+            <div class="stat-value" id="elec-loss-k" style="font-size:1.125rem; color:var(--white)"></div>
+            <div class="stat-unit">mg lost</div>
+          </div>
+          <div class="stat-card" style="background:var(--ink-3);">
+            <div class="stat-label" style="font-size:.45rem;">MAGNESIUM</div>
+            <div class="stat-value" id="elec-loss-mg" style="font-size:1.125rem; color:var(--white)"></div>
+            <div class="stat-unit">mg lost</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="food-list">
+        <div class="food-list-label">SODIUM SOURCES</div>
+        <div class="food-tags">
+          <span class="food-tag">Salt (¼ tsp = 575mg)</span><span class="food-tag">Soy sauce</span>
+          <span class="food-tag">Pickles / pickle juice</span><span class="food-tag">Olives</span>
+          <span class="food-tag">Cheese</span><span class="food-tag">Miso soup</span>
+          <span class="food-tag">Electrolyte tabs</span>
+        </div>
+      </div>
+      <div class="food-list" style="margin-top:.5rem;">
+        <div class="food-list-label">POTASSIUM SOURCES</div>
+        <div class="food-tags">
+          <span class="food-tag">Banana (422mg)</span><span class="food-tag">Avocado (975mg)</span>
+          <span class="food-tag">Sweet potato</span><span class="food-tag">Spinach</span>
+          <span class="food-tag">Salmon</span><span class="food-tag">White beans</span>
+          <span class="food-tag">Coconut water</span>
+        </div>
+      </div>
+      <div class="food-list" style="margin-top:.5rem;">
+        <div class="food-list-label">MAGNESIUM SOURCES</div>
+        <div class="food-tags">
+          <span class="food-tag">Pumpkin seeds (156mg/oz)</span><span class="food-tag">Dark chocolate</span>
+          <span class="food-tag">Almonds</span><span class="food-tag">Black beans</span>
+          <span class="food-tag">Spinach</span><span class="food-tag">Edamame</span>
+          <span class="food-tag">Magnesium glycinate supp</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /results -->
+
+</main>
+
+<footer class="ref-bar">
+  Calculations based on Burke et al. (carbohydrate periodisation), Jeukendrup 2011 (intra-workout carbs), Maughan &amp; Shirreffs (sodium losses), Moore et al. / Witard et al. (post-exercise protein), ACSM fluid guidelines, Volpe 2015 (magnesium). For clinical or medical guidance consult a registered dietitian.
+</footer>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  const state = { activity: 'run', duration: '60', intensity: 'moderate', heat: 'moderate' }
+
+  function pick(group, val) {
+    state[group] = val
+    document.querySelectorAll(`#${group}-group .pill`).forEach(b => {
+      b.classList.toggle('active', b.dataset.val === val)
+    })
+  }
+
+  // ── Calculation engine ─────────────────────────────────────────────────────
+  function clamp(v, mn, mx) { return Math.min(mx, Math.max(mn, v)) }
+  function round5(n) { return Math.round(n / 5) * 5 }
+
+  function calculate() {
+    const w   = parseFloat(document.getElementById('weight').value) || 75
+    const dur = parseInt(state.duration) || 60
+    const { activity, intensity, heat } = state
+    const hrDur = dur / 60
+
+    const intMult  = { easy: 0.6, moderate: 1.0, hard: 1.4, race: 1.8 }[intensity] || 1.0
+    const heatMult = { cool: 0.8, moderate: 1.0, hot: 1.35, very_hot: 1.7 }[heat] || 1.0
+
+    const isEndurance = ['run', 'cycle', 'swim'].includes(activity)
+    const isStrength  = activity === 'strength'
+
+    // Pre
+    let preCarbFactor
+    if (intensity === 'easy' || dur < 45)    preCarbFactor = 1.0
+    else if (intensity === 'moderate')        preCarbFactor = isEndurance ? 2.0 : 1.5
+    else if (intensity === 'hard')            preCarbFactor = isEndurance ? 3.0 : 2.0
+    else                                      preCarbFactor = isEndurance ? 4.0 : 2.5
+    const preProtein = isStrength ? round5(clamp(w * 0.2, 15, 30)) : round5(clamp(w * 0.15, 10, 25))
+    const preCarbs   = round5(clamp(w * preCarbFactor, 20, 400))
+    const preFluid   = Math.round(w * 6)
+    const preTiming  = preCarbFactor >= 3 ? '3–4 hours before' : preCarbFactor >= 2 ? '2–3 hours before' : '1–2 hours before'
+
+    // Intra
+    let intraCarbHr
+    if (dur < 45)          intraCarbHr = 0
+    else if (dur < 75)     intraCarbHr = 20
+    else if (dur < 90)     intraCarbHr = 30
+    else if (dur < 120)    intraCarbHr = 45
+    else if (dur < 180)    intraCarbHr = 60
+    else                   intraCarbHr = 80
+    if (intensity === 'hard' && isEndurance && dur >= 90)  intraCarbHr = Math.min(intraCarbHr * 1.1, 90)
+    if (intensity === 'race' && isEndurance && dur >= 120) intraCarbHr = Math.min(intraCarbHr * 1.2, 90)
+    const intraCarbHrR = round5(intraCarbHr)
+    const intraTotalCarb = round5(intraCarbHrR * hrDur)
+    const useMultiCarb = dur > 150 && intraCarbHrR > 50
+
+    const baseSodium = { easy: 250, moderate: 400, hard: 600, race: 800 }[intensity] || 400
+    const intraSodiumHr = Math.round(baseSodium * heatMult)
+    const baseFluidHr = 500 + (w > 80 ? 100 : 0)
+    const intensFluid = { easy: 0.8, moderate: 1.0, hard: 1.2, race: 1.4 }[intensity] || 1.0
+    const intraFluidHr = Math.round(baseFluidHr * intensFluid * heatMult / 50) * 50
+    const intraPotassiumHr = Math.round(150 * Math.min(heatMult, 1.4))
+
+    // Post
+    const postProtein = round5(clamp(w * (isStrength ? 0.35 : 0.3), 20, 45))
+    let postCarbFactor
+    if (isStrength)                                   postCarbFactor = 0.5
+    else if (activity === 'hiit')                     postCarbFactor = 0.7
+    else if (intensity === 'race' && isEndurance)     postCarbFactor = 1.2
+    else if (intensity === 'hard')                    postCarbFactor = 1.0
+    else                                              postCarbFactor = 0.7
+    const postCarbs = round5(clamp(w * postCarbFactor, 20, 200))
+    const sweatRateLhr = { easy: 0.5, moderate: 0.8, hard: 1.2, race: 1.6 }[intensity] || 0.8
+    const sweatLossL   = sweatRateLhr * heatMult * hrDur
+    const rehydMl      = Math.round(sweatLossL * 1500)
+    const postSodium   = Math.round(sweatLossL * 800)
+    const postWindow   = isEndurance && intensity !== 'easy' ? '30 min' : '60 min'
+
+    // Carb load
+    const shouldLoad  = dur >= 90 && (intensity === 'hard' || intensity === 'race') && isEndurance
+    const loadDay2    = shouldLoad ? round5(w * 8)  : null
+    const loadDay1    = shouldLoad ? round5(w * 10) : null
+    const loadMorning = shouldLoad ? round5(w * 2)  : null
+
+    // Electrolytes
+    const trainingBoost    = hrDur * intMult
+    const sodiumDaily      = Math.round((2000 + trainingBoost * 600) * heatMult)
+    const potassiumDaily   = 3500 + Math.round(trainingBoost * 200)
+    const magnesiumDaily   = Math.round(w * 5.5)
+    const calciumDaily     = 1000
+    const sessionSodiumLoss    = Math.round(intraSodiumHr   * hrDur)
+    const sessionPotassiumLoss = Math.round(intraPotassiumHr * hrDur)
+    const sessionMagLoss       = Math.round(5 * hrDur)
+
+    return {
+      w, preTiming, preCarbs, preProtein, preFluid,
+      intraCarbHrR, intraTotalCarb, useMultiCarb, intraSodiumHr, intraFluidHr, intraPotassiumHr,
+      needsIntra: dur >= 45,
+      postProtein, postCarbs, rehydMl, postSodium, postWindow,
+      shouldLoad, loadDay2, loadDay1, loadMorning,
+      sodiumDaily, potassiumDaily, magnesiumDaily, calciumDaily,
+      sessionSodiumLoss, sessionPotassiumLoss, sessionMagLoss,
+    }
+  }
+
+  // ── DOM helpers ────────────────────────────────────────────────────────────
+  function txt(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+  function show(id) { const el = document.getElementById(id); if (el) el.style.display = ''; }
+  function hide(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+
+  function makeTags(containerId, items) {
+    const el = document.getElementById(containerId)
+    if (!el) return
+    el.innerHTML = items.map(f => `<span class="food-tag">${f}</span>`).join('')
+  }
+
+  function makeElecBar(label, value, unit, max, color, note) {
+    const pct = Math.min((value / max) * 100, 100)
+    return `
+      <div class="elec-bar">
+        <div class="elec-row">
+          <div><span class="elec-name">${label}</span><span class="elec-note">${note}</span></div>
+          <div><span class="elec-val" style="color:${color}">${value.toLocaleString()}</span><span class="elec-unit">${unit}</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${color},${color}aa)"></div></div>
+      </div>`
+  }
+
+  // ── Run & render ───────────────────────────────────────────────────────────
+  function runCalc() {
+    const r = calculate()
+
+    // ── Pre ──
+    txt('pre-eyebrow', 'WINDOW')
+    txt('pre-heading', `${r.preTiming.toUpperCase()} YOUR SESSION`)
+    txt('pre-carbs', r.preCarbs)
+    txt('pre-carbs-sub', 'grams')
+    txt('pre-carbs-gkg', `${(r.preCarbs / r.w).toFixed(1)} g/kg`)
+    txt('pre-protein', r.preProtein)
+    txt('pre-fluid', r.preFluid)
+    makeTags('pre-foods', ['White rice','Oats','Banana','Sourdough toast','Rice cakes','Potato','Sports drink','Low-fat yogurt','Honey'])
+
+    // ── Intra ──
+    if (r.needsIntra) {
+      hide('intra-empty'); show('intra-content')
+      txt('intra-carbs-hr', r.intraCarbHrR)
+      txt('intra-sodium-hr', r.intraSodiumHr)
+      txt('intra-fluid-hr', r.intraFluidHr)
+      txt('intra-potassium', r.intraPotassiumHr)
+      txt('intra-carbs-total', r.intraTotalCarb)
+      r.useMultiCarb ? show('multicarb-box') : hide('multicarb-box')
+      makeTags('intra-foods', ['Energy gel (22–25g)','Medjool dates (2)','Banana (half)','Sports drink 500ml','Rice balls','Chews / blocks','Maltodextrin + fructose mix'])
+    } else {
+      show('intra-empty'); hide('intra-content')
+    }
+
+    // ── Post ──
+    txt('post-eyebrow', `WITHIN ${r.postWindow} OF FINISHING`)
+    txt('post-protein', r.postProtein)
+    txt('post-carbs', r.postCarbs)
+    txt('post-carbs-gkg', `${(r.postCarbs / r.w).toFixed(1)} g/kg`)
+    txt('post-fluid', r.rehydMl)
+    txt('post-sodium', r.postSodium)
+    makeTags('post-foods', ['Greek yogurt + berries','Whey protein + banana','Chicken + white rice','Eggs + sourdough','Tuna + rice cakes','Chocolate milk','Cottage cheese + fruit'])
+
+    // ── Carb load ──
+    if (r.shouldLoad) {
+      hide('load-empty'); show('load-content')
+      const loadDays = [
+        { label:'2 DAYS OUT',    g: r.loadDay2,    note:'Moderate loading — taper training',               color:'var(--info)' },
+        { label:'1 DAY OUT',     g: r.loadDay1,    note:'Peak loading phase — rest or very easy activity', color:'var(--accent)' },
+        { label:'RACE MORNING',  g: r.loadMorning, note:'3–4 hours before start — familiar, low-fibre foods only', color:'var(--pink)' },
+      ]
+      document.getElementById('load-cards').innerHTML = loadDays.map(d => `
+        <div class="load-card" style="border-left-color:${d.color}">
+          <div><div class="load-day" style="color:${d.color}">${d.label}</div><div class="load-note">${d.note}</div></div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div class="load-num" style="color:${d.color}">${d.g}</div>
+            <div class="load-unit">grams carbs</div>
+            <div class="load-unit">${(d.g / r.w).toFixed(0)} g/kg</div>
+          </div>
+        </div>`).join('')
+      makeTags('load-foods', ['White rice','White pasta','White bread','Potatoes (no skin)','Pancakes + syrup','Sports drinks','Rice pudding','Pretzels','White bagels','Cornflakes'])
+    } else {
+      show('load-empty'); hide('load-content')
+    }
+
+    // ── Electrolytes ──
+    document.getElementById('elec-bars').innerHTML =
+      makeElecBar('Sodium',    r.sodiumDaily,    'mg/day', 6000, 'var(--warn)',   'Athletes often need 2–4× sedentary targets') +
+      makeElecBar('Potassium', r.potassiumDaily, 'mg/day', 7000, 'var(--accent)', 'Critical for muscle contractions') +
+      makeElecBar('Magnesium', r.magnesiumDaily, 'mg/day', 600,  '#a78bfa',       'Sleep, muscle relaxation, energy metabolism') +
+      makeElecBar('Calcium',   r.calciumDaily,   'mg/day', 1500, 'var(--info)',   'Bone health, muscle function')
+    txt('elec-loss-na',  r.sessionSodiumLoss)
+    txt('elec-loss-k',   r.sessionPotassiumLoss)
+    txt('elec-loss-mg',  r.sessionMagLoss)
+
+    // Show results
+    document.getElementById('results').classList.add('visible')
+    switchTab('pre')
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  // ── Tab switching ──────────────────────────────────────────────────────────
+  function switchTab(id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id))
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `panel-${id}`))
+  }
+</script>
+
+</body>
+</html>
