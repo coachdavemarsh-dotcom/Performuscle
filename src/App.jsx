@@ -26,6 +26,7 @@ import StripePage from './components/coach/Stripe.jsx'
 import Calculators from './components/coach/Calculators.jsx'
 import RecipeManager from './components/coach/RecipeManager.jsx'
 import Testing from './components/coach/Testing.jsx'
+import Bloodwork from './components/coach/Bloodwork.jsx'
 import BiomechanicalAssessment from './components/coach/BiomechanicalAssessment.jsx'
 import ProgramTemplates from './components/coach/ProgramTemplates.jsx'
 import ContentHub from './components/coach/ContentHub.jsx'
@@ -165,6 +166,10 @@ function AppRoutes() {
         <Route
           path="coach/testing"
           element={<ProtectedRoute coachOnly><Testing /></ProtectedRoute>}
+        />
+        <Route
+          path="coach/bloodwork"
+          element={<ProtectedRoute coachOnly><Bloodwork /></ProtectedRoute>}
         />
         <Route
           path="coach/assessment"
