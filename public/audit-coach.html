@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Performance Audit · Coach</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<style>
+/* Layout: Performuscle house style. Open sections on off-white separated by hairlines; cream cards only where content is grouped. Verdict → questions → markers + screens → Launchpad → roadmap → launch pack */
+:root{
+  --bg:#0B0B0A; --surface:#161513; --sunk:#211F1C; --ink:#F4F1EA; --text2:#D8D3C8; --muted:#9A9387; --line:#2B2925;
+  --gold:#D4A35F; --gold2:#F0C987; --body:#F4F1EA; --body-soft:#F4F1EA14; --mind:#D4A35F; --mind-soft:#D4A35F26;
+  --opt:#6FC08A; --ok:#8DB592; --warn:#EB9B3C; --bad:#E5674F;
+  --display:"Oswald","Arial Narrow",Arial,sans-serif;
+  --text:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --dim:#5E4D36; --orb:240,201,135; --orbcore:60,44,24;
+  color-scheme:dark;
+}
+:root[data-accent="teal"]{--gold:#00C896;--gold2:#4DFFC9;--mind:#00C896;--mind-soft:#00C89626;--dim:#0B4D3D;--orb:77,255,201;--orbcore:6,52,41}
+:root[data-accent="mono"]{--gold:#C9C4BA;--gold2:#FFFFFF;--mind:#8C877E;--mind-soft:#8C877E2E;--dim:#3A3835;--orb:255,255,255;--orbcore:40,40,38}
+.accent{display:flex;align-items:center;gap:8px}
+.accent .seg button{font-size:11.5px;padding:4px 10px}
+.accent .seg button.on{background:var(--gold);color:var(--bg);font-weight:700}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--text);font-size:15px;line-height:1.55;font-variant-numeric:tabular-nums;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1160px;margin:0 auto;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{margin:0;text-wrap:balance;font-family:var(--display);font-weight:600;line-height:1.1}
+p{margin:0}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.eyebrow.gold{color:var(--gold)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.brand{display:flex;flex-direction:column;gap:10px}
+.brand h1{font-size:clamp(40px,7vw,68px);line-height:1}
+.brand .tag{font-size:11px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.client{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:6px 2px;min-width:0;font-weight:500}
+.field input:focus,.field select:focus{border-bottom-color:var(--gold);outline:none}
+#clientName{width:170px}#clientAge{width:56px}
+.sample{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:3px 9px;border-radius:999px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 16px;font-weight:600;font-size:13px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+
+.verdict{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.v{background:var(--surface);border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.v .big{font-family:var(--display);font-weight:600;font-size:42px;line-height:1}
+.v .sub{color:var(--muted);font-size:13.5px}
+.pill{align-self:flex-start;display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2)}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--sev,var(--muted))}
+.v.s-sev .pill{color:var(--text2)}
+@media (max-width:820px){.verdict{grid-template-columns:1fr}}
+
+.panel{display:flex;flex-direction:column;gap:18px;min-width:0;padding-top:32px;border-top:1px solid var(--line)}
+.ttl{display:flex;flex-direction:column;gap:8px}
+.panel h2{font-size:clamp(28px,4vw,38px)}
+.ph{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.ph > .eyebrow{padding-bottom:6px}
+.intro{color:var(--muted);max-width:68ch;font-size:15px}
+
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+@media (max-width:420px){.qgrid{grid-template-columns:1fr}}
+.qsec{border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;min-width:0;background:var(--surface)}
+.qsec h3{font-family:var(--display);font-size:20px;font-weight:500;padding-bottom:10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+.q{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.q:last-child{border-bottom:0;padding-bottom:0}
+.q p{font-size:14px;line-height:1.4;color:var(--text2)}
+.tags{display:flex;gap:4px;margin-top:4px}
+.t{font-size:10px;font-weight:700;padding:0 6px;border-radius:999px;letter-spacing:.06em;background:var(--bg);color:var(--muted)}
+.t.R{color:var(--bad)}.t.S{color:var(--ink)}.t.M{color:var(--gold)}.t.G{color:var(--warn)}
+.seg{display:flex;background:var(--bg);border-radius:999px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:5px 10px;font-size:12px;cursor:pointer;border-radius:999px;white-space:nowrap;color:var(--muted)}
+.seg button.on[data-v="0"]{background:var(--sunk);color:var(--ink);font-weight:600}
+.seg button.on[data-v="1"]{background:var(--gold);color:var(--bg);font-weight:600}
+.seg button.on[data-v="2"]{background:var(--ink);color:var(--bg);font-weight:600}
+@media (max-width:460px){.q{grid-template-columns:1fr}.seg{justify-self:start}}
+
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.group{display:flex;flex-direction:column}
+.group h3{font-family:var(--text);font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);padding:18px 0 8px}
+.row{display:grid;grid-template-columns:150px 112px minmax(0,1fr) 72px;gap:14px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.row .name{font-weight:600;font-size:14px;line-height:1.25}
+.row .name small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.inp{display:flex;align-items:center;border-radius:8px;background:var(--surface);overflow:hidden}
+.inp input,.inp select{border:0;background:transparent;width:100%;min-width:0;padding:7px 10px;font-size:14px;font-weight:500}
+.inp span{font-size:11px;color:var(--muted);padding-right:10px;white-space:nowrap}
+.bar{position:relative;height:6px;display:flex}
+.bar i{display:block;height:100%;opacity:.3}
+.bar i:first-child{border-radius:3px 0 0 3px}.bar i:last-child{border-radius:0 3px 3px 0}
+.bar .dot{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;transform:translate(-50%,-50%);background:var(--bg);border:3px solid var(--ink);transition:left .25s}
+.status{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-align:right}
+.s-opt{color:var(--opt)}.s-ok{color:var(--ok)}.s-warn{color:var(--warn)}.s-bad{color:var(--bad)}.s-na{color:var(--muted)}
+.z-opt{background:var(--opt)}.z-ok{background:var(--ok)}.z-warn{background:var(--warn)}.z-bad{background:var(--bad)}
+@media (max-width:560px){.row{grid-template-columns:minmax(0,1fr) 116px;row-gap:8px}}
+
+.crit{display:flex;flex-direction:column;background:var(--surface);border-radius:16px;padding:6px 18px}
+.crit div{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.crit div:last-child{border-bottom:0}
+.tick{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--bg)}
+.tick.on{background:var(--ink);border-color:var(--ink)}
+.crit code{font-family:var(--text);font-size:12.5px;color:var(--muted)}
+.meter{display:flex;gap:4px}
+.meter b{flex:1;height:8px;border-radius:999px;background:var(--surface)}
+.meter-legend{display:flex;justify-content:space-between;font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12.5px;padding:4px 11px;border-radius:999px;background:var(--surface);color:var(--text2)}
+.chip.hit{background:var(--ink);color:var(--bg)}
+.chip.q{background:transparent;color:var(--text2);box-shadow:inset 0 0 0 1px var(--line)}
+.note{font-size:12.5px;color:var(--muted)}
+
+.launch{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px;align-items:center}
+@media (max-width:900px){.launch{grid-template-columns:1fr}}
+.wheel{width:100%;max-width:540px;margin:0 auto;display:block}
+.wheel .wedge{cursor:pointer}
+.wheel .wedge:hover{opacity:.85}
+.wheel text{font-family:var(--text)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.spoke{display:flex;flex-direction:column;gap:14px;min-width:0}
+.spoke h3{font-size:36px}
+.spoke p{color:var(--muted);max-width:60ch}
+.scores{display:flex;gap:6px}
+.scores button{flex:1;padding:10px 0;border-radius:10px;border:0;background:var(--surface);font-weight:600;cursor:pointer}
+.scores button.on{background:var(--sc);color:var(--bg)}
+.scale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+textarea{width:100%;min-height:80px;border:0;border-radius:10px;background:var(--surface);padding:10px 12px;resize:vertical}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{border:0;background:var(--surface);border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;color:var(--muted)}
+.tabs button.on{background:var(--sc);color:var(--bg);font-weight:600}
+
+.road{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stage{padding:20px 22px;border-radius:16px;background:var(--surface);display:flex;flex-direction:column;gap:8px;min-width:0}
+.stage .n{font-size:10.5px;font-weight:600;color:var(--gold);letter-spacing:.16em}
+.stage h3{font-size:28px}
+.stage .wk{font-size:13px;color:var(--muted)}
+.stage.active{background:var(--ink);color:var(--bg)}
+.stage.active .wk{color:var(--bg);opacity:.7}
+@media (max-width:760px){.road{grid-template-columns:1fr 1fr}}
+.lead{font-size:18px;line-height:1.5;max-width:66ch;color:var(--text2)}
+.lead b{font-weight:700;color:var(--ink)}
+
+.pack{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+@media (max-width:860px){.pack{grid-template-columns:1fr}}
+.side{display:flex;flex-direction:column;gap:22px;min-width:0}
+.side > .eyebrow{padding-bottom:8px;border-bottom:1px solid var(--sc);color:var(--sc)}
+.pillar{display:flex;flex-direction:column;gap:4px}
+.pillar h3{font-size:24px;font-weight:500;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pillar h3 span{font-family:var(--text);font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.08em}
+.act{display:grid;grid-template-columns:minmax(0,1fr);gap:3px;padding:12px 0 12px 16px;border-left:2px solid var(--gold)}
+.act b{font-weight:700;font-size:15px}
+.act .dose{font-size:14.5px;color:var(--text2)}
+.act .why{font-size:13px;color:var(--muted)}
+.act .from{font-size:11px;color:var(--muted);letter-spacing:.02em;font-style:italic}
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.box{border-radius:16px;padding:20px 22px;background:var(--surface);display:flex;flex-direction:column;gap:10px;min-width:0}
+.box.ref{box-shadow:inset 0 0 0 1px var(--bad)}
+.box ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--text2)}
+.empty{color:var(--muted);font-size:14px;padding:4px 0}
+footer{font-size:12px;color:var(--muted);max-width:80ch;padding-top:24px;border-top:1px solid var(--line)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13px;z-index:5}
+
+.mvsum{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.stat{background:var(--surface);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.stat .big{font-family:var(--display);font-size:34px;font-weight:600;line-height:1}
+.stat .sub{font-size:12.5px;color:var(--muted)}
+.stat .btn{align-self:flex-start;margin-top:4px;padding:5px 12px;font-size:12px}
+.mvgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+@media (max-width:420px){.mvgrid{grid-template-columns:1fr}}
+.mvc{background:var(--surface);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.mvc h3{font-size:21px;font-weight:500;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mvc .cap{font-size:12.5px;color:var(--muted)}
+.lr{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center}
+.lr .sd{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted)}
+.lr .st{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-align:right;min-width:64px}
+.degin{display:flex;align-items:center;background:var(--bg);border-radius:8px;max-width:110px}
+.degin input{border:0;background:transparent;width:100%;min-width:0;padding:6px 10px;font-weight:500}
+.degin span{font-size:12px;color:var(--muted);padding-right:10px}
+.fl{display:flex;flex-wrap:wrap;gap:6px}
+.fl button{border:0;background:var(--bg);border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer;color:var(--text2)}
+.fl button.on{background:var(--ink);color:var(--bg);font-weight:600}
+.pain{border:0;background:var(--bg);border-radius:999px;padding:3px 10px;font-family:var(--text);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+.pain.on{background:var(--bad);color:#fff}
+.mvc .seg{align-self:flex-start;flex-wrap:wrap}
+
+/* Marker tiles */
+.grid{grid-template-columns:1fr!important;gap:44px}
+.screens{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;min-width:0}
+@media (max-width:860px){.screens{grid-template-columns:1fr}}
+.group h3{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:22px 0 12px}
+.gcount{font-size:10.5px;font-weight:700;letter-spacing:.12em;color:var(--muted)}
+.gcount b{color:var(--bad)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
+@media (max-width:420px){.tgrid{grid-template-columns:1fr 1fr}}
+.tile{background:var(--surface);border-radius:16px;padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px;min-width:0;box-shadow:inset 0 3px 0 transparent;transition:box-shadow .25s}
+.tile[data-s="bad"]{box-shadow:inset 0 3px 0 var(--bad)}
+.tile[data-s="warn"]{box-shadow:inset 0 3px 0 var(--warn)}
+.tile[data-s="ok"]{box-shadow:inset 0 3px 0 var(--ok)}
+.tile[data-s="opt"]{box-shadow:inset 0 3px 0 var(--opt)}
+.tile:focus-within{box-shadow:inset 0 0 0 1.5px var(--gold)}
+.tl{display:flex;justify-content:space-between;gap:8px;align-items:baseline;min-width:0}
+.tn{font-size:13px;font-weight:600;line-height:1.25;min-width:0}
+.tst{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.tv{display:flex;align-items:baseline;gap:6px;min-width:0}
+.tv input,.tv select{border:0;background:transparent;font-family:var(--display);font-size:42px;font-weight:500;line-height:1;width:100%;min-width:0;padding:0;color:var(--ink);-moz-appearance:textfield}
+.tv input::-webkit-inner-spin-button,.tv input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.tv input::placeholder{color:var(--line)}
+.tv select{font-size:26px;cursor:pointer}
+.tv input:focus,.tv select:focus{outline:none}
+.tu{font-size:12px;color:var(--muted);white-space:nowrap}
+.tsub{font-size:11.5px;color:var(--muted);line-height:1.3}
+.tile .bar .dot{background:var(--surface)}
+
+body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),transparent 62%),radial-gradient(700px 500px at -10% 40%,rgba(var(--orb),.06),transparent 60%),var(--bg);background-attachment:fixed}
+.brand h1{text-transform:uppercase;letter-spacing:.01em}
+.panel h2{text-transform:uppercase;letter-spacing:.01em}
+/* Hero: baseline orb */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:28px;align-items:center;padding:28px;border-radius:24px;background:linear-gradient(180deg,#141311,#0E0E0D);box-shadow:inset 0 0 0 1px var(--line)}
+@media (max-width:860px){.hero{grid-template-columns:1fr;padding:20px}.orbwrap{order:-1}.dom{grid-template-columns:1fr 1fr}}
+.dom{display:grid;gap:12px;min-width:0}
+.dcard{background:var(--sunk);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;min-width:0}
+.dcard .dn{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.dcard .dn small{display:block;font-weight:600;letter-spacing:.08em;color:var(--warn);margin-top:2px}
+.dtrack{grid-column:1;height:5px;border-radius:3px;background:var(--line);position:relative}
+.dfill{position:absolute;inset:0 auto 0 0;border-radius:3px;background:linear-gradient(90deg,var(--dim),var(--gold));transition:width .5s}
+.dknob{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--ink);transform:translate(-50%,-50%);transition:left .5s}
+.dv{grid-row:1/3;grid-column:2;font-family:var(--display);font-size:32px;font-weight:500;color:var(--gold2);line-height:1;text-align:right}
+.dv small{display:block;font-family:var(--text);font-size:10px;color:var(--muted);font-weight:600}
+.dcard.low{box-shadow:inset 0 0 0 1px var(--warn)}
+.orbwrap{position:relative;width:min(280px,72vw);aspect-ratio:1;max-width:100%;justify-self:center}
+.orbwrap canvas{width:100%;height:100%;display:block;border-radius:50%}
+.orbtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;pointer-events:none}
+.orbv{font-family:var(--display);font-size:72px;font-weight:600;line-height:1;color:var(--ink)}
+.orbl{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--text2)}
+.orbb{font-size:13.5px;font-weight:600;color:var(--gold2)}
+/* Slider tiles */
+.sv{font-family:var(--display);font-size:42px;font-weight:500;line-height:1}
+.rng{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--dim),var(--gold) var(--p,0%),var(--line) var(--p,0%));outline:none;margin:4px 0 2px;cursor:pointer}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--gold)}
+.rng::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--ink);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--gold)}
+.rng:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+/* North Star */
+.ns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+@media (max-width:860px){.ns{grid-template-columns:1fr}}
+.nscol{display:flex;flex-direction:column;gap:12px;min-width:0}
+.nsf{background:var(--surface);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.nsf label{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.nsf label span{color:var(--muted);font-weight:500;letter-spacing:.04em;text-transform:none;margin-left:6px}
+.nsf textarea,.nsf input{border:0;background:transparent;padding:0;min-height:0;resize:none;font-size:16px;color:var(--ink);width:100%}
+.nsf textarea{font-family:var(--display);font-size:22px;font-weight:500;line-height:1.25}
+.nsf textarea:focus,.nsf input:focus,.rung input:focus{outline:none}
+.nsf:focus-within,.rung:focus-within{box-shadow:inset 0 0 0 1px var(--gold)}
+.ladder{background:var(--surface);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.ladder > .eyebrow{color:var(--text2);text-transform:none;letter-spacing:0;font-size:14px;font-weight:700;padding-bottom:4px}
+.rung{border-radius:10px;background:var(--sunk);padding:8px 12px;display:flex;gap:8px;align-items:baseline;box-shadow:inset 0 0 0 1px rgba(var(--orb),var(--a,.2))}
+.rung b{font-size:12.5px;white-space:nowrap;color:var(--gold2)}
+.rung input{border:0;background:transparent;width:100%;min-width:0;font-size:14px;padding:0;color:var(--ink)}
+.laws{display:flex;flex-direction:column;gap:6px}
+.laws input{border-bottom:1px solid var(--line)!important;padding:6px 0!important}
+
+/* Intake */
+.ikgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.ikc{background:var(--surface);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.ikc.wide{grid-column:1/-1}
+.ikc h3{font-size:20px;font-weight:500}
+.ikc .injgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px 18px}
+.ikf{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ikf > label,.ikf > .lb{font-size:12.5px;font-weight:600;color:var(--text2)}
+.ikf input{border:0;border-bottom:1px solid var(--line);background:transparent;padding:5px 0;font-size:15px;color:var(--ink);width:100%;min-width:0}
+.ikf input:focus{outline:none;border-bottom-color:var(--gold)}
+.ikn{display:flex;align-items:baseline;gap:6px}
+.ikn input{font-family:var(--display);font-size:24px;font-weight:500;max-width:120px}
+.ikn span{font-size:12px;color:var(--muted)}
+.ikf .fl button{background:var(--bg)}
+
+/* Submissions (coach sign-in + list) */
+.subs{display:flex;flex-direction:column;gap:14px;padding:20px 22px;border-radius:20px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
+.subs h2{font-family:var(--display);font-weight:600;font-size:24px;text-transform:uppercase}
+.subs .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.subs input,.subs select{background:var(--bg);border:0;box-shadow:inset 0 0 0 1px var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);min-width:0}
+.subs input:focus,.subs select:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--gold)}
+.sublist{display:flex;flex-direction:column}
+.subrow{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.subrow .nm{font-weight:600}
+.subrow .dt{color:var(--muted);font-size:12.5px}
+.stp{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--sunk);color:var(--text2)}
+.stp.new{background:var(--gold);color:var(--bg)}
+.subrow.on{background:linear-gradient(90deg,var(--mind-soft),transparent)}
+@media (max-width:560px){.subrow{grid-template-columns:minmax(0,1fr) auto}.subrow .dt{grid-column:1}}
+.submsg{font-size:13px;color:var(--muted)}
+.submsg.err{color:var(--bad)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="tag">Performuscle · Stand in Your Standard</span>
+      <h1>Performance Audit</h1>
+    </div>
+    <div class="client">
+      <div class="field"><label for="clientName">Client</label><input id="clientName"></div>
+      <div class="field"><label for="clientAge">Age</label><input id="clientAge" type="number"></div>
+      <div class="field"><label for="sex">Sex</label><select id="sex"><option value="m">Male</option><option value="f">Female</option></select></div>
+      <div class="field"><label for="ethnic">Waist cut-offs</label><select id="ethnic"><option value="eu">Europid</option><option value="as">South / East Asian</option></select></div>
+      <span class="sample" id="sampleTag">Sample client</span>
+      <div class="field accent"><label>Accent</label><div class="seg" id="accentSeg"><button data-a="gold" class="on">Gold</button><button data-a="teal">Teal</button><button data-a="mono">Mono</button></div></div>
+    </div>
+  </header>
+
+  <section class="subs" id="subs" aria-label="Audit submissions">
+    <div class="ph"><div class="ttl"><span class="eyebrow gold">Coach only</span><h2>Audit submissions</h2></div><span class="submsg" id="subWho"></span></div>
+    <form class="row" id="signin" autocomplete="on">
+      <div class="field"><label for="siEmail">Coach email</label><input id="siEmail" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="siPass">Password</label><input id="siPass" type="password" autocomplete="current-password" required></div>
+      <button class="btn primary" type="submit" id="siBtn">Sign in</button>
+    </form>
+    <div id="subPanel" hidden>
+      <div class="row" style="justify-content:space-between">
+        <div class="row"><div class="field"><label for="subFilter">Show</label><select id="subFilter"><option value="open">New and reviewed</option><option value="all">All</option><option value="new">New</option><option value="reviewed">Reviewed</option><option value="booked">Booked</option><option value="client">Became client</option><option value="archived">Archived</option></select></div>
+        <button class="btn" type="button" id="subRefresh">Refresh</button></div>
+        <div class="row" id="saveRow" hidden><div class="field"><label for="subStatus">Status</label><select id="subStatus"><option value="new">New</option><option value="reviewed">Reviewed</option><option value="booked">Booked</option><option value="client">Became client</option><option value="archived">Archived</option></select></div><button class="btn primary" type="button" id="subSave">Save review</button><button class="btn" type="button" id="signOut">Sign out</button></div>
+      </div>
+      <div class="sublist" id="subList"></div>
+    </div>
+    <p class="submsg" id="subMsg"></p>
+  </section>
+
+  <section class="hero" aria-label="Audit baseline">
+    <div class="dom" id="domL"></div>
+    <div class="orbwrap"><canvas id="orb" aria-hidden="true"></canvas><div class="orbtxt"><span class="orbv" id="orbV">–</span><span class="orbl">Audit baseline</span><span class="orbb" id="orbB"></span></div></div>
+    <div class="dom" id="domR"></div>
+  </section>
+
+  <section class="verdict" aria-label="Audit verdict">
+    <div class="v" id="vRes"><span class="eyebrow">The Resistant</span><span class="big" id="resBig">–</span><span class="pill" id="resPill">–</span><span class="sub" id="resSub"></span></div>
+    <div class="v" id="vSup"><span class="eyebrow">The Suppressed</span><span class="big" id="supBig">–</span><span class="pill" id="supPill">–</span><span class="sub" id="supSub"></span></div>
+    <div class="v" id="vPhase"><span class="eyebrow">Archetype · Phase 1</span><span class="big" id="phBig">–</span><span class="pill" id="phPill">–</span><span class="sub" id="phSub"></span></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 1 · Intake</span><h2>The Health Audit</h2></div><span class="eyebrow">Everything from the consult form</span></div>
+    <p class="intro">What the client tells you before the call. Lifestyle answers feed the launch pack, and the injury history feeds Movement and the referral list.</p>
+    <div class="ikgrid" id="intake"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 2 · Direction</span><h2>North Star</h2></div></div>
+    <p class="intro">Where they're going and why, before anything else. This replaces the 12-month and 12-week goals on the old consult form.</p>
+    <div class="ns">
+      <div class="nscol">
+        <div class="nsf"><label for="ns_year">North Star<span>the one result for the next 12 months</span></label><textarea id="ns_year" rows="2"></textarea></div>
+        <div class="nsf"><label for="ns_weeks">12-week milestone<span>what has to be true by the end of Phase 1</span></label><textarea id="ns_weeks" rows="2"></textarea></div>
+        <div class="nsf"><label for="ns_week">This week<span>the first win</span></label><input id="ns_week"></div>
+        <div class="nsf laws"><label>Non-negotiables<span>the rules they don't break</span></label><input id="ns_law0" aria-label="Non-negotiable 1"><input id="ns_law1" aria-label="Non-negotiable 2"><input id="ns_law2" aria-label="Non-negotiable 3"></div>
+      </div>
+      <div class="ladder" id="ladder"><span class="eyebrow">The why, five levels down</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 3 · The conversation</span><h2>Deep-dive questions</h2></div><div class="actions"><button class="btn" id="clearBtn">New client</button><button class="btn" id="sampleBtn">Load sample</button></div></div>
+    <p class="intro">Ask these in the audit call. Each answer feeds the archetype screens and pulls specific actions into the launch pack. <span class="t R">R</span> Resistant sign · <span class="t S">S</span> Suppressed sign · <span class="t M">M</span> mindset · <span class="t G">GP</span> referral trigger.</p>
+    <div class="qgrid" id="questions"></div>
+  </section>
+
+  <div class="grid">
+    <section class="panel">
+      <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 4 · The numbers</span><h2>Audit markers</h2></div><span class="eyebrow">Clinical cut-offs · AU units</span></div>
+      <div id="markers"></div>
+    </section>
+    <div class="screens">
+      <section class="panel">
+        <div class="ph"><div class="ttl"><span class="eyebrow gold">Resistant screen</span><h2>Metabolic syndrome</h2></div><span class="eyebrow">Harmonised · 3 of 5</span></div>
+        <div class="crit" id="crit"></div>
+        <div class="chips" id="resChips"></div>
+        <p class="note">Waist-to-height ratio of 0.5 is the main Resistant screen. HOMA-IR = glucose × insulin ÷ 22.5. You can screen it; you can't diagnose it.</p>
+      </section>
+      <section class="panel">
+        <div class="ph"><div class="ttl"><span class="eyebrow gold">Suppressed screen</span><h2>Suppressed state</h2></div><span class="eyebrow" id="supCount">0 signals</span></div>
+        <div class="meter" id="supMeter"></div>
+        <div class="meter-legend"><span>Clear 0–2</span><span>Watch 3–5</span><span>Suppressed 6+</span></div>
+        <div class="chips" id="supChips"></div>
+        <p class="note">Read against the client's own baseline. One bad night means nothing; a week of drift means something. Dashed chips come from the questions.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 5 · Movement</span><h2>Movement assessment</h2></div><span class="eyebrow">From the Movement Assessment Guide</span></div>
+    <p class="intro">Score from the client's photos and videos, or live on the call. Findings set the Movement spoke, flag asymmetries and pull pattern work into the launch pack. Mark any test that produced pain.</p>
+    <div class="mvsum" id="mvSum"></div>
+    <div class="mvgrid" id="mvGrid"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 6 · Whole human</span><h2>Client Launchpad</h2></div>
+      <div class="legend"><span><i style="background:var(--body)"></i>Body</span><span><i style="background:var(--mind)"></i>Mind</span><span>Fill = current readiness, 1–5</span></div></div>
+    <div class="launch">
+      <svg class="wheel" id="wheel" viewBox="-80 -20 560 440" role="img" aria-label="Client Launchpad wheel"></svg>
+      <div class="spoke" id="spoke"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 7 · The plan</span><h2>Roadmap</h2></div><span class="eyebrow">Health → Function → Performance → Mindset</span></div>
+    <div class="road" id="road"></div>
+    <p class="lead" id="planLead"></p>
+  </section>
+
+  <section class="panel">
+    <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 8 · What we do first</span><h2>Client launch pack</h2></div><button class="btn primary" id="copyBtn">Copy launch pack</button></div>
+    <p class="intro" id="packIntro"></p>
+    <div class="pack">
+      <div class="side" style="--sc:var(--body)"><span class="eyebrow">Body</span><div id="packBody" class="side"></div></div>
+      <div class="side" style="--sc:var(--mind)"><span class="eyebrow">Mind</span><div id="packMind" class="side"></div></div>
+    </div>
+    <div class="boxes">
+      <div class="box"><span class="eyebrow">Track daily for the first two weeks</span><ul id="trackList"></ul></div>
+      <div class="box ref"><span class="eyebrow s-bad">Refer to GP before progressing</span><ul id="refList"></ul></div>
+    </div>
+  </section>
+
+  <footer>Screening tool for coaching decisions, not a diagnosis. Flags use published clinical cut-offs; insulin and baseline-trend thresholds are practical rules of thumb. Anything in the GP box goes to the client's doctor before Phase 1 progresses. VO₂ max bands are approximate for ages 30–49.</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+/* ---------- Deep-dive questions ---------- */
+function questions(sex){
+  const f=sex==='f';
+  return [
+   {sec:'Sleep',items:[
+    {id:'q_onset',q:'Struggle to fall asleep, mind racing at night?',S:1,act:['winddown','light','caffeine']},
+    {id:'q_wake',q:'Wake between 1 and 4 am and struggle to get back to sleep?',S:1,R:1,act:['dinner','alcohol','winddown']},
+    {id:'q_unref',q:'Wake unrefreshed, even after 7+ hours in bed?',S:1,act:['wake','light']},
+    {id:'q_snore',q:'Snore, or been told you stop breathing in your sleep?',R:1,ref:'Snoring or witnessed pauses in breathing: sleep apnoea assessment'}]},
+   {sec:'Energy & cortisol rhythm',items:[
+    {id:'q_caff',q:'Need caffeine to function in the morning?',S:1,act:['caffeine','breakfast']},
+    {id:'q_wired',q:'Flat all day, then a second wind late at night?',S:1,act:['light','winddown','downreg']},
+    {id:'q_slump',q:'Afternoon slump between 2 and 4 pm?',S:1,R:1,act:['breakfast','light']},
+    {id:'q_crash',q:'Energy crash or brain fog after meals?',R:1,act:['mealwalk','carbtiming']},
+    {id:'q_dizzy',q:'Light-headed when standing up quickly?',S:1,act:['fuel']}]},
+   {sec:'Libido & hormones',items:[
+    {id:'q_libido',q:'Sex drive lower than what is normal for you?',S:1,act:['fuel','alcohol','wake']},
+    f?{id:'q_cycle',q:'Cycle changes: longer, irregular or missed periods?',S:2,act:['fuel'],ref:'Missed or irregular periods: GP review of cycle and energy availability'}
+     :{id:'q_morning',q:'Fewer morning erections than usual?',S:1,act:['fuel'],ref:'Ongoing low libido with fewer morning erections: GP review and repeat testosterone'},
+    f?{id:'q_pms',q:'PMS symptoms worse than they used to be?',S:1,act:['downreg','alcohol']}
+     :{id:'q_mood',q:'Flat mood or lost your competitive edge?',S:1,act:['downreg','identity']},
+    {id:'q_drive',q:'Lost the drive to train?',S:1,act:['volume']}]},
+   {sec:'Appetite & body',items:[
+    {id:'q_crave',q:'Strong sugar or carb cravings, especially at night?',R:1,act:['breakfast','mealwalk']},
+    {id:'q_hungry',q:'Hungry again within two hours of eating?',R:1,act:['breakfast','carbtiming']},
+    {id:'q_waist',q:'Weight gathering around the waist despite effort?',R:1,act:['deficit','steps','zone2']},
+    {id:'q_cold',q:'Cold hands and feet, or always feel cold?',S:1,act:['fuel']},
+    {id:'q_hair',q:'Hair shedding or brittle nails?',S:1,act:['fuel'],ref:'Hair shedding: check ferritin, thyroid and iron studies with GP'},
+    {id:'q_gut',q:'Bloating or irregular digestion most days?',act:['gut']}]},
+   {sec:'Training & recovery',items:[
+    {id:'q_heavy',q:'Usual weights feeling heavier than they should?',S:1,act:['volume']},
+    {id:'q_sore',q:'Soreness lasting three days or more after sessions?',S:1,act:['volume','fuel']},
+    {id:'q_stall',q:'Stuck for weeks despite a genuine calorie deficit?',S:1,act:['fuel']},
+    {id:'q_steps',q:'Moving less day to day than you used to?',S:1,act:['steps']}]},
+   {sec:'Stress & behaviour',items:[
+    {id:'q_on',q:'Feel "on" all the time and struggle to switch off?',S:1,act:['downreg','boundaries']},
+    {id:'q_alc',q:'Use alcohol to wind down most evenings?',R:1,S:1,act:['alcohol','downreg']},
+    {id:'q_aon',q:'One bad meal and the week is written off?',M:1,act:['limits']},
+    {id:'q_yes',q:'Say yes to others at the cost of your own training or sleep?',M:1,act:['boundaries']},
+    {id:'q_ident',q:'Find it hard to see yourself as someone who trains and eats well?',M:1,act:['identity']}]}
+  ];
+}
+const ANS=['Never','Sometimes','Often'];
+
+/* ---------- Markers ---------- */
+function markers(sex,eth){
+  const f=sex==='f', w=eth==='as'?(f?80:90):(f?80:94), wh=eth==='as'?(f?88:100):(f?88:102);
+  return [
+   {g:'Body & blood pressure',items:[
+    {id:'height',label:'Height',unit:'cm',plain:true},
+    {id:'waist',label:'Waist',sub:'midpoint rib–hip, after exhale',unit:'cm',min:55,max:130,z:[[w,'ok'],[wh,'warn'],[999,'bad']]},
+    {id:'sys',label:'Systolic BP',unit:'mmHg',min:90,max:170,z:[[130,'ok'],[140,'warn'],[999,'bad']]},
+    {id:'dia',label:'Diastolic BP',unit:'mmHg',min:55,max:110,z:[[85,'ok'],[90,'warn'],[999,'bad']]}]},
+   {g:'Sleep & recovery · vs own baseline',items:[
+    {id:'sleep',label:'Sleep',sub:'7-day average',unit:'h',min:4,max:10,z:[[6,'bad'],[7,'warn'],[9.5,'opt'],[99,'ok']]},
+    {id:'sleepq',label:'Sleep quality',sub:'self-rated',unit:'/10',min:1,max:10,z:[[5,'bad'],[7,'warn'],[99,'ok']]},
+    {id:'rhrd',label:'Morning HR shift',sub:'vs usual, either way',unit:'bpm',min:-12,max:15,z:[[-5,'warn'],[5,'ok'],[999,'bad']]},
+    {id:'hrv',label:'HRV vs baseline',sub:'7-day vs normal range',unit:'%',min:-30,max:20,z:[[-10,'bad'],[-5,'warn'],[999,'ok']]},
+    {id:'stepsd',label:'Steps vs pre-diet',sub:'daily average',unit:'%',min:-60,max:20,z:[[-25,'bad'],[-10,'warn'],[999,'ok']]}]},
+   {g:'Capacity',items:[
+    {id:'vo2',label:'VO₂ max',sub:'test or wearable',unit:'ml/kg',min:20,max:65,z:f?[[30,'bad'],[37,'warn'],[44,'ok'],[999,'opt']]:[[35,'bad'],[42,'warn'],[50,'ok'],[999,'opt']]}]},
+   {g:'Metabolic bloods',items:[
+    {id:'glu',label:'Fasting glucose',unit:'mmol/L',min:3.5,max:8,z:[[5.6,'ok'],[7.0,'warn'],[99,'bad']]},
+    {id:'a1c',label:'HbA1c',sub:'42 / 48 mmol/mol',unit:'%',min:4.5,max:7.5,z:[[6.0,'ok'],[6.5,'warn'],[99,'bad']]},
+    {id:'ins',label:'Fasting insulin',sub:'rule of thumb',unit:'mIU/L',min:1,max:25,z:[[10,'ok'],[999,'warn']]},
+    {id:'tg',label:'Triglycerides',unit:'mmol/L',min:0.3,max:3.5,z:[[1.7,'ok'],[99,'bad']]},
+    {id:'hdl',label:'HDL',unit:'mmol/L',min:0.5,max:2.5,z:f?[[1.3,'bad'],[99,'ok']]:[[1.0,'bad'],[99,'ok']]},
+    {id:'apob',label:'ApoB',unit:'g/L',min:0.4,max:1.6,z:[[1.0,'ok'],[1.2,'warn'],[99,'bad']]},
+    {id:'crp',label:'hs-CRP',unit:'mg/L',min:0,max:8,z:[[3,'ok'],[99,'bad']]}]},
+   {g:'Hormonal & nutrient',items:[
+    f?{id:'cycle',label:'Menstrual cycle',type:'select',opts:[['regular','Regular'],['irregular','Irregular'],['absent','Absent'],['na','N/A']]}
+     :{id:'test',label:'Total testosterone',unit:'nmol/L',min:5,max:35,z:[[8,'bad'],[12,'warn'],[999,'ok']]},
+    {id:'tsh',label:'TSH',unit:'mIU/L',min:0,max:6,z:[[0.4,'bad'],[4.0,'ok'],[99,'bad']]},
+    {id:'ft3',label:'Free T3',unit:'pmol/L',min:2.5,max:7,z:[[3.1,'bad'],[99,'ok']]},
+    {id:'fer',label:'Ferritin',unit:'µg/L',min:5,max:450,z:[[30,'bad'],[f?200:400,'ok'],[9999,'warn']]},
+    {id:'vitd',label:'Vitamin D',unit:'nmol/L',min:20,max:180,z:[[50,'bad'],[999,'ok']]},
+    {id:'cort',label:'AM cortisol',sub:'7–9 am draw',unit:'nmol/L',min:80,max:800,z:[[140,'bad'],[690,'ok'],[9999,'bad']]}]},
+   {g:'Self-report',items:[
+    {id:'energy',label:'Daily energy',unit:'/10',min:1,max:10,z:[[5,'bad'],[7,'warn'],[99,'ok']]},
+    {id:'libido',label:'Libido',unit:'/10',min:1,max:10,z:[[5,'bad'],[7,'warn'],[99,'ok']]},
+    {id:'stress',label:'Perceived stress',unit:'/10',min:1,max:10,z:[[6,'ok'],[7,'warn'],[99,'bad']]}]}
+  ];
+}
+const LBL={opt:'Strong',ok:'In range',warn:'Watch',bad:'Flag'};
+
+/* ---------- Launch pack action library ---------- */
+const ACT={
+ wake:{spoke:'recovery',t:'Fixed wake time',d:'Same wake time seven days a week, within 30 minutes.',w:'The most reliable lever for sleep onset and morning energy.'},
+ light:{spoke:'recovery',t:'Morning light',d:'Outside for 10 minutes within 30 minutes of waking, no sunglasses.',w:'Anchors the cortisol rise to the morning and sets up melatonin for the night.'},
+ winddown:{spoke:'recovery',t:'Wind-down hour',d:'Screens off and lights dimmed 60 minutes before bed. Bedroom cool, dark and quiet.',w:'Lets evening cortisol fall so sleep comes on faster.'},
+ caffeine:{spoke:'nutrition',t:'Caffeine rules',d:'First coffee after breakfast, none after 12 pm, two a day at most.',w:'Caffeine on an empty stomach or late in the day disrupts sleep and blood sugar.'},
+ dinner:{spoke:'nutrition',t:'Dinner built for sleep',d:'Protein plus slow carbohydrate at dinner. No big meal in the last two hours before bed, and don’t go to bed hungry.',w:'Night waking often follows a blood sugar dip and a cortisol spike.'},
+ alcohol:{spoke:'nutrition',t:'Alcohol ceiling',d:'Alcohol-free Monday to Thursday, and none within three hours of bed.',w:'Alcohol fragments the second half of the night, flattens HRV and lowers testosterone.'},
+ breakfast:{spoke:'nutrition',t:'Protein-first breakfast',d:'30–40 g protein within 90 minutes of waking.',w:'Steadies blood sugar through the day and cuts evening cravings.'},
+ carbtiming:{spoke:'nutrition',t:'Carbs earned by training',d:'Most of the day’s carbohydrate in the meal after training. Protein, veg and fats at other meals.',w:'Puts glucose where muscle can take it up without a big insulin demand.'},
+ deficit:{spoke:'nutrition',t:'Moderate deficit',d:'15–20% below maintenance, protein 1.6–2.2 g/kg, reviewed fortnightly against the waist.',w:'Enough to move the waist without tipping the client into suppression.'},
+ fuel:{spoke:'nutrition',t:'Eat to maintenance',d:'Calories back to maintenance for 4–8 weeks, carbs around training, no deficit until suppression signals fall to Watch.',w:'A suppressed system downregulates further under a deficit. Restore first.'},
+ gut:{spoke:'nutrition',t:'Digestion basics',d:'Eat seated and slowly, build to 25–30 g fibre a day, log foods that trigger bloating.',w:'Rules out the simple causes before anything more specific.'},
+ mealwalk:{spoke:'movement',t:'Post-meal walks',d:'10-minute walk after the two biggest meals of the day.',w:'Working muscle clears glucose without extra insulin.'},
+ steps:{spoke:'movement',t:'Step floor',d:a=>a.res&&!a.sup?'Build to 8,000–10,000 a day, adding 1,000 a week.':'Bring daily steps back to the pre-diet average before adding training.',w:'Daily movement is the biggest swing in energy expenditure, and the first thing to drop when a client is suppressed.'},
+ zone2:{spoke:'movement',t:'Zone 2 base',d:'Two to three sessions of 30–45 minutes at conversational pace.',w:'Builds insulin sensitivity and the aerobic base that VO₂ max sits on.'},
+ strength:{spoke:'movement',t:'Resistance training',d:'Three to four full-body sessions a week, compound lifts first.',w:'Muscle is the body’s largest glucose sink.'},
+ volume:{spoke:'movement',t:'Volume down, intensity held',d:'Weekly sets down about 30%, HIIT out, main lifts kept heavy but shy of failure.',w:'Keeps the strength signal while lowering total stress load.'},
+ blueprint:{spoke:'movement',t:'Movement Blueprint™ screen',d:'Structural balance ratios and pattern screen in week one. Corrective intent built into the main lifts, not bolted on.',w:'Sets the Function phase up from day one.'},
+ downreg:{spoke:'somatics',t:'Down-regulation practice',d:'Five minutes daily of 90/90 breathing with a full exhale to bring the infrasternal angle down, plus physiological sighs when stress spikes.',w:'Moves the nervous system out of a sympathetic state and trains the ribcage position the client will load in the gym.'},
+ boundaries:{spoke:'boundaries',t:'Protect the non-negotiables',d:'Training sessions and bedtime go in the calendar first, every Sunday. Practise one clear no each week.',w:'Plans fail when everything else gets first claim on the client’s time.'},
+ identity:{spoke:'identity',t:'Identity statement',d:'Write one sentence describing the standard the client is stepping into. Read it every morning.',w:'Behaviour follows identity. Stand in Your Standard.'},
+ limits:{spoke:'limits',t:'Name the pattern',d:'Write down the all-or-nothing trigger and an if-then plan: “If I go off plan at lunch, my next meal is back on plan.”',w:'Turns a spiral into a single decision.'}
+};
+
+/* ---------- Launchpad spokes ---------- */
+const SPOKES=[
+ {id:'identity',side:'mind',short:'Identity',name:'Identity change',d:'Who the client is becoming. The standard they hold for themselves and whether their actions match it.'},
+ {id:'boundaries',side:'mind',short:'Boundaries',name:'Boundaries',d:'Protecting time, energy and training from work, people and old obligations.'},
+ {id:'limits',side:'mind',short:'Self-limits',name:'Self-limiting behaviours',d:'The patterns that pull the client off plan: all-or-nothing thinking, avoidance, self-sabotage at the finish line.'},
+ {id:'somatics',side:'mind',short:'Somatics',name:'Somatics',d:'Body awareness and nervous system regulation: breath, down-regulation, noticing stress before it shows in the data.'},
+ {id:'recovery',side:'body',short:'Recovery',name:'Sleep & recovery',d:'Sleep, HRV and morning heart rate. The base every other spoke is built on.'},
+ {id:'movement',side:'body',short:'Movement',name:'Movement patterns',d:'Structural balance, joint integrity and pattern quality, integrated into the training stimulus.'},
+ {id:'peptides',side:'body',short:'Peptides',name:'Peptides',d:'Whether peptides are appropriate, which goal they serve, and the medical oversight in place. Assessed once the foundations hold.'},
+ {id:'nutrition',side:'body',short:'Nutrition',name:'Nutrition',d:'Energy intake, protein, food quality and the structure of the day, periodised to the phase.'}];
+const READY=['','Not started','Aware','Building','Consistent','Owned'];
+
+/* ---------- Sample (example data, not a real client) ---------- */
+const SAMPLE={clientName:'James R.',clientAge:41,sex:'m',ethnic:'eu',height:180,waist:99,sys:134,dia:86,sleep:6.2,sleepq:5,rhrd:6,hrv:-14,stepsd:-15,vo2:38,glu:5.8,a1c:5.6,ins:11,tg:1.9,hdl:0.95,apob:1.15,crp:2.4,test:11.2,cycle:'regular',tsh:2.8,ft3:4.1,fer:140,vitd:48,cort:520,energy:4,libido:5,stress:7};
+const SAMPLE_Q={q_onset:2,q_wake:2,q_unref:1,q_snore:1,q_caff:2,q_wired:1,q_slump:2,q_crash:1,q_libido:1,q_morning:1,q_mood:0,q_drive:1,q_crave:2,q_hungry:1,q_waist:2,q_cold:0,q_hair:0,q_gut:0,q_heavy:1,q_sore:0,q_stall:0,q_steps:1,q_on:2,q_alc:2,q_aon:1,q_yes:2,q_ident:0};
+const SAMPLE_SP={nutrition:2,peptides:1,movement:3,recovery:2,identity:3,boundaries:2,limits:2,somatics:1};
+
+let state={},ans={},spokes={},notes={},sel='nutrition',isSample=true;
+
+const num=id=>{const v=state[id];return v===''||v==null||isNaN(+v)?null:+v};
+function zoneOf(m,v){if(v==null)return null;for(const [t,s] of m.z){if(v<t)return s}return m.z[m.z.length-1][1]}
+function markDirty(){if(isSample){isSample=false;$('sampleTag').hidden=true}}
+
+function renderQuestions(){
+  const host=$('questions');host.innerHTML='';
+  for(const sec of questions(state.sex)){
+    const d=document.createElement('div');d.className='qsec';
+    d.innerHTML=`<h3><span>${sec.sec}</span><span id="qc_${sec.sec.replace(/\W/g,'')}"></span></h3>`;
+    for(const it of sec.items){
+      const tags=[it.R?'<span class="t R">R</span>':'',it.S?'<span class="t S">S</span>':'',it.M?'<span class="t M">M</span>':'',it.ref?'<span class="t G">GP</span>':''].join('');
+      const r=document.createElement('div');r.className='q';
+      r.innerHTML=`<div><p>${it.q}</p><div class="tags">${tags}</div></div>
+        <div class="seg" role="group" aria-label="${it.q}">${ANS.map((a,i)=>`<button data-v="${i}" class="${(ans[it.id]??-1)===i?'on':''}" aria-pressed="${(ans[it.id]??-1)===i}">${a}</button>`).join('')}</div>`;
+      r.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
+        ans[it.id]=+b.dataset.v;markDirty();
+        r.querySelectorAll('.seg button').forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)});
+        update();
+      }));
+      d.appendChild(r);
+    }
+    host.appendChild(d);
+  }
+}
+
+function renderMarkers(){
+  const host=$('markers');host.innerHTML='';
+  markers(state.sex,state.ethnic).forEach((grp,gi)=>{
+    const g=document.createElement('div');g.className='group';
+    g.innerHTML=`<h3><span>${grp.g}</span><span class="gcount" id="gc_${gi}"></span></h3><div class="tgrid"></div>`;
+    const tg=g.querySelector('.tgrid');
+    for(const m of grp.items){
+      const t=document.createElement('div');t.className='tile';t.id='tile_'+m.id;
+      let val,gauge='',sub=m.sub||'';
+      if(m.unit==='/10'){
+        val=`<span class="sv" id="sv_${m.id}">–</span><span class="tu">/10</span>`;
+        gauge=`<input class="rng" type="range" min="1" max="10" step="1" id="${m.id}" aria-label="${m.label}">`;
+      }else if(m.type==='select'){
+        val=`<select id="${m.id}">${m.opts.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select>`;
+      }else{
+        val=`<input id="${m.id}" type="number" step="any" inputmode="decimal" placeholder="–"><span class="tu">${m.unit}</span>`;
+        if(!m.plain){
+          let prev=m.min;
+          for(const [th,st] of m.z){const hi=Math.min(th,m.max);if(hi>prev){gauge+=`<i class="z-${st}" style="width:${(hi-prev)/(m.max-m.min)*100}%"></i>`;prev=hi}}
+          gauge=`<div class="bar">${gauge}<span class="dot" id="dot_${m.id}" hidden></span></div>`;
+        }else sub=`<span id="whtrNote"></span>`;
+      }
+      t.innerHTML=`<div class="tl"><span class="tn">${m.label}</span><span class="tst" id="st_${m.id}"></span></div><div class="tv">${val}</div>${gauge}${sub?`<div class="tsub">${sub}</div>`:''}`;
+      tg.appendChild(t);
+      const el=t.querySelector('#'+m.id);
+      el.value=state[m.id]??(m.type==='select'?'regular':'');
+      el.addEventListener('input',()=>{state[m.id]=el.value;markDirty();update()});
+    }
+    host.appendChild(g);
+  });
+}
+
+function updateMarkers(){
+  markers(state.sex,state.ethnic).forEach((grp,gi)=>{
+    let flags=0,watch=0,have=0;
+    for(const m of grp.items){
+      const st=$('st_'+m.id),tile=$('tile_'+m.id);let s;
+      if(m.type==='select'){const v=state.cycle||'regular';s=v==='absent'?'bad':v==='irregular'?'warn':v==='na'?'na':'ok';st.className='tst s-'+s;st.textContent=s==='na'?'':LBL[s]}
+      else if(m.unit==='/10'){const v=num(m.id);s=zoneOf(m,v)||'na';$('sv_'+m.id).textContent=v??'–';$(m.id).style.setProperty('--p',v==null?'0%':((v-1)/9*100)+'%');st.className='tst s-'+s;st.textContent=v==null?'Not set':LBL[s]}
+      else if(m.plain){const w=whtr();$('whtrNote').textContent=w!=null?`Waist-to-height ${w.toFixed(2)}`:'Enter height for waist-to-height';s=w==null?'na':w>=0.5?'bad':'ok';st.className='tst s-'+s;st.textContent=w==null?'':w>=0.5?'WHtR ≥ 0.5':'WHtR < 0.5'}
+      else{
+        const v=num(m.id),dot=$('dot_'+m.id);s=zoneOf(m,v)||'na';
+        if(v==null){dot.hidden=true;st.className='tst s-na';st.textContent='No data'}
+        else{dot.hidden=false;dot.style.left=Math.max(0,Math.min(100,(v-m.min)/(m.max-m.min)*100))+'%';dot.style.borderColor=`var(--${s})`;st.className='tst s-'+s;st.textContent=LBL[s]}
+      }
+      tile.dataset.s=s;if(s!=='na')have++;if(s==='bad')flags++;if(s==='warn')watch++;
+    }
+    $('gc_'+gi).innerHTML=have?`${flags?`<b>${flags} FLAG${flags>1?'S':''}</b> · `:''}${watch?`${watch} WATCH · `:''}${have}/${grp.items.length} RECORDED`:'NOT RECORDED';
+  });
+}
+const whtr=()=>num('waist')!=null&&num('height')?num('waist')/num('height'):null;
+
+/* ---------- Screens ---------- */
+function allQ(){return questions(state.sex).flatMap(s=>s.items)}
+function resistant(){
+  const f=state.sex==='f',as=state.ethnic==='as',wc=as?(f?80:90):(f?80:94);
+  const c=[
+   {k:'Large waist',t:`≥ ${wc} cm`,v:num('waist'),hit:num('waist')!=null&&num('waist')>=wc},
+   {k:'Raised triglycerides',t:'≥ 1.7 mmol/L',v:num('tg'),hit:num('tg')!=null&&num('tg')>=1.7},
+   {k:'Low HDL',t:f?'< 1.3 mmol/L':'< 1.0 mmol/L',v:num('hdl'),hit:num('hdl')!=null&&num('hdl')<(f?1.3:1.0)},
+   {k:'Raised blood pressure',t:'≥ 130 / 85',v:num('sys')!=null?`${num('sys')}/${num('dia')??'–'}`:null,hit:(num('sys')??0)>=130||(num('dia')??0)>=85},
+   {k:'Raised fasting glucose',t:'≥ 5.6 mmol/L',v:num('glu'),hit:num('glu')!=null&&num('glu')>=5.6}];
+  const n=c.filter(x=>x.hit).length,known=c.filter(x=>x.v!=null).length;
+  const homa=num('glu')!=null&&num('ins')!=null?num('glu')*num('ins')/22.5:null;
+  const w=whtr(),ir=(homa!=null&&homa>=2)||(num('a1c')!=null&&num('a1c')>=6.0);
+  const qs=allQ().filter(q=>q.R&&ans[q.id]>0).map(q=>({label:q.q.replace(/\?$/,''),v:ans[q.id]}));
+  const qpts=qs.reduce((a,b)=>a+(b.v===2?1:.5),0);
+  const score=n+(w!=null&&w>=0.5?1:0)+(ir?1:0)+(num('crp')!=null&&num('crp')>3?1:0)+Math.floor(qpts/2);
+  return {c,n,known,met:n>=3,homa,w,ir,qs,score,level:score>=5||n>=3?'Resistant':score>=3?'Leaning':'Clear'};
+}
+function suppressed(){
+  const f=state.sex==='f',s=[];const add=(on,label,w=1)=>{if(on)s.push({label,w})};
+  add(num('sleep')!=null&&num('sleep')<7,'Sleep under 7 h');
+  add(num('sleepq')!=null&&num('sleepq')<=5,'Poor sleep quality');
+  add(num('rhrd')!=null&&Math.abs(num('rhrd'))>=5,'Morning HR off baseline');
+  add(num('hrv')!=null&&num('hrv')<=-10,'HRV below normal range');
+  add(num('stepsd')!=null&&num('stepsd')<=-25,'Steps well below pre-diet');
+  add(num('energy')!=null&&num('energy')<=4,'Low daily energy');
+  add(num('libido')!=null&&num('libido')<=4,'Low libido');
+  add(num('stress')!=null&&num('stress')>=7,'High perceived stress');
+  if(f){add(state.cycle==='irregular','Irregular cycle');add(state.cycle==='absent','Absent cycle',2)}
+  else add(num('test')!=null&&num('test')<12,'Testosterone under 12 nmol/L');
+  add(num('ft3')!=null&&num('ft3')<3.1,'Low free T3');
+  add(num('fer')!=null&&num('fer')<30,'Ferritin under 30');
+  add(num('vitd')!=null&&num('vitd')<50,'Vitamin D under 50');
+  add(num('cort')!=null&&(num('cort')<140||num('cort')>690),'AM cortisol out of range');
+  const qs=allQ().filter(q=>q.S&&ans[q.id]>0).map(q=>({label:q.q.replace(/\?$/,''),v:ans[q.id],w:q.S}));
+  const qpts=qs.reduce((a,b)=>a+(b.v===2?b.w:.5*b.w),0);
+  const score=s.reduce((a,b)=>a+b.w,0)+Math.floor(qpts/2);
+  return {s,qs,score,level:score>=6?'Suppressed':score>=3?'Watch':'Clear'};
+}
+function archetype(r,s){
+  const R=r.level==='Resistant',S=s.level==='Suppressed';
+  if(R&&S)return {key:'mixed',name:'Mixed',phase:0,mode:'Restore, then reset',sev:'bad',weeks:[10,8,10,6],
+    lead:'<b>Resistant markers on a Suppressed system.</b> The usual fat-loss advice fails this client. Restore first: sleep, food back to maintenance and lower training stress. The metabolic reset begins once suppression signals fall into the Watch band.'};
+  if(S)return {key:'sup',name:'Suppressed',phase:0,mode:'Restore',sev:'bad',weeks:[6,8,10,6],
+    lead:'<b>The client is running suppressed.</b> Phase 1 lowers total load: maintenance calories, reduced training volume, and sleep as the lead metric. No deficit until the trends recover.'};
+  if(R)return {key:'res',name:'Resistant',phase:0,mode:'Metabolic reset',sev:'warn',weeks:[8,8,10,6],
+    lead:'<b>Metabolic markers lead Phase 1.</b> Improve insulin sensitivity with a moderate deficit, daily steps, Zone 2 and resistance training. Waist fortnightly, bloods again at 12 weeks.'};
+  if(r.level==='Leaning'||s.level==='Watch')return {key:'bridge',name:'Watch',phase:0,mode:'Bridge to Function',sev:'warn',weeks:[4,8,10,6],
+    lead:'<b>Nothing is red, but the system is fragile.</b> A short Health block tightens sleep, nutrition and stress before structural work loads up.'};
+  return {key:'clear',name:'Clear',phase:1,mode:'Structural balance',sev:'opt',weeks:[0,8,10,6],
+    lead:'<b>Health markers are clear.</b> Start in Function: the Movement Blueprint™ screen and structural balance ratios set the corrective intent inside the training stimulus.'};
+}
+
+/* ---------- Launch pack ---------- */
+function buildPack(r,s,a){
+  const picked=new Map(); // key -> set of reasons
+  const add=(k,why)=>{if(!ACT[k])return;if(!picked.has(k))picked.set(k,new Set());picked.get(k).add(why)};
+  const ctx={res:r.level!=='Clear',sup:s.level!=='Clear'};
+  // Archetype base protocol
+  if(a.key==='mixed'||a.key==='sup'){['fuel','volume','wake','light','steps'].forEach(k=>add(k,a.name+' base'))}
+  if(a.key==='res'){['deficit','strength','zone2','steps','mealwalk'].forEach(k=>add(k,'Resistant base'))}
+  if(a.key==='mixed'){add('mealwalk','Resistant markers');add('strength','Resistant markers')}
+  if(a.key==='bridge'){['wake','breakfast','strength','zone2'].forEach(k=>add(k,'Bridge base'))}
+  add('breakfast','Foundation');add('blueprint','Foundation');
+  // Markers
+  if(num('sleep')!=null&&num('sleep')<7){add('wake','Sleep under 7 h');add('winddown','Sleep under 7 h')}
+  if(num('stress')!=null&&num('stress')>=7)add('downreg','Stress 7+/10');
+  if(num('hrv')!=null&&num('hrv')<=-10)add('downreg','HRV below range');
+  if(num('vo2')!=null&&num('vo2')<(state.sex==='f'?37:42))add('zone2','VO₂ max below fair');
+  if(r.ir)add('carbtiming','Insulin resistance markers');
+  // Questions
+  for(const q of allQ()){if(ans[q.id]>0&&q.act)q.act.forEach(k=>add(k,q.q.replace(/\?$/,'')))}
+  if(ikn('alc')!=null&&ikn('alc')>=7)add('alcohol',`Intake: ${ikn('alc')} drinks a week`);
+  if(ikn('caff')!=null&&ikn('caff')>=14)add('caffeine',`Intake: ${ikn('caff')} caffeinated drinks a week`);
+  if(ik.digest==='yes')add('gut','Intake: foods disrupt digestion');
+  if(ikn('water')!=null&&ikn('water')<2)add('hydration',`Intake: ${ikn('water')} L water a day`);
+  if((ikn('steps')!=null&&ikn('steps')<7000)||ik.activity==='Sedentary')add('steps',ikn('steps')!=null?`Intake: ${ikn('steps')} steps a day`:'Intake: sedentary');
+  if(ik.destress&&/beer|wine|drink|alcohol/i.test(ik.destress))add('downreg','Intake: de-stresses with alcohol');
+  if(ik.injury==='yes')add('mv_injury','Intake: '+(ik.where||'injury reported'));
+  const mf=mvFindings();mf.flags.forEach(f=>(f.act||[]).forEach(k=>add(k,f.label)));mf.asym.forEach(x=>add('mv_asym',x));
+  // Spoke scores
+  if((spokes.identity||5)<=2)add('identity','Identity spoke '+spokes.identity+'/5');
+  if((spokes.boundaries||5)<=2)add('boundaries','Boundaries spoke '+spokes.boundaries+'/5');
+  if((spokes.limits||5)<=2)add('limits','Self-limits spoke '+spokes.limits+'/5');
+  if((spokes.somatics||5)<=2)add('downreg','Somatics spoke '+spokes.somatics+'/5');
+  // Suppressed overrides a deficit
+  if(picked.has('fuel'))picked.delete('deficit');
+  if(picked.has('volume')&&a.key!=='res')picked.delete('zone2');
+  const bySpoke={};
+  for(const [k,why] of picked){const it=ACT[k];(bySpoke[it.spoke]=bySpoke[it.spoke]||[]).push({k,...it,dose:typeof it.d==='function'?it.d(ctx):it.d,why:[...why]})}
+  for(const k in bySpoke)bySpoke[k].sort((a,b)=>b.why.length-a.why.length);
+  return bySpoke;
+}
+function referrals(r){
+  const out=[];const n=num,f=state.sex==='f';
+  if((n('sys')??0)>=140||(n('dia')??0)>=90)out.push('Blood pressure 140/90 or higher');
+  if((n('glu')??0)>=7||(n('a1c')??0)>=6.5)out.push('Glucose or HbA1c in the diabetes range');
+  else if((n('a1c')??0)>=6.0||(n('glu')??0)>=6.1)out.push('HbA1c or glucose in the increased-risk range');
+  if(r.met)out.push('Metabolic syndrome criteria met: GP to confirm and review');
+  if(n('fer')!=null&&n('fer')<30)out.push('Ferritin under 30 µg/L');
+  if(n('tsh')!=null&&(n('tsh')<0.4||n('tsh')>4))out.push('TSH outside reference range');
+  if(!f&&n('test')!=null&&n('test')<12)out.push('Testosterone under 12 nmol/L: repeat fasted AM test with GP');
+  if(f&&state.cycle==='absent')out.push('Absent cycle');
+  if(n('cort')!=null&&(n('cort')<140||n('cort')>690))out.push('AM cortisol outside reference range');
+  if(n('vitd')!=null&&n('vitd')<50)out.push('Vitamin D under 50 nmol/L');
+  if(n('apob')!=null&&n('apob')>1.2)out.push('ApoB above 1.2 g/L');
+  for(const q of allQ())if(q.ref&&ans[q.id]===2)out.push(q.ref);
+  if(ik.injury==='yes'){
+    if(ikn('pain')!=null&&ikn('pain')>=6)out.push(`Pain ${ikn('pain')}/10${ik.where?' in the '+ik.where.toLowerCase():''}: physio or GP review`);
+    if(ik.radiate&&!/^\s*no/i.test(ik.radiate))out.push(`Pain radiating (${ik.radiate}): GP or physio before loading`);
+    if(ik.trend==='Getting worse')out.push('Injury getting worse: physio review');
+  }
+  mvFindings().pain.forEach(t=>out.push(`Pain during ${t.toLowerCase()}: physio review before loading that pattern`));
+  return out;
+}
+const TRACK=['Morning heart rate','HRV (7-day average)','Sleep hours and quality','Daily steps','Hunger, 1–10','Energy, 1–10','How training felt','Waist, weekly at the same time'];
+
+/* ---------- Wheel ---------- */
+function arc(cx,cy,r0,r1,a0,a1){
+  const p=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
+  const [x0,y0]=p(r1,a0),[x1,y1]=p(r1,a1),[x2,y2]=p(r0,a1),[x3,y3]=p(r0,a0);
+  return `M${x0},${y0}A${r1},${r1} 0 0 1 ${x1},${y1}L${x2},${y2}A${r0},${r0} 0 0 0 ${x3},${y3}Z`;
+}
+function renderWheel(a){
+  const cx=200,cy=200,R0=62,R1=172,gap=0.025,svg=$('wheel');let h='';
+  for(let k=1;k<=5;k++)h+=`<circle cx="${cx}" cy="${cy}" r="${R0+(R1-R0)*k/5}" fill="none" stroke="var(--line)" stroke-width="${k===5?1.5:1}" ${k<5?'stroke-dasharray="2 4"':''}/>`;
+  SPOKES.forEach((s,i)=>{
+    const a0=(-90+i*45)*Math.PI/180+gap,a1=(-90+(i+1)*45)*Math.PI/180-gap,c=s.side==='body'?'var(--body)':'var(--mind)',soft=s.side==='body'?'var(--body-soft)':'var(--mind-soft)';
+    const sc=spokes[s.id]||0,rr=R0+(R1-R0)*sc/5,on=sel===s.id;
+    h+=`<g class="wedge" data-id="${s.id}" tabindex="0" role="button" aria-label="${s.name}: ${sc} of 5">
+      <path d="${arc(cx,cy,R0,R1,a0,a1)}" fill="${soft}" stroke="${on?c:'none'}" stroke-width="2"/>
+      ${sc?`<path d="${arc(cx,cy,R0,rr,a0,a1)}" fill="${c}" opacity="${on?1:.82}"/>`:''}</g>`;
+    const am=(a0+a1)/2,lx=cx+(R1+16)*Math.cos(am),ly=cy+(R1+16)*Math.sin(am),cos=Math.cos(am);
+    const anchor=Math.abs(cos)<0.2?'middle':cos>0?'start':'end';
+    h+=`<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="14" font-weight="${on?700:600}" fill="${on?c:'var(--ink)'}">${s.short}</text>
+        <text x="${lx}" y="${ly+16}" text-anchor="${anchor}" dominant-baseline="middle" font-size="11" fill="var(--muted)" font-family="DM Sans, sans-serif">${sc}/5</text>`;
+  });
+  h+=`<line x1="${cx}" y1="${cy-R1-6}" x2="${cx}" y2="${cy-R0}" stroke="var(--ink)" stroke-width="1.5"/><line x1="${cx}" y1="${cy+R0}" x2="${cx}" y2="${cy+R1+6}" stroke="var(--ink)" stroke-width="1.5"/>
+     <circle cx="${cx}" cy="${cy}" r="${R0-6}" fill="var(--ink)"/>
+     <text x="${cx}" y="${cy-16}" text-anchor="middle" font-size="10" fill="var(--bg)" font-family="DM Sans, sans-serif" letter-spacing="1.5">PHASE ${a.phase+1}</text>
+     <text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="22" font-weight="600" fill="var(--bg)" letter-spacing="1" font-family="Oswald, Arial Narrow, sans-serif">${a.phase===0?'HEALTH':'FUNCTION'}</text>
+     <text x="${cx}" y="${cy+26}" text-anchor="middle" font-size="9.5" fill="var(--bg)" opacity=".75">${a.mode}</text>
+     <text x="${cx-118}" y="${cy-R1+4}" text-anchor="middle" font-size="10" fill="var(--body)" font-family="DM Sans, sans-serif" letter-spacing="2">BODY</text>
+     <text x="${cx+118}" y="${cy-R1+4}" text-anchor="middle" font-size="10" fill="var(--mind)" font-family="DM Sans, sans-serif" letter-spacing="2">MIND</text>`;
+  svg.innerHTML=h;
+  svg.querySelectorAll('.wedge').forEach(g=>{
+    const go=()=>{sel=g.dataset.id;update()};
+    g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}});
+  });
+}
+function renderSpoke(pack){
+  const s=SPOKES.find(x=>x.id===sel),c=s.side==='body'?'var(--body)':'var(--mind)',sc=spokes[s.id]||0,host=$('spoke');
+  const n=(pack[s.id]||[]).length;
+  host.style.setProperty('--sc',c);
+  host.innerHTML=`<div class="tabs">${SPOKES.slice().reverse().map(x=>`<button data-id="${x.id}" class="${x.id===sel?'on':''}" style="--sc:${x.side==='body'?'var(--body)':'var(--mind)'}">${x.short}</button>`).join('')}</div>
+   <span class="eyebrow" style="color:${c}">${s.side==='body'?'Body':'Mind'} spoke · ${n} launch-pack action${n===1?'':'s'}</span>
+   <h3>${s.name}</h3><p>${s.d}</p>
+   <div class="scores">${[1,2,3,4,5].map(k=>`<button data-n="${k}" class="${k===sc?'on':''}" aria-label="Score ${k}, ${READY[k]}">${k}</button>`).join('')}</div>
+   <div class="scale"><span>1 · Not started</span><span>${sc?READY[sc]:'Unscored'}</span><span>5 · Owned</span></div>
+   <div class="field"><label for="spokeNote">Coach notes</label><textarea id="spokeNote" placeholder="What came up in the audit for ${s.name.toLowerCase()}?"></textarea></div>`;
+  $('spokeNote').value=notes[s.id]||'';
+  $('spokeNote').addEventListener('input',e=>{notes[s.id]=e.target.value});
+  host.querySelectorAll('.scores button').forEach(b=>b.addEventListener('click',()=>{spokes[s.id]=+b.dataset.n;markDirty();update()}));
+  host.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{sel=b.dataset.id;update()}));
+}
+
+function renderPack(pack,a){
+  const pillar=s=>{
+    const items=pack[s.id]||[];
+    let inner;
+    if(s.id==='peptides')inner=`<div class="act"><b>${a.phase===0?'Not in Phase 1':'Assess in Function'}</b><span class="dose">${a.phase===0?'Revisit once sleep, nutrition and bloods are stable. Any use goes through a prescribing doctor.':'Discuss goals and medical oversight. Bloods before and 6 weeks after any start.'}</span><span class="why">Peptides amplify a working system. They don’t fix a suppressed or resistant one.</span></div>`;
+    else if(!items.length)inner=`<p class="empty">No flags here. Hold the current standard.</p>`;
+    else inner=items.map(it=>`<div class="act"><b>${it.t}</b><span class="dose">${it.dose}</span><span class="why">${it.w}</span><span class="from">From: ${it.why.slice(0,2).join(' · ')}${it.why.length>2?` +${it.why.length-2}`:''}</span></div>`).join('');
+    return `<div class="pillar"><h3>${s.name}<span>${spokes[s.id]||'–'}/5</span></h3>${inner}</div>`;
+  };
+  const order={body:['recovery','nutrition','movement','peptides'],mind:['somatics','boundaries','limits','identity']};
+  $('packBody').innerHTML=order.body.map(id=>pillar(SPOKES.find(x=>x.id===id))).join('');
+  $('packMind').innerHTML=order.mind.map(id=>pillar(SPOKES.find(x=>x.id===id))).join('');
+}
+
+/* ---------- Movement assessment ---------- */
+const MV=[
+ {id:'posture',name:'Static posture',cap:'Front, back and both side profiles, relaxed stance.',type:'faults',opts:['Forward head','Rounded shoulders','Thoracic kyphosis','Shoulder elevated L','Shoulder elevated R','Rib flare','Anterior pelvic tilt','Posterior pelvic tilt','Lateral shift']},
+ {id:'stance',name:'Stance',cap:'Mid-thigh down from front and back, plus the top of the feet.',type:'faults',opts:['Pronated foot L','Pronated foot R','Supinated foot','Knee valgus','Tibial external rotation','Feet turned out']},
+ {id:'toe',name:'Toe touch',cap:'Side profile, feet together, legs straight.',type:'grade',grades:['Floor','Toes','Short of toes']},
+ {id:'slr',name:'Straight leg raise',cap:'Supine, feet to wall, pelvis neutral. Hip flexion in degrees.',type:'deg',full:80,lim:70},
+ {id:'tspine',name:'Thoracic rotation',cap:'Seated, foam roller between the knees, arms crossed.',type:'deg',full:45,lim:30},
+ {id:'shoulder',name:'Overhead reach',cap:'Supine, back flat, ribs down, palm up.',type:'lrgrade',grades:['To floor','Short or ribs flare','Well short']},
+ {id:'apley',name:'Apley’s scratch',cap:'Hand behind the back toward the opposite shoulder blade.',type:'lrgrade',grades:['Shoulder blade','Mid-back','Low back']},
+ {id:'squat',name:'Squat',cap:'Arms forward, comfortable depth, three angles.',type:'gradefaults',grades:['Full depth','Parallel','Above parallel'],opts:['Heel lift','Knee valgus','Forward lean','Lumbar flexion at depth','Lateral shift','Feet turn out']},
+ {id:'split',name:'Split squat',cap:'Two reps from each angle, each lead leg.',type:'faults',opts:['Knee valgus L','Knee valgus R','Pelvic drop L','Pelvic drop R','Torso lean','Balance loss']}
+];
+const FAULTACT={'Forward head':['mv_upper'],'Rounded shoulders':['mv_upper'],'Thoracic kyphosis':['mv_upper','mv_tspine'],'Shoulder elevated L':['mv_asym'],'Shoulder elevated R':['mv_asym'],'Rib flare':['mv_stack','mv_overhead'],'Anterior pelvic tilt':['mv_stack'],'Posterior pelvic tilt':['mv_stack'],'Lateral shift':['mv_pelvic'],'Pronated foot L':['mv_foot'],'Pronated foot R':['mv_foot'],'Supinated foot':['mv_foot'],'Knee valgus':['mv_knee'],'Tibial external rotation':['mv_knee'],'Feet turned out':['mv_ankle'],'Heel lift':['mv_ankle'],'Forward lean':['mv_ankle','mv_tspine'],'Lumbar flexion at depth':['mv_stack','mv_hinge'],'Feet turn out':['mv_ankle'],'Knee valgus L':['mv_knee'],'Knee valgus R':['mv_knee'],'Pelvic drop L':['mv_pelvic'],'Pelvic drop R':['mv_pelvic'],'Torso lean':['mv_pelvic'],'Balance loss':['mv_pelvic']};
+const TESTACT={toe:['mv_hinge'],slr:['mv_hinge'],tspine:['mv_tspine'],shoulder:['mv_overhead'],apley:['mv_ir'],squat:['mv_ankle']};
+Object.assign(ACT,{
+ blueprint:{spoke:'movement',t:'Movement Blueprint™ integration',d:'Corrective intent goes into the main lifts, not a separate session: range, tempo and position targets taken from the screen.',w:'The client trains and corrects in the same rep.'},
+ mv_stack:{spoke:'movement',t:'Ribcage over pelvis',d:'Dead bugs and 90/90 breathing before loaded work. Proximal Delivery & Distal Drivers™ sets the order: trunk position first, limbs second.',w:'Most of the posture and squat faults here start at the trunk.'},
+ mv_hinge:{spoke:'movement',t:'Posterior chain access',d:'Active straight-leg raise drills and a toe-touch progression in the warm-up. RDLs with a 3-second lowering, only to the range held with a neutral pelvis.',w:'Builds hinge range the client can control, not just reach.'},
+ mv_tspine:{spoke:'movement',t:'Thoracic rotation',d:'Open books and quadruped rotations before upper sessions. Landmine and half-kneeling cable work in the programme.',w:'Rotation lost at the thoracic spine gets taken from the lower back and shoulders.'},
+ mv_overhead:{spoke:'movement',t:'Earn overhead',d:'Rib position first with 90/90 breathing. Landmine and incline pressing replace overhead pressing until full reach with a flat back.',w:'Loading overhead through a flared ribcage loads the lower back, not the shoulder.'},
+ mv_ir:{spoke:'movement',t:'Shoulder internal rotation',d:'Side-lying internal rotation and cross-body work. Neutral-grip pressing and rows by default.',w:'Restores rotation before it limits pressing and pulling.'},
+ mv_ankle:{spoke:'movement',t:'Ankle access',d:'Knee-to-wall dorsiflexion daily. Heel-elevated squats until the heels stay down.',w:'Keeps squat depth honest while dorsiflexion improves.'},
+ mv_knee:{spoke:'movement',t:'Knee tracking',d:'Split squats and step-ups with a lateral band cue. Lateral hip work (side-lying abduction, lateral walks) early in sessions.',w:'Teaches the knee to track over the foot under load.'},
+ mv_foot:{spoke:'movement',t:'Foot tripod',d:'Short-foot and tripod drills barefoot for 2–3 minutes before lower sessions.',w:'The foot is the distal driver for the knee and hip above it.'},
+ mv_pelvic:{spoke:'movement',t:'Pelvic control',d:'Step-downs, single-leg RDLs and suitcase carries with the hips held level.',w:'Builds frontal-plane control for single-leg work and running.'},
+ mv_upper:{spoke:'movement',t:'Upper back position',d:'Chest-supported rows, face pulls and wall slides. Thoracic extension over a foam roller between sets.',w:'Pulls the shoulders back over the ribcage before pressing volume rises.'},
+ mv_asym:{spoke:'movement',t:'Unilateral bias',d:'Lead unilateral work with the restricted side and add a set on that side until the gap closes.',w:'Asymmetry is a stronger injury signal than overall range.'}
+});
+const SAMPLE_MV={posture:{f:['Forward head','Rounded shoulders','Rib flare','Anterior pelvic tilt']},stance:{f:['Pronated foot L']},toe:{g:1},slr:{L:72,R:84},tspine:{L:38,R:46},shoulder:{L:1,R:0},apley:{L:0,R:1},squat:{g:1,f:['Heel lift','Forward lean']},split:{f:['Knee valgus L']}};
+let mv={};
+const mvt=id=>(mv[id]=mv[id]||{f:[]});
+const degSt=(t,v)=>v===''||v==null||isNaN(+v)?null:(+v>=t.full?0:+v>=t.lim?1:2);
+const GL=['Full','Limited','Restricted'],GC=['ok','warn','bad'];
+
+function renderMovement(){
+  const host=$('mvGrid');host.innerHTML='';
+  for(const t of MV){
+    const d=document.createElement('div');d.className='mvc';const o=mvt(t.id);
+    let body='';
+    const seg=(key,grades)=>`<div class="seg" data-key="${key}">${grades.map((g,i)=>`<button data-v="${i}" class="${o[key]===i?'on':''}">${g}</button>`).join('')}</div>`;
+    const fl=()=>`<div class="fl">${t.opts.map(x=>`<button data-f="${x}" class="${(o.f||[]).includes(x)?'on':''}">${x}</button>`).join('')}</div>`;
+    if(t.type==='faults')body=fl();
+    if(t.type==='grade')body=seg('g',t.grades);
+    if(t.type==='gradefaults')body=seg('g',t.grades)+fl();
+    if(t.type==='deg')body=['L','R'].map(sd=>`<div class="lr"><span class="sd">${sd==='L'?'LEFT':'RIGHT'}</span><div class="degin"><input id="mv_${t.id}_${sd}" type="number" inputmode="decimal" data-sd="${sd}" value="${o[sd]??''}"><span>°</span></div><span class="st" id="mvst_${t.id}_${sd}"></span></div>`).join('')+`<span class="cap">Full ≥ ${t.full}° · Limited ${t.lim}–${t.full-1}° · Restricted below ${t.lim}°</span>`;
+    if(t.type==='lrgrade')body=['L','R'].map(sd=>`<div class="lr"><span class="sd">${sd==='L'?'LEFT':'RIGHT'}</span>${seg(sd,t.grades)}<span></span></div>`).join('');
+    d.innerHTML=`<h3>${t.name}<button class="pain ${o.pain?'on':''}" aria-pressed="${!!o.pain}">Pain</button></h3><p class="cap">${t.cap}</p>${body}`;
+    d.querySelectorAll('.seg').forEach(sg=>sg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+      const k=sg.dataset.key,v=+b.dataset.v;o[k]=o[k]===v?null:v;markDirty();
+      sg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',+x.dataset.v===o[k]));update();})));
+    d.querySelectorAll('.fl button').forEach(b=>b.addEventListener('click',()=>{
+      const f=b.dataset.f;o.f=o.f||[];o.f=o.f.includes(f)?o.f.filter(x=>x!==f):[...o.f,f];b.classList.toggle('on');markDirty();update();}));
+    d.querySelectorAll('.degin input').forEach(inp=>inp.addEventListener('input',()=>{o[inp.dataset.sd]=inp.value;markDirty();update();}));
+    const pb=d.querySelector('.pain');pb.addEventListener('click',()=>{o.pain=!o.pain;pb.classList.toggle('on',o.pain);pb.setAttribute('aria-pressed',o.pain);markDirty();update();});
+    host.appendChild(d);
+  }
+}
+function mvFindings(){
+  const flags=[],asym=[],pain=[];let scored=0;
+  for(const t of MV){
+    const o=mvt(t.id);let touched=false;
+    if(o.pain)pain.push(t.name);
+    if(t.type==='faults'||t.type==='gradefaults'){(o.f||[]).forEach(f=>flags.push({label:`${t.name}: ${f.toLowerCase()}`,act:FAULTACT[f]||[]}));if((o.f||[]).length)touched=true}
+    if(t.type==='grade'||t.type==='gradefaults'){if(o.g!=null)touched=true;if(o.g>0)flags.push({label:`${t.name}: ${t.grades[o.g].toLowerCase()}`,act:TESTACT[t.id]||[]})}
+    if(t.type==='deg'){
+      ['L','R'].forEach(sd=>{const st=degSt(t,o[sd]);if(st!=null)touched=true;if(st>0)flags.push({label:`${t.name} ${sd==='L'?'left':'right'} ${o[sd]}°`,act:TESTACT[t.id]})});
+      if(o.L!==''&&o.R!==''&&o.L!=null&&o.R!=null&&Math.abs(o.L-o.R)>=10)asym.push(`${t.name}: ${Math.abs(o.L-o.R)}° gap, ${+o.L<+o.R?'left':'right'} restricted`);
+    }
+    if(t.type==='lrgrade'){
+      ['L','R'].forEach(sd=>{if(o[sd]!=null)touched=true;if(o[sd]>0)flags.push({label:`${t.name} ${sd==='L'?'left':'right'}: ${t.grades[o[sd]].toLowerCase()}`,act:TESTACT[t.id]})});
+      if(o.L!=null&&o.R!=null&&o.L!==o.R)asym.push(`${t.name}: ${o.L>o.R?'left':'right'} restricted`);
+    }
+    if(touched||o.pain)scored++;
+  }
+  const n=flags.length+asym.length;
+  const suggest=scored===0?null:n===0?5:n<=2?4:n<=5?3:n<=9?2:1;
+  return {flags,asym,pain,scored,suggest};
+}
+function updateMovement(){
+  for(const t of MV)if(t.type==='deg'){const o=mvt(t.id);['L','R'].forEach(sd=>{const st=degSt(t,o[sd]),el=$(`mvst_${t.id}_${sd}`);if(!el)return;el.className='st s-'+(st==null?'na':GC[st]);el.textContent=st==null?'':GL[st]})}
+  const m=mvFindings();
+  const acts=[...new Set(m.flags.flatMap(f=>f.act).concat(m.asym.length?['mv_asym']:[]))].map(k=>ACT[k]&&ACT[k].t).filter(Boolean);
+  $('mvSum').innerHTML=`
+   <div class="stat"><span class="eyebrow">Tests scored</span><span class="big">${m.scored} / ${MV.length}</span><span class="sub">${m.flags.length} findings</span></div>
+   <div class="stat"><span class="eyebrow">Asymmetries</span><span class="big">${m.asym.length}</span><span class="sub">${m.asym.join(' · ')||'None recorded'}</span></div>
+   <div class="stat"><span class="eyebrow">Pattern priorities</span><span class="big">${acts.length}</span><span class="sub">${acts.slice(0,4).join(' · ')||'No pattern work flagged'}</span></div>
+   <div class="stat"><span class="eyebrow">Movement spoke</span><span class="big">${m.suggest??'–'}${m.suggest?' / 5':''}</span><span class="sub">${m.pain.length?`<span class="s-bad">Pain in ${m.pain.join(', ')}</span>`:'Suggested from the screen'}</span>${m.suggest&&spokes.movement!==m.suggest?`<button class="btn" id="mvApply">Set Movement to ${m.suggest}/5</button>`:''}</div>`;
+  const ap=$('mvApply');if(ap)ap.addEventListener('click',()=>{spokes.movement=m.suggest;sel='movement';markDirty();update()});
+  return m;
+}
+
+/* ---------- North Star ---------- */
+const RUNGS=['Surface','Deeper','Deeper still','Personal','The real reason'];
+const SAMPLE_NS={year:'10 cm off the waist, blood pressure back in range, and the strongest I’ve been at 42.',weeks:'Sleeping 7 hours, waist down 4 cm, training three times a week without missing.',week:'Three sessions done and lights out by 10:30 on five nights.',why:['To lose the gut and get fit again','Because I’m flat all day and it’s affecting work','Because I’m short with the kids by the evening','Because my dad had a heart attack at 52','To be the dad who’s still active at 70'],laws:['Sessions are booked like meetings','No drinking Monday to Thursday','Phone out of the bedroom']};
+let ns={why:[],laws:[]};
+function renderNorth(){
+  const lad=$('ladder');lad.querySelectorAll('.rung').forEach(x=>x.remove());
+  RUNGS.forEach((r,i)=>{const d=document.createElement('div');d.className='rung';d.style.marginLeft=(i*14)+'px';d.style.setProperty('--a',(0.15+i*0.15).toFixed(2));
+    d.innerHTML=`<b>${i+1}. ${r}:</b><input id="ns_why${i}" aria-label="Why level ${i+1}" placeholder="${i===0?'Why do you want this?':'And why does that matter?'}">`;lad.appendChild(d);
+    const el=d.querySelector('input');el.value=ns.why[i]||'';el.addEventListener('input',()=>{ns.why[i]=el.value;markDirty();update()});});
+  [['ns_year','year'],['ns_weeks','weeks'],['ns_week','week']].forEach(([id,k])=>{const el=$(id);el.value=ns[k]||'';el.oninput=()=>{ns[k]=el.value;markDirty();update()}});
+  [0,1,2].forEach(i=>{const el=$('ns_law'+i);el.value=ns.laws[i]||'';el.placeholder=['e.g. Sessions are booked like meetings','Second non-negotiable','Third non-negotiable'][i];el.oninput=()=>{ns.laws[i]=el.value;markDirty();update()}});
+}
+function nsLines(){
+  const L=[];if(ns.year)L.push('North Star (12 months): '+ns.year);if(ns.weeks)L.push('12-week milestone: '+ns.weeks);if(ns.week)L.push('This week: '+ns.week);
+  const w=ns.why.filter(Boolean);if(w.length)L.push('Why: '+w.join(' → '));
+  const l=ns.laws.filter(Boolean);if(l.length)L.push('Non-negotiables: '+l.join(' · '));
+  return L;
+}
+
+/* ---------- Baseline domains ---------- */
+const ZS={opt:10,ok:9,warn:5.5,bad:2.5};
+function mz(id){const m=markers(state.sex,state.ethnic).flatMap(g=>g.items).find(x=>x.id===id);if(!m||m.type==='select'||m.plain)return null;const st=zoneOf(m,num(id));return st?ZS[st]:null}
+const qz=id=>ans[id]==null?null:10-5*ans[id];
+const avg=a=>{const v=a.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((p,c)=>p+c,0)/v.length:null};
+function domains(r,s,m){
+  const f=state.sex==='f',sh=num('sleep');
+  const sleepH=sh==null?null:sh>=7.5?10:sh>=7?8:sh>=6.5?6:sh>=6?4.5:sh>=5?2.5:1;
+  const cyc={regular:9,irregular:5,absent:2,na:null}[state.cycle||'regular'];
+  const w=r.w,homa=r.homa;
+  return [
+   {k:'Sleep',v:avg([sleepH,num('sleepq'),qz('q_onset'),qz('q_wake'),qz('q_unref'),qz('q_snore')])},
+   {k:'Recovery',v:avg([ikn('steps')==null?null:ikn('steps')>=8000?9:ikn('steps')>=6000?6:3,mz('rhrd'),mz('hrv'),mz('stepsd'),num('energy'),qz('q_heavy'),qz('q_sore'),qz('q_drive'),qz('q_stall'),qz('q_steps')])},
+   {k:'Metabolic',v:avg([r.known?10-2*r.n:null,w==null?null:w<0.5?9:w<0.55?5:2.5,homa==null?null:homa<1.5?9:homa<2?7:homa<3?4:2,mz('a1c'),mz('apob'),mz('crp'),qz('q_crave'),qz('q_hungry'),qz('q_waist'),qz('q_crash')])},
+   {k:'Hormones',v:avg([f?(state.cycle?cyc:null):mz('test'),mz('tsh'),mz('ft3'),mz('fer'),mz('vitd'),mz('cort'),num('libido'),qz('q_libido'),qz(f?'q_cycle':'q_morning'),qz(f?'q_pms':'q_mood'),qz('q_cold'),qz('q_hair'),qz('q_dizzy')])},
+   {k:'Movement',v:avg([m.scored?Math.max(1,Math.min(10,10-(m.flags.length+m.asym.length)*0.35-m.pain.length*1.5)):null,ik.injury==='yes'&&ikn('pain')!=null?10-ikn('pain'):null])},
+   {k:'Mindset',v:avg([num('stress')==null?null:11-num('stress'),qz('q_on'),qz('q_alc'),qz('q_aon'),qz('q_yes'),qz('q_ident'),...['identity','boundaries','limits','somatics'].map(k=>spokes[k]?spokes[k]*2:null)])}
+  ];
+}
+function renderHero(r,s){
+  const d=domains(r,s,mvFindings()),have=d.filter(x=>x.v!=null);
+  const base=have.length?avg(have.map(x=>x.v)):null;
+  const low=have.length?have.reduce((a,b)=>b.v<a.v?b:a):null;
+  const card=x=>{const pct=x.v==null?0:x.v*10;return `<div class="dcard ${low&&x.k===low.k?'low':''}"><span class="dn">${x.k}${low&&x.k===low.k?'<small>Bottleneck</small>':''}</span><span class="dv">${x.v==null?'–':x.v.toFixed(1)}<small>/10</small></span><div class="dtrack"><div class="dfill" style="width:${pct}%"></div>${x.v==null?'':`<span class="dknob" style="left:${pct}%"></span>`}</div></div>`};
+  $('domL').innerHTML=d.slice(0,3).map(card).join('');
+  $('domR').innerHTML=d.slice(3).map(card).join('');
+  $('orbV').textContent=base==null?'–':base.toFixed(1);
+  $('orbB').textContent=low?`Bottleneck: ${low.k}`:'Start the audit';
+  orbLevel=base==null?0.3:base/10;
+}
+
+/* ---------- Orb canvas ---------- */
+let orbLevel=0.5;
+(function orb(){
+  const c=$('orb'),ctx=c.getContext('2d');let W=0,P=[];
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function size(){const r=c.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);W=r.width;c.width=W*dpr;c.height=W*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    P=Array.from({length:170},()=>{const edge=Math.random()<0.55;const rad=edge?0.42+Math.random()*0.08:Math.sqrt(Math.random())*0.44;return {a:Math.random()*Math.PI*2,r:rad,s:(Math.random()*0.6+0.2)*(Math.random()<.5?-1:1)*0.0016,z:Math.random()*1.6+0.4,t:Math.random()*Math.PI*2}})}
+  function frame(ts){
+    if(!W){size()}
+    const cs=getComputedStyle(document.documentElement),OC=cs.getPropertyValue('--orb').trim()||'240,201,135',CC=cs.getPropertyValue('--orbcore').trim()||'60,44,24';
+    ctx.clearRect(0,0,W,W);const cx=W/2,cy=W/2;
+    const g=ctx.createRadialGradient(cx,cy,W*0.05,cx,cy,W*0.5);
+    g.addColorStop(0,`rgba(${CC},0.95)`);g.addColorStop(0.6,`rgba(${CC},0.45)`);g.addColorStop(1,'rgba(11,11,10,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,W*0.5,0,Math.PI*2);ctx.fill();
+    for(const p of P){
+      if(!reduce)p.a+=p.s*(0.6+orbLevel);
+      const tw=reduce?0.8:0.55+0.45*Math.sin(ts/600+p.t);
+      const x=cx+Math.cos(p.a)*p.r*W,y=cy+Math.sin(p.a)*p.r*W;
+      ctx.fillStyle=p.r>0.4?`rgba(${OC},${0.75*tw})`:`rgba(244,241,234,${0.45*tw})`;
+      ctx.beginPath();ctx.arc(x,y,p.z,0,Math.PI*2);ctx.fill();
+    }
+    if(!reduce)requestAnimationFrame(frame);
+  }
+  window.addEventListener('resize',()=>{W=0});
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- Intake (from the consult form) ---------- */
+const IK=[
+ {t:'Contact',f:[{id:'phone',l:'Phone',type:'text'},{id:'email',l:'Email',type:'text'},{id:'call',l:'Best time to call',type:'choice',o:['Morning 7–9 am','Afternoon 12–1 pm','Evening 5–7 pm']}]},
+ {t:'Commitment',f:[{id:'commit',l:'How motivated are you?',type:'choice',o:['100% committed, no financial constraints','Committed, budget of $150 a week','Unsure, would like more information']}]},
+ {t:'Body & activity',f:[{id:'weight',l:'Weight',type:'num',u:'kg'},{id:'activity',l:'How active are you?',type:'choice',o:['Sedentary','1–2 times a week','2–4 times a week','5–6 times a week','Intense, 5–6 times a week']},{id:'steps',l:'Daily steps',type:'num',u:'steps'},{id:'bpknown',l:'Blood pressure, if known',type:'text'}]},
+ {t:'Nutrition & stimulants',f:[{id:'tracks',l:'Tracks nutrition?',type:'yn'},{id:'kcal',l:'Daily calories',type:'num',u:'kcal',show:'tracks'},{id:'water',l:'Water a day',type:'num',u:'L'},{id:'caff',l:'Caffeinated drinks a week',type:'num',u:'per week'},{id:'alc',l:'Alcoholic drinks a week',type:'num',u:'per week'},{id:'digest',l:'Foods that disrupt digestion?',type:'yn'},{id:'foods',l:'Which foods?',type:'text',show:'digest'}]},
+ {t:'Stress',f:[{id:'destress',l:'What do you do to de-stress?',type:'text'}]},
+ {t:'Injury history',wide:true,f:[{id:'injury',l:'Any injuries or current dysfunction?',type:'yn'},
+   {id:'where',l:'Where does it hurt?',type:'text',show:'injury'},{id:'pain',l:'Pain, out of 10',type:'num',u:'/10',show:'injury'},{id:'trend',l:'Getting better or worse?',type:'choice',o:['Getting better','Same','Getting worse'],show:'injury'},
+   {id:'start',l:'When did it start?',type:'text',show:'injury'},{id:'how',l:'How did it start?',type:'text',show:'injury'},{id:'feel',l:'Describe the feeling',type:'text',show:'injury'},
+   {id:'better',l:'What makes it better?',type:'text',show:'injury'},{id:'worse',l:'What makes it worse?',type:'text',show:'injury'},{id:'radiate',l:'Does it radiate anywhere?',type:'text',show:'injury'},
+   {id:'when',l:'When in the day does it bother you?',type:'text',show:'injury'},{id:'freq',l:'How often are symptoms present?',type:'text',show:'injury'},{id:'dur',l:'How long does the pain last?',type:'text',show:'injury'},
+   {id:'life',l:'How does it affect activity and daily life?',type:'text',show:'injury'}]}
+];
+const SAMPLE_IK={call:'Evening 5–7 pm',commit:'100% committed, no financial constraints',weight:92,activity:'1–2 times a week',steps:6500,bpknown:'Told it was a bit high last year',tracks:'no',water:1.5,caff:21,alc:10,digest:'no',destress:'Beers and Netflix',injury:'yes',where:'Lower back, right side',pain:4,trend:'Same',start:'About two years ago',how:'Deadlifting',feel:'Dull ache, tight',better:'Walking, heat',worse:'Sitting for long periods, bending',radiate:'No',when:'Mornings and after sitting',freq:'Most days',dur:'An hour or two',life:'Can’t sit through long meetings; avoids deadlifts'};
+let ik={};
+const ikn=id=>ik[id]===''||ik[id]==null||isNaN(+ik[id])?null:+ik[id];
+function renderIntake(){
+  const host=$('intake');host.innerHTML='';
+  for(const g of IK){
+    const c=document.createElement('div');c.className='ikc'+(g.wide?' wide':'');
+    c.innerHTML=`<h3>${g.t}</h3><div class="${g.wide?'injgrid':'ikcol'}" style="${g.wide?'':'display:flex;flex-direction:column;gap:12px'}"></div>`;
+    const box=c.lastElementChild;
+    for(const f of g.f){
+      const w=document.createElement('div');w.className='ikf';w.dataset.show=f.show||'';
+      if(f.id==='injury')w.style.gridColumn='1/-1';
+      if(f.id==='life')w.style.gridColumn='1/-1';
+      if(f.type==='text')w.innerHTML=`<label for="ik_${f.id}">${f.l}</label><input id="ik_${f.id}">`;
+      if(f.type==='num')w.innerHTML=`<label for="ik_${f.id}">${f.l}</label><div class="ikn"><input id="ik_${f.id}" type="number" step="any" inputmode="decimal" placeholder="–"><span>${f.u}</span></div>`;
+      if(f.type==='choice'||f.type==='yn'){const o=f.type==='yn'?[['yes','Yes'],['no','No']]:f.o.map(x=>[x,x]);
+        w.innerHTML=`<span class="lb">${f.l}</span><div class="fl">${o.map(([v,t])=>`<button data-v="${v}" class="${ik[f.id]===v?'on':''}">${t}</button>`).join('')}</div>`;
+        w.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ik[f.id]=ik[f.id]===b.dataset.v?'':b.dataset.v;w.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.v===ik[f.id]));markDirty();ikShow();update()}));}
+      box.appendChild(w);
+      const inp=w.querySelector('input');if(inp){inp.value=ik[f.id]??'';inp.addEventListener('input',()=>{ik[f.id]=inp.value;markDirty();update()})}
+    }
+    host.appendChild(c);
+  }
+  ikShow();
+}
+function ikShow(){document.querySelectorAll('#intake .ikf').forEach(w=>{const s=w.dataset.show;if(s)w.hidden=ik[s]!=='yes'})}
+function ikLines(){
+  const L=[];
+  if(ik.commit)L.push('Commitment: '+ik.commit);
+  if(ik.call)L.push('Best time to call: '+ik.call);
+  const life=[ik.activity&&('Activity: '+ik.activity),ikn('steps')!=null&&(ikn('steps')+' steps a day'),ikn('weight')!=null&&(ikn('weight')+' kg'),ikn('water')!=null&&(ikn('water')+' L water'),ikn('caff')!=null&&(ikn('caff')+' caffeinated drinks/wk'),ikn('alc')!=null&&(ikn('alc')+' alcoholic drinks/wk')].filter(Boolean);
+  if(life.length)L.push(life.join(' · '));
+  if(ik.destress)L.push('De-stresses with: '+ik.destress);
+  if(ik.injury==='yes')L.push(`Injury: ${ik.where||'unspecified'}, ${ikn('pain')??'–'}/10, ${ik.trend||'trend unknown'}. Worse with ${ik.worse||'–'}; better with ${ik.better||'–'}.`);
+  return L;
+}
+Object.assign(ACT,{
+ hydration:{spoke:'nutrition',t:'Hydration',d:'Build to 2.5–3 L a day, mostly before midday, more on training days.',w:'Even mild dehydration drags energy and training output.'},
+ mv_injury:{spoke:'movement',t:'Train around the injury',d:'Pain-free ranges only, the aggravating pattern out of week one, and pain scored 0–10 every session. Progress while it stays at 3 or below.',w:'Keeps training going while the injured area settles.'}
+});
+
+/* ---------- Update ---------- */
+function update(){
+  updateMarkers();updateMovement();
+  const r=resistant(),s=suppressed(),a=archetype(r,s);
+  const rs=r.level==='Resistant'?'bad':r.level==='Leaning'?'warn':'opt';
+  $('resBig').textContent=`${r.n} / 5`;$('vRes').style.setProperty('--sev',`var(--${rs})`);
+  $('resPill').textContent=r.level;$('resPill').className='pill s-'+rs;
+  $('resSub').textContent=[r.w!=null?`Waist-to-height ${r.w.toFixed(2)}`:null,r.homa!=null?`HOMA-IR ${r.homa.toFixed(1)}`:null,`${r.qs.length} question signs`].filter(Boolean).join(' · ');
+  const ss=s.level==='Suppressed'?'bad':s.level==='Watch'?'warn':'opt';
+  $('supBig').textContent=`${s.score} signals`;$('vSup').style.setProperty('--sev',`var(--${ss})`);
+  $('supPill').textContent=s.level;$('supPill').className='pill s-'+ss;
+  $('supSub').textContent=`${s.s.length} from markers · ${s.qs.length} from questions`;
+  $('phBig').textContent=a.name;$('vPhase').style.setProperty('--sev',`var(--${a.sev})`);
+  $('phPill').textContent=`Phase 1 · ${a.mode}`;$('phPill').className='pill s-'+a.sev;
+  $('phSub').textContent=a.phase===0?`${a.weeks[0]}-week Health block, then Function`:'Health block not required';
+
+  $('crit').innerHTML=r.c.map(x=>`<div><span class="tick ${x.hit?'on':''}">${x.hit?'✓':''}</span><span>${x.k} <code>${x.t}</code></span><code>${x.v==null?'—':x.v}</code></div>`).join('');
+  $('resChips').innerHTML=[
+    `<span class="chip ${r.w!=null&&r.w>=.5?'hit':''}">Waist-to-height ${r.w!=null?r.w.toFixed(2):'—'}</span>`,
+    `<span class="chip ${r.homa!=null&&r.homa>=2?'hit':''}">HOMA-IR ${r.homa!=null?r.homa.toFixed(2):'—'}</span>`,
+    `<span class="chip ${num('a1c')!=null&&num('a1c')>=6?'hit':''}">HbA1c ${num('a1c')??'—'}%</span>`,
+    `<span class="chip ${num('crp')!=null&&num('crp')>3?'hit':''}">hs-CRP ${num('crp')??'—'}</span>`,
+    ...r.qs.map(q=>`<span class="chip hit q">${q.label}</span>`)].join('');
+
+  $('supCount').textContent=`${s.score} signal${s.score===1?'':'s'}`;
+  $('supMeter').innerHTML=Array.from({length:10},(_,i)=>`<b style="${i<s.score?`background:var(--${i>=5?'bad':i>=2?'warn':'opt'})`:''}"></b>`).join('');
+  $('supChips').innerHTML=[...s.s.map(x=>`<span class="chip hit">${x.label}</span>`),...s.qs.map(q=>`<span class="chip hit q">${q.label}</span>`)].join('')||'<span class="chip">No signals</span>';
+
+  const pack=buildPack(r,s,a);
+  renderWheel(a);renderSpoke(pack);
+
+  const names=['Health','Function','Performance','Mindset'];
+  $('road').innerHTML=names.map((n,i)=>`<div class="stage ${i===a.phase?'active':''}"><span class="n">PHASE ${i+1}${i===a.phase?' · START HERE':''}</span><h3>${n}</h3><span class="wk">${a.weeks[i]?a.weeks[i]+' weeks':'Skipped'}</span></div>`).join('');
+  $('planLead').innerHTML=a.lead;
+
+  const total=Object.values(pack).reduce((x,y)=>x+y.length,0);
+  $('packIntro').innerHTML=`${ns.year?`<b style="color:var(--gold2)">North Star:</b> ${ns.year}<br>`:''}${state.clientName||'Client'} · ${a.name} archetype · ${total} actions across the Launchpad. Introduce two or three a week, recovery first, so nothing is added before the last one sticks.`;
+  renderPack(pack,a);
+  $('trackList').innerHTML=TRACK.map(t=>`<li>${t}</li>`).join('');
+  const refs=referrals(r);
+  $('refList').innerHTML=refs.length?refs.map(t=>`<li>${t}</li>`).join(''):'<li>No referral triggers.</li>';
+  window._sum={r,s,a,pack,refs};
+  renderHero(r,s);
+}
+
+function loadAll(st,q,sp,m,n,k){
+  ik={...(k||{})};state={...st};ans={...q};spokes={...sp};notes={};mv=JSON.parse(JSON.stringify(m||{}));ns=JSON.parse(JSON.stringify(n||{why:[],laws:[]}));ns.why=ns.why||[];ns.laws=ns.laws||[];
+  ['clientName','clientAge','sex','ethnic'].forEach(k=>$(k).value=state[k]??'');
+  renderIntake();renderNorth();renderQuestions();renderMarkers();renderMovement();update();
+}
+['clientName','clientAge'].forEach(k=>$(k).addEventListener('input',e=>{state[k]=e.target.value;markDirty();update()}));
+['sex','ethnic'].forEach(k=>$(k).addEventListener('change',e=>{state[k]=e.target.value;markDirty();renderQuestions();renderMarkers();update()}));
+$('sampleBtn').addEventListener('click',()=>{isSample=true;$('sampleTag').hidden=false;loadAll(SAMPLE,SAMPLE_Q,SAMPLE_SP,SAMPLE_MV,SAMPLE_NS,SAMPLE_IK)});
+$('clearBtn').addEventListener('click',()=>{isSample=false;$('sampleTag').hidden=true;loadAll({clientName:'',clientAge:'',sex:state.sex,ethnic:'eu',cycle:'regular'},{},{},{},{},{})});
+
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
+$('copyBtn').addEventListener('click',()=>{
+  const {r,s,a,pack,refs}=window._sum;
+  const lines=[`PERFORMANCE AUDIT · ${state.clientName||'Client'}${state.clientAge?', '+state.clientAge:''}`,
+   `Archetype: ${a.name} · Phase 1: ${a.phase===0?'Health':'Function'} (${a.mode})`,
+   `Resistant: ${r.level} · ${r.n}/5 metabolic syndrome criteria${r.w!=null?`, WHtR ${r.w.toFixed(2)}`:''}${r.homa!=null?`, HOMA-IR ${r.homa.toFixed(2)}`:''}`,
+   `Suppressed: ${s.level} · ${s.score} signals`,'',a.lead.replace(/<[^>]+>/g,''),'','LAUNCH PACK'];
+  lines.splice(1,0,...nsLines(),...ikLines());
+  for(const sp of ['recovery','nutrition','movement','somatics','boundaries','limits','identity']){
+    const it=pack[sp];if(!it||!it.length)continue;
+    lines.push(`${SPOKES.find(x=>x.id===sp).name.toUpperCase()} (${spokes[sp]||'–'}/5)`);
+    it.forEach(x=>lines.push(`- ${x.t}: ${x.dose}`));
+    if(notes[sp])lines.push(`  Notes: ${notes[sp]}`);
+  }
+  const mf=mvFindings();if(mf.flags.length||mf.asym.length){lines.push('','MOVEMENT SCREEN',...mf.flags.map(f=>'- '+f.label),...mf.asym.map(a=>'- Asymmetry: '+a))}
+  lines.push('','TRACK DAILY FOR TWO WEEKS',...TRACK.map(t=>'- '+t));
+  if(refs.length)lines.push('','REFER TO GP',...refs.map(t=>'- '+t));
+  const txt=lines.join('\n');
+  try{navigator.clipboard.writeText(txt).then(()=>toast('Launch pack copied'),()=>fallback(txt))}catch(e){fallback(txt)}
+});
+function fallback(txt){const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');toast('Launch pack copied')}catch(e){toast('Copy failed. Select the text manually.')}t.remove()}
+
+loadAll(SAMPLE,SAMPLE_Q,SAMPLE_SP,SAMPLE_MV,SAMPLE_NS,SAMPLE_IK);
+function setAccent(a){document.documentElement.dataset.accent=a==='gold'?'':a;document.querySelectorAll('#accentSeg button').forEach(b=>b.classList.toggle('on',b.dataset.a===a));try{localStorage.setItem('pa_accent',a)}catch(e){}}
+document.querySelectorAll('#accentSeg button').forEach(b=>b.addEventListener('click',()=>setAccent(b.dataset.a)));
+try{const a=localStorage.getItem('pa_accent');if(a)setAccent(a);else setAccent('teal')}catch(e){setAccent('teal')}
+
+/* ---------- Submissions: Supabase ---------- */
+const SB={url:'https://opccfbudpovmxfmpanvj.supabase.co',key:'sb_publishable_brN2Be820KKzLyA8gfGltQ_Tvvus9Lg',table:'performance_audits'};
+let tok=null,openId=null,subs=[];
+const subMsg=(t,e)=>{const m=$('subMsg');m.textContent=t||'';m.className='submsg'+(e?' err':'')};
+const onSite=()=>/(^|\.)coachdavemarsh\.net$|^localhost$|^127\.0\.0\.1$|netlify\.app$/.test(location.hostname);
+try{const t=JSON.parse(sessionStorage.getItem('pa_coach')||'null');if(t&&t.exp>Date.now())tok=t}catch(e){}
+async function sb(path,opt={}){
+  const r=await fetch(SB.url+path,{...opt,headers:{apikey:SB.key,'Content-Type':'application/json',...(tok?{Authorization:'Bearer '+tok.access}:{}),...(opt.headers||{})}});
+  if(r.status===401){tok=null;try{sessionStorage.removeItem('pa_coach')}catch(e){};showSubs();throw new Error('Your sign-in expired. Sign in again.')}
+  if(!r.ok){let m='';try{m=(await r.json()).message}catch(e){};throw new Error(m||('Request failed ('+r.status+')'))}
+  return r.status===204?null:r.json();
+}
+function showSubs(){
+  $('signin').hidden=!!tok;$('subPanel').hidden=!tok;
+  $('subWho').textContent=tok?('Signed in as '+tok.email):'';
+  if(!onSite())subMsg('Submissions load on coachdavemarsh.net. This preview shows the sample client.');
+}
+$('signin').addEventListener('submit',async e=>{
+  e.preventDefault();if(!onSite()){subMsg('Sign in on coachdavemarsh.net/audit-coach to load real submissions.',1);return}
+  $('siBtn').disabled=true;subMsg('Signing in…');
+  try{
+    const r=await fetch(SB.url+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify({email:$('siEmail').value.trim(),password:$('siPass').value})});
+    const j=await r.json();if(!r.ok)throw new Error(j.error_description||j.msg||'Email or password is incorrect.');
+    tok={access:j.access_token,email:j.user&&j.user.email,exp:Date.now()+(j.expires_in||3600)*1000};
+    try{sessionStorage.setItem('pa_coach',JSON.stringify(tok))}catch(e){}
+    $('siPass').value='';showSubs();await loadSubs();
+  }catch(err){subMsg(err.message,1)}finally{$('siBtn').disabled=false}
+});
+$('signOut').addEventListener('click',()=>{tok=null;openId=null;try{sessionStorage.removeItem('pa_coach')}catch(e){};$('subList').innerHTML='';$('saveRow').hidden=true;showSubs();subMsg('Signed out.')});
+$('subRefresh').addEventListener('click',()=>loadSubs());
+$('subFilter').addEventListener('change',()=>loadSubs());
+async function loadSubs(){
+  subMsg('Loading submissions…');
+  try{
+    const f=$('subFilter').value,q=f==='all'?'':f==='open'?'&status=in.(new,reviewed)':'&status=eq.'+f;
+    subs=await sb(`/rest/v1/${SB.table}?select=id,created_at,full_name,email,status&order=created_at.desc&limit=200${q}`);
+    $('subList').innerHTML=subs.length?subs.map(x=>`<div class="subrow ${x.id===openId?'on':''}"><div><div class="nm">${escH(x.full_name)}</div><div class="dt">${escH(x.email)}</div></div><div class="dt">${new Date(x.created_at).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</div><span class="stp ${x.status}">${x.status}</span><button class="btn" data-open="${x.id}">Open</button></div>`).join(''):'<p class="submsg">No submissions in this view yet.</p>';
+    $('subList').querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openSub(b.dataset.open)));
+    subMsg(subs.length?`${subs.length} submission${subs.length>1?'s':''}.`:'');
+  }catch(err){subMsg(err.message,1)}
+}
+const escH=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function openSub(id){
+  subMsg('Opening…');
+  try{
+    const [row]=await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(id)}&select=*`);
+    if(!row)throw new Error('That submission no longer exists.');
+    openId=id;
+    if(row.coach_data&&row.coach_data.state){const c=row.coach_data;loadAll(c.state,c.ans||{},c.spokes||{},c.mv||{},c.ns||{},c.ik||{});notes=c.notes||{}}
+    else{
+      const a=row.answers||{},st=a.state||{},ex=a.extra||{};
+      const state={clientName:row.full_name||st.clientName||'',clientAge:st.clientAge||'',sex:st.sex==='f'?'f':'m',ethnic:'eu',cycle:'regular',height:st.height||'',sleep:st.sleep||'',stress:st.stress===''||st.stress==null?'':Math.max(1,+st.stress),vo2:ex.vo2||''};
+      const ik={...(a.ik||{}),email:row.email,phone:row.phone||''};
+      loadAll(state,a.ans||{},{},{},a.ns||{why:[],laws:[]},ik);
+      const extra=[ex.rhr?`Resting HR ${ex.rhr} bpm`:'',ex.bloods==='yes'?'Has blood work from the last 12 months':''].filter(Boolean).join(' · ');
+      if(extra)notes.recovery=extra;
+    }
+    isSample=false;$('sampleTag').hidden=true;
+    $('subStatus').value=row.status==='new'?'reviewed':row.status;$('saveRow').hidden=false;
+    update();loadSubsSilently();
+    subMsg(`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(err){subMsg(err.message,1)}
+}
+function loadSubsSilently(){$('subList').querySelectorAll('.subrow').forEach(r=>r.classList.toggle('on',!!r.querySelector(`[data-open="${openId}"]`)))}
+$('subSave').addEventListener('click',async()=>{
+  if(!openId)return;$('subSave').disabled=true;subMsg('Saving…');
+  try{
+    const coach_data={state,ans,spokes,notes,mv,ns,ik,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
+    await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(openId)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({coach_data,status:$('subStatus').value})});
+    subMsg('Review saved.');await loadSubs();
+  }catch(err){subMsg(err.message,1)}finally{$('subSave').disabled=false}
+});
+showSubs();if(tok&&onSite())loadSubs();
+</script>
+
+</body>
+</html>
