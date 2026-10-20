@@ -40,6 +40,7 @@ echo "  → Copying tool pages..."
 [ -f "public/physique-peaking.html" ]      && cp public/physique-peaking.html      dist/physique-peaking.html
 [ -f "public/audit.html" ]                 && cp public/audit.html                 dist/audit.html
 [ -f "public/audit-coach.html" ]           && cp public/audit-coach.html           dist/audit-coach.html
+[ -f "public/my-plan.html" ]               && cp public/my-plan.html               dist/my-plan.html
 [ -f "public/article-male-hormones.html" ]   && cp public/article-male-hormones.html   dist/article-male-hormones.html
 [ -f "public/article-birth-control.html" ]  && cp public/article-birth-control.html  dist/article-birth-control.html
 [ -f "public/article-womens-health.html" ]    && cp public/article-womens-health.html    dist/article-womens-health.html
@@ -67,6 +68,7 @@ echo "    Body Composition     →  dist/body-composition.html"
 echo "    Physique Peaking     →  dist/physique-peaking.html"
 echo "    Performance Audit    →  dist/audit.html"
 echo "    Audit coach view     →  dist/audit-coach.html"
+echo "    Client My Plan       →  dist/my-plan.html"
 echo "    Article: Hormones    →  dist/article-male-hormones.html"
 echo "    Article: BC & Perf   →  dist/article-birth-control.html"
 echo "    Article: Women's H.  →  dist/article-womens-health.html"

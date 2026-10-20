@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>My Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* Layout: client's own plan. Sign-in screen, then one column of sections: baseline orb, Alignment framework, roadmap, first actions, North Star. */
+:root{
+  --bg:#0B0B0A; --surface:#121211; --surface-2:#181816; --surface-3:#201F1C;
+  --ink:#F4F2EC; --off:#D9D6CE; --muted:#9A968E; --line:rgba(255,255,255,.08);
+  --accent:#00C896; --accent-hi:#4DFFC9; --accent-dim:rgba(0,200,150,.14); --bad:#E5674F;
+  --display:"Oswald","Arial Narrow",Arial,sans-serif;
+  --text:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.11),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.05),transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font-family:var(--text);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+[hidden]{display:none!important}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:rgba(11,11,10,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:rgba(11,11,10,.95)}
+.top-in{max-width:980px;margin:0 auto;padding:14px max(20px,env(safe-area-inset-right,0px)) 14px max(20px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.02em}
+.logo span{color:var(--accent)}
+.badge{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;background:var(--ink);color:var(--bg);padding:3px 9px;border-radius:999px;margin-left:10px}
+.who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:12px}
+.link{background:none;border:0;color:var(--off);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:13px}
+main{max-width:980px;margin:0 auto;padding:32px max(20px,env(safe-area-inset-right,0px)) 80px max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:56px}
+section{display:flex;flex-direction:column;gap:18px;min-width:0}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(36px,7vw,60px);line-height:1.02;text-transform:uppercase;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,5vw,40px);line-height:1.05;text-transform:uppercase;text-wrap:balance}
+.lede{color:var(--off);font-size:17px;max-width:62ch}
+.small{font-size:13px;color:var(--muted);max-width:64ch}
+.btn{border:0;border-radius:999px;padding:14px 26px;font-size:14px;font-weight:700;letter-spacing:.06em;cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--bg)}
+.btn.primary:hover{background:var(--accent-hi)}
+.btn.ghost{background:transparent;color:var(--off);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.preview{font-size:12px;color:var(--bg);background:var(--accent-hi);padding:6px 12px;border-radius:8px;font-weight:600;align-self:flex-start}
+
+/* Sign in */
+.auth{max-width:440px;margin:6vh auto 0;display:flex;flex-direction:column;gap:18px}
+.card{background:var(--surface);border-radius:20px;padding:24px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:14px}
+.f{display:flex;flex-direction:column;gap:7px}
+.f label{font-size:13px;font-weight:600;color:var(--off)}
+.in{width:100%;background:var(--bg);border:0;box-shadow:inset 0 0 0 1px var(--line);border-radius:12px;padding:14px 16px;font-size:17px;color:var(--ink)}
+.in:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--accent)}
+.msg{font-size:14px;color:var(--off)}
+.msg.err{color:var(--bad);font-weight:600}
+.tabs2{display:flex;background:var(--bg);border-radius:999px;padding:3px;gap:2px}
+.tabs2 button{flex:1;border:0;background:transparent;border-radius:999px;padding:9px 12px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+.tabs2 button.on{background:var(--surface-3);color:var(--ink)}
+
+/* Baseline */
+.base{display:grid;grid-template-columns:minmax(0,1.15fr) auto;gap:32px;align-items:center;background:var(--surface);border-radius:24px;padding:28px;box-shadow:inset 0 0 0 1px var(--line)}
+@media (max-width:760px){.base{grid-template-columns:1fr;padding:20px}.base .orbwrap{order:-1}}
+.doms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:420px){.doms{grid-template-columns:1fr}}
+.dom{background:var(--surface-2);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.dom .dn{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.dom .dn small{display:block;font-weight:600;letter-spacing:.04em;color:var(--accent-hi);margin-top:2px;text-transform:none;font-size:11.5px}
+.dom .dv{grid-row:1/3;grid-column:2;font-family:var(--display);font-size:28px;font-weight:500;color:var(--accent-hi);line-height:1;text-align:right}
+.dom .dv span{display:block;font-family:var(--text);font-size:10px;color:var(--muted);font-weight:600}
+.tr{grid-column:1;height:5px;border-radius:3px;background:var(--surface-3);position:relative;overflow:hidden}
+.tr i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#0B4D3D,var(--accent));border-radius:3px}
+.dom.low{box-shadow:inset 0 0 0 1px var(--accent)}
+.orbwrap{position:relative;width:min(300px,72vw);aspect-ratio:1;justify-self:center}
+.orbwrap canvas{width:100%;height:100%;display:block;border-radius:50%}
+.orbtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;pointer-events:none}
+.orbtxt b{font-family:var(--display);font-size:64px;font-weight:600;line-height:1}
+.orbtxt span{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--off)}
+.orbtxt em{font-style:normal;font-size:13.5px;font-weight:600;color:var(--accent-hi)}
+.focus{display:flex;flex-direction:column;gap:6px;border-left:2px solid var(--accent);padding:4px 0 4px 16px}
+.focus b{font-family:var(--display);font-size:22px;font-weight:600;text-transform:uppercase}
+.focus span{color:var(--off);font-size:15px;max-width:60ch}
+
+/* Alignment framework */
+.frame{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:860px){.frame{grid-template-columns:1fr}}
+.wheel{width:100%;max-width:520px;margin:0 auto;display:block;overflow:visible}
+.wheel text{font-family:var(--text);fill:var(--ink)}
+.wheel .node{cursor:pointer}
+.wheel .node:hover circle.face{stroke:var(--accent-hi)}
+.wheel .node.on circle.face{stroke:var(--accent-hi);stroke-width:2}
+.detail{background:var(--surface);border-radius:20px;padding:22px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:14px;min-width:0}
+.detail h3{font-family:var(--display);font-weight:600;font-size:30px;text-transform:uppercase;line-height:1}
+.detail .sys{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.detail p{color:var(--off)}
+.dots{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
+.dots i{width:22px;height:6px;border-radius:3px;background:var(--surface-3)}
+.dots i.on{background:var(--accent)}
+.act{display:flex;flex-direction:column;gap:3px;padding:12px 0 12px 16px;border-left:2px solid var(--accent)}
+.act b{font-size:15.5px}
+.act span{font-size:14.5px;color:var(--off)}
+.act small{font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:0;background:var(--surface-2);border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--off);cursor:pointer}
+.chip.on{background:var(--accent);color:var(--bg);font-weight:700}
+
+/* Alignment centre */
+.align3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.align3{grid-template-columns:1fr}}
+.al{background:var(--surface);border-radius:18px;padding:18px 20px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:8px}
+.al b{font-family:var(--display);font-size:22px;font-weight:600;text-transform:uppercase}
+.al span{color:var(--off);font-size:15px}
+.al em{font-style:normal;font-size:12px;color:var(--muted)}
+
+/* Roadmap */
+.road{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.road{grid-template-columns:1fr 1fr}}
+.stage{background:var(--surface);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 0 0 1px var(--line);min-width:0}
+.stage .n{font-size:10.5px;font-weight:700;letter-spacing:.16em;color:var(--accent)}
+.stage h3{font-family:var(--display);font-weight:600;font-size:26px;text-transform:uppercase;line-height:1}
+.stage .wk{font-size:13px;color:var(--muted)}
+.stage.now{background:var(--ink);color:var(--bg)}
+.stage.now .n{color:#0B6B53}.stage.now .wk{color:#55524C}
+
+/* North Star */
+.ns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:760px){.ns{grid-template-columns:1fr}}
+.nsb{background:var(--surface);border-radius:18px;padding:18px 20px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:8px}
+.nsb .k{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.nsb .v{font-family:var(--display);font-size:22px;font-weight:500;line-height:1.25}
+.rung{padding:8px 12px;border-radius:10px;background:var(--surface-2);font-size:14.5px;box-shadow:inset 0 0 0 1px rgba(0,200,150,var(--a,.15))}
+.rung b{color:var(--accent-hi);font-size:12px;margin-right:6px}
+.list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:var(--off)}
+.bloods{background:var(--surface);border-radius:20px;padding:22px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:12px}
+.bloods input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+.bloods label.btn{align-self:flex-start;display:inline-block;cursor:pointer}
+.files{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.files div{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;border-radius:10px;background:var(--surface-2)}
+.files em{font-style:normal;color:var(--muted);white-space:nowrap}
+.files .ok{color:var(--accent-hi)}.files .bad{color:var(--bad)}
+.notice{background:var(--accent-dim);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:inset 0 0 0 1px rgba(0,200,150,.35)}
+.notice .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.notice .row .f{flex:1;min-width:200px}
+footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in"><div style="display:flex;align-items:center"><span class="logo">Perfor<span>muscle</span></span><span class="badge">My Plan</span></div><div class="who" id="who" hidden><span id="whoName"></span><button class="link" id="signOut">Sign out</button></div></div></header>
+
+<main id="app"></main>
+
+<script>
+/* Sample plan: what the coach publishes after the audit call (example data, not a real client) */
+const SAMPLE={
+ client:{first:'James',name:'James R.'},
+ coach:'Dave',
+ publishedAt:'2026-10-21',
+ baseline:{score:4.8,focus:'Sleep',domains:[{k:'Sleep',v:3.3},{k:'Recovery',v:5.5},{k:'Metabolic',v:4.0},{k:'Hormones',v:7.4},{k:'Movement',v:5.0},{k:'Mindset',v:3.5}]},
+ phase:{index:0,name:'Health',mode:'Restore, then reset',weeks:[10,8,10,6],lead:'Your first ten weeks rebuild the foundations. Sleep, food and recovery come first so your body is ready to change. Once those are steady, we shift the focus to body composition.'},
+ systems:{
+  body:{name:'Body',sub:'Nervous system · safety',spokes:[
+   {id:'movement',name:'Movement',score:3,about:'Pattern quality, joint health and how you load your body.',actions:[{t:'Volume down, intensity held',d:'Fewer sets, main lifts kept heavy but shy of failure.',w:'Keeps the strength signal while lowering total stress.'},{t:'Ankle access',d:'Knee-to-wall work daily, heel-elevated squats until heels stay down.',w:'Keeps squat depth honest while your ankles open up.'}]},
+   {id:'nutrition',name:'Nutrition',score:2,about:'Energy, protein, food quality and the structure of your day.',actions:[{t:'Eat to maintenance',d:'Calories back to maintenance for the first 4–8 weeks, carbs around training.',w:'Your body downregulates further under a deficit right now. Restore first.'},{t:'Protein-first breakfast',d:'30–40 g protein within 90 minutes of waking.',w:'Steadies energy through the day and cuts evening cravings.'},{t:'Alcohol ceiling',d:'Alcohol-free Monday to Thursday, none within three hours of bed.',w:'Protects the second half of your sleep.'}]},
+   {id:'recovery',name:'Recovery',score:2,about:'Sleep, breath and how well your nervous system settles.',actions:[{t:'Fixed wake time',d:'Same wake time seven days a week, within 30 minutes.',w:'The most reliable lever for falling asleep and morning energy.'},{t:'Morning light',d:'Outside for 10 minutes within 30 minutes of waking.',w:'Sets your body clock so sleep comes easier at night.'},{t:'Down-regulation practice',d:'Five minutes daily of 90/90 breathing with a full exhale.',w:'Moves you out of a constant “on” state.'}]}
+  ]},
+  mind:{name:'Mind',sub:'Beliefs · story',spokes:[
+   {id:'identity',name:'Identity',score:3,about:'Who you are becoming, and whether your actions match it.',actions:[{t:'Identity statement',d:'One sentence on the standard you are stepping into. Read it every morning.',w:'Behaviour follows identity. Stand in Your Standard.'}]},
+   {id:'authority',name:'Authority',score:2,about:'Trusting your own decisions and following through on them.',actions:[{t:'Decide once',d:'Training days, bedtime and food rules are set on Sunday. No renegotiating midweek.',w:'Keeping your own word is how self-trust is built.'},{t:'Name the pattern',d:'Write the all-or-nothing trigger down and an if-then plan for it.',w:'Turns a spiral into a single decision.'}]},
+   {id:'boundaries',name:'Boundaries',score:2,about:'Protecting your time, energy and training.',actions:[{t:'Protect the non-negotiables',d:'Training and bedtime go in the calendar first, every Sunday.',w:'Plans fail when everything else gets first claim on your time.'}]}
+  ]},
+  heart:{name:'Heart',sub:'Desire · meaning',spokes:[
+   {id:'contribution',name:'Contribution',score:null,about:'Who this is for beyond you. We build this from your first call.',actions:[]},
+   {id:'story',name:'Story',score:null,about:'The story you’ve been living, and the one you’re writing next. From your first call.',actions:[]},
+   {id:'devotion',name:'Devotion',score:null,about:'What you’re committed to when motivation runs out. From your first call.',actions:[]}
+  ]}
+ },
+ alignment:{
+  permission:{text:'To rest without having to earn it first.',from:'First call'},
+  intention:{text:'Train to feel strong and steady, not to punish a bad week.',from:'First call'},
+  direction:{text:'Be the dad who is still active at 70.',from:'Your North Star'}
+ },
+ northStar:{year:'10 cm off the waist, blood pressure back in range, and the strongest I’ve been at 42.',weeks:'Sleeping 7 hours, waist down 4 cm, training three times a week without missing.',why:['To lose the gut and get fit again','Because I’m flat all day and it’s affecting work','Because I’m short with the kids by the evening','Because my dad had a heart attack at 52','To be the dad who’s still active at 70'],laws:['Sessions are booked like meetings','No drinking Monday to Thursday','Phone out of the bedroom']},
+ track:['Morning heart rate','Sleep hours and quality','Daily steps','Energy, 1–10','How training felt','Waist, weekly at the same time']
+};
+const SB={url:'https://opccfbudpovmxfmpanvj.supabase.co',key:'sb_publishable_brN2Be820KKzLyA8gfGltQ_Tvvus9Lg',home:'https://coachdavemarsh.net/my-plan'};
+const LIVE=/(^|\.)coachdavemarsh\.net$|^localhost$|^127\.0\.0\.1$|netlify\.app$/.test(location.hostname);
+let sess=null,needPw=false,files=[];
+function loadSess(){try{sess=JSON.parse(localStorage.getItem('pm_session')||'null')}catch(e){sess=null}}
+function saveSess(j,email){sess={access:j.access_token,refresh:j.refresh_token,exp:Date.now()+((+j.expires_in||3600)*1000),email:email||(sess&&sess.email)||jwt(j.access_token).email};try{localStorage.setItem('pm_session',JSON.stringify(sess))}catch(e){}}
+function clearSess(){sess=null;try{localStorage.removeItem('pm_session')}catch(e){}}
+function jwt(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))}catch(e){return {}}}
+async function authFetch(path,opt={}){
+  if(sess&&sess.exp<Date.now()+60000){const r=await fetch(SB.url+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:sess.refresh})});if(r.ok)saveSess(await r.json());else{clearSess();throw new Error('Your session ended. Sign in again.')}}
+  const r=await fetch(SB.url+path,{...opt,headers:{apikey:SB.key,Authorization:'Bearer '+(sess?sess.access:SB.key),...(opt.headers||{})}});
+  if(r.status===401){clearSess();throw new Error('Your session ended. Sign in again.')}
+  return r;
+}
+const FOCUS={Sleep:'Sleep is where we start: it sets the ceiling for your energy, hormones and recovery.',Recovery:'Recovery comes first: your system needs room to adapt before we add more.',Metabolic:'Metabolic health leads: how you eat, move and recover around your blood sugar.',Hormones:'Your hormone signals lead: we restore the basics before pushing harder.',Movement:'Movement quality comes first: pain-free patterns before load.',Mindset:'Stress and habits lead: the plan has to fit the life you actually live.'};
+const PHASES=['Health','Function','Performance','Mindset'];
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let plan=null,sel='nutrition',authMode='in';
+
+/* ---------- Sign in (preview: any email opens the sample) ---------- */
+function renderAuth(msg,err){
+  $('who').hidden=true;
+  $('app').innerHTML=`<div class="auth">
+   ${LIVE?'':'<span class="preview">Preview with sample data. Any email opens the example plan.</span>'}
+   <div><span class="eyebrow">Your plan</span><h1 style="margin-top:8px">Welcome back.</h1></div>
+   <form class="card" id="authForm" novalidate>
+    <div class="tabs2" role="tablist"><button type="button" class="${authMode==='in'?'on':''}" data-m="in">Sign in</button><button type="button" class="${authMode==='set'?'on':''}" data-m="set">First time here</button></div>
+    <div class="f"><label for="email">Email</label><input class="in" id="email" type="email" autocomplete="email" placeholder="The email you used for your audit"></div>
+    ${authMode==='in'?`<div class="f"><label for="pw">Password</label><input class="in" id="pw" type="password" autocomplete="current-password"></div><button class="btn primary" type="submit">Sign in</button><button type="button" class="link" data-m="set" style="align-self:flex-start">Forgot your password?</button>`
+    :`<p class="small" style="color:var(--off)">We'll email you a link to set your password. Use the same email you gave in your audit.</p><button class="btn primary" type="submit">Email me a link</button>`}
+    <p class="msg ${err?'err':''}" id="authMsg">${esc(msg||'')}</p>
+   </form></div>`;
+  document.querySelectorAll('[data-m]').forEach(b=>b.addEventListener('click',()=>{authMode=b.dataset.m;renderAuth()}));
+  $('authForm').addEventListener('submit',e=>{e.preventDefault();
+    const em=$('email').value.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){renderAuth('Enter the email you used for your audit.',1);$('email').value=em;return}
+    if(!LIVE){if(authMode==='set'){renderAuth(`Check ${em} for a link to set your password. It expires in an hour.`);return}plan=SAMPLE;renderPlan();return}
+    const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;
+    if(authMode==='set'){
+      fetch(SB.url+'/auth/v1/otp?redirect_to='+encodeURIComponent(SB.home),{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify({email:em,create_user:true})})
+       .then(async r=>{if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error(j.msg||j.error_description||'That didn\u2019t send. Try again in a minute.')}renderAuth(`Check ${em} for a sign-in link. Open it on this device, then set your password.`)})
+       .catch(err=>{renderAuth(err.message,1);$('email').value=em});return}
+    fetch(SB.url+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify({email:em,password:$('pw').value})})
+     .then(async r=>{const j=await r.json();if(!r.ok)throw new Error(r.status===400?'That email and password don\u2019t match. First time here? Use the other tab.':(j.msg||'Sign in failed. Try again.'));saveSess(j,em);await boot()})
+     .catch(err=>{renderAuth(err.message,1);$('email').value=em});});
+}
+
+/* ---------- Plan ---------- */
+function allSpokes(){return Object.entries(plan.systems).flatMap(([sys,s])=>s.spokes.map(p=>({...p,sys,sysName:s.name})))}
+function renderPlan(){
+  $('who').hidden=false;$('whoName').textContent=plan.client.name;
+  const b=plan.baseline,ph=plan.phase;
+  const card=x=>`<div class="dom ${x.k===b.focus?'low':''}"><span class="dn">${x.k}${x.k===b.focus?'<small>First focus</small>':''}</span><span class="dv">${x.v==null?'–':x.v.toFixed(1)}<span>/10</span></span><div class="tr"><i style="width:${(x.v||0)*10}%"></i></div></div>`;
+  $('app').innerHTML=`${needPw?`<div class="notice"><b>Set a password for next time</b><span class="small" style="color:var(--off)">You're signed in with your email link. Choose a password so you can sign in straight away next time.</span><form class="row" id="pwForm"><div class="f"><label for="newPw">New password</label><input class="in" id="newPw" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters"></div><button class="btn primary" type="submit">Save password</button></form><p class="msg" id="pwMsg"></p></div>`:''}
+  <section><span class="eyebrow">Your plan · published ${new Date(plan.publishedAt).toLocaleDateString('en-AU',{day:'numeric',month:'long'})}</span><h1>${esc(plan.client.first)}, here's where you are.</h1><p class="lede">Built from your audit, your numbers and our first call. This is the plan we work from, and it updates as you move through it.</p></section>
+
+  <section class="base"><div style="display:flex;flex-direction:column;gap:16px;min-width:0"><span class="eyebrow">Your baseline</span><div class="doms">${b.domains.map(card).join('')}</div><div class="focus"><b>First focus: ${esc(b.focus)}</b><span>${esc(FOCUS[b.focus]||'')}</span></div></div>
+   <div class="orbwrap"><canvas id="orb" aria-hidden="true"></canvas><div class="orbtxt"><b>${b.score.toFixed(1)}</b><span>Baseline</span><em>Phase 1 · ${esc(ph.name)}</em></div></div></section>
+
+  <section><span class="eyebrow">Your Launchpad</span><h2>Body, Mind, Heart. Performance at the centre.</h2><p class="lede">You're not one system but several. When body, mind and heart are aligned, performance follows. Tap any circle to see what we're working on there.</p>
+   <div class="frame"><svg class="wheel" id="wheel" viewBox="-48 -44 496 524" role="img" aria-label="Alignment framework: Body, Mind and Heart around Alignment"></svg><div class="detail" id="detail"></div></div></section>
+
+  <section><span class="eyebrow">At the centre</span><h2>Alignment</h2><div class="align3">
+   ${['permission','intention','direction'].map(k=>{const a=plan.alignment&&plan.alignment[k];return `<div class="al"><b>${k[0].toUpperCase()+k.slice(1)}</b><span>${a&&a.text?esc(a.text):'We set this together on your first call.'}</span>${a&&a.from?`<em>From: ${esc(a.from)}</em>`:''}</div>`}).join('')}
+  </div></section>
+
+  <section><span class="eyebrow">Your roadmap</span><h2>Where we're going</h2><div class="road">${PHASES.map((n,i)=>`<div class="stage ${i===ph.index?'now':''}"><span class="n">PHASE ${i+1}${i===ph.index?' · NOW':''}</span><h3>${n}</h3><span class="wk">${ph.weeks[i]?ph.weeks[i]+' weeks':'Not needed'}</span></div>`).join('')}</div><p class="lede">${esc(ph.lead)}</p></section>
+
+  <section><span class="eyebrow">North Star</span><h2>Why we're doing this</h2><div class="ns">
+   <div class="nsb"><span class="k">12 months</span><span class="v">${esc(plan.northStar.year)}</span></div>
+   <div class="nsb"><span class="k">12 weeks</span><span class="v">${esc(plan.northStar.weeks)}</span></div>
+   <div class="nsb"><span class="k">The why, five levels down</span>${plan.northStar.why.filter(Boolean).map((w,i)=>`<div class="rung" style="margin-left:${Math.min(i*12,48)}px;--a:${(0.15+i*0.15).toFixed(2)}"><b>${i+1}</b>${esc(w)}</div>`).join('')}</div>
+   <div class="nsb"><span class="k">Non-negotiables</span><ul class="list">${plan.northStar.laws.filter(Boolean).map(l=>`<li>${esc(l)}</li>`).join('')}</ul><span class="k" style="margin-top:10px">Track daily</span><ul class="list">${plan.track.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
+  </div></section>
+
+  <section><span class="eyebrow">Blood work</span><h2>Add new results</h2><div class="bloods"><p class="lede" style="font-size:16px">Had new bloods done? Upload the results here and ${esc(plan.coach)} will review them against your last panel.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>
+
+  <footer>Stand in Your Standard. Questions about your plan go to ${esc(plan.coach)} in your check-in.</footer>`;
+  drawWheel();renderDetail();startOrb();bindExtras();
+}
+function fileRow(f){return `<div><span>${esc(f.name)}</span><em class="${f.state==='error'?'bad':f.state==='uploading'?'':'ok'}">${f.state==='uploading'?'Uploading…':f.state==='error'?'Didn\u2019t upload':new Date(f.created_at||Date.now()).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}</em></div>`}
+function drawFiles(){const el=$('fileList');if(el)el.innerHTML=files.length?files.map(fileRow).join(''):'<p class="small">No uploads yet.</p>'}
+async function loadFiles(){if(!LIVE||!sess){drawFiles();return}try{const r=await authFetch('/rest/v1/client_files?select=name,size,created_at&order=created_at.desc');if(r.ok)files=await r.json()}catch(e){}drawFiles()}
+async function upload(file){
+  const item={name:file.name,size:file.size,state:'uploading'};files.unshift(item);drawFiles();
+  try{
+    if(file.size>10485760)throw new Error('big');
+    if(LIVE){
+      const uid=jwt(sess.access).sub,path=`clients/${uid}/${Date.now()}-${file.name.replace(/[^A-Za-z0-9._-]+/g,'_').slice(-80)}`;
+      let r=await authFetch(`/storage/v1/object/audit-uploads/${path}`,{method:'POST',headers:{'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});
+      if(!r.ok)throw new Error('upload');
+      r=await authFetch('/rest/v1/client_files',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({email:sess.email,name:file.name,path,size:file.size})});
+      if(!r.ok)throw new Error('record');
+    }
+    item.state='done';item.created_at=new Date().toISOString();
+  }catch(e){item.state='error'}
+  drawFiles();
+}
+function bindExtras(){
+  const up=$('bloodUp');if(up)up.addEventListener('change',()=>{[...up.files].forEach(upload);up.value=''});
+  loadFiles();
+  const f=$('pwForm');if(f)f.addEventListener('submit',async e=>{e.preventDefault();const pw=$('newPw').value;if(pw.length<8){$('pwMsg').textContent='Use at least 8 characters.';$('pwMsg').className='msg err';return}
+    try{const r=await authFetch('/auth/v1/user',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error(j.msg||'That didn\u2019t save. Try again.')}needPw=false;plan?renderPlan():renderWaiting()}catch(err){$('pwMsg').textContent=err.message;$('pwMsg').className='msg err'}});
+}
+function renderWaiting(){
+  $('who').hidden=false;$('whoName').textContent=sess.email;
+  $('app').innerHTML=`${needPw?'<div class="notice"><b>Set a password for next time</b><form class="row" id="pwForm"><div class="f"><label for="newPw">New password</label><input class="in" id="newPw" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters"></div><button class="btn primary" type="submit">Save password</button></form><p class="msg" id="pwMsg"></p></div>':''}
+   <section><span class="eyebrow">Your plan</span><h1>Almost there.</h1><p class="lede">Your plan is published after your first call, once your audit, numbers and movement screen are reviewed. You'll see it here as soon as it's ready.</p></section>
+   <section><span class="eyebrow">Blood work</span><div class="bloods"><p class="lede" style="font-size:16px">Have recent bloods? Upload them now so they're ready for your call.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each.</p></div></section>`;
+  bindExtras();
+}
+async function boot(){
+  if(!LIVE){plan=SAMPLE;renderPlan();return}
+  loadSess();if(!sess){renderAuth();return}
+  $('app').innerHTML='<p class="small">Loading your plan…</p>';
+  try{
+    const r=await authFetch('/rest/v1/client_plans?select=plan,updated_at&published=eq.true&order=updated_at.desc&limit=1');
+    if(!r.ok)throw new Error('Your plan didn\u2019t load. Refresh to try again.');
+    const rows=await r.json();
+    if(!rows.length){plan=null;renderWaiting();return}
+    plan=rows[0].plan;plan.publishedAt=plan.publishedAt||rows[0].updated_at;renderPlan();
+  }catch(err){renderAuth(err.message,1)}
+}
+
+/* Alignment wheel: Body top, Mind bottom-left, Heart bottom-right, Alignment centre */
+const POS={body:{x:200,y:105,sats:[[118,18],[200,-2],[282,18]]},mind:{x:80,y:300,sats:[[-10,392],[52,432],[122,442]]},heart:{x:320,y:300,sats:[[278,442],[348,432],[410,392]]}};
+function ring(cx,cy,r,score){if(score==null)return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--line)" stroke-width="3" stroke-dasharray="2 4"/>`;const c=2*Math.PI*r,f=c*score/5;return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--surface-3)" stroke-width="3"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="${f} ${c}" transform="rotate(-90 ${cx} ${cy})" stroke-linecap="round"/>`}
+function drawWheel(){
+  const W=$('wheel');let h=`<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>`;
+  // flows
+  h+=`<path d="M58 250 C 40 160, 90 100, 148 92" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-start="url(#ah)" marker-end="url(#ah)"/>
+      <path d="M252 92 C 310 100, 360 160, 342 250" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-start="url(#ah)" marker-end="url(#ah)"/>
+      <path d="M118 342 C 165 385, 235 385, 282 342" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-start="url(#ah)" marker-end="url(#ah)"/>
+      <text x="22" y="150" font-size="12" font-weight="700" text-anchor="middle" transform="rotate(-62 22 150)">Inspired action</text>
+      <text x="378" y="150" font-size="12" font-weight="700" text-anchor="middle" transform="rotate(62 378 150)">Refinement</text>
+      <text x="200" y="436" font-size="12" font-weight="700" text-anchor="middle">Feedback</text>
+      <text x="200" y="350" font-size="9" letter-spacing="2" text-anchor="middle" fill="var(--muted)">SUBCONSCIOUS</text>
+      <text x="104" y="206" font-size="9.5" letter-spacing="3" text-anchor="middle" fill="var(--muted)" transform="rotate(-58 104 206)">BREATH</text>
+      <text x="296" y="206" font-size="9.5" letter-spacing="3" text-anchor="middle" fill="var(--muted)" transform="rotate(58 296 206)">PURPOSE</text>`;
+  // alignment centre
+  h+=`<circle cx="200" cy="232" r="78" fill="rgba(0,200,150,.05)" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="4 5"/>
+      <text x="200" y="234" font-size="13" font-weight="700" text-anchor="middle" fill="var(--ink)" style="font-family:Oswald,Arial Narrow,sans-serif;letter-spacing:1.5px">PERFORMANCE</text>
+      <text x="200" y="327" font-size="10" font-weight="700" letter-spacing="3" text-anchor="middle" fill="var(--accent-hi)">ALIGNMENT</text>`;
+  [['Permission',200,190],['Intention',158,268],['Direction',242,268]].forEach(([t,x,y])=>{h+=`<g class="node" data-al="${t.toLowerCase()}" tabindex="0" role="button" aria-label="${t}"><circle class="face" cx="${x}" cy="${y}" r="27" fill="var(--surface)" stroke="var(--line)" stroke-width="1.2"/><text x="${x}" y="${y+4}" font-size="10.5" font-weight="700" text-anchor="middle">${t}</text></g>`});
+  // systems + satellites
+  for(const [sys,p] of Object.entries(POS)){
+    const S=plan.systems[sys],on=allSpokes().find(x=>x.id===sel)?.sys===sys;
+    S.spokes.forEach((sp,i)=>{const [sx,sy]=p.sats[i];h+=`<line x1="${p.x}" y1="${p.y}" x2="${sx}" y2="${sy}" stroke="var(--line)" stroke-width="1.2"/>`});
+    h+=`<circle cx="${p.x}" cy="${p.y}" r="50" fill="var(--surface)" stroke="${on?'var(--accent)':'rgba(255,255,255,.35)'}" stroke-width="1.6"/>
+        <text x="${p.x}" y="${p.y-6}" font-size="19" font-weight="600" text-anchor="middle" style="font-family:Oswald,Arial Narrow,sans-serif;text-transform:uppercase">${S.name.toUpperCase()}</text>
+        ${S.sub.split(' · ').map((t,i)=>`<text x="${p.x}" y="${p.y+16+i*12}" font-size="9.5" text-anchor="middle" fill="var(--muted)">${esc(t[0].toUpperCase()+t.slice(1))}</text>`).join('')}`;
+    S.spokes.forEach((sp,i)=>{const [sx,sy]=p.sats[i];h+=`<g class="node ${sp.id===sel?'on':''}" data-id="${sp.id}" tabindex="0" role="button" aria-label="${esc(sp.name)}${sp.score!=null?`, ${sp.score} of 5`:', set on your first call'}"><circle class="face" cx="${sx}" cy="${sy}" r="30" fill="var(--bg)" stroke="var(--line)"/>${ring(sx,sy,34,sp.score)}<text x="${sx}" y="${sy+(sp.score!=null?-1:4)}" font-size="10" font-weight="700" text-anchor="middle">${esc(sp.name)}</text>${sp.score!=null?`<text x="${sx}" y="${sy+13}" font-size="10" text-anchor="middle" fill="var(--accent-hi)">${sp.score}/5</text>`:''}</g>`});
+  }
+  W.innerHTML=h;
+  W.querySelectorAll('[data-id]').forEach(g=>{const go=()=>{sel=g.dataset.id;drawWheel();renderDetail()};g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+  W.querySelectorAll('[data-al]').forEach(g=>{const go=()=>{sel='al:'+g.dataset.al;drawWheel();renderDetail()};g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+}
+function renderDetail(){
+  const box=$('detail');
+  if(sel.startsWith('al:')){const k=sel.slice(3),a=plan.alignment&&plan.alignment[k];
+    box.innerHTML=`<span class="sys">Alignment</span><h3>${k[0].toUpperCase()+k.slice(1)}</h3><p>${a&&a.text?esc(a.text):'We set this together on your first call.'}</p><p class="small">Permission, intention and direction form the Alignment ring around Performance. When all three are clear, body, mind and heart stop pulling against each other.</p>`;return}
+  const sp=allSpokes().find(x=>x.id===sel);
+  box.innerHTML=`<span class="sys">${esc(sp.sysName)}</span><h3>${esc(sp.name)}</h3><p>${esc(sp.about)}</p>
+   ${sp.score!=null?`<div class="dots">${[1,2,3,4,5].map(n=>`<i class="${n<=sp.score?'on':''}"></i>`).join('')}<span>${sp.score}/5 now</span></div>`:''}
+   ${sp.actions.length?`<span class="sys" style="margin-top:6px">What we're doing first</span>${sp.actions.map(a=>`<div class="act"><b>${esc(a.t)}</b><span>${esc(a.d)}</span><small>${esc(a.w)}</small></div>`).join('')}`:sp.fromCall?'<p class="small">From your first call with '+esc(plan.coach)+'.</p>':'<p class="small">We build this out from your first call and add it here.</p>'}
+   <div class="chips">${allSpokes().map(x=>`<button class="chip ${x.id===sel?'on':''}" data-chip="${x.id}">${esc(x.name)}</button>`).join('')}</div>`;
+  box.querySelectorAll('[data-chip]').forEach(c=>c.addEventListener('click',()=>{sel=c.dataset.chip;drawWheel();renderDetail()}));
+}
+
+/* Orb */
+let raf=0;
+function startOrb(){
+  cancelAnimationFrame(raf);const c=$('orb');if(!c)return;const ctx=c.getContext('2d');if(!ctx)return;
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const r=c.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),W=r.width||280;c.width=W*dpr;c.height=W*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  const P=Array.from({length:170},()=>{const edge=Math.random()<0.55;return {a:Math.random()*Math.PI*2,r:edge?0.42+Math.random()*0.08:Math.sqrt(Math.random())*0.44,s:(Math.random()*0.6+0.2)*(Math.random()<.5?-1:1)*0.0016,z:Math.random()*1.6+0.4,t:Math.random()*6.3}});
+  (function frame(ts){
+    if(!document.body.contains(c))return;ctx.clearRect(0,0,W,W);const cx=W/2;
+    const g=ctx.createRadialGradient(cx,cx,W*.05,cx,cx,W*.5);g.addColorStop(0,'rgba(6,52,41,.95)');g.addColorStop(.6,'rgba(6,40,32,.5)');g.addColorStop(1,'rgba(11,11,10,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cx,W*.5,0,Math.PI*2);ctx.fill();
+    for(const p of P){if(!reduce)p.a+=p.s;const tw=reduce?.8:.55+.45*Math.sin((ts||0)/600+p.t);ctx.fillStyle=p.r>.4?`rgba(77,255,201,${.75*tw})`:`rgba(244,242,236,${.45*tw})`;ctx.beginPath();ctx.arc(cx+Math.cos(p.a)*p.r*W,cx+Math.sin(p.a)*p.r*W,p.z,0,Math.PI*2);ctx.fill()}
+    if(!reduce)raf=requestAnimationFrame(frame);
+  })();
+}
+$('signOut').addEventListener('click',()=>{if(LIVE&&sess)fetch(SB.url+'/auth/v1/logout',{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+sess.access}}).catch(()=>{});clearSess();plan=null;needPw=false;renderAuth('You\u2019re signed out.')});
+// Arriving from an email sign-in link: keep the session, tidy the address bar, offer to set a password.
+(function(){const h=new URLSearchParams(location.hash.slice(1));
+  if(h.get('access_token')){saveSess({access_token:h.get('access_token'),refresh_token:h.get('refresh_token'),expires_in:h.get('expires_in')});needPw=true;history.replaceState(null,'',location.pathname)}
+  else if(h.get('error_description')){history.replaceState(null,'',location.pathname);loadSess();if(!sess){authMode='set';renderAuth(h.get('error_description').replace(/\+/g,' ')+'. Request a new link below.',1);return}}
+  boot();})();
+</script>
+</body>
+</html>
