@@ -307,6 +307,18 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .inner .field select{max-width:150px}
 .inner h3{grid-column:1/-1;font-size:13px;letter-spacing:.16em;text-transform:uppercase;margin:6px 0 0;color:var(--off)}
 .publink{font-size:13.5px;color:var(--off)}.publink a{color:var(--accent-hi)}
+#subHub,#hubVids{display:flex;flex-direction:column;gap:10px;padding-top:12px;border-top:1px solid var(--line)}
+.hubm{background:var(--surface-2);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.hubm summary{cursor:pointer;display:flex;justify-content:space-between;gap:12px;font-size:14px;list-style:none}
+.hubm summary::-webkit-details-marker{display:none}
+.hubm .hb{height:5px;border-radius:3px;background:var(--surface-3);overflow:hidden}
+.hubm .hb i{display:block;height:100%;background:var(--gold)}
+.hubm dl{display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+.hubm dt{color:var(--muted)}
+.hubm dd{white-space:pre-wrap;overflow-wrap:anywhere}
+.vrow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,2fr) 80px;gap:8px;align-items:center;font-size:13.5px}
+@media (max-width:620px){.vrow{grid-template-columns:1fr}}
+.vrow input{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink)}
 #subFiles{display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
 .frow{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}
 .frow span{min-width:0;overflow-wrap:anywhere}
@@ -348,6 +360,8 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
       </div>
       <div class="sublist" id="subList"></div>
       <div id="subFiles" hidden></div>
+      <div id="subHub" hidden></div>
+      <details id="hubVids" hidden><summary class="eyebrow gold" style="cursor:pointer">Client Hub videos</summary><p class="submsg">Paste a YouTube, Vimeo or Loom link (or a direct video file) for each training. Clients see it at coachdavemarsh.net/hub.</p><div id="vidRows"></div><button class="btn primary" type="button" id="vidSave" style="align-self:flex-start">Save video links</button></details>
     </div>
     <p class="submsg" id="subMsg"></p>
   </section>
@@ -1172,7 +1186,7 @@ $('signin').addEventListener('submit',async e=>{
     $('siPass').value='';showSubs();await loadSubs();
   }catch(err){subMsg(err.message,1)}finally{$('siBtn').disabled=false}
 });
-$('signOut').addEventListener('click',()=>{tok=null;openId=null;$('subFiles').hidden=true;$('subFiles').innerHTML='';try{sessionStorage.removeItem('pa_coach')}catch(e){};$('subList').innerHTML='';$('saveRow').hidden=true;showSubs();subMsg('Signed out.')});
+$('signOut').addEventListener('click',()=>{tok=null;openId=null;$('subHub').hidden=true;$('subHub').innerHTML='';$('hubVids').hidden=true;$('subFiles').hidden=true;$('subFiles').innerHTML='';try{sessionStorage.removeItem('pa_coach')}catch(e){};$('subList').innerHTML='';$('saveRow').hidden=true;showSubs();subMsg('Signed out.')});
 $('subRefresh').addEventListener('click',()=>loadSubs());
 $('subFilter').addEventListener('change',()=>loadSubs());
 async function loadSubs(){
@@ -1182,7 +1196,7 @@ async function loadSubs(){
     subs=await sb(`/rest/v1/${SB.table}?select=id,created_at,full_name,email,status&order=created_at.desc&limit=200${q}`);
     $('subList').innerHTML=subs.length?subs.map(x=>`<div class="subrow ${x.id===openId?'on':''}"><div><div class="nm">${escH(x.full_name)}</div><div class="dt">${escH(x.email)}</div></div><div class="dt">${new Date(x.created_at).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</div><span class="stp ${x.status}">${x.status}</span><button class="btn" data-open="${x.id}">Open</button></div>`).join(''):'<p class="submsg">No submissions in this view yet.</p>';
     $('subList').querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openSub(b.dataset.open)));
-    subMsg(subs.length?`${subs.length} submission${subs.length>1?'s':''}.`:'');
+    subMsg(subs.length?`${subs.length} submission${subs.length>1?'s':''}.`:'');loadVideos();
   }catch(err){subMsg(err.message,1)}
 }
 const escH=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1201,7 +1215,7 @@ async function openSub(id){
       const extra=[ex.rhr?`Resting HR ${ex.rhr} bpm`:'',ex.bloods==='yes'?'Has blood work from the last 12 months':''].filter(Boolean).join(' · ');
       if(extra)notes.recovery=extra;
     }
-    isSample=false;$('sampleTag').hidden=true;showFiles(row);clientFiles(row);renderInner();
+    isSample=false;$('sampleTag').hidden=true;showFiles(row);clientFiles(row);clientHub(row);renderInner();
     $('subStatus').value=row.status==='new'?'reviewed':row.status;$('saveRow').hidden=false;
     update();loadSubsSilently();
     subMsg(`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
@@ -1298,6 +1312,36 @@ async function clientFiles(row){
       catch(err){subMsg(err.message,1)}finally{btn.disabled=false}}));
   }catch(e){/* table not created yet: nothing to show */}
 }
+/* ---------- Client Hub: progress, answers and video links ---------- */
+const HUB=[['regulate','Somatics: regulate the body','Regulate · Body'],['identity','Identity: old self, new self','Rehearse · Mind'],['limits','Self-limits: the inner voice','Rehearse · Mind'],['boundaries','Boundaries: protect the standard','Rehearse · Mind'],['release','Release: eighteen inches','Release · Heart']];
+async function clientHub(row){
+  const box=$('subHub');box.hidden=true;box.innerHTML='';if(!row.email)return;
+  try{
+    const rows=await sb(`/rest/v1/client_progress?select=module,data,updated_at&email=ilike.${encodeURIComponent(row.email.replace(/[%_]/g,'\\$&'))}`);
+    const by={};(rows||[]).forEach(r=>{by[r.module]={...(r.data||{}),updated:r.updated_at}});
+    const xp=HUB.reduce((a,[id])=>a+(+((by[id]||{}).xp)||0),0),done=HUB.filter(([id])=>(by[id]||{}).done).length;
+    box.innerHTML=`<span class="eyebrow gold">Client Hub · ${xp} XP · ${done} of ${HUB.length} complete</span>`+HUB.map(([id,t,tk])=>{const d=by[id];if(!d)return `<div class="hubm"><div style="display:flex;justify-content:space-between;font-size:14px"><span>${escH(t)}</span><span class="submsg">Not started</span></div></div>`;
+      const qa=(d.qa||[]).filter(x=>x.a&&x.a.trim()),days=(d.days||[]).filter(Boolean).length;
+      return `<details class="hubm"><summary><span><b>${escH(t)}</b> <span class="submsg">${escH(tk)}</span></span><span class="submsg">${d.done?'Complete':(+d.pct||0)+'%'} · ${days}/7 days</span></summary><div class="hb"><i style="width:${+d.pct||0}%"></i></div>
+        <dl>${qa.map(x=>`<div><dt>${escH(x.q)}</dt><dd>${escH(x.a)}</dd></div>`).join('')}${d.reflection&&d.reflection.trim()?`<div><dt>${escH(d.reflectQ||'Reflection')}</dt><dd>${escH(d.reflection)}</dd></div>`:''}${qa.length||d.reflection?'':'<div><dd class="submsg">No answers written yet.</dd></div>'}</dl>
+        <span class="submsg">Last active ${new Date(d.updated).toLocaleDateString('en-AU')}</span></details>`}).join('');
+    box.hidden=false;
+  }catch(e){/* Hub tables not created yet */}
+}
+async function loadVideos(){
+  const box=$('hubVids');
+  try{const rows=await sb('/rest/v1/hub_content?select=module,video_url,minutes');const by={};(rows||[]).forEach(r=>{by[r.module]=r});
+    $('vidRows').innerHTML=HUB.map(([id,t])=>`<div class="vrow"><span>${escH(t)}</span><input id="vid_${id}" type="url" placeholder="https://youtu.be/…" value="${escH((by[id]||{}).video_url||'')}" aria-label="Video link for ${escH(t)}"><input id="min_${id}" type="number" min="1" max="120" placeholder="min" value="${escH((by[id]||{}).minutes||'')}" aria-label="Minutes for ${escH(t)}"></div>`).join('');
+    box.hidden=false;
+  }catch(e){box.hidden=true}
+}
+$('vidSave').addEventListener('click',async()=>{
+  const bad=HUB.find(([id])=>{const v=$('vid_'+id).value.trim();return v&&!/^https:\/\//.test(v)});
+  if(bad){subMsg(`The link for ${bad[1]} needs to start with https://`,1);return}
+  $('vidSave').disabled=true;subMsg('Saving video links…');
+  try{await sb('/rest/v1/hub_content?on_conflict=module',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(HUB.map(([id])=>({module:id,video_url:$('vid_'+id).value.trim()||null,minutes:+$('min_'+id).value||null})))});subMsg('Video links saved. Clients see them next time they open the Hub.')}
+  catch(err){subMsg(err.message,1)}finally{$('vidSave').disabled=false}
+});
 function loadSubsSilently(){$('subList').querySelectorAll('.subrow').forEach(r=>r.classList.toggle('on',!!r.querySelector(`[data-open="${openId}"]`)))}
 $('subSave').addEventListener('click',async()=>{
   if(!openId)return;$('subSave').disabled=true;subMsg('Saving…');

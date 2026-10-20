@@ -81,6 +81,22 @@ h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,5vw,40px);lin
 .focus b{font-family:var(--display);font-size:22px;font-weight:600;text-transform:uppercase}
 .focus span{color:var(--off);font-size:15px;max-width:60ch}
 
+/* Client Hub summary */
+.hubc{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:center;background:var(--surface);border-radius:22px;padding:22px;box-shadow:inset 0 0 0 1px var(--line)}
+@media (max-width:760px){.hubc{grid-template-columns:1fr}}
+.hring{position:relative;width:120px;height:120px}
+.hring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.hring div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.hring b{font-family:var(--display);font-size:30px;font-weight:500;line-height:1}
+.hring span{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.hlv{display:flex;flex-direction:column;gap:8px;min-width:0}
+.hlv .nm{font-family:var(--display);font-size:26px;font-weight:600;text-transform:uppercase;line-height:1}
+.hbar{height:7px;border-radius:4px;background:var(--surface-3);overflow:hidden}
+.hbar i{display:block;height:100%;border-radius:4px;background:var(--c,var(--accent))}
+.htr{display:flex;flex-direction:column;gap:10px;min-width:0}
+.htr div{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--off)}
+.htr div span{display:flex;justify-content:space-between}
+.htr em{font-style:normal;color:var(--muted)}
 /* Launchpad wheel */
 .frame{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start}
 @media (max-width:860px){.frame{grid-template-columns:1fr}}
@@ -218,11 +234,33 @@ function renderAuth(msg,err){
        .then(async r=>{if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error(j.msg||j.error_description||'That didn\u2019t send. Try again in a minute.')}renderAuth(`Check ${em} for a sign-in link. Open it on this device, then set your password.`)})
        .catch(err=>{renderAuth(err.message,1);$('email').value=em});return}
     fetch(SB.url+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify({email:em,password:$('pw').value})})
-     .then(async r=>{const j=await r.json();if(!r.ok)throw new Error(r.status===400?'That email and password don\u2019t match. First time here? Use the other tab.':(j.msg||'Sign in failed. Try again.'));saveSess(j,em);await boot()})
+     .then(async r=>{const j=await r.json();if(!r.ok)throw new Error(r.status===400?'That email and password don\u2019t match. First time here? Use the other tab.':(j.msg||'Sign in failed. Try again.'));saveSess(j,em);if(new URLSearchParams(location.search).get('next')==='hub'){location.href='/hub';return}await boot()})
      .catch(err=>{renderAuth(err.message,1);$('email').value=em});});
 }
 
 /* ---------- Plan ---------- */
+const HUB_MODS=[{id:'regulate',track:'body'},{id:'identity',track:'mind'},{id:'limits',track:'mind'},{id:'boundaries',track:'mind'},{id:'release',track:'heart'}];
+const HUB_TRACKS=[['body','Regulate','Body','var(--ink)'],['mind','Rehearse','Mind','var(--accent)'],['heart','Release','Heart','#E8A87C']];
+const HUB_LEVELS=[['Not started',0],['Aware',100],['Building',400],['Consistent',900],['Owned',1400]];
+const HUB_SPOKE={somatics:'regulate',identity:'identity',limits:'limits',boundaries:'boundaries'};
+let hub=null;
+const HUB_SAMPLE={regulate:{pct:58,xp:150,done:false},identity:{pct:12,xp:25,done:false}};
+async function loadHub(){
+  if(!LIVE){hub=HUB_SAMPLE}else{try{const r=await authFetch('/rest/v1/client_progress?select=module,data');hub={};if(r.ok)(await r.json()).forEach(x=>{hub[x.module]=x.data||{}})}catch(e){hub={}}}
+  const el=$('hubSec');if(el)el.innerHTML=hubHTML();
+  if($('wheel')&&plan)drawWheel();
+}
+function hubHTML(){
+  const h=hub||{},pct=id=>Math.max(0,Math.min(100,+((h[id]||{}).pct)||0));
+  const xp=HUB_MODS.reduce((a,m)=>a+(+((h[m.id]||{}).xp)||0),0),done=HUB_MODS.filter(m=>(h[m.id]||{}).done).length;
+  let li=0;HUB_LEVELS.forEach((l,i)=>{if(xp>=l[1])li=i});const nx=HUB_LEVELS[li+1];
+  const lp=nx?Math.round(100*(xp-HUB_LEVELS[li][1])/(nx[1]-HUB_LEVELS[li][1])):100;
+  const all=Math.round(HUB_MODS.reduce((a,m)=>a+pct(m.id),0)/HUB_MODS.length),r=54,c=2*Math.PI*r;
+  return `<span class="eyebrow">Your Client Hub</span><h2>Regulate. Rehearse. Release.</h2><p class="lede">Short trainings from ${esc((plan&&plan.coach)||'Dave')} with worksheets and homework. Every step earns XP, and the outer ring on your Launchpad fills as you go.</p>
+   <div class="hubc"><div class="hring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--surface-3)" stroke-width="9"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*all/100} ${c}"/></svg><div><b>${all}%</b><span>Complete</span></div></div>
+    <div class="hlv"><span class="eyebrow">Level ${li+1} of 5</span><span class="nm">${HUB_LEVELS[li][0]}</span><div class="hbar"><i style="width:${lp}%"></i></div><span class="small">${xp} XP · ${done} of ${HUB_MODS.length} trainings complete${nx?` · ${nx[1]-xp} XP to ${nx[0]}`:''}</span><a class="btn primary" href="/hub" style="align-self:flex-start;margin-top:6px;text-decoration:none">Open your Hub →</a></div>
+    <div class="htr">${HUB_TRACKS.map(([id,k,sys,col])=>{const ms=HUB_MODS.filter(m=>m.track===id),p=Math.round(ms.reduce((a,m)=>a+pct(m.id),0)/ms.length);return `<div style="--c:${col}"><span><b>${k}</b><em>${sys} · ${p}%</em></span><div class="hbar"><i style="width:${p}%"></i></div></div>`}).join('')}</div></div>`;
+}
 const LP_ORDER=['identity','boundaries','limits','somatics','recovery','movement','peptides','nutrition'];
 function allSpokes(){
   let lp=plan.launchpad;
@@ -243,6 +281,8 @@ function renderPlan(){
    <div class="legend"><span><i style="background:var(--ink)"></i>Body</span><span><i style="background:var(--accent)"></i>Mind</span><span>Fill = where you are now, 1–5</span></div>
    <div class="frame"><svg class="wheel" id="wheel" viewBox="-80 -20 560 440" role="img" aria-label="Client Launchpad: Body and Mind spokes"></svg><div class="detail" id="detail"></div></div></section>
 
+  <section id="hubSec">${hubHTML()}</section>
+
   <section><span class="eyebrow">Your roadmap</span><h2>Where we're going</h2><div class="road">${PHASES.map((n,i)=>`<div class="stage ${i===ph.index?'now':''}"><span class="n">PHASE ${i+1}${i===ph.index?' · NOW':''}</span><h3>${n}</h3><span class="wk">${ph.weeks[i]?ph.weeks[i]+' weeks':'Not needed'}</span></div>`).join('')}</div><p class="lede">${esc(ph.lead)}</p></section>
 
   <section><span class="eyebrow">North Star</span><h2>Why we're doing this</h2><div class="ns">
@@ -255,7 +295,7 @@ function renderPlan(){
   <section><span class="eyebrow">Blood work</span><h2>Add new results</h2><div class="bloods"><p class="lede" style="font-size:16px">Had new bloods done? Upload the results here and ${esc(plan.coach)} will review them against your last panel.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>
 
   <footer>Stand in Your Standard. Questions about your plan go to ${esc(plan.coach)} in your check-in.</footer>`;
-  drawWheel();renderDetail();startOrb();bindExtras();
+  drawWheel();renderDetail();startOrb();bindExtras();if(!hub)loadHub();
 }
 function fileRow(f){return `<div><span>${esc(f.name)}</span><em class="${f.state==='error'?'bad':f.state==='uploading'?'':'ok'}">${f.state==='uploading'?'Uploading…':f.state==='error'?'Didn\u2019t upload':new Date(f.created_at||Date.now()).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}</em></div>`}
 function drawFiles(){const el=$('fileList');if(el)el.innerHTML=files.length?files.map(fileRow).join(''):'<p class="small">No uploads yet.</p>'}
@@ -285,8 +325,9 @@ function renderWaiting(){
   $('who').hidden=false;$('whoName').textContent=sess.email;
   $('app').innerHTML=`${needPw?'<div class="notice"><b>Set a password for next time</b><form class="row" id="pwForm"><div class="f"><label for="newPw">New password</label><input class="in" id="newPw" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters"></div><button class="btn primary" type="submit">Save password</button></form><p class="msg" id="pwMsg"></p></div>':''}
    <section><span class="eyebrow">Your plan</span><h1>Almost there.</h1><p class="lede">Your plan is published after your first call, once your audit, numbers and movement screen are reviewed. You'll see it here as soon as it's ready.</p></section>
+   <section id="hubSec">${hubHTML()}</section>
    <section><span class="eyebrow">Blood work</span><div class="bloods"><p class="lede" style="font-size:16px">Have recent bloods? Upload them now so they're ready for your call.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each.</p></div></section>`;
-  bindExtras();
+  bindExtras();if(!hub)loadHub();
 }
 async function boot(){
   if(!LIVE){plan=SAMPLE;renderPlan();return}
@@ -310,6 +351,7 @@ function lpDraw(){
   sp.forEach((s,i)=>{
     const a0=(-90+i*step)*Math.PI/180+gap,a1=(-90+(i+1)*step)*Math.PI/180-gap,body=s.side==='body',c=body?'var(--ink)':'var(--accent)',soft=body?'rgba(244,242,236,.08)':'rgba(0,200,150,.15)';
     const sc=s.score||0,rr=R0+(R1-R0)*sc/5,on=sel===s.id;
+    const hm=HUB_SPOKE[s.id];if(hm&&hub){const hp=Math.max(0,Math.min(100,+((hub[hm]||{}).pct)||0));h+=`<path d="${lpArc(cx,cy,R1+4,R1+8,a0,a1)}" fill="var(--surface-3)"/>`+(hp?`<path d="${lpArc(cx,cy,R1+4,R1+8,a0,a0+(a1-a0)*hp/100)}" fill="var(--accent-hi)"><title>Hub training ${hp}% complete</title></path>`:'')}
     h+=`<g class="wedge" data-id="${s.id}" tabindex="0" role="button" aria-label="${esc(s.name)}: ${sc?sc+' of 5':'not scored yet'}"><path d="${lpArc(cx,cy,R0,R1,a0,a1)}" fill="${soft}" stroke="${on?c:'none'}" stroke-width="2"/>${sc?`<path d="${lpArc(cx,cy,R0,rr,a0,a1)}" fill="${c}" opacity="${on?1:.82}"/>`:''}</g>`;
     const am=(a0+a1)/2,lx=cx+(R1+16)*Math.cos(am),ly=cy+(R1+16)*Math.sin(am),cos=Math.cos(am),anchor=Math.abs(cos)<0.2?'middle':cos>0?'start':'end';
     h+=`<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="14" font-weight="${on?700:600}" style="fill:${on?c:'var(--ink)'}">${esc(s.short)}</text><text x="${lx}" y="${ly+16}" text-anchor="${anchor}" dominant-baseline="middle" font-size="11" style="fill:var(--muted)">${sc?sc+'/5':'–'}</text>`;
