@@ -6,7 +6,7 @@
   <title>Physique Peaking Calculator — Performuscle</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg:          #0F0F0F;
@@ -29,7 +29,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'DM Sans', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -37,7 +37,7 @@
 
     a { color: inherit; text-decoration: none; }
 
-    input, select, button, textarea { font-family: 'Inter', sans-serif; }
+    input, select, button, textarea { font-family: 'DM Sans', sans-serif; }
 
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
@@ -91,7 +91,7 @@
       text-align: center; margin-bottom: 2.5rem;
     }
     .pw-brand-name {
-      font-family: 'Bebas Neue', sans-serif; font-size: 2rem;
+      font-family: 'Oswald', sans-serif; font-size: 2rem;
       letter-spacing: 0.15em; color: var(--accent);
     }
     .pw-brand-sub {
@@ -368,6 +368,15 @@
       .tool-nav { padding: 0 16px; }
     }
   </style>
+<style id="house-2026">
+/* HOUSE STYLE 2026: Oswald + DM Sans, near-black, warm white, teal accents. Matches the Performance Audit. */
+:root{--muted:#9A968E;--bg:#0B0B0A;--card:#121211;--card2:#181816;--text:#F4F2EC;--faint:#4A4743;--accent:#00C896;--border:rgba(255,255,255,0.08)}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.04),transparent 60%),var(--bg,#0B0B0A)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+h1,h2,h3{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.005em;text-wrap:balance}
+input,select,textarea{border-radius:10px;font-family:'DM Sans',system-ui,sans-serif}
+button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
+:focus-visible{outline:2px solid #00C896;outline-offset:2px}
+</style>
 </head>
 <body>
 

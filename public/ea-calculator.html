@@ -7,7 +7,7 @@
   <meta name="description" content="Find out if your calorie intake is actually supporting your training — or quietly wrecking your hormones, recovery, and performance. Free EA calculator." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
   <style>
     :root {
       --ink:        #060608;
@@ -26,7 +26,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Montserrat', sans-serif;
+      font-family: 'DM Sans', sans-serif;
       background: var(--ink);
       color: var(--white);
       min-height: 100vh;
@@ -47,10 +47,10 @@
       display: flex; align-items: center; justify-content: center;
     }
     .nav-brand .icon svg { width: 17px; height: 17px; }
-    .nav-brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .07em; }
+    .nav-brand-name { font-family: 'Oswald', sans-serif; font-size: 1.2rem; letter-spacing: .07em; }
     .nav-brand-name span { color: var(--accent); }
     .nav-cta {
-      font-family: 'Josefin Sans', sans-serif; font-size: .72rem; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; font-size: .72rem; font-weight: 600;
       letter-spacing: .15em; color: var(--ink); background: var(--accent);
       border: none; border-radius: 8px; padding: .45rem 1.1rem; cursor: pointer;
       text-decoration: none; transition: background .2s;
@@ -63,13 +63,13 @@
       max-width: 820px; margin: 0 auto; text-align: center;
     }
     .hero-eyebrow {
-      display: inline-block; font-family: 'Josefin Sans', sans-serif; font-size: .7rem;
+      display: inline-block; font-family: 'DM Sans', sans-serif; font-size: .7rem;
       font-weight: 600; letter-spacing: .3em; color: var(--accent);
       background: rgba(0,200,150,.08); border: 1px solid rgba(0,200,150,.2);
       padding: .3rem 1rem; border-radius: 20px; margin-bottom: 1.25rem;
     }
     .hero h1 {
-      font-family: 'Bebas Neue', sans-serif;
+      font-family: 'Oswald', sans-serif;
       font-size: clamp(2.4rem, 7vw, 4rem);
       line-height: 1.05; letter-spacing: .03em; margin-bottom: 1rem;
     }
@@ -83,7 +83,7 @@
     .trust-row {
       display: flex; align-items: center; justify-content: center;
       gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2.5rem;
-      font-family: 'Josefin Sans', sans-serif; font-size: .68rem;
+      font-family: 'DM Sans', sans-serif; font-size: .68rem;
       font-weight: 600; letter-spacing: .15em; color: var(--muted);
     }
     .trust-row span { display: flex; align-items: center; gap: .4rem; }
@@ -96,7 +96,7 @@
       border-radius: 16px; padding: 2rem 1.75rem; margin-bottom: 1.5rem;
     }
     .card-heading {
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .08em;
+      font-family: 'Oswald', sans-serif; font-size: 1.2rem; letter-spacing: .08em;
       margin-bottom: 1.5rem; display: flex; align-items: center; gap: .6rem;
     }
     .card-heading-num {
@@ -109,13 +109,13 @@
 
     .input-group { display: flex; flex-direction: column; gap: .5rem; }
     .input-label {
-      font-family: 'Josefin Sans', sans-serif; font-size: .72rem;
+      font-family: 'DM Sans', sans-serif; font-size: .72rem;
       font-weight: 600; letter-spacing: .2em; color: var(--muted);
     }
     .input-field {
       background: var(--ink-3); border: 1px solid rgba(255,255,255,.1);
       border-radius: 10px; padding: .8rem 1rem;
-      font-family: 'Montserrat', sans-serif; font-size: .95rem; color: var(--white);
+      font-family: 'DM Sans', sans-serif; font-size: .95rem; color: var(--white);
       outline: none; transition: border-color .2s; width: 100%;
     }
     .input-field:focus { border-color: var(--accent); }
@@ -124,7 +124,7 @@
 
     .toggle-group { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
     .toggle-label {
-      font-family: 'Josefin Sans', sans-serif; font-size: .7rem; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; font-size: .7rem; font-weight: 600;
       letter-spacing: .2em; color: var(--muted);
     }
     .toggle-row {
@@ -133,7 +133,7 @@
     }
     .toggle-btn {
       flex: 1; padding: .4rem .75rem; border-radius: 6px; border: none; cursor: pointer;
-      font-family: 'Josefin Sans', sans-serif; font-size: .7rem; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; font-size: .7rem; font-weight: 600;
       letter-spacing: .1em; transition: all .15s;
       background: transparent; color: var(--muted);
     }
@@ -141,7 +141,7 @@
 
     .calc-btn {
       width: 100%; padding: 1rem 1rem; background: var(--accent); color: var(--ink);
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .1em;
+      font-family: 'Oswald', sans-serif; font-size: 1.2rem; letter-spacing: .1em;
       border: none; border-radius: 12px; cursor: pointer; transition: background .2s, transform .1s;
       margin-top: 1.25rem;
     }
@@ -165,7 +165,7 @@
     .result-hero.status-reds    { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.35); }
 
     .result-label {
-      font-family: 'Josefin Sans', sans-serif; font-size: .7rem; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; font-size: .7rem; font-weight: 600;
       letter-spacing: .25em; margin-bottom: .5rem;
     }
     .status-optimal .result-label { color: var(--accent); }
@@ -173,7 +173,7 @@
     .status-reds    .result-label { color: var(--danger); }
 
     .result-ea-value {
-      font-family: 'Bebas Neue', sans-serif; font-size: 4.5rem; line-height: 1;
+      font-family: 'Oswald', sans-serif; font-size: 4.5rem; line-height: 1;
       letter-spacing: .02em; margin-bottom: .3rem;
     }
     .status-optimal .result-ea-value { color: var(--accent); }
@@ -182,7 +182,7 @@
 
     .result-unit { font-size: .8rem; color: var(--muted); margin-bottom: .5rem; }
     .result-status-badge {
-      display: inline-block; font-family: 'Josefin Sans', sans-serif; font-size: .75rem;
+      display: inline-block; font-family: 'DM Sans', sans-serif; font-size: .75rem;
       font-weight: 600; letter-spacing: .1em; padding: .3rem .9rem; border-radius: 20px;
       margin-bottom: .75rem;
     }
@@ -204,12 +204,12 @@
       background: var(--ink-2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px;
       padding: 1.25rem 1rem; text-align: center;
     }
-    .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: .3rem; }
+    .stat-value { font-family: 'Oswald', sans-serif; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: .3rem; }
     .stat-label { font-size: .72rem; color: var(--muted); line-height: 1.4; }
 
     /* ── EA SCALE ── */
     .ea-scale { background: var(--ink-2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
-    .ea-scale-label { font-family: 'Josefin Sans', sans-serif; font-size: .7rem; font-weight: 600; letter-spacing: .2em; color: var(--muted); margin-bottom: .75rem; }
+    .ea-scale-label { font-family: 'DM Sans', sans-serif; font-size: .7rem; font-weight: 600; letter-spacing: .2em; color: var(--muted); margin-bottom: .75rem; }
     .ea-bar-wrap { position: relative; height: 14px; border-radius: 8px; overflow: visible; background: var(--ink-3); margin-bottom: .5rem; }
     .ea-bar-segment { position: absolute; top: 0; height: 100%; }
     .ea-bar-reds    { left: 0;    width: 40%; background: rgba(239,68,68,.5);  border-radius: 8px 0 0 8px; }
@@ -228,7 +228,7 @@
       background: var(--ink-2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px;
       padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;
     }
-    .rec-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: .06em; margin-bottom: .75rem; }
+    .rec-box h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; letter-spacing: .06em; margin-bottom: .75rem; }
     .rec-item { display: flex; gap: .75rem; margin-bottom: .65rem; align-items: flex-start; font-size: .85rem; color: #c4c4d4; line-height: 1.6; }
     .rec-item::before { content: '→'; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
     .rec-item strong { color: var(--white); }
@@ -246,7 +246,7 @@
     }
     .lead-icon svg { width: 26px; height: 26px; }
     .lead-heading {
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: .05em;
+      font-family: 'Oswald', sans-serif; font-size: 1.7rem; letter-spacing: .05em;
       line-height: 1.1; margin-bottom: .75rem;
     }
     .lead-heading span { color: var(--accent); }
@@ -264,7 +264,7 @@
     .lead-form input[type="email"] {
       width: 100%; background: var(--ink-3); border: 1px solid rgba(255,255,255,.1);
       border-radius: 10px; padding: .85rem 1rem; margin-bottom: .75rem;
-      font-family: 'Montserrat', sans-serif; font-size: .92rem; color: var(--white);
+      font-family: 'DM Sans', sans-serif; font-size: .92rem; color: var(--white);
       outline: none; transition: border-color .2s;
     }
     .lead-form input:focus { border-color: var(--accent); }
@@ -272,7 +272,7 @@
 
     .lead-submit {
       width: 100%; padding: 1rem; background: var(--accent); color: var(--ink);
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .1em;
+      font-family: 'Oswald', sans-serif; font-size: 1.2rem; letter-spacing: .1em;
       border: none; border-radius: 12px; cursor: pointer; transition: background .2s, transform .1s;
     }
     .lead-submit:hover { background: var(--accent-hi); }
@@ -289,7 +289,7 @@
       justify-content: center; margin: 0 auto 1.25rem;
     }
     .thank-you-icon svg { width: 28px; height: 28px; }
-    .thank-you h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: .05em; color: var(--accent); margin-bottom: .5rem; }
+    .thank-you h3 { font-family: 'Oswald', sans-serif; font-size: 1.6rem; letter-spacing: .05em; color: var(--accent); margin-bottom: .5rem; }
     .thank-you p { font-size: .88rem; color: var(--sub); line-height: 1.65; max-width: 380px; margin: 0 auto; }
 
     /* ── FOOTER CTA ── */
@@ -297,11 +297,11 @@
       background: var(--ink-2); border-top: 1px solid rgba(255,255,255,.06);
       padding: 3rem 1.5rem; text-align: center;
     }
-    .footer-cta h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); letter-spacing: .04em; margin-bottom: .75rem; }
+    .footer-cta h2 { font-family: 'Oswald', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); letter-spacing: .04em; margin-bottom: .75rem; }
     .footer-cta h2 span { color: var(--accent); }
     .footer-cta p { font-size: .88rem; color: var(--sub); max-width: 420px; margin: 0 auto 1.5rem; line-height: 1.65; }
     .footer-btn {
-      display: inline-block; font-family: 'Josefin Sans', sans-serif; font-size: .8rem;
+      display: inline-block; font-family: 'DM Sans', sans-serif; font-size: .8rem;
       font-weight: 600; letter-spacing: .15em; color: var(--ink); background: var(--accent);
       border-radius: 10px; padding: .85rem 2rem; cursor: pointer; transition: background .2s;
       text-decoration: none;
@@ -316,6 +316,15 @@
       .lead-card { padding: 1.75rem 1.25rem; }
     }
   </style>
+<style id="house-2026">
+/* HOUSE STYLE 2026: Oswald + DM Sans, near-black, warm white, teal accents. Matches the Performance Audit. */
+:root{--ink:#0B0B0A;--ink-2:#121211;--ink-3:#201F1C;--white:#F4F2EC;--muted:#9A968E;--accent:#00C896;--accent-hi:#4DFFC9}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.04),transparent 60%),var(--ink,#0B0B0A)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+h1,h2,h3{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.005em;text-wrap:balance}
+input,select,textarea{border-radius:10px;font-family:'DM Sans',system-ui,sans-serif}
+button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
+:focus-visible{outline:2px solid #00C896;outline-offset:2px}
+</style>
 </head>
 <body>
 
