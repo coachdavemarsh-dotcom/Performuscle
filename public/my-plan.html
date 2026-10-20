@@ -169,7 +169,7 @@ const SAMPLE={
   {id:'somatics',side:'mind',short:'Somatics',name:'Somatics',score:1,about:'Body awareness and settling your nervous system: breath, down-regulation, noticing stress early.',actions:[{t:'Down-regulation practice',d:'Five minutes of 90/90 breathing with a full exhale, daily.',w:'Teaches your body to switch off so recovery can happen.'}]},
   {id:'recovery',side:'body',short:'Recovery',name:'Sleep & recovery',score:2,about:'Sleep, heart rate variability and morning heart rate. The base everything else is built on.',actions:[{t:'Fixed wake time',d:'Same wake time seven days a week, within 30 minutes.',w:'The most reliable lever for falling asleep and morning energy.'},{t:'Wind-down hour',d:'Screens off and lights dimmed 60 minutes before bed.',w:'Lets evening stress hormones fall so sleep comes on faster.'}]},
   {id:'movement',side:'body',short:'Movement',name:'Movement patterns',score:3,about:'Structural balance, joint health and pattern quality, built into your training.',actions:[{t:'Volume down, intensity held',d:'Fewer sets, main lifts kept heavy but shy of failure.',w:'Keeps the strength signal while lowering total stress.'}]},
-  {id:'peptides',side:'body',short:'Peptides',name:'Peptides',score:1,about:'Whether peptides have a place in your plan. We look at this once the foundations hold.',actions:[]},
+  {id:'peptides',side:'body',short:'Supplements',name:'Supplements',score:1,about:'Which supplements earn a place in your plan, matched to your bloods and goals.',actions:[]},
   {id:'nutrition',side:'body',short:'Nutrition',name:'Nutrition',score:2,about:'Energy, protein, food quality and the structure of your day.',actions:[{t:'Eat to maintenance',d:'Calories back to maintenance for the first 4–8 weeks, carbs around training.',w:'Your body downregulates when food is too low for too long.'},{t:'Protein at every meal',d:'A palm-sized serve of protein at each meal.',w:'Supports recovery and keeps hunger steady.'}]}
  ],
  northStar:{year:'10 cm off the waist, blood pressure back in range, and the strongest I’ve been at 42.',weeks:'Sleeping 7 hours, waist down 4 cm, training three times a week without missing.',why:['To lose the gut and get fit again','Because I’m flat all day and it’s affecting work','Because I’m short with the kids by the evening','Because my dad had a heart attack at 52','To be the dad who’s still active at 70'],laws:['Sessions are booked like meetings','No drinking Monday to Thursday','Phone out of the bedroom']},
@@ -227,7 +227,7 @@ const LP_ORDER=['identity','boundaries','limits','somatics','recovery','movement
 function allSpokes(){
   let lp=plan.launchpad;
   if(!lp&&plan.systems){lp=['body','mind'].flatMap(k=>((plan.systems[k]||{}).spokes||[]).map(x=>({...x,side:k,short:x.name})))}
-  return (lp||[]).map(x=>({...x,short:x.short||x.name,sysName:x.side==='body'?'Body':'Mind'}));
+  return (lp||[]).map(x=>x.id==='peptides'?{...x,short:'Supplements',name:'Supplements',about:'Which supplements earn a place in your plan, matched to your bloods and goals.'}:x).map(x=>({...x,short:x.short||x.name,sysName:x.side==='body'?'Body':'Mind'}));
 }
 function renderPlan(){
   $('who').hidden=false;$('whoName').textContent=plan.client.name;

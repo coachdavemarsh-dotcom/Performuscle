@@ -571,7 +571,7 @@ const SPOKES=[
  {id:'somatics',side:'mind',short:'Somatics',name:'Somatics',d:'Body awareness and nervous system regulation: breath, down-regulation, noticing stress before it shows in the data.'},
  {id:'recovery',side:'body',short:'Recovery',name:'Sleep & recovery',d:'Sleep, HRV and morning heart rate. The base every other spoke is built on.'},
  {id:'movement',side:'body',short:'Movement',name:'Movement patterns',d:'Structural balance, joint integrity and pattern quality, integrated into the training stimulus.'},
- {id:'peptides',side:'body',short:'Peptides',name:'Peptides',d:'Whether peptides are appropriate, which goal they serve, and the medical oversight in place. Assessed once the foundations hold.'},
+ {id:'peptides',side:'body',short:'Supplements',name:'Supplements',d:'Which supplements earn a place, the goal each one serves, and whether bloods support it. Added once the foundations hold.'},
  {id:'nutrition',side:'body',short:'Nutrition',name:'Nutrition',d:'Energy intake, protein, food quality and the structure of the day, periodised to the phase.'}];
 const READY=['','Not started','Aware','Building','Consistent','Owned'];
 
@@ -829,7 +829,7 @@ function renderPack(pack,a){
   const pillar=s=>{
     const items=pack[s.id]||[];
     let inner;
-    if(s.id==='peptides')inner=`<div class="act"><b>${a.phase===0?'Not in Phase 1':'Assess in Function'}</b><span class="dose">${a.phase===0?'Revisit once sleep, nutrition and bloods are stable. Any use goes through a prescribing doctor.':'Discuss goals and medical oversight. Bloods before and 6 weeks after any start.'}</span><span class="why">Peptides amplify a working system. They don’t fix a suppressed or resistant one.</span></div>`;
+    if(s.id==='peptides')inner=`<div class="act"><b>${a.phase===0?'Foundations first':'Review the stack'}</b><span class="dose">${a.phase===0?'Only what the bloods or audit point to. Everything else waits until sleep and nutrition are stable.':'Match each supplement to a goal and a marker. Retest bloods at 12 weeks.'}</span><span class="why">Supplements top up a working system. They don’t replace sleep, food or training.</span></div>`;
     else if(!items.length)inner=`<p class="empty">No flags here. Hold the current standard.</p>`;
     else inner=items.map(it=>`<div class="act"><b>${it.t}</b><span class="dose">${it.dose}</span><span class="why">${it.w}</span><span class="from">From: ${it.why.slice(0,2).join(' · ')}${it.why.length>2?` +${it.why.length-2}`:''}</span></div>`).join('');
     return `<div class="pillar"><h3>${s.name}<span>${spokes[s.id]||'–'}/5</span></h3>${inner}</div>`;
@@ -1245,7 +1245,7 @@ const CLIENT_LEAD={
  res:'Your first phase targets metabolic health: a moderate deficit, daily steps, steady cardio and strength training. We check your waist every fortnight and repeat bloods at 12 weeks.',
  bridge:'Nothing is red, but the foundations need tightening. A short first phase locks in sleep, food and stress before we load up the structural work.',
  clear:'Your health markers are clear, so we start with how you move: structural balance and pattern quality built into your training.'};
-const ABOUT={limits:'The patterns that pull you off plan: all-or-nothing thinking, avoidance, quitting near the finish line.',somatics:'Body awareness and settling your nervous system: breath, down-regulation, noticing stress early.',peptides:'Whether peptides have a place in your plan. We look at this once the foundations hold.',movement:'Structural balance, joint health and pattern quality, built into your training.',nutrition:'Energy, protein, food quality and the structure of your day.',recovery:'Sleep, heart rate variability and morning heart rate. The base everything else is built on.',identity:'Who you are becoming, and whether your actions match it.',authority:'Trusting your own decisions and following through on them.',boundaries:'Protecting your time, energy and training.',contribution:'Who this is for beyond you.',story:'The story you’ve been living, and the one you’re writing next.',devotion:'What you’re committed to when motivation runs out.'};
+const ABOUT={limits:'The patterns that pull you off plan: all-or-nothing thinking, avoidance, quitting near the finish line.',somatics:'Body awareness and settling your nervous system: breath, down-regulation, noticing stress early.',peptides:'Which supplements earn a place in your plan, matched to your bloods and goals.',movement:'Structural balance, joint health and pattern quality, built into your training.',nutrition:'Energy, protein, food quality and the structure of your day.',recovery:'Sleep, heart rate variability and morning heart rate. The base everything else is built on.',identity:'Who you are becoming, and whether your actions match it.',authority:'Trusting your own decisions and following through on them.',boundaries:'Protecting your time, energy and training.',contribution:'Who this is for beyond you.',story:'The story you’ve been living, and the one you’re writing next.',devotion:'What you’re committed to when motivation runs out.'};
 const toYou=t=>String(t||'').replace(/the client's/g,'your').replace(/The client's/g,'Your').replace(/the client is/g,'you are').replace(/The client is/g,'You are').replace(/the client/g,'you').replace(/The client/g,'You');
 function buildPlan(){
   update();
