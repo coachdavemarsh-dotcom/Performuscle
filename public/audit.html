@@ -129,6 +129,31 @@ input[type=number]{-moz-appearance:textfield}
 .tb{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:600}
 .tb em{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;background:var(--accent);color:var(--bg);padding:5px 10px;border-radius:6px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+/* Client baseline (end screen) */
+.base{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center;background:var(--surface);border-radius:22px;padding:24px;box-shadow:inset 0 0 0 1px var(--line)}
+@media (max-width:720px){.base{grid-template-columns:1fr}.base .orbwrap{order:-1;width:min(240px,64vw)!important}}
+.doms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:420px){.doms{grid-template-columns:1fr}}
+.dom{background:var(--surface-2);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+.dom .dn{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.dom .dn small{display:block;font-weight:600;letter-spacing:.06em;color:var(--accent-hi);margin-top:2px;text-transform:none;font-size:11.5px}
+.dom .dv{grid-row:1/3;grid-column:2;font-family:var(--display);font-size:28px;font-weight:500;color:var(--accent-hi);line-height:1;text-align:right}
+.dom .dv span{display:block;font-family:var(--text);font-size:10px;color:var(--muted);font-weight:600}
+.dom .tr{grid-column:1;height:5px;border-radius:3px;background:var(--surface-3);position:relative;overflow:hidden}
+.dom .tr i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#0B4D3D,var(--accent));border-radius:3px}
+.dom.low{box-shadow:inset 0 0 0 1px var(--accent)}
+.focus{display:flex;flex-direction:column;gap:6px;border-left:2px solid var(--accent);padding:4px 0 4px 16px}
+.focus b{font-family:var(--display);font-size:22px;font-weight:600;text-transform:uppercase}
+.focus span{color:var(--off);font-size:15px;max-width:60ch}
+.small{font-size:13px;color:var(--muted);max-width:62ch}
+/* Uploads */
+.drop{display:flex;flex-direction:column;gap:10px;background:var(--surface);border-radius:14px;padding:16px;box-shadow:inset 0 0 0 1px var(--line)}
+.drop label.btn{align-self:flex-start;display:inline-block;cursor:pointer}
+.drop input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+.files{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.files div{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:10px;background:var(--surface-2)}
+.files em{font-style:normal;color:var(--muted);white-space:nowrap}
+.files .ok{color:var(--accent-hi)}.files .bad{color:var(--bad)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -230,7 +255,7 @@ const SCREENS=[
    {row:[{k:'ik.better',l:'What makes it better?',t:'text'},{k:'ik.worse',l:'What makes it worse?',t:'text'}],show:['ik.injury','yes']},
    {k:'ik.radiate',l:'Does it radiate anywhere?',t:'text',show:['ik.injury','yes']},
    {k:'ik.life',l:'How does it affect your training and daily life?',t:'text',show:['ik.injury','yes']}]},
- {sec:5,eyebrow:'Body',title:'Any numbers you already have?',help:'All optional. Skip anything you don’t know.',fields:[{row:[{k:'extra.rhr',l:'Resting heart rate',t:'number',u:'bpm',opt:1},{k:'extra.vo2',l:'VO₂ max',t:'number',u:'ml/kg',opt:1}]},{k:'ik.bpknown',l:'Blood pressure, if you know it',t:'text',opt:1},{k:'extra.bloods',l:'Do you have blood work from the last 12 months?',t:'yn'}]},
+ {sec:5,eyebrow:'Body',title:'Any numbers you already have?',help:'All optional. Skip anything you don’t know.',fields:[{row:[{k:'extra.rhr',l:'Resting heart rate',t:'number',u:'bpm',opt:1},{k:'extra.vo2',l:'VO₂ max',t:'number',u:'ml/kg',opt:1}]},{k:'ik.bpknown',l:'Blood pressure, if you know it',t:'text',opt:1},{k:'extra.bloods',l:'Do you have blood work from the last 12 months?',t:'yn'},{t:'upload',show:['extra.bloods','yes']}]},
  {sec:6,eyebrow:'Commitment',title:'How ready are you?',fields:[{k:'ik.commit',t:'choice',o:['100% committed, no financial constraints','Committed, with a budget of $150 a week','Unsure, I’d like more information'],auto:1}]},
  {sec:6,eyebrow:'Last step',title:'When should we call?',fields:[{k:'ik.call',t:'choice',o:['Morning 7–9 am','Afternoon 12–1 pm','Evening 5–7 pm'],inline:1},{t:'consent'}],submit:1},
  {sec:6,done:true}
@@ -268,6 +293,7 @@ function fieldHTML(f){
     case 'slider':{const n=v===''||v==null?null:+v,mid=Math.round((f.min+f.max)/2);return `<div class="f">${lab}<div class="slider"><div class="v"><b id="${id}_v">${n??'–'}</b><span>/ ${f.max}</span></div><input class="rng" type="range" id="${id}" data-k="${f.k}" min="${f.min}" max="${f.max}" step="1" value="${n??mid}" style="--p:${(((n??mid)-f.min)/(f.max-f.min))*100}%" aria-label="${esc(f.l||'Score')}"><div class="ends"><span>${esc(f.lo)}</span><span>${esc(f.hi)}</span></div></div></div>`}
     case 'ladder':return `<div class="ladder">${RUNGS.map((r,i)=>{const w=D.ns.why[i]||'',prev=i===0||D.ns.why[i-1];return `<div class="rung ${prev?'':'dim'}" style="margin-left:${Math.min(i*14,56)}px;--a:${(0.15+i*0.15).toFixed(2)}"><b>${i+1}. ${r}</b><input data-why="${i}" aria-label="Why, level ${i+1}" placeholder="${i===0?'Why do you want this?':'And why does that matter?'}" value="${esc(w)}"></div>`}).join('')}</div>`;
     case 'laws':return `<div class="fields">${[0,1,2].map(i=>`<div class="f"><input class="in" data-law="${i}" aria-label="Non-negotiable ${i+1}" placeholder="${['e.g. Sessions are booked like meetings','e.g. Lights out by 10:30 on weeknights','e.g. No drinking Monday to Thursday'][i]}" value="${esc(D.ns.laws[i]||'')}"></div>`).join('')}</div>`;
+    case 'upload':{const fl=D.extra.bloodFiles||[];return `<div class="drop"><span class="lab" style="font-size:13px;font-weight:600;color:var(--off)">Upload your results <span class="opt-lab" style="font-weight:400;color:var(--muted)">(PDF or photos, up to 10 MB each)</span></span><label class="btn ghost" for="bloodUp">Choose files</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList">${fl.map(fileRow).join('')}</div><p class="small">Only ${esc(BRAND.coach)} can open these. You can also bring them to the call.</p></div>`}
     case 'consent':return `<label class="consent"><input type="checkbox" id="consent" ${consent?'checked':''}><span>I agree that my answers are stored securely and used only by ${esc(BRAND.coach)} to prepare my coaching. They're never shared or sold.</span></label><input class="hp" id="company" tabindex="-1" autocomplete="off" aria-hidden="true">`;
   }
   return '';
@@ -305,8 +331,8 @@ function render(){
   }
   if(s.done){
     const first=esc(D.state.first||'');
-    m.innerHTML=`<section class="screen"><span class="eyebrow">Audit complete</span><h1>Thank you${first?', '+first:''}.</h1>
-      <p class="help">${esc(BRAND.coach)} will read every answer and build your baseline before you speak. ${previewMode()?'<br><strong>Preview mode:</strong> on this page your answers are kept on this device only and not sent.':''}</p>
+    m.innerHTML=`<section class="screen"><span class="eyebrow">Audit complete</span><h1>Thank you${first?', '+first:''}.</h1>${baselineHTML()}
+      <p class="help">This is your starting point from your answers. ${esc(BRAND.coach)} reads every one and adds your blood work and movement screen before the call. ${previewMode()?'<br><strong>Preview mode:</strong> on this page your answers are kept on this device only and not sent.':''}</p>
       <div class="list">
         <div class="li"><b>1 · Book your call</b><span>Pick a time that suits you. Thirty minutes, no obligation.</span></div>
         <div class="li"><b>2 · Your audit is reviewed</b><span>Your answers are turned into a baseline and a first-phase plan.</span></div>
@@ -314,7 +340,7 @@ function render(){
       </div>
       <div><a class="btn primary" style="display:inline-block;text-decoration:none" href="${BRAND.calendly}" target="_blank" rel="noopener">Book your call →</a></div>
       <p class="help" style="font-family:var(--display);text-transform:uppercase;font-size:22px;color:var(--ink)">${esc(BRAND.tagline)}</p></section>`;
-    return;
+    startOrb();return;
   }
   let body='';
   if(s.dq!=null){
@@ -342,8 +368,52 @@ function bind(){
   m.querySelectorAll('[data-why]').forEach(el=>el.addEventListener('input',()=>{const i=+el.dataset.why;D.ns.why[i]=el.value;save();const nxt=m.querySelectorAll('.rung')[i+1];if(nxt)nxt.classList.toggle('dim',!el.value)}));
   m.querySelectorAll('[data-law]').forEach(el=>el.addEventListener('input',()=>{D.ns.laws[+el.dataset.law]=el.value;save()}));
   const c=$('consent');if(c)c.addEventListener('change',()=>{consent=c.checked});
+  const up=$('bloodUp');if(up)up.addEventListener('change',()=>{[...up.files].forEach(uploadFile);up.value=''});
 }
 
+/* ---------- Client baseline ---------- */
+const qz=id=>D.ans[id]==null?null:10-5*D.ans[id];
+const avg=a=>{const v=a.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((p,c)=>p+c,0)/v.length:null};
+const num=v=>v===''||v==null||isNaN(+v)?null:+v;
+const FOCUS={Sleep:'Sleep is where we start: it sets the ceiling for energy, hormones and recovery.',Energy:'Your energy through the day comes first: steady fuel and recovery before more training.',Metabolism:'Metabolic health leads: how you eat, move and recover around your blood sugar.',Hormones:'Your hormone signals lead: we restore the basics before pushing harder.',Movement:'Movement quality comes first: pain-free patterns before load.',Mindset:'Stress and habits lead: the plan has to fit the life you actually live.'};
+function clientBaseline(){
+  const sh=num(D.state.sleep),st=num(D.ik.steps),stress=num(D.state.stress),alc=num(D.ik.alc),pain=num(D.ik.pain),f=D.state.sex==='Female';
+  const act={'Sedentary':3,'1–2 times a week':6,'2–4 times a week':8,'5–6 times a week':9,'Intense, 5–6 times a week':8}[D.ik.activity]??null;
+  const d=[
+   {k:'Sleep',v:avg([sh==null?null:sh>=7.5?10:sh>=7?8:sh>=6.5?6:sh>=6?4.5:sh>=5?2.5:1,qz('q_onset'),qz('q_wake'),qz('q_unref'),qz('q_snore')])},
+   {k:'Energy',v:avg([st==null?null:st>=8000?9:st>=6000?6:3,qz('q_caff'),qz('q_wired'),qz('q_slump'),qz('q_heavy'),qz('q_sore'),qz('q_stall'),qz('q_steps'),qz('q_drive')])},
+   {k:'Metabolism',v:avg([qz('q_crave'),qz('q_hungry'),qz('q_waist'),qz('q_crash'),alc==null?null:alc>=14?3:alc>=7?6:9,act])},
+   {k:'Hormones',v:avg([qz('q_libido'),qz(f?'q_cycle':'q_morning'),qz(f?'q_pms':'q_mood'),qz('q_cold'),qz('q_hair'),qz('q_dizzy')])},
+   {k:'Movement',v:avg([D.ik.injury==='yes'?(pain==null?6:10-pain):D.ik.injury==='no'?9:null,act])},
+   {k:'Mindset',v:avg([stress==null?null:10-stress,qz('q_on'),qz('q_alc'),qz('q_aon'),qz('q_yes'),qz('q_ident')])}
+  ].map(x=>({k:x.k,v:x.v==null?null:Math.round(x.v*10)/10}));
+  const have=d.filter(x=>x.v!=null),score=have.length?Math.round(avg(have.map(x=>x.v))*10)/10:null;
+  const low=have.length?have.reduce((a,b)=>b.v<a.v?b:a):null;
+  return {score,focus:low&&low.k,domains:d};
+}
+function baselineHTML(){
+  const b=clientBaseline();if(b.score==null)return '';
+  const card=x=>`<div class="dom ${x.k===b.focus?'low':''}"><span class="dn">${x.k}${x.k===b.focus?'<small>First focus</small>':''}</span><span class="dv">${x.v==null?'–':x.v.toFixed(1)}<span>/10</span></span><div class="tr"><i style="width:${(x.v||0)*10}%"></i></div></div>`;
+  return `<div class="base"><div style="display:flex;flex-direction:column;gap:16px;min-width:0"><span class="eyebrow">Your baseline</span><div class="doms">${b.domains.map(card).join('')}</div><div class="focus"><b>First focus: ${b.focus}</b><span>${FOCUS[b.focus]}</span></div><p class="small">Scores come from your answers only, out of 10. They show where to start, not a diagnosis.</p></div><div class="orbwrap"><canvas id="orb" aria-hidden="true"></canvas><div class="orbtxt"><b>${b.score.toFixed(1)}</b><span>Your baseline</span></div></div></div>`;
+}
+/* ---------- Blood work uploads ---------- */
+function fileRow(x){return `<div><span>${esc(x.name)}</span><em class="${x.state==='error'?'bad':x.state==='done'?'ok':''}">${x.state==='done'?'Uploaded':x.state==='error'?'Didn’t upload':'Uploading…'}</em></div>`}
+function uploadId(){if(!D.extra.uploadId){D.extra.uploadId=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));save()}return D.extra.uploadId}
+async function uploadFile(file){
+  const list=D.extra.bloodFiles=D.extra.bloodFiles||[];
+  const safe=file.name.replace(/[^A-Za-z0-9._-]+/g,'_').slice(-80);
+  const item={name:file.name,size:file.size,path:`${uploadId()}/${Date.now()}-${safe}`,state:'uploading'};
+  list.push(item);const redraw=()=>{const el=$('fileList');if(el)el.innerHTML=list.map(fileRow).join('');save()};redraw();
+  if(file.size>10485760){item.state='error';redraw();showErr(`${file.name} is over 10 MB. Try a smaller photo or a PDF.`);return}
+  try{
+    if(!previewMode()){
+      const r=await fetch(`${SUPABASE.url}/storage/v1/object/audit-uploads/${item.path}`,{method:'POST',headers:{apikey:SUPABASE.key,Authorization:'Bearer '+SUPABASE.key,'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});
+      if(!r.ok)throw new Error(r.status);
+    }
+    item.state='done';
+  }catch(e){item.state='error';showErr(`${file.name} didn’t upload. Check your connection and choose it again.`)}
+  redraw();
+}
 function showErr(t){const e=$('err');if(e){e.textContent=t;e.hidden=false}}
 function validate(){
   const s=SCREENS[cur];
@@ -359,7 +429,8 @@ async function submit(){
   if($('company')&&$('company').value){cur++;render();return}
   sending=true;render();
   const payload={full_name:[D.state.first,D.state.last].filter(Boolean).join(' ').trim(),email:(D.ik.email||'').trim(),phone:(D.ik.phone||'').trim()||null,consent:true,
-    answers:{...D,state:{...D.state,clientName:[D.state.first,D.state.last].filter(Boolean).join(' '),sex:D.state.sex==='Female'?'f':D.state.sex==='Male'?'m':''},submittedAt:new Date().toISOString(),version:1}};
+    answers:{...D,state:{...D.state,clientName:[D.state.first,D.state.last].filter(Boolean).join(' '),sex:D.state.sex==='Female'?'f':D.state.sex==='Male'?'m':''},submittedAt:new Date().toISOString(),version:1,baseline:clientBaseline()}};
+  payload.answers.extra={...payload.answers.extra,bloodFiles:(D.extra.bloodFiles||[]).filter(x=>x.state==='done').map(({name,size,path})=>({name,size,path}))};
   try{
     if(!previewMode()){
       const r=await fetch(`${SUPABASE.url}/rest/v1/${SUPABASE.table}`,{method:'POST',headers:{'apikey':SUPABASE.key,'Authorization':'Bearer '+SUPABASE.key,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)});

@@ -301,6 +301,9 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 @media (max-width:560px){.subrow{grid-template-columns:minmax(0,1fr) auto}.subrow .dt{grid-column:1}}
 .submsg{font-size:13px;color:var(--muted)}
 .submsg.err{color:var(--bad)}
+#subFiles{display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
+.frow{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}
+.frow span{min-width:0;overflow-wrap:anywhere}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 </style>
@@ -338,6 +341,7 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
         <div class="row" id="saveRow" hidden><div class="field"><label for="subStatus">Status</label><select id="subStatus"><option value="new">New</option><option value="reviewed">Reviewed</option><option value="booked">Booked</option><option value="client">Became client</option><option value="archived">Archived</option></select></div><button class="btn primary" type="button" id="subSave">Save review</button><button class="btn" type="button" id="signOut">Sign out</button></div>
       </div>
       <div class="sublist" id="subList"></div>
+      <div id="subFiles" hidden></div>
     </div>
     <p class="submsg" id="subMsg"></p>
   </section>
@@ -1162,7 +1166,7 @@ $('signin').addEventListener('submit',async e=>{
     $('siPass').value='';showSubs();await loadSubs();
   }catch(err){subMsg(err.message,1)}finally{$('siBtn').disabled=false}
 });
-$('signOut').addEventListener('click',()=>{tok=null;openId=null;try{sessionStorage.removeItem('pa_coach')}catch(e){};$('subList').innerHTML='';$('saveRow').hidden=true;showSubs();subMsg('Signed out.')});
+$('signOut').addEventListener('click',()=>{tok=null;openId=null;$('subFiles').hidden=true;$('subFiles').innerHTML='';try{sessionStorage.removeItem('pa_coach')}catch(e){};$('subList').innerHTML='';$('saveRow').hidden=true;showSubs();subMsg('Signed out.')});
 $('subRefresh').addEventListener('click',()=>loadSubs());
 $('subFilter').addEventListener('change',()=>loadSubs());
 async function loadSubs(){
@@ -1191,12 +1195,27 @@ async function openSub(id){
       const extra=[ex.rhr?`Resting HR ${ex.rhr} bpm`:'',ex.bloods==='yes'?'Has blood work from the last 12 months':''].filter(Boolean).join(' · ');
       if(extra)notes.recovery=extra;
     }
-    isSample=false;$('sampleTag').hidden=true;
+    isSample=false;$('sampleTag').hidden=true;showFiles(row);
     $('subStatus').value=row.status==='new'?'reviewed':row.status;$('saveRow').hidden=false;
     update();loadSubsSilently();
     subMsg(`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
     window.scrollTo({top:0,behavior:'smooth'});
   }catch(err){subMsg(err.message,1)}
+}
+function showFiles(row){
+  const box=$('subFiles'),a=row.answers||{},ex=a.extra||{},files=ex.bloodFiles||[],b=a.baseline;
+  const parts=[];
+  if(b&&b.score!=null)parts.push(`<span class="eyebrow">Client saw a baseline of ${b.score.toFixed(1)}/10, first focus ${escH(b.focus)}</span>`);
+  if(files.length){parts.push('<span class="eyebrow gold">Blood work uploaded</span>');files.forEach((f,i)=>parts.push(`<div class="frow"><span>${escH(f.name)} <span class="submsg">${Math.max(1,Math.round((f.size||0)/1024))} KB</span></span><button class="btn" data-file="${i}">Open</button></div>`))}
+  else if(ex.bloods==='yes')parts.push('<span class="submsg">Said they have blood work from the last 12 months but didn’t upload it. Ask them to bring it to the call.</span>');
+  box.innerHTML=parts.join('');box.hidden=!parts.length;
+  box.querySelectorAll('[data-file]').forEach(btn=>btn.addEventListener('click',async()=>{
+    const f=files[+btn.dataset.file];btn.disabled=true;subMsg('Opening file…');
+    try{const j=await sb(`/storage/v1/object/sign/audit-uploads/${f.path.split('/').map(encodeURIComponent).join('/')}`,{method:'POST',body:JSON.stringify({expiresIn:600})});
+      const url=SB.url+'/storage/v1'+(j.signedURL||j.signedUrl);const w=window.open(url,'_blank','noopener');
+      subMsg(w?'File opened in a new tab. The link expires in 10 minutes.':'');if(!w){$('subMsg').innerHTML=`<a href="${url}" target="_blank" rel="noopener">Open ${escH(f.name)}</a> (link expires in 10 minutes)`}}
+    catch(err){subMsg(err.message,1)}finally{btn.disabled=false}
+  }));
 }
 function loadSubsSilently(){$('subList').querySelectorAll('.subrow').forEach(r=>r.classList.toggle('on',!!r.querySelector(`[data-open="${openId}"]`)))}
 $('subSave').addEventListener('click',async()=>{
