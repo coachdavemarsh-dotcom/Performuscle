@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Performance Audit · Performuscle</title>
+<meta name="description" content="The Performance Audit: where you are, where you're going and why. Ten minutes before our first call, so the call starts at the deep end.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* Layout: one question per screen. Sticky top bar with section progress, a single centred card, back/next at the foot. */
+:root{
+  --bg:#0B0B0A; --surface:#121211; --surface-2:#181816; --surface-3:#201F1C;
+  --ink:#F4F2EC; --off:#D9D6CE; --muted:#9A968E; --line:rgba(255,255,255,.08);
+  --accent:#00C896; --accent-hi:#4DFFC9; --accent-dim:rgba(0,200,150,.14); --bad:#E5674F;
+  --display:"Oswald","Arial Narrow",Arial,sans-serif;
+  --text:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.11),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.05),transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font-family:var(--text);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+a{color:var(--accent)}
+[hidden]{display:none!important}
+
+.top{position:sticky;top:0;z-index:10;background:rgba(11,11,10,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.top-in{max-width:920px;margin:0 auto;padding:14px max(20px,env(safe-area-inset-right,0px)) 0 max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+.brandrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.02em;color:var(--ink);text-decoration:none}
+.logo span{color:var(--accent)}
+.badge{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;background:var(--ink);color:var(--bg);padding:3px 9px;border-radius:999px}
+.saved{font-size:12px;color:var(--muted)}
+.secs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:0 4px}
+.secs::-webkit-scrollbar{display:none}
+.sec{flex:1 0 auto;min-width:92px;display:flex;align-items:baseline;gap:8px;padding:8px 6px 10px;border-bottom:2px solid var(--line);font-size:13px;color:var(--muted);white-space:nowrap}
+.sec b{font-family:var(--display);font-weight:500;font-size:13px}
+.sec.done{color:var(--off);border-bottom-color:rgba(0,200,150,.45)}
+.sec.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+
+main{max-width:760px;margin:0 auto;padding:clamp(28px,6vw,64px) max(20px,env(safe-area-inset-right,0px)) calc(120px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px))}
+.screen{display:flex;flex-direction:column;gap:22px;animation:rise .35s ease both}
+@keyframes rise{from{opacity:.0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(32px,6vw,52px);line-height:1.05;text-transform:uppercase;letter-spacing:.005em;text-wrap:balance}
+.help{color:var(--off);font-size:17px;max-width:58ch}
+.fields{display:flex;flex-direction:column;gap:18px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:520px){.row2{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:7px;min-width:0}
+.f > label,.f > .lab{font-size:13px;font-weight:600;color:var(--off)}
+.f .opt-lab{font-weight:400;color:var(--muted)}
+.in{width:100%;background:var(--surface);border:0;box-shadow:inset 0 0 0 1px var(--line);border-radius:12px;padding:14px 16px;font-size:17px;color:var(--ink);min-width:0}
+.in:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--accent)}
+.in::placeholder{color:#5f5c56}
+textarea.in{min-height:120px;resize:vertical;font-family:var(--display);font-size:22px;line-height:1.3;font-weight:500}
+.unit{position:relative}
+.unit .in{padding-right:64px}
+.unit span{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+
+.opts{display:flex;flex-direction:column;gap:10px}
+.opts.inline{flex-direction:row;flex-wrap:wrap}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:0;box-shadow:inset 0 0 0 1px var(--line);border-radius:14px;padding:15px 18px;font-size:16px;cursor:pointer;transition:box-shadow .15s,background .15s}
+.opts.inline .opt{padding:12px 22px}
+.opt:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.opt .k{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--surface-3);color:var(--muted)}
+.opt.on{background:var(--accent-dim);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.opt.on .k{background:var(--accent);color:var(--bg)}
+
+.slider{display:flex;flex-direction:column;gap:10px;background:var(--surface);border-radius:16px;padding:18px 20px;box-shadow:inset 0 0 0 1px var(--line)}
+.slider .v{display:flex;align-items:baseline;gap:8px}
+.slider .v b{font-family:var(--display);font-size:56px;font-weight:600;line-height:1;color:var(--accent)}
+.slider .v span{color:var(--muted)}
+.rng{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(90deg,#0B4D3D,var(--accent) var(--p,50%),var(--surface-3) var(--p,50%));cursor:pointer}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--ink);border:4px solid var(--surface);box-shadow:0 0 0 1px var(--accent)}
+.rng::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ink);border:4px solid var(--surface);box-shadow:0 0 0 1px var(--accent)}
+.ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+
+.freq{display:flex;flex-direction:column;gap:10px}
+.fq{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;align-items:center;background:var(--surface);border-radius:14px;padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line)}
+.fq p{font-size:15.5px;line-height:1.4}
+.pills{display:flex;background:var(--bg);border-radius:999px;padding:3px;gap:2px}
+.pills button{border:0;background:transparent;border-radius:999px;padding:7px 12px;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.pills button.on{background:var(--accent);color:var(--bg);font-weight:700}
+@media (max-width:560px){.fq{grid-template-columns:1fr}.pills{justify-self:start}}
+
+.ladder{display:flex;flex-direction:column;gap:10px}
+.rung{display:flex;flex-direction:column;gap:6px;background:var(--surface);border-radius:14px;padding:12px 16px;box-shadow:inset 0 0 0 1px rgba(0,200,150,var(--a,.15));transition:opacity .25s}
+.rung b{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--accent-hi)}
+.rung input{border:0;background:transparent;font-size:16px;color:var(--ink);width:100%}
+.rung input:focus{outline:none}
+.rung:focus-within{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.rung.dim{opacity:.4}
+
+.consent{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border-radius:14px;padding:16px;box-shadow:inset 0 0 0 1px var(--line);font-size:14px;color:var(--off);cursor:pointer}
+.consent input{width:20px;height:20px;accent-color:var(--accent);flex:none;margin-top:2px}
+.err{color:var(--bad);font-size:14px;font-weight:600}
+
+.foot{position:fixed;left:0;right:0;bottom:0;z-index:10;background:linear-gradient(180deg,rgba(11,11,10,0),rgba(11,11,10,.92) 30%);padding:28px max(20px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px))}
+.foot-in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.count{flex:1;font-size:12.5px;color:var(--muted)}
+.bar{height:3px;border-radius:2px;background:var(--surface-3);margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.btn{border:0;border-radius:999px;padding:14px 26px;font-size:14px;font-weight:700;letter-spacing:.06em;cursor:pointer;white-space:nowrap}
+.btn.primary{background:var(--accent);color:var(--bg)}
+.btn.primary:hover{background:var(--accent-hi)}
+.btn.ghost{background:transparent;color:var(--off);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.btn:disabled{opacity:.5;cursor:default}
+.hint{font-size:12px;color:var(--muted)}
+.hint kbd{font-family:var(--text);font-size:11px;padding:1px 6px;border-radius:5px;background:var(--surface-3);color:var(--off)}
+@media (max-width:560px){.hint{display:none}}
+
+/* Welcome */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:32px;align-items:center}
+@media (max-width:720px){.hero{grid-template-columns:1fr}.orbwrap{order:-1;width:min(240px,64vw)!important}}
+.orbwrap{position:relative;width:min(320px,100%);aspect-ratio:1;justify-self:center}
+.orbwrap canvas{width:100%;height:100%;display:block;border-radius:50%}
+.orbtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;pointer-events:none}
+.orbtxt b{font-family:var(--display);font-size:56px;font-weight:600;line-height:1}
+.orbtxt span{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--off)}
+.list{display:flex;flex-direction:column;gap:10px}
+.li{display:flex;flex-direction:column;gap:2px;background:var(--surface);border-radius:14px;padding:14px 18px;box-shadow:inset 0 0 0 1px var(--line)}
+.li b{font-family:var(--display);font-weight:600;font-size:18px;text-transform:uppercase;letter-spacing:.02em}
+.li span{font-size:14.5px;color:var(--muted)}
+.tb{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:600}
+.tb em{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;background:var(--accent);color:var(--bg);padding:5px 10px;border-radius:6px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brandrow">
+      <div style="display:flex;align-items:center;gap:12px"><a class="logo" id="logo" href="/">Perfor<span>muscle</span></a><span class="badge">Audit</span></div>
+      <span class="saved" id="saved">Saved on this device</span>
+    </div>
+    <nav class="secs" id="secs" aria-label="Audit sections"></nav>
+  </div>
+</header>
+
+<main id="main" aria-live="polite"></main>
+
+<div class="foot" id="foot">
+  <div class="foot-in">
+    <button class="btn ghost" id="back">Back</button>
+    <div class="count"><span id="count"></span><div class="bar"><i id="barfill"></i></div></div>
+    <span class="hint" id="hint">Press <kbd>Enter</kbd></span>
+    <button class="btn primary" id="next">Next</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONFIG: brand, links and storage. Change these, not the code.
+   ========================================================= */
+const BRAND={name:'Performuscle',logoA:'Perfor',logoB:'muscle',coach:'Dave',tagline:'Stand in Your Standard.',calendly:'https://calendly.com/coachdavemarsh/client-triage-call',home:'/'};
+const SUPABASE={url:'https://opccfbudpovmxfmpanvj.supabase.co',key:'sb_publishable_brN2Be820KKzLyA8gfGltQ_Tvvus9Lg',table:'performance_audits'};
+const SECTIONS=['Start','You','North Star','Lifestyle','Deep dive','Body','Commitment'];
+
+/* Deep-dive questions: same ids as the coach dashboard */
+function questions(sex){
+  const f=sex==='Female';
+  return [
+   {sec:'Sleep',items:[
+    {id:'q_onset',q:'Struggle to fall asleep, mind racing at night?'},
+    {id:'q_wake',q:'Wake between 1 and 4 am and struggle to get back to sleep?'},
+    {id:'q_unref',q:'Wake unrefreshed, even after 7+ hours in bed?'},
+    {id:'q_snore',q:'Snore, or been told you stop breathing in your sleep?'}]},
+   {sec:'Energy',items:[
+    {id:'q_caff',q:'Need caffeine to function in the morning?'},
+    {id:'q_wired',q:'Flat all day, then a second wind late at night?'},
+    {id:'q_slump',q:'Afternoon slump between 2 and 4 pm?'},
+    {id:'q_crash',q:'Energy crash or brain fog after meals?'},
+    {id:'q_dizzy',q:'Light-headed when standing up quickly?'}]},
+   {sec:'Hormones',items:[
+    {id:'q_libido',q:'Sex drive lower than what is normal for you?'},
+    f?{id:'q_cycle',q:'Cycle changes: longer, irregular or missed periods?'}:{id:'q_morning',q:'Fewer morning erections than usual?'},
+    f?{id:'q_pms',q:'PMS symptoms worse than they used to be?'}:{id:'q_mood',q:'Flat mood or lost your competitive edge?'},
+    {id:'q_drive',q:'Lost the drive to train?'}]},
+   {sec:'Appetite & body',items:[
+    {id:'q_crave',q:'Strong sugar or carb cravings, especially at night?'},
+    {id:'q_hungry',q:'Hungry again within two hours of eating?'},
+    {id:'q_waist',q:'Weight gathering around the waist despite effort?'},
+    {id:'q_cold',q:'Cold hands and feet, or always feel cold?'},
+    {id:'q_hair',q:'Hair shedding or brittle nails?'},
+    {id:'q_gut',q:'Bloating or irregular digestion most days?'}]},
+   {sec:'Training & recovery',items:[
+    {id:'q_heavy',q:'Usual weights feeling heavier than they should?'},
+    {id:'q_sore',q:'Soreness lasting three days or more after sessions?'},
+    {id:'q_stall',q:'Stuck for weeks despite a genuine calorie deficit?'},
+    {id:'q_steps',q:'Moving less day to day than you used to?'}]},
+   {sec:'Stress & behaviour',items:[
+    {id:'q_on',q:'Feel "on" all the time and struggle to switch off?'},
+    {id:'q_alc',q:'Use alcohol to wind down most evenings?'},
+    {id:'q_aon',q:'One bad meal and the week is written off?'},
+    {id:'q_yes',q:'Say yes to others at the cost of your own training or sleep?'},
+    {id:'q_ident',q:'Find it hard to see yourself as someone who trains and eats well?'}]}
+  ];
+}
+
+/* =========================================================
+   SCREENS
+   ========================================================= */
+const RUNGS=['Surface','Deeper','Deeper still','Personal','The real reason'];
+const SCREENS=[
+ {sec:0,welcome:true},
+ {sec:1,eyebrow:'About you',title:'First, who are we talking to?',fields:[{row:[{k:'state.first',l:'First name',t:'text',req:1,ac:'given-name'},{k:'state.last',l:'Last name',t:'text',ac:'family-name'}]}]},
+ {sec:1,eyebrow:'About you',title:'Where can we reach you?',help:'Used only to send your audit summary and book your call.',fields:[{k:'ik.email',l:'Email',t:'email',req:1,ac:'email'},{k:'ik.phone',l:'Phone',t:'tel',ac:'tel'}]},
+ {sec:1,eyebrow:'About you',title:'The basics',fields:[{row:[{k:'state.clientAge',l:'Age',t:'number',u:'years'},{k:'state.sex',l:'Sex',t:'select',o:['Male','Female']}]},{row:[{k:'state.height',l:'Height',t:'number',u:'cm'},{k:'ik.weight',l:'Weight',t:'number',u:'kg'}]}]},
+ {sec:2,eyebrow:'North Star',title:'Twelve months from now, what has to have happened?',help:'The one result that would make this year a win. Be specific.',fields:[{k:'ns.year',t:'textarea',ph:'e.g. 10 cm off my waist and the strongest I’ve been'}]},
+ {sec:2,eyebrow:'North Star',title:'And twelve weeks from now?',help:'If we were talking in twelve weeks, what would you want to have achieved?',fields:[{k:'ns.weeks',t:'textarea',ph:'e.g. Sleeping 7 hours and training three times a week'}]},
+ {sec:2,eyebrow:'North Star',title:'Why does that matter?',help:'Five levels down, until you hit the reason that gets you up on a wet Tuesday.',fields:[{t:'ladder'}]},
+ {sec:2,eyebrow:'North Star',title:'Your non-negotiables',help:'Up to three rules you won’t break, whatever the week throws at you.',fields:[{t:'laws'}]},
+ {sec:3,eyebrow:'Lifestyle',title:'How active are you right now?',fields:[{k:'ik.activity',t:'choice',o:['Sedentary','1–2 times a week','2–4 times a week','5–6 times a week','Intense, 5–6 times a week'],auto:1}]},
+ {sec:3,eyebrow:'Lifestyle',title:'Sleep and steps',help:'Your best estimate is fine. If you wear a tracker, use its weekly average.',fields:[{row:[{k:'state.sleep',l:'Sleep a night',t:'number',u:'hours'},{k:'ik.steps',l:'Steps a day',t:'number',u:'steps'}]}]},
+ {sec:3,eyebrow:'Lifestyle',title:'How stressed are you, most days?',fields:[{k:'state.stress',t:'slider',min:0,max:10,lo:'Not stressed at all',hi:'Completely overwhelmed'},{k:'ik.destress',l:'What do you do to de-stress?',t:'text'}]},
+ {sec:3,eyebrow:'Lifestyle',title:'Food and water',fields:[{k:'ik.tracks',l:'Do you track your nutrition?',t:'yn'},{k:'ik.kcal',l:'Roughly how many calories a day?',t:'number',u:'kcal',show:['ik.tracks','yes']},{k:'ik.water',l:'Water a day',t:'number',u:'litres'}]},
+ {sec:3,eyebrow:'Lifestyle',title:'Caffeine, alcohol and digestion',fields:[{row:[{k:'ik.caff',l:'Caffeinated drinks a week',t:'number',u:'/ week'},{k:'ik.alc',l:'Alcoholic drinks a week',t:'number',u:'/ week'}]},{k:'ik.digest',l:'Do certain foods disrupt your digestion?',t:'yn'},{k:'ik.foods',l:'Which foods?',t:'text',show:['ik.digest','yes']}]},
+ ...[0,1,2,3,4,5].map(i=>({sec:4,eyebrow:'Deep dive',dq:i,help:'How often does this happen? Answer for a normal week.'})),
+ {sec:5,eyebrow:'Body',title:'Any injuries or pain right now?',fields:[{k:'ik.injury',t:'yn'},
+   {k:'ik.where',l:'Where does it hurt?',t:'text',show:['ik.injury','yes']},
+   {k:'ik.pain',l:'How bad is it, out of 10?',t:'slider',min:0,max:10,lo:'No pain',hi:'Worst imaginable',show:['ik.injury','yes']},
+   {k:'ik.trend',l:'Is it getting better or worse?',t:'choice',o:['Getting better','Same','Getting worse'],inline:1,show:['ik.injury','yes']},
+   {row:[{k:'ik.start',l:'When did it start?',t:'text'},{k:'ik.how',l:'How did it start?',t:'text'}],show:['ik.injury','yes']},
+   {row:[{k:'ik.better',l:'What makes it better?',t:'text'},{k:'ik.worse',l:'What makes it worse?',t:'text'}],show:['ik.injury','yes']},
+   {k:'ik.radiate',l:'Does it radiate anywhere?',t:'text',show:['ik.injury','yes']},
+   {k:'ik.life',l:'How does it affect your training and daily life?',t:'text',show:['ik.injury','yes']}]},
+ {sec:5,eyebrow:'Body',title:'Any numbers you already have?',help:'All optional. Skip anything you don’t know.',fields:[{row:[{k:'extra.rhr',l:'Resting heart rate',t:'number',u:'bpm',opt:1},{k:'extra.vo2',l:'VO₂ max',t:'number',u:'ml/kg',opt:1}]},{k:'ik.bpknown',l:'Blood pressure, if you know it',t:'text',opt:1},{k:'extra.bloods',l:'Do you have blood work from the last 12 months?',t:'yn'}]},
+ {sec:6,eyebrow:'Commitment',title:'How ready are you?',fields:[{k:'ik.commit',t:'choice',o:['100% committed, no financial constraints','Committed, with a budget of $150 a week','Unsure, I’d like more information'],auto:1}]},
+ {sec:6,eyebrow:'Last step',title:'When should we call?',fields:[{k:'ik.call',t:'choice',o:['Morning 7–9 am','Afternoon 12–1 pm','Evening 5–7 pm'],inline:1},{t:'consent'}],submit:1},
+ {sec:6,done:true}
+];
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let D={state:{},ik:{},ns:{why:[],laws:[]},ans:{},extra:{}},cur=0,consent=false,sending=false;
+const KEY='pa_audit_draft_v1';
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.D){D=Object.assign(D,s.D);cur=Math.min(s.cur||0,SCREENS.length-2)}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({D,cur}));$('saved').textContent='Saved on this device'}catch(e){$('saved').textContent=''}}
+const $=id=>document.getElementById(id);
+const get=k=>k.split('.').reduce((o,p)=>o==null?o:o[p],D);
+function set(k,v){const ps=k.split('.');let o=D;ps.slice(0,-1).forEach(p=>{o=o[p]=o[p]||{}});o[ps[ps.length-1]]=v;save()}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shown=f=>!f.show||get(f.show[0])===f.show[1];
+const visible=()=>SCREENS.filter(()=>true);
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function fieldHTML(f){
+  if(!shown(f))return '';
+  if(f.row)return `<div class="row2">${f.row.map(fieldHTML).join('')}</div>`;
+  const v=f.k?get(f.k):null,id='f_'+(f.k||f.t).replace(/\./g,'_');
+  const lab=f.l?`<label for="${id}">${esc(f.l)}${f.opt?' <span class="opt-lab">(optional)</span>':''}</label>`:'';
+  switch(f.t){
+    case 'text':case 'email':case 'tel':return `<div class="f">${lab}<input class="in" id="${id}" data-k="${f.k}" type="${f.t}" ${f.ac?`autocomplete="${f.ac}"`:''} placeholder="${esc(f.ph||'')}" value="${esc(v)}"></div>`;
+    case 'number':return `<div class="f">${lab}<div class="unit"><input class="in" id="${id}" data-k="${f.k}" type="number" inputmode="decimal" step="any" value="${esc(v)}"><span>${esc(f.u||'')}</span></div></div>`;
+    case 'textarea':return `<div class="f">${lab}<textarea class="in" id="${id}" data-k="${f.k}" placeholder="${esc(f.ph||'')}" rows="3">${esc(v)}</textarea></div>`;
+    case 'select':return `<div class="f"><span class="lab">${esc(f.l)}</span><div class="opts inline">${f.o.map(o=>`<button type="button" class="opt ${v===o?'on':''}" data-k="${f.k}" data-v="${esc(o)}" aria-pressed="${v===o}">${esc(o)}</button>`).join('')}</div></div>`;
+    case 'choice':return `<div class="f">${f.l?`<span class="lab">${esc(f.l)}</span>`:''}<div class="opts ${f.inline?'inline':''}">${f.o.map((o,i)=>`<button type="button" class="opt ${v===o?'on':''}" data-k="${f.k}" data-v="${esc(o)}" data-auto="${f.auto?1:''}" aria-pressed="${v===o}">${f.inline?'':`<span class="k">${String.fromCharCode(65+i)}</span>`}${esc(o)}</button>`).join('')}</div></div>`;
+    case 'yn':return `<div class="f">${f.l?`<span class="lab">${esc(f.l)}</span>`:''}<div class="opts inline">${[['yes','Yes'],['no','No']].map(([x,t])=>`<button type="button" class="opt ${v===x?'on':''}" data-k="${f.k}" data-v="${x}" data-re="1" aria-pressed="${v===x}">${t}</button>`).join('')}</div></div>`;
+    case 'slider':{const n=v===''||v==null?null:+v,mid=Math.round((f.min+f.max)/2);return `<div class="f">${lab}<div class="slider"><div class="v"><b id="${id}_v">${n??'–'}</b><span>/ ${f.max}</span></div><input class="rng" type="range" id="${id}" data-k="${f.k}" min="${f.min}" max="${f.max}" step="1" value="${n??mid}" style="--p:${(((n??mid)-f.min)/(f.max-f.min))*100}%" aria-label="${esc(f.l||'Score')}"><div class="ends"><span>${esc(f.lo)}</span><span>${esc(f.hi)}</span></div></div></div>`}
+    case 'ladder':return `<div class="ladder">${RUNGS.map((r,i)=>{const w=D.ns.why[i]||'',prev=i===0||D.ns.why[i-1];return `<div class="rung ${prev?'':'dim'}" style="margin-left:${Math.min(i*14,56)}px;--a:${(0.15+i*0.15).toFixed(2)}"><b>${i+1}. ${r}</b><input data-why="${i}" aria-label="Why, level ${i+1}" placeholder="${i===0?'Why do you want this?':'And why does that matter?'}" value="${esc(w)}"></div>`}).join('')}</div>`;
+    case 'laws':return `<div class="fields">${[0,1,2].map(i=>`<div class="f"><input class="in" data-law="${i}" aria-label="Non-negotiable ${i+1}" placeholder="${['e.g. Sessions are booked like meetings','e.g. Lights out by 10:30 on weeknights','e.g. No drinking Monday to Thursday'][i]}" value="${esc(D.ns.laws[i]||'')}"></div>`).join('')}</div>`;
+    case 'consent':return `<label class="consent"><input type="checkbox" id="consent" ${consent?'checked':''}><span>I agree that my answers are stored securely and used only by ${esc(BRAND.coach)} to prepare my coaching. They're never shared or sold.</span></label><input class="hp" id="company" tabindex="-1" autocomplete="off" aria-hidden="true">`;
+  }
+  return '';
+}
+
+function render(){
+  const s=SCREENS[cur],m=$('main');
+  // Sections bar
+  $('secs').innerHTML=SECTIONS.map((n,i)=>`<div class="sec ${i===s.sec?'on':i<s.sec?'done':''}"><b>${i}</b>${n}</div>`).join('');
+  const on=$('secs').querySelector('.on');if(on)on.scrollIntoView({block:'nearest',inline:'center'});
+  // Footer
+  const total=SCREENS.length-2,pos=Math.max(0,Math.min(cur,total));
+  $('foot').hidden=!!s.done;
+  $('back').style.visibility=cur===0?'hidden':'visible';
+  $('count').textContent=s.welcome?'About 10 minutes':`${pos} of ${total}`;
+  $('barfill').style.width=(pos/total*100)+'%';
+  $('next').textContent=s.welcome?'Start the audit':s.submit?(sending?'Sending…':'Submit my audit'):'Next';
+  $('next').disabled=sending;
+  $('hint').hidden=!!s.welcome;
+
+  if(s.welcome){
+    m.innerHTML=`<section class="screen"><div class="hero"><div style="display:flex;flex-direction:column;gap:20px">
+      <span class="eyebrow">${esc(BRAND.name)} · Performance Audit</span>
+      <h1>Your baseline, before day one.</h1>
+      <p class="help">Ten minutes on where you are, where you're going and why. ${esc(BRAND.coach)} reads every answer before your call, so the call starts at the deep end.</p>
+      <p class="tb"><em>Time back</em>We skip the forms and talk about what matters.</p>
+      </div><div class="orbwrap"><canvas id="orb" aria-hidden="true"></canvas><div class="orbtxt"><b>10</b><span>minutes</span></div></div></div>
+      <div class="list">
+        <div class="li"><b>North Star</b><span>The one result for the year, and the why behind it.</span></div>
+        <div class="li"><b>Lifestyle</b><span>Sleep, stress, food, movement. Your honest normal week.</span></div>
+        <div class="li"><b>Deep dive</b><span>The signals that tell us which kind of plan you need first.</span></div>
+        <div class="li"><b>Body</b><span>Injuries and any numbers you already have.</span></div>
+      </div></section>`;
+    startOrb();return;
+  }
+  if(s.done){
+    const first=esc(D.state.first||'');
+    m.innerHTML=`<section class="screen"><span class="eyebrow">Audit complete</span><h1>Thank you${first?', '+first:''}.</h1>
+      <p class="help">${esc(BRAND.coach)} will read every answer and build your baseline before you speak. ${previewMode()?'<br><strong>Preview mode:</strong> on this page your answers are kept on this device only and not sent.':''}</p>
+      <div class="list">
+        <div class="li"><b>1 · Book your call</b><span>Pick a time that suits you. Thirty minutes, no obligation.</span></div>
+        <div class="li"><b>2 · Your audit is reviewed</b><span>Your answers are turned into a baseline and a first-phase plan.</span></div>
+        <div class="li"><b>3 · We start at the deep end</b><span>The call is about what it means for you, not filling in forms.</span></div>
+      </div>
+      <div><a class="btn primary" style="display:inline-block;text-decoration:none" href="${BRAND.calendly}" target="_blank" rel="noopener">Book your call →</a></div>
+      <p class="help" style="font-family:var(--display);text-transform:uppercase;font-size:22px;color:var(--ink)">${esc(BRAND.tagline)}</p></section>`;
+    return;
+  }
+  let body='';
+  if(s.dq!=null){
+    const g=questions(D.state.sex)[s.dq];
+    body=`<div class="freq">${g.items.map(q=>`<div class="fq"><p>${esc(q.q)}</p><div class="pills" role="group" aria-label="${esc(q.q)}">${['Never','Sometimes','Often'].map((t,i)=>`<button type="button" data-q="${q.id}" data-v="${i}" class="${D.ans[q.id]===i?'on':''}" aria-pressed="${D.ans[q.id]===i}">${t}</button>`).join('')}</div></div>`).join('')}</div>`;
+    s.title=g.sec;
+  }else body=`<div class="fields">${s.fields.map(fieldHTML).join('')}</div>`;
+  m.innerHTML=`<section class="screen"><span class="eyebrow">${esc(s.eyebrow)}</span><h1>${esc(s.title)}</h1>${s.help?`<p class="help">${esc(s.help)}</p>`:''}${body}<p class="err" id="err" hidden></p></section>`;
+  bind();
+  const first=m.querySelector('input.in,textarea.in,.rung input');if(first&&window.innerWidth>700)first.focus({preventScroll:true});
+}
+
+function bind(){
+  const m=$('main');
+  m.querySelectorAll('[data-k].in').forEach(el=>el.addEventListener('input',()=>set(el.dataset.k,el.value)));
+  m.querySelectorAll('.rng').forEach(el=>{const upd=()=>{set(el.dataset.k,+el.value);$(el.id+'_v').textContent=el.value;el.style.setProperty('--p',((el.value-el.min)/(el.max-el.min))*100+'%')};el.addEventListener('input',upd);el.addEventListener('change',upd)});
+  m.querySelectorAll('button.opt').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.k,v=b.dataset.v;set(k,get(k)===v&&!b.dataset.auto?'':v);
+    const s=SCREENS[cur];const hasCond=(s.fields||[]).some(f=>f.show&&f.show[0]===k);
+    if(hasCond||b.dataset.re||k==='state.sex'){render();return}
+    b.parentElement.querySelectorAll('.opt').forEach(x=>{const o=x.dataset.v===get(k);x.classList.toggle('on',o);x.setAttribute('aria-pressed',o)});
+    if(b.dataset.auto&&get(k))setTimeout(next,260);
+  }));
+  m.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click',()=>{D.ans[b.dataset.q]=+b.dataset.v;save();b.parentElement.querySelectorAll('button').forEach(x=>{const o=+x.dataset.v===D.ans[b.dataset.q];x.classList.toggle('on',o);x.setAttribute('aria-pressed',o)})}));
+  m.querySelectorAll('[data-why]').forEach(el=>el.addEventListener('input',()=>{const i=+el.dataset.why;D.ns.why[i]=el.value;save();const nxt=m.querySelectorAll('.rung')[i+1];if(nxt)nxt.classList.toggle('dim',!el.value)}));
+  m.querySelectorAll('[data-law]').forEach(el=>el.addEventListener('input',()=>{D.ns.laws[+el.dataset.law]=el.value;save()}));
+  const c=$('consent');if(c)c.addEventListener('change',()=>{consent=c.checked});
+}
+
+function showErr(t){const e=$('err');if(e){e.textContent=t;e.hidden=false}}
+function validate(){
+  const s=SCREENS[cur];
+  const flat=(s.fields||[]).flatMap(f=>f.row?f.row:[f]);
+  for(const f of flat){if(f.req&&!String(get(f.k)||'').trim()){showErr(`Please add your ${f.l.toLowerCase()}.`);return false}}
+  if(flat.some(f=>f.k==='ik.email')&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(D.ik.email||'')){showErr('That email doesn’t look right. Check it and try again.');return false}
+  if(s.submit&&!consent){showErr('Tick the box to agree to how your answers are stored.');return false}
+  return true;
+}
+function previewMode(){return !/(^|\.)coachdavemarsh\.net$|^localhost$|^127\.0\.0\.1$|netlify\.app$/.test(location.hostname)}
+
+async function submit(){
+  if($('company')&&$('company').value){cur++;render();return}
+  sending=true;render();
+  const payload={full_name:[D.state.first,D.state.last].filter(Boolean).join(' ').trim(),email:(D.ik.email||'').trim(),phone:(D.ik.phone||'').trim()||null,consent:true,
+    answers:{...D,state:{...D.state,clientName:[D.state.first,D.state.last].filter(Boolean).join(' '),sex:D.state.sex==='Female'?'f':D.state.sex==='Male'?'m':''},submittedAt:new Date().toISOString(),version:1}};
+  try{
+    if(!previewMode()){
+      const r=await fetch(`${SUPABASE.url}/rest/v1/${SUPABASE.table}`,{method:'POST',headers:{'apikey':SUPABASE.key,'Authorization':'Bearer '+SUPABASE.key,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)});
+      if(!r.ok)throw new Error('status '+r.status);
+    }
+    try{localStorage.removeItem(KEY)}catch(e){}
+    sending=false;cur++;render();window.scrollTo(0,0);
+  }catch(e){
+    sending=false;render();showErr('Your audit didn’t send. Check your connection and press Submit again. Your answers are still saved on this device.');
+  }
+}
+function next(){
+  const s=SCREENS[cur];
+  if(!s.welcome&&!validate())return;
+  if(s.submit){submit();return}
+  if(cur<SCREENS.length-1){cur++;save();render();window.scrollTo(0,0)}
+}
+function back(){if(cur>0){cur--;save();render();window.scrollTo(0,0)}}
+$('next').addEventListener('click',next);
+$('back').addEventListener('click',back);
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&e.target.tagName!=='TEXTAREA'&&e.target.tagName!=='BUTTON'&&e.target.tagName!=='A'){e.preventDefault();next()}});
+$('logo').innerHTML=`${esc(BRAND.logoA)}<span>${esc(BRAND.logoB)}</span>`;$('logo').href=BRAND.home;
+
+/* Orb */
+let orbRaf=0;
+function startOrb(){
+  cancelAnimationFrame(orbRaf);const c=$('orb');if(!c)return;const ctx=c.getContext('2d');if(!ctx)return;
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const r=c.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),W=r.width||280;c.width=W*dpr;c.height=W*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  const P=Array.from({length:170},()=>{const edge=Math.random()<0.55;return {a:Math.random()*Math.PI*2,r:edge?0.42+Math.random()*0.08:Math.sqrt(Math.random())*0.44,s:(Math.random()*0.6+0.2)*(Math.random()<.5?-1:1)*0.0018,z:Math.random()*1.6+0.4,t:Math.random()*6.3}});
+  (function frame(ts){
+    if(!document.body.contains(c))return;
+    ctx.clearRect(0,0,W,W);const cx=W/2;
+    const g=ctx.createRadialGradient(cx,cx,W*.05,cx,cx,W*.5);g.addColorStop(0,'rgba(6,52,41,.95)');g.addColorStop(.6,'rgba(6,40,32,.5)');g.addColorStop(1,'rgba(11,11,10,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cx,W*.5,0,Math.PI*2);ctx.fill();
+    for(const p of P){if(!reduce)p.a+=p.s;const tw=reduce?.8:.55+.45*Math.sin((ts||0)/600+p.t);ctx.fillStyle=p.r>.4?`rgba(77,255,201,${.75*tw})`:`rgba(244,242,236,${.45*tw})`;ctx.beginPath();ctx.arc(cx+Math.cos(p.a)*p.r*W,cx+Math.sin(p.a)*p.r*W,p.z,0,Math.PI*2);ctx.fill()}
+    if(!reduce)orbRaf=requestAnimationFrame(frame);
+  })();
+}
+render();
+</script>
+</body>
+</html>

@@ -9,35 +9,35 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
 
   <style>
     /* ============================================================
        DESIGN TOKENS
     ============================================================ */
     :root {
-      --black:       #060608;
-      --surface:     #0d0d0f;
-      --surface-2:   #131316;
-      --surface-3:   #1a1a1e;
+      --black:       #0B0B0A;
+      --surface:     #121211;
+      --surface-2:   #181816;
+      --surface-3:   #201F1C;
       --accent:      #00C896;
       --accent-hi:   #00FFB8;
       --accent-dim:  rgba(0, 200, 150, 0.12);
-      --white:       #F5F6FA;
-      --off-white:   #E8E9EE;
-      --muted:       #7a7a7d;
+      --white:       #F4F2EC;
+      --off-white:   #D9D6CE;
+      --muted:       #9A968E;
       --subtle:      #4a5568;
-      --border:      rgba(255,255,255,0.07);
+      --border:      rgba(255,255,255,0.08);
       --border-hi:   rgba(0,200,150,0.25);
 
-      --font-display: 'Bebas Neue', sans-serif;
-      --font-sub:     'Josefin Sans', sans-serif;
-      --font-body:    'Montserrat', sans-serif;
+      --font-display: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+      --font-sub:     'DM Sans', system-ui, -apple-system, sans-serif;
+      --font-body:    'DM Sans', system-ui, -apple-system, sans-serif;
 
       --max-w:  1280px;
       --pad-h:  clamp(24px, 5vw, 80px);
       --pad-v:  clamp(72px, 10vw, 140px);
-      --radius: 0px;
+      --radius: 14px;
       --ease:   0.22s ease;
     }
 
@@ -2134,6 +2134,44 @@
       .reset-feature__days  { grid-template-columns: repeat(3, 1fr); }
       .instagram__grid      { grid-template-columns: repeat(3, 1fr); }
     }
+
+    /* ============================================================
+       HOUSE STYLE 2026 — Oswald + DM Sans, near-black, white type,
+       teal used sparingly. Matches the Performance Audit.
+    ============================================================ */
+    body{background:radial-gradient(1000px 560px at 90% -6%,rgba(0,200,150,.10),transparent 62%),radial-gradient(800px 600px at -12% 38%,rgba(0,200,150,.04),transparent 60%),var(--black);background-attachment:fixed;font-size:16px;line-height:1.6}
+    .display-1,.display-2,.display-3{font-weight:600;letter-spacing:.005em;line-height:1.02}
+    .display-1{font-size:clamp(56px,8vw,112px)}
+    .display-2{font-size:clamp(38px,4.8vw,64px)}
+    .display-3{font-size:clamp(28px,3vw,42px)}
+    .eyebrow{font-family:var(--font-body);font-size:11px;font-weight:700;letter-spacing:.22em}
+    .eyebrow::before{width:18px;height:2px;border-radius:2px}
+    .body-lg{color:var(--off-white)}
+    /* Buttons: pills */
+    .btn-primary,.btn-outline,.btn-ghost{font-family:var(--font-body);font-size:13px;font-weight:700;letter-spacing:.08em;border-radius:999px!important}
+    .btn-primary{padding:15px 30px}
+    .btn-primary:hover{transform:translateY(-1px)}
+    .btn-outline{padding:14px 28px;border-width:1px}
+    .btn-ghost{color:var(--off-white)}
+    .hero .btn-ghost{border:1px solid rgba(255,255,255,.35)!important;padding:15px 28px!important;text-shadow:none!important}
+    /* Nav */
+    .nav{background:rgba(11,11,10,.78)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+    .nav__links a{font-family:var(--font-body)!important;font-size:12.5px!important;letter-spacing:.06em!important;font-weight:600!important}
+    /* Cards: soft surfaces, rounded, hairline */
+    .pillar-card,.program-card,.testimonial-card,.result-card,.credential,.apply-form,.calendly-panel,.stat-item,.step,.blog-card,.tool-card,.audit-card{border-radius:18px!important}
+    .pillar-card,.testimonial-card,.credential,.apply-form,.calendly-panel,.blog-card{background:var(--surface)!important;border:0!important;box-shadow:inset 0 0 0 1px var(--border)}
+    .pillar-card:hover,.testimonial-card:hover{box-shadow:inset 0 0 0 1px var(--border-hi)}
+    .program-card{overflow:hidden}
+    .result-card__img,.about__image,.about__image-wrap{border-radius:18px;overflow:hidden}
+    .form-input{border-radius:10px!important;background:var(--surface-2)!important;border:1px solid var(--border)!important;font-family:var(--font-body)}
+    .form-input:focus{border-color:var(--accent)!important}
+    .stat-item__number,.step__num,.pillar-card__number{font-weight:600}
+    .ticker{border-block:1px solid var(--border)}
+    .ticker__item{font-family:var(--font-display);font-weight:500;letter-spacing:.06em}
+    .footer{border-top:1px solid var(--border)}
+    .ticker{background:var(--surface)!important}
+    .ticker__item{color:var(--off-white)!important}
+    .ticker__sep{color:var(--accent)!important}
   </style>
 </head>
 <body>
@@ -2147,7 +2185,7 @@
         <a href="#" class="nav__logo">Perfor<span>muscle</span></a>
         <ul class="nav__links">
           <li><a href="#about">Peak Human Performance</a></li>
-          <li><a href="#audit">Performance Audit</a></li>
+          <li><a href="/audit">Performance Audit</a></li>
           <li><a href="#process">90 Day Human Reset</a></li>
           <li><a href="#results">Results</a></li>
           <li><a href="#blog">Blog</a></li>
@@ -2162,7 +2200,7 @@
     <div class="nav__mobile" id="mobileMenu">
       <ul>
         <li><a href="#about" onclick="toggleMenu()">Peak Human Performance</a></li>
-        <li><a href="#audit" onclick="toggleMenu()">Performance Audit</a></li>
+        <li><a href="/audit" onclick="toggleMenu()">Performance Audit</a></li>
         <li><a href="#process" onclick="toggleMenu()">90 Day Human Reset</a></li>
         <li><a href="#results" onclick="toggleMenu()">Results</a></li>
         <li><a href="#blog" onclick="toggleMenu()">Blog</a></li>
@@ -2200,7 +2238,7 @@
           Elite Performance Coaching that enables you to operate at your highest potential, that doesn't sacrifice your health for aesthetics. Real results through evidence-based training and nutrition.
         </p>
         <div class="cta-row">
-          <a href="#audit" class="btn-primary">Take Audit <span class="arrow">→</span></a>
+          <a href="/audit" class="btn-primary">Take Audit <span class="arrow">→</span></a>
           <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="btn-ghost" style="color:#ffffff;border:1px solid rgba(255,255,255,0.5);padding:14px 28px;border-radius:4px;text-shadow:0 1px 6px rgba(0,0,0,0.8);">Book Call →</a>
         </div>
       </div>
@@ -3091,7 +3129,7 @@
           <div class="footer__heading">Navigate</div>
           <ul class="footer__links">
             <li><a href="#about">Peak Human Performance</a></li>
-            <li><a href="#audit">Performance Audit</a></li>
+            <li><a href="/audit">Performance Audit</a></li>
             <li><a href="#reset">90 Day Human Reset</a></li>
             <li><a href="#results">Results</a></li>
             <li><a href="#blog">Blog</a></li>
