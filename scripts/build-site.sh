@@ -18,7 +18,7 @@ for img in hero.jpg top.jpg about.jpg coaching.jpg clients.jpg; do
 done
 # Also catch any other images at root level
 for ext in jpg jpeg png webp svg ico gif; do
-  find . -maxdepth 1 -name "*.${ext}" -exec cp {} dist/ \; 2>/dev/null || true
+  find . -maxdepth 1 -iname "*.${ext}" -exec cp {} dist/ \; 2>/dev/null || true
 done
 
 # Copy recipe images from the app's public folder so they're served on coachdavemarsh.net/recipes/
