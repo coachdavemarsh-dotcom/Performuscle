@@ -1313,7 +1313,7 @@ async function clientFiles(row){
   }catch(e){/* table not created yet: nothing to show */}
 }
 /* ---------- Client Hub: progress, answers and video links ---------- */
-const HUB=[['regulate','Somatics: regulate the body','Regulate · Body'],['identity','Identity: old self, new self','Rehearse · Mind'],['limits','Self-limits: the inner voice','Rehearse · Mind'],['boundaries','Boundaries: protect the standard','Rehearse · Mind'],['release','Release: eighteen inches','Release · Heart']];
+const HUB=[['regulate','Somatics: regulate the body','Regulate · Body'],['identity','Identity: old self, new self','Rehearse · Mind'],['limits','Self-limits: the inner voice','Rehearse · Mind'],['boundaries','Boundaries: protect the standard','Rehearse · Mind'],['release','Release: head to heart','Release · Heart']];
 async function clientHub(row){
   const box=$('subHub');box.hidden=true;box.innerHTML='';if(!row.email)return;
   try{
