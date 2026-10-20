@@ -428,12 +428,6 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
     </div>
   </section>
 
-  <section class="panel" id="innerPanel">
-    <div class="ph"><div class="ttl"><span class="eyebrow gold">Heart · Alignment</span><h2>Inner work · from first call</h2></div><span class="eyebrow">Shown to the client on My Plan</span></div>
-    <p class="intro">Fill these from the first call or its transcript. They become the Heart system and the Alignment ring on the client's dashboard. Leave any blank and the client sees "We build this out from your first call".</p>
-    <div class="inner" id="innerGrid"></div>
-  </section>
-
   <section class="panel">
     <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 7 · The plan</span><h2>Roadmap</h2></div><span class="eyebrow">Health → Function → Performance → Mindset</span></div>
     <div class="road" id="road"></div>
@@ -1251,7 +1245,7 @@ const CLIENT_LEAD={
  res:'Your first phase targets metabolic health: a moderate deficit, daily steps, steady cardio and strength training. We check your waist every fortnight and repeat bloods at 12 weeks.',
  bridge:'Nothing is red, but the foundations need tightening. A short first phase locks in sleep, food and stress before we load up the structural work.',
  clear:'Your health markers are clear, so we start with how you move: structural balance and pattern quality built into your training.'};
-const ABOUT={movement:'Pattern quality, joint health and how you load your body.',nutrition:'Energy, protein, food quality and the structure of your day.',recovery:'Sleep, breath and how well your nervous system settles.',identity:'Who you are becoming, and whether your actions match it.',authority:'Trusting your own decisions and following through on them.',boundaries:'Protecting your time, energy and training.',contribution:'Who this is for beyond you.',story:'The story you’ve been living, and the one you’re writing next.',devotion:'What you’re committed to when motivation runs out.'};
+const ABOUT={limits:'The patterns that pull you off plan: all-or-nothing thinking, avoidance, quitting near the finish line.',somatics:'Body awareness and settling your nervous system: breath, down-regulation, noticing stress early.',peptides:'Whether peptides have a place in your plan. We look at this once the foundations hold.',movement:'Structural balance, joint health and pattern quality, built into your training.',nutrition:'Energy, protein, food quality and the structure of your day.',recovery:'Sleep, heart rate variability and morning heart rate. The base everything else is built on.',identity:'Who you are becoming, and whether your actions match it.',authority:'Trusting your own decisions and following through on them.',boundaries:'Protecting your time, energy and training.',contribution:'Who this is for beyond you.',story:'The story you’ve been living, and the one you’re writing next.',devotion:'What you’re committed to when motivation runs out.'};
 const toYou=t=>String(t||'').replace(/the client's/g,'your').replace(/The client's/g,'Your').replace(/the client is/g,'you are').replace(/The client is/g,'You are').replace(/the client/g,'you').replace(/The client/g,'You');
 function buildPlan(){
   update();
@@ -1268,11 +1262,7 @@ function buildPlan(){
    client:{first:name.split(/\s+/)[0]||'there',name:name||ik.email||''},coach:'Dave',publishedAt:new Date().toISOString(),
    baseline:{score:score??0,focus:low?low.k:'Sleep',domains:d},
    phase:{index:a.phase,name:['Health','Function','Performance','Mindset'][a.phase],mode:a.mode,weeks:a.weeks,lead:CLIENT_LEAD[a.key]},
-   systems:{
-    body:{name:'Body',sub:'Nervous system · safety',spokes:[sp('movement','Movement',spokes.movement,acts('movement')),sp('nutrition','Nutrition',spokes.nutrition,acts('nutrition')),sp('recovery','Recovery',spokes.recovery,acts('recovery','somatics'))]},
-    mind:{name:'Mind',sub:'Beliefs · story',spokes:[sp('identity','Identity',spokes.identity,acts('identity')),sp('authority','Authority',spokes.limits,acts('limits')),sp('boundaries','Boundaries',spokes.boundaries,acts('boundaries'))]},
-    heart:{name:'Heart',sub:'Desire · meaning',spokes:[heart('contribution'),heart('story'),heart('devotion')]}},
-   alignment:{permission:al('permission'),intention:al('intention'),direction:al('direction',(ns.year||'').trim(),'Your North Star')},
+   launchpad:SPOKES.map(x=>({id:x.id,side:x.side,short:x.short,name:x.name,score:sc(spokes[x.id]),about:ABOUT[x.id]||toYou(x.d),actions:acts(x.id)})),
    northStar:{year:ns.year||'',weeks:ns.weeks||'',week:ns.week||'',why:(ns.why||[]).filter(Boolean),laws:(ns.laws||[]).filter(Boolean)},
    track:TRACK.slice()};
 }
