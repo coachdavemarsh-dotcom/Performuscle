@@ -9,17 +9,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink:        #060608;
-      --ink-2:      #0d0d0f;
-      --ink-3:      #1a1a1e;
-      --accent:     #00C896;
-      --accent-hi:  #00FFB8;
-      --accent-dim: rgba(0,200,150,.08);
-      --white:      #F5F6FA;
-      --muted:      #7a7a7d;
-      --danger:     #EF4444;
-      --warn:       #F59E0B;
-      --purple:     #a78bfa;
+      --ink:        #F1EDE4;
+      --ink-2:      #FBFAF6;
+      --ink-3:      #ECE7DC;
+      --accent:     #8A6A3B;
+      --accent-hi:  #6F5530;
+      --accent-dim: rgba(138,106,59,.08);
+      --white:      #141413;
+      --muted:      #77726A;
+      --danger:     #B23A26;
+      --warn:       #6F5530;
+      --purple:     #6E5A99;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,7 +49,7 @@
     .logo-block { text-align: center; }
     .logo-icon {
       width: 64px; height: 64px; border-radius: 14px;
-      background: var(--accent-dim); border: 1px solid rgba(0,200,150,.25);
+      background: var(--accent-dim); border: 1px solid rgba(138,106,59,.25);
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 1rem;
     }
@@ -59,7 +59,7 @@
     .logo-block p { margin-top: .45rem; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
 
     .gate-card {
-      background: var(--ink-2); border: 1px solid rgba(255,255,255,.07);
+      background: var(--ink-2); border: 1px solid rgba(20,20,19,.07);
       border-radius: 16px; padding: 2.5rem 2rem; width: 100%; max-width: 380px;
       display: flex; flex-direction: column; gap: 1.25rem;
     }
@@ -68,7 +68,7 @@
 
     .input-wrap { position: relative; }
     .input-wrap input {
-      width: 100%; background: var(--ink-3); border: 1px solid rgba(255,255,255,.1);
+      width: 100%; background: var(--ink-3); border: 1px solid rgba(20,20,19,.1);
       border-radius: 10px; padding: .85rem 3rem .85rem 1rem;
       font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--white);
       letter-spacing: .15em; outline: none; transition: border-color .2s; text-align: center;
@@ -95,12 +95,12 @@
     .app-nav {
       display: flex; align-items: center; justify-content: space-between;
       padding: 1rem 1.5rem; background: var(--ink-2);
-      border-bottom: 1px solid rgba(255,255,255,.07);
+      border-bottom: 1px solid rgba(20,20,19,.07);
     }
     .nav-brand { display: flex; align-items: center; gap: .6rem; }
     .nav-brand .icon {
       width: 30px; height: 30px; border-radius: 7px;
-      background: var(--accent-dim); border: 1px solid rgba(0,200,150,.2);
+      background: var(--accent-dim); border: 1px solid rgba(138,106,59,.2);
       display: flex; align-items: center; justify-content: center;
     }
     .nav-brand .icon svg { width: 17px; height: 17px; }
@@ -109,14 +109,14 @@
     .nav-right { display: flex; align-items: center; gap: .75rem; }
     .back-btn {
       font-size: .78rem; color: var(--muted); background: none;
-      border: 1px solid rgba(255,255,255,.08); border-radius: 7px;
+      border: 1px solid rgba(20,20,19,.08); border-radius: 7px;
       padding: .35rem .75rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
       text-decoration: none; transition: color .2s, border-color .2s;
     }
-    .back-btn:hover { color: var(--white); border-color: rgba(255,255,255,.2); }
+    .back-btn:hover { color: var(--white); border-color: rgba(20,20,19,.2); }
     .lock-btn {
       font-size: .78rem; color: var(--muted); background: none;
-      border: 1px solid rgba(255,255,255,.08); border-radius: 7px;
+      border: 1px solid rgba(20,20,19,.08); border-radius: 7px;
       padding: .35rem .75rem; cursor: pointer; font-family: 'DM Sans', sans-serif;
       transition: color .2s, border-color .2s;
     }
@@ -128,7 +128,7 @@
     .page-eyebrow {
       display: inline-block; font-family: 'DM Sans', sans-serif; font-size: .7rem;
       font-weight: 600; letter-spacing: .30em; color: var(--accent);
-      background: rgba(0,200,150,.08); border: 1px solid rgba(0,200,150,.2);
+      background: rgba(138,106,59,.08); border: 1px solid rgba(138,106,59,.2);
       padding: .25rem .9rem; border-radius: 20px; margin-bottom: 1rem;
     }
     .page-title { font-family: 'Oswald', sans-serif; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: .04em; line-height: 1; }
@@ -137,7 +137,7 @@
 
     /* ── FORMULA BOX ── */
     .formula-box {
-      background: var(--ink-2); border: 1px solid rgba(0,200,150,.2);
+      background: var(--ink-2); border: 1px solid rgba(138,106,59,.2);
       border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
       display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
     }
@@ -151,7 +151,7 @@
     .input-group { display: flex; flex-direction: column; gap: .5rem; }
     .input-label { font-family: 'DM Sans', sans-serif; font-size: .72rem; font-weight: 600; letter-spacing: .2em; color: var(--muted); }
     .input-field {
-      background: var(--ink-2); border: 1px solid rgba(255,255,255,.1);
+      background: var(--ink-2); border: 1px solid rgba(20,20,19,.1);
       border-radius: 10px; padding: .75rem 1rem;
       font-family: 'DM Sans', sans-serif; font-size: .95rem; color: var(--white);
       outline: none; transition: border-color .2s; width: 100%;
@@ -160,7 +160,7 @@
     .input-field::placeholder { color: var(--muted); font-size: .85rem; }
 
     .unit-toggle {
-      display: flex; background: var(--ink-3); border: 1px solid rgba(255,255,255,.08);
+      display: flex; background: var(--ink-3); border: 1px solid rgba(20,20,19,.08);
       border-radius: 8px; padding: 3px; gap: 3px;
     }
     .unit-btn {
@@ -189,11 +189,11 @@
     .result-hero::before {
       content: ''; position: absolute; top: -40px; right: -40px;
       width: 180px; height: 180px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%);
+      background: radial-gradient(circle, rgba(20,20,19,.06), transparent 70%);
     }
-    .result-hero.status-optimal { background: rgba(0,200,150,.1); border: 1px solid rgba(0,200,150,.35); }
-    .result-hero.status-low     { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.35); }
-    .result-hero.status-reds    { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.35); }
+    .result-hero.status-optimal { background: rgba(138,106,59,.1); border: 1px solid rgba(138,106,59,.35); }
+    .result-hero.status-low     { background: rgba(111,85,48,.08); border: 1px solid rgba(111,85,48,.35); }
+    .result-hero.status-reds    { background: rgba(178,58,38,.08); border: 1px solid rgba(178,58,38,.35); }
 
     .result-status {
       font-family: 'DM Sans', sans-serif; font-size: .7rem; font-weight: 600;
@@ -213,14 +213,14 @@
 
     .result-ea-unit { font-size: .8rem; color: var(--muted); }
     .result-message { font-size: .88rem; line-height: 1.6; margin-top: .75rem; }
-    .status-optimal .result-message { color: rgba(0,200,150,.85); }
-    .status-low     .result-message { color: rgba(245,158,11,.85); }
-    .status-reds    .result-message { color: rgba(239,68,68,.85); }
+    .status-optimal .result-message { color: rgba(138,106,59,.85); }
+    .status-low     .result-message { color: rgba(111,85,48,.85); }
+    .status-reds    .result-message { color: rgba(178,58,38,.85); }
 
     /* ── STAT CARDS ── */
     .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
     .stat-card {
-      background: var(--ink-2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px;
+      background: var(--ink-2); border: 1px solid rgba(20,20,19,.07); border-radius: 12px;
       padding: 1.25rem 1rem; text-align: center;
     }
     .stat-value { font-family: 'Oswald', sans-serif; font-size: 2rem; color: var(--accent); line-height: 1; margin-bottom: .35rem; }
@@ -233,9 +233,9 @@
     .ea-bar-segment {
       position: absolute; top: 0; height: 100%;
     }
-    .ea-bar-reds    { left: 0;    width: 40%; background: rgba(239,68,68,.5);  border-radius: 8px 0 0 8px; }
-    .ea-bar-low     { left: 40%;  width: 30%; background: rgba(245,158,11,.5); }
-    .ea-bar-optimal { left: 70%;  width: 30%; background: rgba(0,200,150,.5);  border-radius: 0 8px 8px 0; }
+    .ea-bar-reds    { left: 0;    width: 40%; background: rgba(178,58,38,.5);  border-radius: 8px 0 0 8px; }
+    .ea-bar-low     { left: 40%;  width: 30%; background: rgba(111,85,48,.5); }
+    .ea-bar-optimal { left: 70%;  width: 30%; background: rgba(138,106,59,.5);  border-radius: 0 8px 8px 0; }
     .ea-bar-marker  {
       position: absolute; top: 50%; transform: translateX(-50%) translateY(-50%);
       width: 18px; height: 18px; background: var(--white); border-radius: 50%;
@@ -247,11 +247,11 @@
 
     /* ── RECOMMENDATION BOX ── */
     .rec-box {
-      background: var(--ink-2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px;
+      background: var(--ink-2); border: 1px solid rgba(20,20,19,.07); border-radius: 12px;
       padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;
     }
     .rec-box h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; letter-spacing: .06em; margin-bottom: .75rem; }
-    .rec-item { display: flex; gap: .75rem; margin-bottom: .65rem; align-items: flex-start; font-size: .85rem; color: #c4c4d4; line-height: 1.6; }
+    .rec-item { display: flex; gap: .75rem; margin-bottom: .65rem; align-items: flex-start; font-size: .85rem; color: #4A4740; line-height: 1.6; }
     .rec-item::before { content: '→'; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
     .rec-item strong { color: var(--white); }
 
@@ -260,19 +260,19 @@
     .ref-table th {
       font-family: 'DM Sans', sans-serif; font-size: .68rem; font-weight: 600;
       letter-spacing: .18em; color: var(--muted); padding: .6rem .75rem;
-      border-bottom: 1px solid rgba(255,255,255,.08); text-align: left;
+      border-bottom: 1px solid rgba(20,20,19,.08); text-align: left;
     }
-    .ref-table td { padding: .7rem .75rem; border-bottom: 1px solid rgba(255,255,255,.05); color: #c4c4d4; }
+    .ref-table td { padding: .7rem .75rem; border-bottom: 1px solid rgba(20,20,19,.05); color: #4A4740; }
     .ref-table tr:last-child td { border-bottom: none; }
     .status-pill {
       display: inline-block; font-size: .68rem; font-weight: 600; padding: 2px 9px;
       border-radius: 20px; font-family: 'DM Sans', sans-serif; letter-spacing: .06em;
     }
-    .pill-optimal { background: rgba(0,200,150,.12); color: var(--accent); border: 1px solid rgba(0,200,150,.3); }
-    .pill-low     { background: rgba(245,158,11,.1);  color: var(--warn);   border: 1px solid rgba(245,158,11,.3); }
-    .pill-reds    { background: rgba(239,68,68,.1);   color: var(--danger); border: 1px solid rgba(239,68,68,.3); }
+    .pill-optimal { background: rgba(138,106,59,.12); color: var(--accent); border: 1px solid rgba(138,106,59,.3); }
+    .pill-low     { background: rgba(111,85,48,.1);  color: var(--warn);   border: 1px solid rgba(111,85,48,.3); }
+    .pill-reds    { background: rgba(178,58,38,.1);   color: var(--danger); border: 1px solid rgba(178,58,38,.3); }
 
-    .section-card { background: var(--ink-2); border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.25rem; }
+    .section-card { background: var(--ink-2); border: 1px solid rgba(20,20,19,.07); border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 1.25rem; }
     .section-card h3 { font-family: 'Oswald', sans-serif; font-size: 1.1rem; letter-spacing: .06em; margin-bottom: .75rem; }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -284,12 +284,27 @@
   </style>
 <style id="house-2026">
 /* HOUSE STYLE 2026: Oswald + DM Sans, near-black, warm white, teal accents. Matches the Performance Audit. */
-:root{--ink:#0B0B0A;--ink-2:#121211;--ink-3:#201F1C;--white:#F4F2EC;--muted:#9A968E;--accent:#00C896;--accent-hi:#4DFFC9}
-body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.04),transparent 60%),var(--ink,#0B0B0A)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+:root{--ink:#FBFAF6;--ink-2:#FBFAF6;--ink-3:#ECE7DC;--white:#141413;--muted:#77726A;--accent:#8A6A3B;--accent-hi:#6F5530}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(138,106,59,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(138,106,59,.04),transparent 60%),var(--ink,#FBFAF6)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
 h1,h2,h3{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.005em;text-wrap:balance}
 input,select,textarea{border-radius:10px;font-family:'DM Sans',system-ui,sans-serif}
 button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
-:focus-visible{outline:2px solid #00C896;outline-offset:2px}
+:focus-visible{outline:2px solid #8A6A3B;outline-offset:2px}
+
+/* ===== Soul Meets Strength palette: matches the Client Hub ===== */
+.app-nav{
+      --ink:        #141413;
+      --ink-2:      #1E1D1B;
+      --ink-3:      #262522;
+      --accent:     #C9A56B;
+      --accent-hi:  #E0C08A;
+      --accent-dim: rgba(201,165,107,.08);
+      --white:      #F5F6FA;
+      --muted:      #7a7a7d;
+      --danger:     #EF4444;
+      --warn:       #F59E0B;
+      --purple:     #a78bfa;
+    ;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
 </style>
 </head>
 <body>
@@ -298,7 +313,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
 <div id="lock-screen">
   <div class="logo-block">
     <div class="logo-icon">
-      <svg viewBox="0 0 36 36" fill="none"><rect x="2" y="14" width="5" height="8" rx="2" fill="#00C896"/><rect x="7" y="11" width="4" height="14" rx="2" fill="#00C896"/><rect x="11" y="16" width="14" height="4" rx="2" fill="#00C896"/><rect x="25" y="11" width="4" height="14" rx="2" fill="#00C896"/><rect x="29" y="14" width="5" height="8" rx="2" fill="#00C896"/></svg>
+      <svg viewBox="0 0 36 36" fill="none"><rect x="2" y="14" width="5" height="8" rx="2" fill="#8A6A3B"/><rect x="7" y="11" width="4" height="14" rx="2" fill="#8A6A3B"/><rect x="11" y="16" width="14" height="4" rx="2" fill="#8A6A3B"/><rect x="25" y="11" width="4" height="14" rx="2" fill="#8A6A3B"/><rect x="29" y="14" width="5" height="8" rx="2" fill="#8A6A3B"/></svg>
     </div>
     <h1>PERFORM<span>USCLE</span></h1>
     <p>Professional Training Tools</p>
@@ -326,7 +341,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
   <nav class="app-nav">
     <div class="nav-brand">
       <div class="icon">
-        <svg viewBox="0 0 36 36" fill="none"><rect x="2" y="14" width="5" height="8" rx="2" fill="#00C896"/><rect x="7" y="11" width="4" height="14" rx="2" fill="#00C896"/><rect x="11" y="16" width="14" height="4" rx="2" fill="#00C896"/><rect x="25" y="11" width="4" height="14" rx="2" fill="#00C896"/><rect x="29" y="14" width="5" height="8" rx="2" fill="#00C896"/></svg>
+        <svg viewBox="0 0 36 36" fill="none"><rect x="2" y="14" width="5" height="8" rx="2" fill="#8A6A3B"/><rect x="7" y="11" width="4" height="14" rx="2" fill="#8A6A3B"/><rect x="11" y="16" width="14" height="4" rx="2" fill="#8A6A3B"/><rect x="25" y="11" width="4" height="14" rx="2" fill="#8A6A3B"/><rect x="29" y="14" width="5" height="8" rx="2" fill="#8A6A3B"/></svg>
       </div>
       <span class="nav-brand-name">PERFORM<span>USCLE</span></span>
     </div>
@@ -396,59 +411,59 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
           Enter the average calories burned through structured exercise per day. If training 5 days/week, add up the week's total and divide by 7 to get the daily average. Use 0 if unsure or for a rest-day baseline.
         </div>
         <!-- Exercise EE reference table -->
-        <div style="background:var(--ink-3);border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden;">
-          <div style="padding:.6rem 1rem;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none;" onclick="toggleEeGuide()" id="ee-guide-toggle">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div style="background:var(--ink-3);border:1px solid rgba(20,20,19,.07);border-radius:10px;overflow:hidden;">
+          <div style="padding:.6rem 1rem;border-bottom:1px solid rgba(20,20,19,.06);display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none;" onclick="toggleEeGuide()" id="ee-guide-toggle">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <span style="font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.18em;color:var(--accent);">EXERCISE CALORIE GUIDE</span>
             <svg id="ee-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
           <div id="ee-guide-body" style="display:none;padding:.75rem 1rem;">
             <table style="width:100%;border-collapse:collapse;font-size:.75rem;">
               <thead>
-                <tr style="border-bottom:1px solid rgba(255,255,255,.07);">
+                <tr style="border-bottom:1px solid rgba(20,20,19,.07);">
                   <th style="text-align:left;padding:.4rem .5rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.12em;font-size:.65rem;">ACTIVITY TYPE</th>
                   <th style="text-align:left;padding:.4rem .5rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.12em;font-size:.65rem;">DURATION</th>
                   <th style="text-align:left;padding:.4rem .5rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.12em;font-size:.65rem;">APPROX KCAL BURNED</th>
                 </tr>
               </thead>
               <tbody>
-                <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                  <td style="padding:.45rem .5rem;color:#c4c4d4;">Strength training</td>
+                <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                  <td style="padding:.45rem .5rem;color:#4A4740;">Strength training</td>
                   <td style="padding:.45rem .5rem;color:var(--muted);">45–60 min</td>
                   <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">200–350 kcal</td>
                 </tr>
-                <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                  <td style="padding:.45rem .5rem;color:#c4c4d4;">Strength training (heavy/high volume)</td>
+                <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                  <td style="padding:.45rem .5rem;color:#4A4740;">Strength training (heavy/high volume)</td>
                   <td style="padding:.45rem .5rem;color:var(--muted);">75–90 min</td>
                   <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">350–500 kcal</td>
                 </tr>
-                <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                  <td style="padding:.45rem .5rem;color:#c4c4d4;">LISS cardio (walking, cycling, elliptical)</td>
+                <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                  <td style="padding:.45rem .5rem;color:#4A4740;">LISS cardio (walking, cycling, elliptical)</td>
                   <td style="padding:.45rem .5rem;color:var(--muted);">30–45 min</td>
                   <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">150–280 kcal</td>
                 </tr>
-                <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                  <td style="padding:.45rem .5rem;color:#c4c4d4;">Moderate run / steady-state cardio</td>
+                <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                  <td style="padding:.45rem .5rem;color:#4A4740;">Moderate run / steady-state cardio</td>
                   <td style="padding:.45rem .5rem;color:var(--muted);">30–45 min</td>
                   <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">280–400 kcal</td>
                 </tr>
-                <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                  <td style="padding:.45rem .5rem;color:#c4c4d4;">HIIT / sprint intervals</td>
+                <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                  <td style="padding:.45rem .5rem;color:#4A4740;">HIIT / sprint intervals</td>
                   <td style="padding:.45rem .5rem;color:var(--muted);">20–30 min</td>
                   <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">250–450 kcal</td>
                 </tr>
-                <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                  <td style="padding:.45rem .5rem;color:#c4c4d4;">Long run / endurance cardio</td>
+                <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                  <td style="padding:.45rem .5rem;color:#4A4740;">Long run / endurance cardio</td>
                   <td style="padding:.45rem .5rem;color:var(--muted);">60–90 min</td>
                   <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">500–800 kcal</td>
                 </tr>
-                <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                  <td style="padding:.45rem .5rem;color:#c4c4d4;">Strength + cardio combination session</td>
+                <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                  <td style="padding:.45rem .5rem;color:#4A4740;">Strength + cardio combination session</td>
                   <td style="padding:.45rem .5rem;color:var(--muted);">60–75 min</td>
                   <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">400–600 kcal</td>
                 </tr>
                 <tr>
-                  <td style="padding:.45rem .5rem;color:#c4c4d4;">Two-a-days or competition day</td>
+                  <td style="padding:.45rem .5rem;color:#4A4740;">Two-a-days or competition day</td>
                   <td style="padding:.45rem .5rem;color:var(--muted);">Multiple sessions</td>
                   <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">700–1200+ kcal</td>
                 </tr>
@@ -456,7 +471,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
             </table>
             <div style="margin-top:.65rem;font-size:.68rem;color:var(--muted);line-height:1.55;">
               Estimates based on a 60–75 kg individual at moderate effort. Heavier clients or higher intensities will burn more.
-              <strong style="color:rgba(255,255,255,.4);">Tip:</strong> If training 5 days/week, multiply a single session by 5 then divide by 7 for the daily average — e.g. 5 × 300 ÷ 7 ≈ 214 kcal/day.
+              <strong style="color:rgba(20,20,19,.4);">Tip:</strong> If training 5 days/week, multiply a single session by 5 then divide by 7 for the daily average — e.g. 5 × 300 ÷ 7 ≈ 214 kcal/day.
             </div>
           </div>
         </div>
@@ -471,44 +486,44 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
         Walking and general daily movement (NEAT — Non-Exercise Activity Thermogenesis) is separate from structured training and can add hundreds of calories to daily expenditure. Enter average daily steps if known — a fitness tracker or phone step count works well.
       </div>
       <!-- Steps guide -->
-      <div style="background:var(--ink-3);border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden;">
-        <div style="padding:.6rem 1rem;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none;" onclick="toggleStepsGuide()" id="steps-guide-toggle">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div style="background:var(--ink-3);border:1px solid rgba(20,20,19,.07);border-radius:10px;overflow:hidden;">
+        <div style="padding:.6rem 1rem;border-bottom:1px solid rgba(20,20,19,.06);display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none;" onclick="toggleStepsGuide()" id="steps-guide-toggle">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <span style="font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.18em;color:var(--accent);">STEPS TO KCAL REFERENCE</span>
           <svg id="steps-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div id="steps-guide-body" style="display:none;padding:.75rem 1rem;">
           <table style="width:100%;border-collapse:collapse;font-size:.75rem;">
             <thead>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.07);">
+              <tr style="border-bottom:1px solid rgba(20,20,19,.07);">
                 <th style="text-align:left;padding:.4rem .5rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.12em;font-size:.65rem;">DAILY STEPS</th>
                 <th style="text-align:left;padding:.4rem .5rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.12em;font-size:.65rem;">ACTIVITY LEVEL</th>
                 <th style="text-align:left;padding:.4rem .5rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:.12em;font-size:.65rem;">APPROX KCAL (70 KG)</th>
               </tr>
             </thead>
             <tbody>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                <td style="padding:.45rem .5rem;color:#c4c4d4;">2,000–4,000</td>
+              <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                <td style="padding:.45rem .5rem;color:#4A4740;">2,000–4,000</td>
                 <td style="padding:.45rem .5rem;color:var(--muted);">Sedentary / desk-based</td>
                 <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">80–160 kcal</td>
               </tr>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                <td style="padding:.45rem .5rem;color:#c4c4d4;">5,000–7,000</td>
+              <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                <td style="padding:.45rem .5rem;color:#4A4740;">5,000–7,000</td>
                 <td style="padding:.45rem .5rem;color:var(--muted);">Lightly active</td>
                 <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">200–280 kcal</td>
               </tr>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                <td style="padding:.45rem .5rem;color:#c4c4d4;">8,000–10,000</td>
+              <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                <td style="padding:.45rem .5rem;color:#4A4740;">8,000–10,000</td>
                 <td style="padding:.45rem .5rem;color:var(--muted);">Moderately active</td>
                 <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">320–400 kcal</td>
               </tr>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-                <td style="padding:.45rem .5rem;color:#c4c4d4;">12,000–15,000</td>
+              <tr style="border-bottom:1px solid rgba(20,20,19,.04);">
+                <td style="padding:.45rem .5rem;color:#4A4740;">12,000–15,000</td>
                 <td style="padding:.45rem .5rem;color:var(--muted);">Active (on feet most of day)</td>
                 <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">480–600 kcal</td>
               </tr>
               <tr>
-                <td style="padding:.45rem .5rem;color:#c4c4d4;">18,000–25,000+</td>
+                <td style="padding:.45rem .5rem;color:#4A4740;">18,000–25,000+</td>
                 <td style="padding:.45rem .5rem;color:var(--muted);">Very active (manual labour, hospitality, retail)</td>
                 <td style="padding:.45rem .5rem;color:var(--accent);font-weight:600;">720–1000+ kcal</td>
               </tr>
@@ -517,7 +532,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
           <div style="margin-top:.65rem;font-size:.68rem;color:var(--muted);line-height:1.55;">
             Estimated at ~0.04 kcal/step for a 70 kg individual. Heavier clients burn proportionally more — scale up by roughly 1.5% per kg above 70 kg. Steps from a fitness tracker or phone pedometer are the most reliable source.
             <br><br>
-            <strong style="color:rgba(255,255,255,.4);">Why it matters:</strong> A client who walks 12,000 steps/day burns ~480 kcal more than one who walks 2,000 steps — without any structured exercise. Including NEAT gives a far more accurate picture of true energy availability.
+            <strong style="color:rgba(20,20,19,.4);">Why it matters:</strong> A client who walks 12,000 steps/day burns ~480 kcal more than one who walks 2,000 steps — without any structured exercise. Including NEAT gives a far more accurate picture of true energy availability.
           </div>
         </div>
       </div>
@@ -574,7 +589,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       <!-- Calories to add to reach optimal -->
       <div class="section-card" id="cal-adjustment-box" style="display:none;">
         <h3>CALORIES TO REACH OPTIMAL EA</h3>
-        <div id="cal-adjustment-text" style="font-size:.88rem;color:#c4c4d4;line-height:1.7;"></div>
+        <div id="cal-adjustment-text" style="font-size:.88rem;color:#4A4740;line-height:1.7;"></div>
       </div>
 
       <!-- Reference Table -->
@@ -593,7 +608,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
           </tbody>
         </table>
         <div style="margin-top:1rem;font-size:.78rem;color:var(--muted);line-height:1.6;">
-          <strong style="color:rgba(255,255,255,.5);">Note on Exercise EE:</strong> If you don't have a precise figure, use these estimates per training session:
+          <strong style="color:rgba(20,20,19,.5);">Note on Exercise EE:</strong> If you don't have a precise figure, use these estimates per training session:
           LISS cardio 30–45 min ≈ 200–300 kcal · Strength training 60 min ≈ 250–350 kcal · HIIT 30 min ≈ 300–450 kcal · Two-a-days or long cardio &gt; 90 min ≈ 500–800 kcal.
           Divide weekly exercise calories by 7 for a daily average.
         </div>
@@ -615,9 +630,9 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
         <div style="margin-top:1rem;font-size:.78rem;color:var(--muted);line-height:1.6;">If two or more of these are present alongside low energy availability, address EA as the immediate priority — before adjusting any other aspect of the programme.</div>
 
         <!-- RED-S overweight clarification -->
-        <div style="margin-top:1.25rem;padding:1rem;background:rgba(0,200,150,.05);border:1px solid rgba(0,200,150,.15);border-radius:10px;">
+        <div style="margin-top:1.25rem;padding:1rem;background:rgba(138,106,59,.05);border:1px solid rgba(138,106,59,.15);border-radius:10px;">
           <div style="font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.18em;color:var(--accent);margin-bottom:.5rem;">IMPORTANT: WHO RED-S AFFECTS</div>
-          <div style="font-size:.78rem;color:#c4c4d4;line-height:1.65;">
+          <div style="font-size:.78rem;color:#4A4740;line-height:1.65;">
             RED-S is a <strong style="color:var(--white);">lean athlete and physique competitor problem</strong>. It does not occur in overweight or obese individuals. The reason is straightforward: body fat is stored energy. Someone carrying significant excess fat has a physiological buffer of tens of thousands of calories available at any time — even during a caloric deficit, the body draws on those fat stores to meet critical physiological needs. True cellular energy deficiency does not occur when substantial adipose reserves are present.
           </div>
           <div style="margin-top:.6rem;font-size:.78rem;color:var(--muted);line-height:1.65;">
@@ -700,7 +715,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       const input = document.getElementById('pw-input')
       input.value = ''
       input.focus()
-      input.style.borderColor = '#EF4444'
+      input.style.borderColor = '#B23A26'
       setTimeout(() => { input.style.borderColor = '' }, 1200)
     }
   }

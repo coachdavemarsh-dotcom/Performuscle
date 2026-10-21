@@ -12,24 +12,24 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink:         #060608;
-      --ink-2:       #0f1014;
-      --ink-3:       #1a1b21;
-      --ink-4:       #22242c;
-      --accent:      #00C896;
-      --accent-hi:   #00FFB8;
-      --accent-dim:  rgba(0,200,150,.08);
-      --white:       #F5F6FA;
-      --sub:         #b0b3c6;
-      --muted:       #5e5e70;
-      --danger:      #EF4444;
-      --warn:        #F59E0B;
-      --info:        #60a5fa;
-      --pink:        #f472b6;
-      --violet:      #a78bfa;
-      --border:      rgba(255,255,255,.07);
-      --border-md:   rgba(255,255,255,.12);
-      --border-acc:  rgba(0,200,150,.25);
+      --ink:         #F1EDE4;
+      --ink-2:       #FBFAF6;
+      --ink-3:       #ECE7DC;
+      --ink-4:       #E4DED2;
+      --accent:      #8A6A3B;
+      --accent-hi:   #6F5530;
+      --accent-dim:  rgba(138,106,59,.08);
+      --white:       #141413;
+      --sub:         #4A4740;
+      --muted:       #77726A;
+      --danger:      #B23A26;
+      --warn:        #6F5530;
+      --info:        #3E6A8A;
+      --pink:        #A34E7A;
+      --violet:      #6E5A99;
+      --border:      rgba(20,20,19,.07);
+      --border-md:   rgba(20,20,19,.12);
+      --border-acc:  rgba(138,106,59,.25);
       --font-display: 'Oswald', sans-serif;
       --font-body:    'DM Sans', sans-serif;
       --radius:       10px;
@@ -110,9 +110,9 @@
       background: linear-gradient(135deg, var(--accent), var(--accent-hi));
       color: var(--ink);
       border-color: transparent;
-      box-shadow: 0 0 12px rgba(0,200,150,.25);
+      box-shadow: 0 0 12px rgba(138,106,59,.25);
     }
-    .pill small { display: block; font-family: var(--font-body); font-size: .65rem; font-weight: 400; letter-spacing: 0; color: rgba(6,6,8,.6); margin-top: 1px; }
+    .pill small { display: block; font-family: var(--font-body); font-size: .65rem; font-weight: 400; letter-spacing: 0; color: rgba(241,237,228,.6); margin-top: 1px; }
     .pill:not(.active) small { color: var(--muted); }
 
     /* Weight input */
@@ -301,8 +301,8 @@
     .multicarb-box {
       margin-top: .75rem;
       padding: .75rem .875rem;
-      background: rgba(245,158,11,.06);
-      border: 1px solid rgba(245,158,11,.2);
+      background: rgba(111,85,48,.06);
+      border: 1px solid rgba(111,85,48,.2);
       border-radius: 8px;
     }
     .multicarb-label { font-family: var(--font-display); font-size: .5rem; letter-spacing: .15em; color: var(--warn); margin-bottom: .375rem; }
@@ -329,12 +329,37 @@
   </style>
 <style id="house-2026">
 /* HOUSE STYLE 2026: Oswald + DM Sans, near-black, warm white, teal accents. Matches the Performance Audit. */
-:root{--ink:#0B0B0A;--ink-2:#121211;--ink-3:#201F1C;--white:#F4F2EC;--muted:#9A968E;--accent:#00C896;--accent-hi:#4DFFC9;--border:rgba(255,255,255,0.08);--radius:14px}
-body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.04),transparent 60%),var(--ink,#0B0B0A)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+:root{--ink:#FBFAF6;--ink-2:#FBFAF6;--ink-3:#ECE7DC;--white:#141413;--muted:#77726A;--accent:#8A6A3B;--accent-hi:#6F5530;--border:rgba(20,20,19,0.08);--radius:14px}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(138,106,59,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(138,106,59,.04),transparent 60%),var(--ink,#FBFAF6)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
 h1,h2,h3{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.005em;text-wrap:balance}
 input,select,textarea{border-radius:10px;font-family:'DM Sans',system-ui,sans-serif}
 button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
-:focus-visible{outline:2px solid #00C896;outline-offset:2px}
+:focus-visible{outline:2px solid #8A6A3B;outline-offset:2px}
+
+/* ===== Soul Meets Strength palette: matches the Client Hub ===== */
+.header{
+      --ink:         #141413;
+      --ink-2:       #1E1D1B;
+      --ink-3:       #262522;
+      --ink-4:       #34322E;
+      --accent:      #C9A56B;
+      --accent-hi:   #E0C08A;
+      --accent-dim:  rgba(201,165,107,.08);
+      --white:       #F5F6FA;
+      --sub:         #b0b3c6;
+      --muted:       #5e5e70;
+      --danger:      #EF4444;
+      --warn:        #F59E0B;
+      --info:        #60a5fa;
+      --pink:        #f472b6;
+      --violet:      #a78bfa;
+      --border:      rgba(255,255,255,.07);
+      --border-md:   rgba(255,255,255,.12);
+      --border-acc:  rgba(201,165,107,.25);
+      --font-display: 'Oswald', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --radius:       10px;
+    ;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
 </style>
 </head>
 <body>
@@ -343,9 +368,9 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
 <header class="header">
   <a href="/" class="header-brand">
     <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="26" height="26" rx="6" fill="#00C896"/>
-      <path d="M6 9h3.5M16.5 9H20M6 13h14M6 17h14" stroke="#060608" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="13" cy="9" r="2" fill="#060608"/>
+      <rect width="26" height="26" rx="6" fill="#8A6A3B"/>
+      <path d="M6 9h3.5M16.5 9H20M6 13h14M6 17h14" stroke="#F1EDE4" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="13" cy="9" r="2" fill="#F1EDE4"/>
     </svg>
     <span class="wordmark">PERFORM<span>USCLE</span></span>
   </a>
@@ -473,7 +498,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
         <div class="food-tags" id="pre-foods"></div>
       </div>
 
-      <div class="tip-box" style="background:rgba(0,200,150,.06);border:1px solid rgba(0,200,150,.15);">
+      <div class="tip-box" style="background:rgba(138,106,59,.06);border:1px solid rgba(138,106,59,.15);">
         💡 If eating <strong>1 hour or less</strong> before training, stick to simple carbs only (no fat, minimal protein). Avoid high-fibre foods to prevent GI discomfort.
       </div>
     </div>
@@ -526,7 +551,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
           <div class="food-tags" id="intra-foods"></div>
         </div>
 
-        <div class="tip-box" style="background:rgba(0,200,150,.06);border:1px solid rgba(0,200,150,.15);">
+        <div class="tip-box" style="background:rgba(138,106,59,.06);border:1px solid rgba(138,106,59,.15);">
           💡 Sip fluid <strong>regularly, not all at once</strong>. Sodium in sports drinks helps fluid retention and maintains the drive to drink.
         </div>
       </div>
@@ -566,7 +591,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
         <div class="food-tags" id="post-foods"></div>
       </div>
 
-      <div class="tip-box" style="background:rgba(244,114,182,.06);border:1px solid rgba(244,114,182,.15);">
+      <div class="tip-box" style="background:rgba(163,78,122,.06);border:1px solid rgba(163,78,122,.15);">
         💡 Co-ingesting carbs and protein post-workout <strong>does not impair MPS</strong> but does accelerate glycogen resynthesis. Aim for leucine ≥2–3g in your protein source.
       </div>
     </div>
@@ -586,7 +611,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
           <div class="food-list-label">LOADING FOODS — LOW FIBRE, HIGH CARB</div>
           <div class="food-tags" id="load-foods"></div>
         </div>
-        <div class="tip-box" style="background:rgba(99,179,237,.06);border:1px solid rgba(99,179,237,.15);">
+        <div class="tip-box" style="background:rgba(62,106,138,.06);border:1px solid rgba(62,106,138,.15);">
           ⚠️ <strong>Nothing new on race day.</strong> Only consume foods you have tested in training. Avoid high-fat, high-fibre, and high-protein meals in the 24hrs before to prevent GI distress.
         </div>
       </div>
@@ -844,7 +869,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
     document.getElementById('elec-bars').innerHTML =
       makeElecBar('Sodium',    r.sodiumDaily,    'mg/day', 6000, 'var(--warn)',   'Athletes often need 2–4× sedentary targets') +
       makeElecBar('Potassium', r.potassiumDaily, 'mg/day', 7000, 'var(--accent)', 'Critical for muscle contractions') +
-      makeElecBar('Magnesium', r.magnesiumDaily, 'mg/day', 600,  '#a78bfa',       'Sleep, muscle relaxation, energy metabolism') +
+      makeElecBar('Magnesium', r.magnesiumDaily, 'mg/day', 600,  '#6E5A99',       'Sleep, muscle relaxation, energy metabolism') +
       makeElecBar('Calcium',   r.calciumDaily,   'mg/day', 1500, 'var(--info)',   'Bone health, muscle function')
     txt('elec-loss-na',  r.sessionSodiumLoss)
     txt('elec-loss-k',   r.sessionPotassiumLoss)

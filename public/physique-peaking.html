@@ -9,21 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:          #0F0F0F;
-      --card:        #1A1A1A;
-      --card2:       #222222;
-      --accent:      #00C9A7;
-      --accent-dim:  rgba(0,201,167,0.10);
-      --accent-bdr:  rgba(0,201,167,0.25);
-      --text:        #FFFFFF;
-      --muted:       #888888;
-      --faint:       #444444;
-      --border:      rgba(255,255,255,0.07);
-      --border-md:   rgba(255,255,255,0.13);
-      --danger:      #EF4444;
-      --danger-dim:  rgba(239,68,68,0.10);
-      --warn:        #F59E0B;
-      --warn-dim:    rgba(245,158,11,0.10);
+      --bg:          #F1EDE4;
+      --card:        #FBFAF6;
+      --card2:       #ECE7DC;
+      --accent:      #8A6A3B;
+      --accent-dim:  rgba(138,106,59,0.10);
+      --accent-bdr:  rgba(138,106,59,0.25);
+      --text:        #141413;
+      --muted:       #77726A;
+      --faint:       #9A9488;
+      --border:      rgba(20,20,19,0.07);
+      --border-md:   rgba(20,20,19,0.13);
+      --danger:      #B23A26;
+      --danger-dim:  rgba(178,58,38,0.10);
+      --warn:        #6F5530;
+      --warn-dim:    rgba(111,85,48,0.10);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -56,7 +56,7 @@
       border-radius: 8px; color: var(--text); font-size: 14px;
       padding: 10px 14px; outline: none; transition: border-color .15s, box-shadow .15s;
     }
-    .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,201,167,0.15); }
+    .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(138,106,59,0.15); }
     .field-input.error { border-color: var(--danger); }
     .field-error { font-size: 11px; color: var(--danger); }
 
@@ -72,7 +72,7 @@
       font-size: 13px; font-weight: 600; transition: background .15s, color .15s;
       background: transparent; color: var(--muted);
     }
-    .toggle button.active { background: var(--accent); color: #000; }
+    .toggle button.active { background: var(--accent); color: #F1EDE4; }
 
     /* ── Screen visibility ── */
     .screen { display: none !important; }
@@ -112,15 +112,15 @@
       padding: 12px 14px; outline: none; text-align: center;
       letter-spacing: 0.15em; transition: border-color .15s, box-shadow .15s;
     }
-    .pw-input-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,201,167,0.15); }
+    .pw-input-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(138,106,59,0.15); }
     .pw-input-wrap input.error { border-color: var(--danger); }
     .pw-error { font-size: 13px; color: var(--danger); margin-bottom: 12px; }
     .pw-btn {
       width: 100%; padding: 13px; background: var(--accent); border: none;
-      border-radius: 8px; color: #000; font-size: 14px; font-weight: 700;
+      border-radius: 8px; color: #F1EDE4; font-size: 14px; font-weight: 700;
       cursor: pointer; letter-spacing: 0.05em; transition: background .15s;
     }
-    .pw-btn:hover { background: #00e6be; }
+    .pw-btn:hover { background: #6F5530; }
 
     @keyframes shake {
       0%,100% { transform: translateX(0); }
@@ -188,10 +188,10 @@
     .form-actions { display: flex; gap: 12px; margin-top: 28px; }
     .btn-generate {
       flex: 1; padding: 14px; background: var(--accent); border: none;
-      border-radius: 10px; color: #000; font-size: 15px; font-weight: 700;
+      border-radius: 10px; color: #F1EDE4; font-size: 15px; font-weight: 700;
       cursor: pointer; letter-spacing: 0.04em; transition: background .15s;
     }
-    .btn-generate:hover { background: #00e6be; }
+    .btn-generate:hover { background: #6F5530; }
     .btn-reset {
       padding: 14px 20px; background: transparent; border: 1px solid var(--border-md);
       border-radius: 10px; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer;
@@ -212,7 +212,7 @@
       border-radius: 10px; padding: 14px 20px; margin-bottom: 20px;
       display: flex; gap: 12px; align-items: flex-start;
     }
-    .banner-warn { background: var(--warn-dim); border: 1px solid rgba(245,158,11,0.3); }
+    .banner-warn { background: var(--warn-dim); border: 1px solid rgba(111,85,48,0.3); }
     .banner-info  { background: var(--accent-dim); border: 1px solid var(--accent-bdr); }
     .banner-icon { font-size: 18px; flex-shrink: 0; }
     .banner-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
@@ -241,7 +241,7 @@
       border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600;
     }
     .tag-accent { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-bdr); }
-    .tag-blue { background: rgba(96,165,250,0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.25); }
+    .tag-blue { background: rgba(62,106,138,0.1); color: #3E6A8A; border: 1px solid rgba(62,106,138,0.25); }
 
     /* ── Metric grid ── */
     .metrics-grid {
@@ -316,10 +316,10 @@
       border-radius: 4px; padding: 2px 8px;
       font-size: 11px; font-weight: 700; white-space: nowrap;
     }
-    .phase-dep   { background: rgba(239,68,68,0.15);   color: #f87171; }
+    .phase-dep   { background: rgba(178,58,38,0.15);   color: #B23A26; }
     .phase-load  { background: var(--accent-dim);       color: var(--accent); }
-    .phase-hold  { background: rgba(96,165,250,0.15);   color: #60a5fa; }
-    .phase-shoot { background: rgba(255,255,255,0.06);  color: var(--accent); }
+    .phase-hold  { background: rgba(62,106,138,0.15);   color: #3E6A8A; }
+    .phase-shoot { background: rgba(20,20,19,0.06);  color: var(--accent); }
 
     /* ── Collapsibles ── */
     .collapsible { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
@@ -350,7 +350,7 @@
     .result-actions { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
     .btn-copy {
       flex: 1; min-width: 200px; padding: 14px 20px; background: var(--accent);
-      border: none; border-radius: 10px; color: #000; font-size: 15px; font-weight: 700;
+      border: none; border-radius: 10px; color: #F1EDE4; font-size: 15px; font-weight: 700;
       cursor: pointer; letter-spacing: 0.03em; transition: background .2s, color .2s;
     }
     .btn-copy.copied {
@@ -370,12 +370,31 @@
   </style>
 <style id="house-2026">
 /* HOUSE STYLE 2026: Oswald + DM Sans, near-black, warm white, teal accents. Matches the Performance Audit. */
-:root{--muted:#9A968E;--bg:#0B0B0A;--card:#121211;--card2:#181816;--text:#F4F2EC;--faint:#4A4743;--accent:#00C896;--border:rgba(255,255,255,0.08)}
-body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.04),transparent 60%),var(--bg,#0B0B0A)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+:root{--muted:#77726A;--bg:#FBFAF6;--card:#FBFAF6;--card2:#ECE7DC;--text:#141413;--faint:#9A9488;--accent:#8A6A3B;--border:rgba(20,20,19,0.08)}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(138,106,59,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(138,106,59,.04),transparent 60%),var(--bg,#FBFAF6)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
 h1,h2,h3{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.005em;text-wrap:balance}
 input,select,textarea{border-radius:10px;font-family:'DM Sans',system-ui,sans-serif}
 button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
-:focus-visible{outline:2px solid #00C896;outline-offset:2px}
+:focus-visible{outline:2px solid #8A6A3B;outline-offset:2px}
+
+/* ===== Soul Meets Strength palette: matches the Client Hub ===== */
+.tool-nav{
+      --bg:          #141413;
+      --card:        #1E1D1B;
+      --card2:       #262522;
+      --accent:      #C9A56B;
+      --accent-dim:  rgba(201,165,107,0.10);
+      --accent-bdr:  rgba(201,165,107,0.25);
+      --text:        #FFFFFF;
+      --muted:       #888888;
+      --faint:       #444444;
+      --border:      rgba(255,255,255,0.07);
+      --border-md:   rgba(255,255,255,0.13);
+      --danger:      #EF4444;
+      --danger-dim:  rgba(239,68,68,0.10);
+      --warn:        #F59E0B;
+      --warn-dim:    rgba(245,158,11,0.10);
+    ;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
 </style>
 </head>
 <body>
@@ -806,9 +825,9 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
           html += `<div class="macro-chip${big ? ' big-diff' : ''}">
             <div class="macro-chip-name">${m.label}</div>
             <div class="macro-chip-vals">
-              <span style="color:#fff">${m.cur}g</span>
-              <span style="color:#444;margin:0 6px">→</span>
-              <span style="color:${big ? '#F59E0B' : '#00C9A7'}">${m.pro}g</span>
+              <span style="color:#141413">${m.cur}g</span>
+              <span style="color:#9A9488;margin:0 6px">→</span>
+              <span style="color:${big ? '#6F5530' : '#8A6A3B'}">${m.pro}g</span>
             </div>
             ${big ? `<div class="macro-chip-diff">${diff > 0 ? '+' : ''}${r(diff)}% vs protocol</div>` : ''}
           </div>`

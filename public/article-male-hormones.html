@@ -15,13 +15,13 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink:        #060608;
-      --accent:     #00C896;
-      --accent-hi:  #00FFB8;
-      --white:      #F5F6FA;
-      --muted:      #7a7a7d;
-      --card-bg:    #0d0d0f;
-      --border:     rgba(255,255,255,0.08);
+      --ink:        #F1EDE4;
+      --accent:     #8A6A3B;
+      --accent-hi:  #6F5530;
+      --white:      #141413;
+      --muted:      #77726A;
+      --card-bg:    #FBFAF6;
+      --border:     rgba(20,20,19,0.08);
     }
 
     html { font-size: 16px; }
@@ -39,7 +39,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(6,6,8,0.92);
+      background: rgba(241,237,228,0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       display: flex;
@@ -79,8 +79,8 @@
       font-size: 11px;
       letter-spacing: 0.30em;
       color: var(--accent);
-      background: rgba(0,200,150,0.1);
-      border: 1px solid rgba(0,200,150,0.25);
+      background: rgba(138,106,59,0.1);
+      border: 1px solid rgba(138,106,59,0.25);
       padding: 4px 14px;
       border-radius: 20px;
       margin-bottom: 24px;
@@ -124,7 +124,7 @@
     .article p {
       font-size: 17px;
       line-height: 1.85;
-      color: #d4d4e0;
+      color: #141413;
       margin-bottom: 24px;
     }
 
@@ -161,7 +161,7 @@
     }
     .article ul li, .article ol li {
       font-size: 17px;
-      color: #d4d4e0;
+      color: #141413;
       line-height: 1.7;
       padding: 8px 0 8px 28px;
       position: relative;
@@ -190,7 +190,7 @@
     /* ── Pull Quote / Callout ── */
     .callout {
       border-left: 3px solid var(--accent);
-      background: rgba(0,200,150,0.06);
+      background: rgba(138,106,59,0.06);
       padding: 20px 24px;
       margin: 36px 0;
       border-radius: 0 8px 8px 0;
@@ -220,7 +220,7 @@
       margin-bottom: 16px;
     }
     .key-box ul { margin: 0; }
-    .key-box ul li { border-color: rgba(255,255,255,0.05); }
+    .key-box ul li { border-color: rgba(20,20,19,0.05); }
 
     /* ── Divider ── */
     .divider {
@@ -231,8 +231,8 @@
 
     /* ── CTA Block ── */
     .cta-block {
-      background: linear-gradient(135deg, rgba(0,200,150,0.08) 0%, rgba(0,200,150,0.03) 100%);
-      border: 1px solid rgba(0,200,150,0.2);
+      background: linear-gradient(135deg, rgba(138,106,59,0.08) 0%, rgba(138,106,59,0.03) 100%);
+      border: 1px solid rgba(138,106,59,0.2);
       border-radius: 16px;
       padding: 48px 40px;
       text-align: center;
@@ -288,12 +288,23 @@
   </style>
 <style id="house-2026">
 /* HOUSE STYLE 2026: Oswald + DM Sans, near-black, warm white, teal accents. Matches the Performance Audit. */
-:root{--ink:#0B0B0A;--white:#F4F2EC;--muted:#9A968E;--card-bg:#121211;--accent:#00C896;--accent-hi:#4DFFC9;--border:rgba(255,255,255,0.08)}
-body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.04),transparent 60%),var(--ink,#0B0B0A)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+:root{--ink:#FBFAF6;--white:#141413;--muted:#77726A;--card-bg:#FBFAF6;--accent:#8A6A3B;--accent-hi:#6F5530;--border:rgba(20,20,19,0.08)}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(138,106,59,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(138,106,59,.04),transparent 60%),var(--ink,#FBFAF6)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
 h1,h2,h3{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.005em;text-wrap:balance}
 input,select,textarea{border-radius:10px;font-family:'DM Sans',system-ui,sans-serif}
 button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
-:focus-visible{outline:2px solid #00C896;outline-offset:2px}
+:focus-visible{outline:2px solid #8A6A3B;outline-offset:2px}
+
+/* ===== Soul Meets Strength palette: matches the Client Hub ===== */
+.nav{
+      --ink:        #141413;
+      --accent:     #C9A56B;
+      --accent-hi:  #E0C08A;
+      --white:      #F5F6FA;
+      --muted:      #7a7a7d;
+      --card-bg:    #1E1D1B;
+      --border:     rgba(255,255,255,0.08);
+    ;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
 </style>
 </head>
 <body>

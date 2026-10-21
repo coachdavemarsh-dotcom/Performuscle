@@ -12,17 +12,17 @@
 <style>
 /* Layout: Performuscle house style. Open sections on off-white separated by hairlines; cream cards only where content is grouped. Verdict → questions → markers + screens → Launchpad → roadmap → launch pack */
 :root{
-  --bg:#0B0B0A; --surface:#161513; --sunk:#211F1C; --ink:#F4F1EA; --text2:#D8D3C8; --muted:#9A9387; --line:#2B2925;
-  --gold:#D4A35F; --gold2:#F0C987; --body:#F4F1EA; --body-soft:#F4F1EA14; --mind:#D4A35F; --mind-soft:#D4A35F26;
-  --opt:#6FC08A; --ok:#8DB592; --warn:#EB9B3C; --bad:#E5674F;
+  --bg:#F1EDE4; --surface:#FBFAF6; --sunk:#ECE7DC; --ink:#141413; --text2:#141413; --muted:#77726A; --line:#E4DED2;
+  --gold:#6F5530; --gold2:#6F5530; --body:#141413; --body-soft:#F4F1EA14; --mind:#6F5530; --mind-soft:#D4A35F26;
+  --opt:#5E7154; --ok:#5E7154; --warn:#6F5530; --bad:#B23A26;
   --display:"Oswald","Arial Narrow",Arial,sans-serif;
   --text:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --dim:#5E4D36; --orb:240,201,135; --orbcore:60,44,24;
-  color-scheme:dark;
+  --dim:#A86F1E; --orb:138,106,59; --orbcore:237,227,210;
+  color-scheme:light;
 }
-:root[data-accent="teal"]{--gold:#00C896;--gold2:#4DFFC9;--mind:#00C896;--mind-soft:#00C89626;--dim:#0B4D3D;--orb:77,255,201;--orbcore:6,52,41}
-:root[data-accent="mono"]{--gold:#C9C4BA;--gold2:#FFFFFF;--mind:#8C877E;--mind-soft:#8C877E2E;--dim:#3A3835;--orb:255,255,255;--orbcore:40,40,38}
+:root[data-accent="teal"]{--gold:#8A6A3B;--gold2:#6F5530;--mind:#8A6A3B;--mind-soft:#8A6A3B26;--dim:#8A6A3B;--orb:138,106,59;--orbcore:237,227,210}
+:root[data-accent="mono"]{--gold:#4A4740;--gold2:#141413;--mind:#77726A;--mind-soft:#77726A2E;--dim:#DDD7CB;--orb:20,20,19;--orbcore:236,231,220}
 .accent{display:flex;align-items:center;gap:8px}
 .accent .seg button{font-size:11.5px;padding:4px 10px}
 .accent .seg button.on{background:var(--gold);color:var(--bg);font-weight:700}
@@ -192,7 +192,7 @@ footer{font-size:12px;color:var(--muted);max-width:80ch;padding-top:24px;border-
 .fl button{border:0;background:var(--bg);border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer;color:var(--text2)}
 .fl button.on{background:var(--ink);color:var(--bg);font-weight:600}
 .pain{border:0;background:var(--bg);border-radius:999px;padding:3px 10px;font-family:var(--text);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer}
-.pain.on{background:var(--bad);color:#fff}
+.pain.on{background:var(--bad);color:#141413}
 .mvc .seg{align-self:flex-start;flex-wrap:wrap}
 
 /* Marker tiles */
@@ -227,7 +227,7 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .brand h1{text-transform:uppercase;letter-spacing:.01em}
 .panel h2{text-transform:uppercase;letter-spacing:.01em}
 /* Hero: baseline orb */
-.hero{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:28px;align-items:center;padding:28px;border-radius:24px;background:linear-gradient(180deg,#141311,#0E0E0D);box-shadow:inset 0 0 0 1px var(--line)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:28px;align-items:center;padding:28px;border-radius:24px;background:linear-gradient(180deg,#FBFAF6,#FBFAF6);box-shadow:inset 0 0 0 1px var(--line)}
 @media (max-width:860px){.hero{grid-template-columns:1fr;padding:20px}.orbwrap{order:-1}.dom{grid-template-columns:1fr 1fr}}
 .dom{display:grid;gap:12px;min-width:0}
 .dcard{background:var(--sunk);border-radius:14px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;min-width:0}
@@ -327,6 +327,19 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .pathgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin-top:10px}
 .prow{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px}
 .prow select{max-width:150px}
+:root{--body:#9C7438;--body-soft:#9C743824;--mind:#5E7154;--mind-soft:#5E715426}
+
+/* ===== Soul Meets Strength palette: matches the Client Hub ===== */
+.no-dark-bar{
+  --bg:#141413; --surface:#1E1D1B; --sunk:#262522; --ink:#F4F1EA; --text2:#D8D3C8; --muted:#9A9387; --line:#34322E;
+  --gold:#D4A35F; --gold2:#F0C987; --body:#F4F1EA; --body-soft:#F4F1EA14; --mind:#D4A35F; --mind-soft:#D4A35F26;
+  --opt:#6FC08A; --ok:#8DB592; --warn:#EB9B3C; --bad:#E5674F;
+  --display:"Oswald","Arial Narrow",Arial,sans-serif;
+  --text:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --dim:#5E4D36; --orb:240,201,135; --orbcore:60,44,24;
+  color-scheme:dark;
+;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
 </style>
 </head>
 <body>
@@ -344,7 +357,7 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
       <div class="field"><label for="sex">Sex</label><select id="sex"><option value="m">Male</option><option value="f">Female</option></select></div>
       <div class="field"><label for="ethnic">Waist cut-offs</label><select id="ethnic"><option value="eu">Europid</option><option value="as">South / East Asian</option></select></div>
       <span class="sample" id="sampleTag">Sample client</span>
-      <div class="field accent"><label>Accent</label><div class="seg" id="accentSeg"><button data-a="gold" class="on">Gold</button><button data-a="teal">Teal</button><button data-a="mono">Mono</button></div></div>
+      <div class="field accent"><label>Accent</label><div class="seg" id="accentSeg"><button data-a="gold" class="on">Gold</button><button data-a="mono">Mono</button></div></div>
     </div>
   </header>
 
@@ -1009,13 +1022,13 @@ let orbLevel=0.5;
     const cs=getComputedStyle(document.documentElement),OC=cs.getPropertyValue('--orb').trim()||'240,201,135',CC=cs.getPropertyValue('--orbcore').trim()||'60,44,24';
     ctx.clearRect(0,0,W,W);const cx=W/2,cy=W/2;
     const g=ctx.createRadialGradient(cx,cy,W*0.05,cx,cy,W*0.5);
-    g.addColorStop(0,`rgba(${CC},0.95)`);g.addColorStop(0.6,`rgba(${CC},0.45)`);g.addColorStop(1,'rgba(11,11,10,0)');
+    g.addColorStop(0,`rgba(${CC},0.95)`);g.addColorStop(0.6,`rgba(${CC},0.45)`);g.addColorStop(1,'rgba(251,250,246,0)');
     ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,W*0.5,0,Math.PI*2);ctx.fill();
     for(const p of P){
       if(!reduce)p.a+=p.s*(0.6+orbLevel);
       const tw=reduce?0.8:0.55+0.45*Math.sin(ts/600+p.t);
       const x=cx+Math.cos(p.a)*p.r*W,y=cy+Math.sin(p.a)*p.r*W;
-      ctx.fillStyle=p.r>0.4?`rgba(${OC},${0.75*tw})`:`rgba(244,241,234,${0.45*tw})`;
+      ctx.fillStyle=p.r>0.4?`rgba(${OC},${0.75*tw})`:`rgba(20,20,19,${0.45*tw})`;
       ctx.beginPath();ctx.arc(x,y,p.z,0,Math.PI*2);ctx.fill();
     }
     if(!reduce)requestAnimationFrame(frame);

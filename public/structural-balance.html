@@ -8,24 +8,24 @@
     @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
     :root {
-      --bg: #0d0d0d;
-      --surface: #161616;
-      --surface2: #1e1e1e;
-      --surface3: #242424;
-      --border: rgba(255,255,255,0.07);
-      --border2: rgba(255,255,255,0.13);
-      --accent: #00C896;
-      --accent-dim: rgba(0,200,150,0.1);
-      --accent-mid: rgba(0,200,150,0.2);
-      --warn: #f59e0b;
-      --warn-dim: rgba(245,158,11,0.1);
-      --danger: #ef4444;
-      --danger-dim: rgba(239,68,68,0.08);
-      --blue: #60a5fa;
-      --blue-dim: rgba(96,165,250,0.1);
-      --text: #efefef;
-      --text2: #8a8a8a;
-      --text3: #4a4a4a;
+      --bg: #F1EDE4;
+      --surface: #FBFAF6;
+      --surface2: #ECE7DC;
+      --surface3: #E4DED2;
+      --border: rgba(20,20,19,0.07);
+      --border2: rgba(20,20,19,0.13);
+      --accent: #8A6A3B;
+      --accent-dim: rgba(138,106,59,0.1);
+      --accent-mid: rgba(138,106,59,0.2);
+      --warn: #6F5530;
+      --warn-dim: rgba(111,85,48,0.1);
+      --danger: #B23A26;
+      --danger-dim: rgba(178,58,38,0.08);
+      --blue: #3E6A8A;
+      --blue-dim: rgba(62,106,138,0.1);
+      --text: #141413;
+      --text2: #77726A;
+      --text3: #9A9488;
       --font-d: 'Oswald', Impact, sans-serif;
       --font-b: 'DM Sans', system-ui, sans-serif;
       --r: 10px;
@@ -62,7 +62,7 @@
     /* Unit toggle */
     .unit-toggle { display: inline-flex; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rs); overflow: hidden; margin: 20px 0 32px; }
     .unit-toggle button { background: none; border: none; color: var(--text2); font-family: var(--font-b); font-size: 12px; font-weight: 600; padding: 7px 18px; cursor: pointer; transition: all .15s; letter-spacing: .04em; }
-    .unit-toggle button.active { background: var(--accent); color: #000; }
+    .unit-toggle button.active { background: var(--accent); color: #F1EDE4; }
 
     /* Section */
     .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
@@ -95,11 +95,11 @@
 
     .r-status { text-align: center; }
     .pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; letter-spacing: .04em; text-transform: uppercase; }
-    .pill-anchor { background: rgba(255,255,255,0.04); color: var(--text3); }
+    .pill-anchor { background: rgba(20,20,19,0.04); color: var(--text3); }
     .pill-good { background: var(--accent-dim); color: var(--accent); }
     .pill-close { background: var(--warn-dim); color: var(--warn); }
     .pill-deficit { background: var(--danger-dim); color: var(--danger); }
-    .pill-critical { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+    .pill-critical { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(178,58,38,0.2); }
 
     /* Divider between groups */
     .r-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
@@ -135,7 +135,7 @@
 
     .block-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 28px; }
     .b-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; }
-    .b-card.active { border-color: var(--accent); background: rgba(0,200,150,0.04); }
+    .b-card.active { border-color: var(--accent); background: rgba(138,106,59,0.04); }
     .b-num { font-size: 10px; color: var(--text3); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
     .b-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
     .b-detail { font-size: 12px; color: var(--text2); margin-bottom: 12px; line-height: 1.5; }
@@ -144,7 +144,7 @@
     .btag-prox { background: var(--accent-dim); color: var(--accent); }
     .btag-mixed { background: var(--blue-dim); color: var(--blue); }
     .btag-earned { background: var(--danger-dim); color: var(--danger); }
-    .btag-neutral { background: rgba(255,255,255,0.04); color: var(--text3); }
+    .btag-neutral { background: rgba(20,20,19,0.04); color: var(--text3); }
 
     /* Class grid */
     .class-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 8px; }
@@ -175,8 +175,8 @@
     .ref-section:first-of-type { margin-top: 0; }
 
     .priority-core { background: var(--accent-dim); color: var(--accent); }
-    .priority-critical { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(239,68,68,0.15); }
-    .priority-accessory { background: rgba(255,255,255,0.04); color: var(--text3); }
+    .priority-critical { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(178,58,38,0.15); }
+    .priority-accessory { background: rgba(20,20,19,0.04); color: var(--text3); }
     .priority-clinical { background: var(--blue-dim); color: var(--blue); }
 
     .info-box { background: var(--surface2); border-left: 2px solid var(--accent); border-radius: 0 var(--rs) var(--rs) 0; padding: 14px 18px; margin: 16px 0; font-size: 13px; color: var(--text2); line-height: 1.7; }
@@ -198,7 +198,7 @@
     input[type="email"]:focus { border-color: var(--accent); }
     input[type="email"]::placeholder { color: var(--text3); font-size: 12px; }
     .btn-email { width: 100%; padding: 11px; background: transparent; border: 1px solid var(--accent); border-radius: var(--rs); color: var(--accent); font-family: var(--font-d); font-size: 16px; letter-spacing: .1em; cursor: pointer; transition: background .15s, color .15s; }
-    .btn-email:hover { background: var(--accent); color: #000; }
+    .btn-email:hover { background: var(--accent); color: #F1EDE4; }
     .btn-email:disabled { opacity: .45; cursor: not-allowed; }
     .email-status { margin-top: 10px; font-size: 13px; text-align: center; display: none; }
     .email-status.success { color: var(--accent); display: block; }
@@ -218,12 +218,38 @@
   </style>
 <style id="house-2026">
 /* HOUSE STYLE 2026: Oswald + DM Sans, near-black, warm white, teal accents. Matches the Performance Audit. */
-:root{--bg:#0B0B0A;--surface:#121211;--surface2:#181816;--surface3:#201F1C;--text:#F4F2EC;--accent:#00C896;--border:rgba(255,255,255,0.08)}
-body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.04),transparent 60%),var(--bg,#0B0B0A)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+:root{--bg:#FBFAF6;--surface:#FBFAF6;--surface2:#ECE7DC;--surface3:#ECE7DC;--text:#141413;--accent:#8A6A3B;--border:rgba(20,20,19,0.08)}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(138,106,59,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(138,106,59,.04),transparent 60%),var(--bg,#FBFAF6)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
 h1,h2,h3{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.005em;text-wrap:balance}
 input,select,textarea{border-radius:10px;font-family:'DM Sans',system-ui,sans-serif}
 button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
-:focus-visible{outline:2px solid #00C896;outline-offset:2px}
+:focus-visible{outline:2px solid #8A6A3B;outline-offset:2px}
+
+/* ===== Soul Meets Strength palette: matches the Client Hub ===== */
+body>header{
+      --bg: #141413;
+      --surface: #1E1D1B;
+      --surface2: #262522;
+      --surface3: #34322E;
+      --border: rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.13);
+      --accent: #C9A56B;
+      --accent-dim: rgba(201,165,107,0.1);
+      --accent-mid: rgba(201,165,107,0.2);
+      --warn: #f59e0b;
+      --warn-dim: rgba(245,158,11,0.1);
+      --danger: #ef4444;
+      --danger-dim: rgba(239,68,68,0.08);
+      --blue: #60a5fa;
+      --blue-dim: rgba(96,165,250,0.1);
+      --text: #efefef;
+      --text2: #8a8a8a;
+      --text3: #4a4a4a;
+      --font-d: 'Oswald', Impact, sans-serif;
+      --font-b: 'DM Sans', system-ui, sans-serif;
+      --r: 10px;
+      --rs: 6px;
+    ;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
 </style>
 </head>
 <body>
@@ -811,8 +837,8 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
     const labels = ['Baseline', 'B1 retest', 'B2 retest', 'B3 retest'];
 
     // Build datasets from deficits that have data — max 4 for readability
-    const colours = ['#00C896','#60a5fa','#f59e0b','#ef4444'];
-    const benchColours = ['rgba(0,200,150,0.3)','rgba(96,165,250,0.3)','rgba(245,158,11,0.3)','rgba(239,68,68,0.3)'];
+    const colours = ['#8A6A3B','#3E6A8A','#6F5530','#B23A26'];
+    const benchColours = ['rgba(138,106,59,0.3)','rgba(62,106,138,0.3)','rgba(111,85,48,0.3)','rgba(178,58,38,0.3)'];
 
     const topDeficits = deficits.slice(0, 4);
 
@@ -851,10 +877,10 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
     if (!datasets.length) {
       // Default example chart
       datasets.push(
-        { label:'Leg curl : squat', data:[35,41,47,51], borderColor:'#00C896', borderWidth:2, pointRadius:4, pointBackgroundColor:'#00C896', tension:.3, fill:false },
-        { label:'Target 52%', data:[52,52,52,52], borderColor:'rgba(0,200,150,0.3)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
-        { label:'Curl : bench', data:[24,27,29,31], borderColor:'#60a5fa', borderWidth:2, pointRadius:4, pointBackgroundColor:'#60a5fa', tension:.3, fill:false },
-        { label:'Target 32%', data:[32,32,32,32], borderColor:'rgba(96,165,250,0.3)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false }
+        { label:'Leg curl : squat', data:[35,41,47,51], borderColor:'#8A6A3B', borderWidth:2, pointRadius:4, pointBackgroundColor:'#8A6A3B', tension:.3, fill:false },
+        { label:'Target 52%', data:[52,52,52,52], borderColor:'rgba(138,106,59,0.3)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+        { label:'Curl : bench', data:[24,27,29,31], borderColor:'#3E6A8A', borderWidth:2, pointRadius:4, pointBackgroundColor:'#3E6A8A', tension:.3, fill:false },
+        { label:'Target 32%', data:[32,32,32,32], borderColor:'rgba(62,106,138,0.3)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false }
       );
     }
 
@@ -868,11 +894,11 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
         scales: {
           y: {
             min: 0,
-            ticks: { callback: v => v + '%', color: '#4a4a4a', font: { size: 11 } },
-            grid: { color: 'rgba(255,255,255,0.04)' }
+            ticks: { callback: v => v + '%', color: '#9A9488', font: { size: 11 } },
+            grid: { color: 'rgba(20,20,19,0.04)' }
           },
           x: {
-            ticks: { color: '#4a4a4a', font: { size: 11 }, autoSkip: false },
+            ticks: { color: '#9A9488', font: { size: 11 }, autoSkip: false },
             grid: { display: false }
           }
         }
@@ -888,7 +914,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       <div class="legend-item">
         <div class="legend-swatch" style="background:${colours[i]}"></div>
         <span>${d.label}</span>
-      </div>`).join('') + `<div class="legend-item"><div class="legend-swatch" style="background:rgba(255,255,255,0.15);border-top:1px dashed rgba(255,255,255,0.3)"></div><span>Benchmarks</span></div>`;
+      </div>`).join('') + `<div class="legend-item"><div class="legend-swatch" style="background:rgba(20,20,19,0.15);border-top:1px dashed rgba(20,20,19,0.3)"></div><span>Benchmarks</span></div>`;
   }
 </script>
 </body>

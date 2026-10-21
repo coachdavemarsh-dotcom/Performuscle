@@ -9,16 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink:        #060608;
-      --ink-2:      #0d0d0f;
-      --ink-3:      #1a1a1e;
-      --accent:     #00C896;
-      --accent-hi:  #00FFB8;
-      --accent-dim: rgba(0,200,150,.08);
-      --white:      #F5F6FA;
-      --muted:      #7a7a7d;
-      --danger:     #EF4444;
-      --warn:       #F59E0B;
+      --ink:        #F1EDE4;
+      --ink-2:      #FBFAF6;
+      --ink-3:      #ECE7DC;
+      --accent:     #8A6A3B;
+      --accent-hi:  #6F5530;
+      --accent-dim: rgba(138,106,59,.08);
+      --white:      #141413;
+      --muted:      #77726A;
+      --danger:     #B23A26;
+      --warn:       #6F5530;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,7 +53,7 @@
       height: 64px;
       border-radius: 14px;
       background: var(--accent-dim);
-      border: 1px solid rgba(0,200,150,.25);
+      border: 1px solid rgba(138,106,59,.25);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -79,7 +79,7 @@
 
     .gate-card {
       background: var(--ink-2);
-      border: 1px solid rgba(255,255,255,.07);
+      border: 1px solid rgba(20,20,19,.07);
       border-radius: 16px;
       padding: 2.5rem 2rem;
       width: 100%;
@@ -108,7 +108,7 @@
     .input-wrap input {
       width: 100%;
       background: var(--ink-3);
-      border: 1px solid rgba(255,255,255,.1);
+      border: 1px solid rgba(20,20,19,.1);
       border-radius: 10px;
       padding: .85rem 3rem .85rem 1rem;
       font-family: 'DM Sans', sans-serif;
@@ -174,7 +174,7 @@
       justify-content: space-between;
       padding: 1rem 1.5rem;
       background: var(--ink-2);
-      border-bottom: 1px solid rgba(255,255,255,.07);
+      border-bottom: 1px solid rgba(20,20,19,.07);
     }
 
     .hub-brand {
@@ -188,7 +188,7 @@
       height: 30px;
       border-radius: 7px;
       background: var(--accent-dim);
-      border: 1px solid rgba(0,200,150,.2);
+      border: 1px solid rgba(138,106,59,.2);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -207,7 +207,7 @@
       font-size: .78rem;
       color: var(--muted);
       background: none;
-      border: 1px solid rgba(255,255,255,.08);
+      border: 1px solid rgba(20,20,19,.08);
       border-radius: 7px;
       padding: .35rem .75rem;
       cursor: pointer;
@@ -233,8 +233,8 @@
       font-weight: 600;
       letter-spacing: .30em;
       color: var(--accent);
-      background: rgba(0,200,150,.08);
-      border: 1px solid rgba(0,200,150,.2);
+      background: rgba(138,106,59,.08);
+      border: 1px solid rgba(138,106,59,.2);
       padding: .25rem .9rem;
       border-radius: 20px;
       margin-bottom: 1rem;
@@ -267,7 +267,7 @@
 
     .tool-card {
       background: var(--ink-2);
-      border: 1px solid rgba(255,255,255,.07);
+      border: 1px solid rgba(20,20,19,.07);
       border-radius: 14px;
       padding: 1.75rem;
       display: flex;
@@ -279,7 +279,7 @@
     }
 
     .tool-card.live {
-      border-color: rgba(0,200,150,.2);
+      border-color: rgba(138,106,59,.2);
       cursor: pointer;
     }
     .tool-card.live:hover {
@@ -292,12 +292,12 @@
       position: absolute;
       top: 0; right: 0;
       width: 120px; height: 120px;
-      background: radial-gradient(ellipse at top right, rgba(0,200,150,.07), transparent 70%);
+      background: radial-gradient(ellipse at top right, rgba(138,106,59,.07), transparent 70%);
       pointer-events: none;
     }
 
     .tool-card.coming::before {
-      background: radial-gradient(ellipse at top right, rgba(94,94,112,.05), transparent 70%);
+      background: radial-gradient(ellipse at top right, rgba(119,114,106,.05), transparent 70%);
     }
 
     .card-badge {
@@ -313,14 +313,14 @@
       width: fit-content;
     }
     .card-badge.live-badge {
-      background: rgba(0,200,150,.12);
+      background: rgba(138,106,59,.12);
       color: var(--accent);
-      border: 1px solid rgba(0,200,150,.25);
+      border: 1px solid rgba(138,106,59,.25);
     }
     .card-badge.soon-badge {
-      background: rgba(94,94,112,.1);
+      background: rgba(119,114,106,.1);
       color: var(--muted);
-      border: 1px solid rgba(255,255,255,.07);
+      border: 1px solid rgba(20,20,19,.07);
     }
     .card-badge .dot {
       width: 6px; height: 6px;
@@ -332,14 +332,14 @@
       width: 44px; height: 44px;
       border-radius: 10px;
       background: var(--accent-dim);
-      border: 1px solid rgba(0,200,150,.15);
+      border: 1px solid rgba(138,106,59,.15);
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .tool-card.coming .card-icon {
-      background: rgba(255,255,255,.03);
-      border-color: rgba(255,255,255,.07);
+      background: rgba(20,20,19,.03);
+      border-color: rgba(20,20,19,.07);
     }
     .card-icon svg { width: 22px; height: 22px; }
 
@@ -366,7 +366,7 @@
       align-items: center;
       gap: .5rem;
       font-size: .8rem;
-      color: #9898aa;
+      color: #77726A;
     }
     .card-feature::before {
       content: '';
@@ -402,12 +402,26 @@
   </style>
 <style id="house-2026">
 /* HOUSE STYLE 2026: Oswald + DM Sans, near-black, warm white, teal accents. Matches the Performance Audit. */
-:root{--ink:#0B0B0A;--ink-2:#121211;--ink-3:#201F1C;--white:#F4F2EC;--muted:#9A968E;--accent:#00C896;--accent-hi:#4DFFC9}
-body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.04),transparent 60%),var(--ink,#0B0B0A)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+:root{--ink:#FBFAF6;--ink-2:#FBFAF6;--ink-3:#ECE7DC;--white:#141413;--muted:#77726A;--accent:#8A6A3B;--accent-hi:#6F5530}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(138,106,59,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(138,106,59,.04),transparent 60%),var(--ink,#FBFAF6)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
 h1,h2,h3{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.005em;text-wrap:balance}
 input,select,textarea{border-radius:10px;font-family:'DM Sans',system-ui,sans-serif}
 button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
-:focus-visible{outline:2px solid #00C896;outline-offset:2px}
+:focus-visible{outline:2px solid #8A6A3B;outline-offset:2px}
+
+/* ===== Soul Meets Strength palette: matches the Client Hub ===== */
+.hub-nav{
+      --ink:        #141413;
+      --ink-2:      #1E1D1B;
+      --ink-3:      #262522;
+      --accent:     #C9A56B;
+      --accent-hi:  #E0C08A;
+      --accent-dim: rgba(201,165,107,.08);
+      --white:      #F5F6FA;
+      --muted:      #7a7a7d;
+      --danger:     #EF4444;
+      --warn:       #F59E0B;
+    ;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
 </style>
 </head>
 <body>
@@ -418,11 +432,11 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
   <div class="logo-block">
     <div class="logo-icon">
       <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="14" width="5" height="8" rx="2" fill="#00C896"/>
-        <rect x="7" y="11" width="4" height="14" rx="2" fill="#00C896"/>
-        <rect x="11" y="16" width="14" height="4" rx="2" fill="#00C896"/>
-        <rect x="25" y="11" width="4" height="14" rx="2" fill="#00C896"/>
-        <rect x="29" y="14" width="5" height="8" rx="2" fill="#00C896"/>
+        <rect x="2" y="14" width="5" height="8" rx="2" fill="#8A6A3B"/>
+        <rect x="7" y="11" width="4" height="14" rx="2" fill="#8A6A3B"/>
+        <rect x="11" y="16" width="14" height="4" rx="2" fill="#8A6A3B"/>
+        <rect x="25" y="11" width="4" height="14" rx="2" fill="#8A6A3B"/>
+        <rect x="29" y="14" width="5" height="8" rx="2" fill="#8A6A3B"/>
       </svg>
     </div>
     <h1>PERFORM<span>USCLE</span></h1>
@@ -462,11 +476,11 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
     <div class="hub-brand">
       <div class="icon">
         <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="14" width="5" height="8" rx="2" fill="#00C896"/>
-          <rect x="7" y="11" width="4" height="14" rx="2" fill="#00C896"/>
-          <rect x="11" y="16" width="14" height="4" rx="2" fill="#00C896"/>
-          <rect x="25" y="11" width="4" height="14" rx="2" fill="#00C896"/>
-          <rect x="29" y="14" width="5" height="8" rx="2" fill="#00C896"/>
+          <rect x="2" y="14" width="5" height="8" rx="2" fill="#8A6A3B"/>
+          <rect x="7" y="11" width="4" height="14" rx="2" fill="#8A6A3B"/>
+          <rect x="11" y="16" width="14" height="4" rx="2" fill="#8A6A3B"/>
+          <rect x="25" y="11" width="4" height="14" rx="2" fill="#8A6A3B"/>
+          <rect x="29" y="14" width="5" height="8" rx="2" fill="#8A6A3B"/>
         </svg>
       </div>
       <span class="hub-brand-name">PERFORM<span>USCLE</span></span>
@@ -489,7 +503,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
         <div class="card-badge live-badge"><span class="dot"></span> Live</div>
         <div class="card-icon">
           <!-- Bar chart icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="20" x2="18" y2="10"/>
             <line x1="12" y1="20" x2="12" y2="4"/>
             <line x1="6"  y1="20" x2="6"  y2="14"/>
@@ -511,7 +525,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       <a href="/1rm-calculator.html" class="tool-card live">
         <div class="card-badge live-badge"><span class="dot"></span> Live</div>
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
             <polyline points="12 6 12 12 16 14"/>
           </svg>
@@ -530,7 +544,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       <a href="/body-composition.html" class="tool-card live">
         <div class="card-badge live-badge"><span class="dot"></span> Live</div>
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
         </div>
@@ -547,7 +561,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       <a href="/physique-peaking.html" class="tool-card live">
         <div class="card-badge live-badge"><span class="dot"></span> Live</div>
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
           </svg>
         </div>
@@ -565,7 +579,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       <a href="/energy-availability.html" class="tool-card live">
         <div class="card-badge live-badge"><span class="dot"></span> Live</div>
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
           </svg>
         </div>
@@ -584,7 +598,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       <a href="/endurance-calculator.html" class="tool-card live">
         <div class="card-badge live-badge"><span class="dot"></span> Live</div>
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
         </div>
@@ -603,7 +617,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       <a href="/performance-fuel.html" class="tool-card live">
         <div class="card-badge live-badge"><span class="dot"></span> Live</div>
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
           </svg>
         </div>
@@ -622,7 +636,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       <a href="/meal-planner/" class="tool-card live">
         <div class="card-badge live-badge"><span class="dot"></span> Live</div>
         <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A6A3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/>
             <path d="M12 6v6l4 2"/>
             <path d="M8 12H4M20 12h-4M12 8V4M12 20v-4"/>
@@ -678,7 +692,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
       const input = document.getElementById('pw-input')
       input.value = ''
       input.focus()
-      input.style.borderColor = '#EF4444'
+      input.style.borderColor = '#B23A26'
       setTimeout(() => { input.style.borderColor = '' }, 1200)
     }
   }

@@ -11,17 +11,17 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --ink:        #060608;
-      --ink-2:      #0f1014;
-      --ink-3:      #1a1b21;
-      --accent:     #00C896;
-      --accent-hi:  #00FFB8;
-      --accent-dim: rgba(0,200,150,.08);
-      --white:      #F5F6FA;
-      --muted:      #5e5e70;
-      --danger:     #EF4444;
-      --warn:       #F59E0B;
-      --border:     rgba(255,255,255,.07);
+      --ink:        #F1EDE4;
+      --ink-2:      #FBFAF6;
+      --ink-3:      #ECE7DC;
+      --accent:     #8A6A3B;
+      --accent-hi:  #6F5530;
+      --accent-dim: rgba(138,106,59,.08);
+      --white:      #141413;
+      --muted:      #77726A;
+      --danger:     #B23A26;
+      --warn:       #6F5530;
+      --border:     rgba(20,20,19,.07);
       --radius:     10px;
     }
 
@@ -365,8 +365,8 @@
     }
 
     .rate-pill.active          { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
-    .rate-pill.active-warn     { border-color: var(--warn);   color: var(--warn);   background: rgba(245,158,11,.08); }
-    .rate-pill.active-danger   { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,.08); }
+    .rate-pill.active-warn     { border-color: var(--warn);   color: var(--warn);   background: rgba(111,85,48,.08); }
+    .rate-pill.active-danger   { border-color: var(--danger); color: var(--danger); background: rgba(178,58,38,.08); }
 
     .rate-pill .pill-pct {
       font-family: 'Oswald', sans-serif;
@@ -402,9 +402,9 @@
       letter-spacing: .06em;
       margin-bottom: 20px;
     }
-    .rate-quality.green  { background: rgba(0,200,150,.1);  color: var(--accent); border: 1px solid rgba(0,200,150,.25); }
-    .rate-quality.amber  { background: rgba(245,158,11,.1); color: var(--warn);   border: 1px solid rgba(245,158,11,.25); }
-    .rate-quality.red    { background: rgba(239,68,68,.1);  color: var(--danger); border: 1px solid rgba(239,68,68,.25); }
+    .rate-quality.green  { background: rgba(138,106,59,.1);  color: var(--accent); border: 1px solid rgba(138,106,59,.25); }
+    .rate-quality.amber  { background: rgba(111,85,48,.1); color: var(--warn);   border: 1px solid rgba(111,85,48,.25); }
+    .rate-quality.red    { background: rgba(178,58,38,.1);  color: var(--danger); border: 1px solid rgba(178,58,38,.25); }
 
     /* result sections */
     .result-section {
@@ -482,7 +482,7 @@
       text-align: left;
     }
 
-    .use-bf-btn:hover { background: rgba(0,200,150,.14); }
+    .use-bf-btn:hover { background: rgba(138,106,59,.14); }
     .use-bf-btn:disabled {
       opacity: .35;
       cursor: not-allowed;
@@ -681,8 +681,8 @@
 
     /* error state */
     .error-msg {
-      background: rgba(239,68,68,.1);
-      border: 1px solid rgba(239,68,68,.3);
+      background: rgba(178,58,38,.1);
+      border: 1px solid rgba(178,58,38,.3);
       border-radius: 8px;
       padding: 12px 16px;
       color: var(--danger);
@@ -695,12 +695,28 @@
   </style>
 <style id="house-2026">
 /* HOUSE STYLE 2026: Oswald + DM Sans, near-black, warm white, teal accents. Matches the Performance Audit. */
-:root{--ink:#0B0B0A;--ink-2:#121211;--ink-3:#201F1C;--white:#F4F2EC;--muted:#9A968E;--accent:#00C896;--accent-hi:#4DFFC9;--border:rgba(255,255,255,0.08);--radius:14px}
-body{background:radial-gradient(900px 520px at 90% -8%,rgba(0,200,150,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(0,200,150,.04),transparent 60%),var(--ink,#0B0B0A)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+:root{--ink:#FBFAF6;--ink-2:#FBFAF6;--ink-3:#ECE7DC;--white:#141413;--muted:#77726A;--accent:#8A6A3B;--accent-hi:#6F5530;--border:rgba(20,20,19,0.08);--radius:14px}
+body{background:radial-gradient(900px 520px at 90% -8%,rgba(138,106,59,.09),transparent 62%),radial-gradient(700px 520px at -12% 50%,rgba(138,106,59,.04),transparent 60%),var(--ink,#FBFAF6)!important;background-attachment:fixed!important;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
 h1,h2,h3{font-family:'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:.005em;text-wrap:balance}
 input,select,textarea{border-radius:10px;font-family:'DM Sans',system-ui,sans-serif}
 button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
-:focus-visible{outline:2px solid #00C896;outline-offset:2px}
+:focus-visible{outline:2px solid #8A6A3B;outline-offset:2px}
+
+/* ===== Soul Meets Strength palette: matches the Client Hub ===== */
+.header{
+      --ink:        #141413;
+      --ink-2:      #1E1D1B;
+      --ink-3:      #262522;
+      --accent:     #C9A56B;
+      --accent-hi:  #E0C08A;
+      --accent-dim: rgba(201,165,107,.08);
+      --white:      #F5F6FA;
+      --muted:      #5e5e70;
+      --danger:     #EF4444;
+      --warn:       #F59E0B;
+      --border:     rgba(255,255,255,.07);
+      --radius:     10px;
+    ;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
 </style>
 </head>
 <body>
@@ -710,11 +726,11 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
     <a href="#" class="header-brand">
       <!-- dumbbell SVG -->
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="9" width="3" height="6" rx="1" fill="#00C896"/>
-        <rect x="4" y="7" width="3" height="10" rx="1.2" fill="#00C896"/>
-        <rect x="7" y="10.5" width="10" height="3" rx="1" fill="#00C896"/>
-        <rect x="17" y="7" width="3" height="10" rx="1.2" fill="#00C896"/>
-        <rect x="20" y="9" width="3" height="6" rx="1" fill="#00C896"/>
+        <rect x="1" y="9" width="3" height="6" rx="1" fill="#8A6A3B"/>
+        <rect x="4" y="7" width="3" height="10" rx="1.2" fill="#8A6A3B"/>
+        <rect x="7" y="10.5" width="10" height="3" rx="1" fill="#8A6A3B"/>
+        <rect x="17" y="7" width="3" height="10" rx="1.2" fill="#8A6A3B"/>
+        <rect x="20" y="9" width="3" height="6" rx="1" fill="#8A6A3B"/>
       </svg>
       <span class="header-wordmark">PERFOR<span>MUSCLE</span></span>
     </a>
