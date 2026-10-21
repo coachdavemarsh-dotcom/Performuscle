@@ -1352,6 +1352,8 @@ async function clientHub(row){
       return `<details class="hubm"><summary><span><b>${escH(t)}</b> <span class="submsg">${escH(tk)}</span></span><span class="submsg">${d.done?'Complete':(+d.pct||0)+'%'} · ${days}/7 days</span></summary><div class="hb"><i style="width:${+d.pct||0}%"></i></div>
         <dl>${qa.map(x=>`<div><dt>${escH(x.q)}</dt><dd>${escH(x.a)}</dd></div>`).join('')}${d.reflection&&d.reflection.trim()?`<div><dt>${escH(d.reflectQ||'Reflection')}</dt><dd>${escH(d.reflection)}</dd></div>`:''}${qa.length||d.reflection?'':'<div><dd class="submsg">No answers written yet.</dd></div>'}</dl>
         <span class="submsg">Last active ${new Date(d.updated).toLocaleDateString('en-AU')}</span></details>`}).join('');
+    const jw=((by.journal||{}).weeks)||{},jk=Object.keys(jw).filter(k=>(jw[k].t||'').trim()).sort((a,b)=>b-a);
+    box.insertAdjacentHTML('beforeend',`<details class="hubm"${jk.length?' open':''}><summary><span><b>Weekly journal</b> <span class="submsg">From My Plan</span></span><span class="submsg">${jk.length} ${jk.length===1?'entry':'entries'}</span></summary><dl>${jk.map(k=>`<div><dt>Week ${escH(k)} · ${escH(jw[k].p||'')}</dt><dd>${escH(jw[k].t)}</dd></div>`).join('')||'<div><dd class="submsg">No journal entries yet.</dd></div>'}</dl></details>`);
     box.insertAdjacentHTML('afterbegin',pathPanel(by));bindPath();box.hidden=false;
   }catch(e){box.innerHTML=pathPanel({});bindPath();box.hidden=false}
 }

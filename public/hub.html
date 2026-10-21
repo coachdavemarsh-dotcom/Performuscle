@@ -132,6 +132,17 @@ section{display:flex;flex-direction:column;gap:16px}
 .complete{background:#141413;color:#F4F1EA;border-radius:22px;padding:24px;box-shadow:none;border-left:6px solid #C9A56B;display:flex;gap:18px;align-items:center}
 .complete .bdg{width:64px;height:64px;font-size:16px;flex:none}
 .complete b{font-family:var(--display);font-size:26px;text-transform:uppercase;display:block}
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.book{background:var(--surface);border-radius:16px;padding:16px 18px;box-shadow:inset 0 0 0 1px var(--line);border-left:3px solid var(--c);display:flex;flex-direction:column;gap:5px;min-width:0}
+.book b{font-family:var(--display);font-size:19px;font-weight:600;text-transform:uppercase;line-height:1.1}
+.book .au{font-size:13px;font-weight:600;color:var(--c)}
+.book p{font-size:14px;color:var(--off)}
+.book .tags{font-size:12.5px;color:var(--muted);margin-top:2px}
+.libf{display:flex;gap:6px;flex-wrap:wrap}
+.libf button{border:0;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);border-radius:999px;padding:7px 15px;font-size:13px;font-weight:600;color:var(--off);cursor:pointer}
+.libf button.on{background:var(--ink);color:var(--on);box-shadow:none}
+.deeper{display:flex;flex-direction:column;gap:10px}
+.deeper .tk{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
 .care{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);opacity:0;background:#141413;color:#F4F1EA;font-weight:700;padding:10px 18px;border-radius:999px;transition:all .3s ease;pointer-events:none;z-index:30;font-size:14px}
 .toast.show{transform:translate(-50%,0);opacity:1}
@@ -297,6 +308,9 @@ const ROADMAP=[
  {name:'Integrate',line:'Presence under pressure, then three weeks to bring it all together.'}];
 const PATH_WEEKS={regulate:1,awareness:2,sleep:3,recovery:4,nutrition:5,strength:6,mobility:7,values:8,identity:9,limits:10,boundaries:11,metabolism:12,hormones:13,growth:14,release:15,grief:16,purpose:17,polarity:18,devotion:19,service:20,presence:21};
 let path={start:null,weeks:{}};
+/* Further reading: books that go deeper on each training. tr = training ids */
+const BOOKS=[{"t": "The Body Keeps the Score", "a": "Bessel van der Kolk", "w": "How stress and trauma live in the body, and why healing starts there.", "tr": ["regulate", "release"]}, {"t": "Breath", "a": "James Nestor", "w": "Why how you breathe changes how you feel, sleep and perform.", "tr": ["regulate", "presence"]}, {"t": "Wherever You Go, There You Are", "a": "Jon Kabat-Zinn", "w": "Short, practical chapters on paying attention to your life as it happens.", "tr": ["awareness"]}, {"t": "The Power of Now", "a": "Eckhart Tolle", "w": "Stepping out of the running commentary in your head and into the present.", "tr": ["awareness", "presence"]}, {"t": "Why We Sleep", "a": "Matthew Walker", "w": "What sleep does for your body and brain, and what you lose without it.", "tr": ["sleep"]}, {"t": "Sleep", "a": "Nick Littlehales", "w": "A practical, sport-tested way to plan sleep in cycles rather than hours.", "tr": ["sleep", "recovery"]}, {"t": "Good to Go", "a": "Christie Aschwanden", "w": "What the science actually says about recovery, and which fads to ignore.", "tr": ["recovery"]}, {"t": "Built to Move", "a": "Kelly Starrett & Juliet Starrett", "w": "Ten simple daily habits to keep your body moving well for life.", "tr": ["mobility"]}, {"t": "Starting Strength", "a": "Mark Rippetoe", "w": "The classic guide to the big barbell lifts and how to progress them.", "tr": ["strength"]}, {"t": "Outlive", "a": "Peter Attia", "w": "Training, nutrition and sleep for a long healthspan, with zone 2 and strength at the core.", "tr": ["metabolism", "strength"]}, {"t": "Burn", "a": "Herman Pontzer", "w": "How your body really spends energy, and what that means for weight and health.", "tr": ["metabolism", "nutrition"]}, {"t": "In Defense of Food", "a": "Michael Pollan", "w": "A clear, common-sense case for eating real food.", "tr": ["nutrition"]}, {"t": "Why Zebras Don’t Get Ulcers", "a": "Robert Sapolsky", "w": "How chronic stress hormones affect sleep, gut, immunity and mood.", "tr": ["hormones", "regulate"]}, {"t": "Dare to Lead", "a": "Brené Brown", "w": "Naming your core values and living them when it’s uncomfortable.", "tr": ["values", "boundaries"]}, {"t": "Atomic Habits", "a": "James Clear", "w": "Building identity-based habits that stick, one small action at a time.", "tr": ["identity", "devotion"]}, {"t": "The Chimp Paradox", "a": "Steve Peters", "w": "A simple model for managing the emotional, reactive part of your mind.", "tr": ["limits", "presence"]}, {"t": "No More Mr Nice Guy", "a": "Robert Glover", "w": "Breaking the habit of seeking approval and learning to ask for what you need.", "tr": ["boundaries", "polarity"]}, {"t": "Mindset", "a": "Carol Dweck", "w": "Why believing you can grow changes how you meet challenge and failure.", "tr": ["growth", "limits"]}, {"t": "Peak", "a": "Anders Ericsson & Robert Pool", "w": "How deliberate practice at the edge of your ability builds real skill.", "tr": ["growth", "strength"]}, {"t": "Letting Go", "a": "David R. Hawkins", "w": "A practical method for surrendering feelings instead of suppressing them.", "tr": ["release"]}, {"t": "When the Body Says No", "a": "Gabor Maté", "w": "The link between hidden stress, emotion and the immune system.", "tr": ["grief", "release"]}, {"t": "It’s OK That You’re Not OK", "a": "Megan Devine", "w": "Grief without the pressure to fix it or move on.", "tr": ["grief"]}, {"t": "Man’s Search for Meaning", "a": "Viktor Frankl", "w": "Finding purpose even in the hardest circumstances.", "tr": ["purpose", "grief"]}, {"t": "The Way of the Superior Man", "a": "David Deida", "w": "Masculine and feminine energy, purpose and presence in relationships.", "tr": ["polarity", "purpose"]}, {"t": "King, Warrior, Magician, Lover", "a": "Robert Moore & Douglas Gillette", "w": "Four mature masculine archetypes and their shadows.", "tr": ["polarity", "identity"]}, {"t": "Discipline Is Destiny", "a": "Ryan Holiday", "w": "Self-discipline as a daily practice of character, not punishment.", "tr": ["devotion", "boundaries"]}, {"t": "Give and Take", "a": "Adam Grant", "w": "Why generous people often succeed, and how to give without burning out.", "tr": ["service"]}, {"t": "Leaders Eat Last", "a": "Simon Sinek", "w": "Service and trust as the foundation of leadership.", "tr": ["service", "purpose"]}, {"t": "The Inner Game of Tennis", "a": "W. Timothy Gallwey", "w": "Quieting the inner critic so the body can perform. Not really about tennis.", "tr": ["presence", "limits"]}];
+let libF='all';
 const DAY=864e5;
 function dayOf(iso){const d=new Date(iso+'T00:00:00');return isNaN(d)?null:d}
 function todayD(){const t=new Date();t.setHours(0,0,0,0);return t}
@@ -405,9 +419,22 @@ function renderHome(){
     return `<div class="track" style="--c:${t.c}"><div class="th"><div><span class="tk">${t.sys}</span><h3>${t.key}</h3></div><div class="mini">${ring(p,56,5,t.c)}<b>${p}%</b></div></div><p>${t.line}</p>
      ${(FW_SOON[t.id]||[]).length?`<p class="soonlist"><b>Coming soon:</b> ${(FW_SOON[t.id]||[]).map(x=>esc(FW_SOON_FULL[x]||x)).join(' · ')}</p>`:''}
      ${ms.map(m=>{const s=stats(m);if(!isOpen(m.id))return `<div class="mod locked"><span class="mt"><b>${esc(m.title)}</b><em>Week ${weekOf(m.id)}</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><span class="chip">${esc(lockMsg(m.id))}</span></div>`;return `<button class="mod" data-open="${m.id}"><span class="mt"><b>${esc(m.title)}</b><em>${(videos[m.id]&&videos[m.id].minutes)||m.minutes} min</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><div class="bar"><i style="width:${s.pct}%"></i></div><span class="chip ${s.done?'done':''}">${s.done?'Complete':s.pct?`In progress · ${s.pct}%`:'Start'}</span></button>`}).join('')}</div>`}).join('')}</div></section>
+  <section id="libSec">${libraryHTML()}</section>
   <p class="care">This is coaching, not therapy. If something heavy comes up while you work through these, tell Dave and we’ll make sure you have the right support.</p>`;
   document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
-  drawFramework();
+  bindLibrary();drawFramework();
+}
+function bookCard(b){const m=MODULES.find(x=>x.id===b.tr[0]),c=m?trackOf(m.track).c:'var(--accent)';
+  return `<div class="book" style="--c:${c}"><b>${esc(b.t)}</b><span class="au">${esc(b.a)}</span><p>${esc(b.w)}</p><span class="tags">Goes with ${b.tr.map(id=>isOpen(id)?`<button class="linkish" data-open="${id}">${esc(FW_NAME[id]||id)}</button>`:`<span>${esc(FW_NAME[id]||id)}</span>`).join(' · ')}</span></div>`}
+function libraryHTML(){
+  const inT=(b,t)=>b.tr.some(id=>{const m=MODULES.find(x=>x.id===id);return m&&m.track===t});
+  const list=BOOKS.filter(b=>libF==='all'||inT(b,libF));
+  return `<span class="eyebrow">Go deeper</span><h2>Further reading</h2><p class="lede" style="font-size:15.5px">Books ${'Dave'} rates for each part of the work. Read what pulls at you. None of it is homework.</p>
+   <div class="libf" role="group" aria-label="Filter books">${[['all','All'],...TRACKS.map(t=>[t.id,t.sys])].map(([k,n])=>`<button type="button" data-lib="${k}" class="${libF===k?'on':''}" aria-pressed="${libF===k}">${esc(n)}</button>`).join('')}</div>
+   <div class="lib">${list.map(bookCard).join('')}</div>`}
+function bindLibrary(){
+  document.querySelectorAll('[data-lib]').forEach(b=>b.addEventListener('click',()=>{libF=b.dataset.lib;$('libSec').innerHTML=libraryHTML();bindLibrary()}));
+  document.querySelectorAll('#libSec [data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
 }
 /* Mind, Body, Heart around Alignment; each training is a satellite with its progress ring */
 const FW_POS={body:{x:200,y:105,a0:-178,dir:1,st:25.4,r:150},mind:{x:80,y:300,a0:88,dir:1,st:30,r:125},heart:{x:320,y:300,a0:92,dir:-1,st:30,r:125}};
@@ -473,6 +500,7 @@ function openModule(id){
   <div class="step ${s.days>=5?'done':''}" id="st4" style="--c:${t.c}"><span class="num">4</span><div class="sc"><h3>Homework · 7 days</h3><div class="practice"><b>${esc(m.practice[0])}</b><span>${esc(m.practice[1])}</span></div>
    <p class="small">Tap a day when you’ve done it. Five of seven completes the homework. +15 XP a day.</p><div class="days">${[0,1,2,3,4,5,6].map(i=>`<button class="day ${(d.days||[])[i]?'on':''}" data-day="${i}" aria-pressed="${!!(d.days||[])[i]}"><span>Day</span><b>${i+1}</b></button>`).join('')}</div></div></div>
   <div class="step ${s.refl?'done':''}" id="st5" style="--c:${t.c}"><span class="num">5</span><div class="sc"><h3>Reflect</h3><div class="q ${s.refl?'ok':''}" id="qr"><label for="refl">${esc(m.reflect)}</label><textarea id="refl"></textarea><div class="qf"><span>Write this at the end of your week.</span><span class="xp">${s.refl?'+20 XP ✓':'+20 XP'}</span></div></div></div></div>
+  ${BOOKS.some(b=>b.tr.includes(id))?`<div class="deeper" style="--c:${t.c}"><span class="tk">Go deeper</span><div class="lib">${BOOKS.filter(b=>b.tr.includes(id)).map(b=>`<div class="book" style="--c:${t.c}"><b>${esc(b.t)}</b><span class="au">${esc(b.a)}</span><p>${esc(b.w)}</p></div>`).join('')}</div></div>`:''}
   <div id="doneBox"></div>
   <p class="care">This is coaching, not therapy. If something heavy comes up, tell Dave and we’ll make sure you have the right support.</p>`;
   $('back').addEventListener('click',()=>{renderHome();window.scrollTo(0,0)});
