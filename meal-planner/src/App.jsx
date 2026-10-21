@@ -16,12 +16,12 @@ const DIETARY_FILTERS = [
 ]
 
 const MEAL_TYPE_COLOURS = {
-  'pre-workout':  '#f59e0b',
-  'post-workout': '#00C896',
-  'breakfast':    '#6366f1',
-  'lunch':        '#3b82f6',
-  'dinner':       '#8b5cf6',
-  'snack':        '#ec4899',
+  'pre-workout':  '#6F5530',
+  'post-workout': '#8A6A3B',
+  'breakfast':    '#3E6A8A',
+  'lunch':        '#3E6A8A',
+  'dinner':       '#6E5A99',
+  'snack':        '#A34E7A',
 }
 
 const SHOPPING_ICONS = {
@@ -48,7 +48,7 @@ function StepHeader({ step, title, subtitle }) {
         {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map(n => (
           <div key={n} className="step-bar" style={{
             width: n < step ? 28 : n === step ? 48 : 12,
-            background: n <= step ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
+            background: n <= step ? 'var(--accent)' : 'rgba(20,20,19,0.1)',
           }} />
         ))}
       </div>
@@ -199,8 +199,8 @@ function TDEEStep({ onComplete, onSkip }) {
             <button key={a.value}
               onClick={() => setActivity(a.value)}
               style={{
-                padding: '12px 16px', borderRadius: 8, border: `1.5px solid ${activity === a.value ? 'var(--accent)' : 'rgba(255,255,255,0.08)'}`,
-                background: activity === a.value ? 'rgba(0,200,150,0.08)' : 'rgba(255,255,255,0.02)',
+                padding: '12px 16px', borderRadius: 8, border: `1.5px solid ${activity === a.value ? 'var(--accent)' : 'rgba(20,20,19,0.08)'}`,
+                background: activity === a.value ? 'rgba(138,106,59,0.08)' : 'rgba(20,20,19,0.02)',
                 cursor: 'pointer', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               }}>
               <div>
@@ -231,16 +231,16 @@ function TDEEStep({ onComplete, onSkip }) {
 
       {/* Result */}
       {result && (
-        <div className="section-card" style={{ borderColor: 'rgba(0,200,150,0.3)', background: 'rgba(0,200,150,0.05)', marginBottom: 16 }}>
+        <div className="section-card" style={{ borderColor: 'rgba(138,106,59,0.3)', background: 'rgba(138,106,59,0.05)', marginBottom: 16 }}>
           <div style={{ fontSize: 11, fontFamily: 'var(--font-display)', letterSpacing: '0.08em', color: 'var(--accent)', marginBottom: 12 }}>
             YOUR ESTIMATED TARGETS
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 12 }}>
             {[
               { label: 'KCAL',    val: result.kcal,      color: 'var(--white)' },
-              { label: 'PROTEIN', val: `${result.protein_g}g`, color: '#818cf8' },
-              { label: 'CARBS',   val: `${result.carbs_g}g`,   color: '#f59e0b' },
-              { label: 'FAT',     val: `${result.fat_g}g`,     color: '#34d399' },
+              { label: 'PROTEIN', val: `${result.protein_g}g`, color: '#3E6A8A' },
+              { label: 'CARBS',   val: `${result.carbs_g}g`,   color: '#6F5530' },
+              { label: 'FAT',     val: `${result.fat_g}g`,     color: '#6F5530' },
             ].map(({ label, val, color }) => (
               <div key={label} style={{ textAlign: 'center' }}>
                 <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, color }}>{val}</div>
@@ -248,7 +248,7 @@ function TDEEStep({ onComplete, onSkip }) {
               </div>
             ))}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--muted)', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 10 }}>
+          <div style={{ fontSize: 11, color: 'var(--muted)', borderTop: '1px solid rgba(20,20,19,0.06)', paddingTop: 10 }}>
             Maintenance TDEE: <strong style={{ color: 'var(--white)' }}>{result.tdee} kcal</strong>
             &nbsp;·&nbsp; Mifflin-St Jeor formula &nbsp;·&nbsp; Adjust based on real-world progress
           </div>
@@ -493,7 +493,7 @@ function LeadCTA({ result, macros, mealsPerDay, trainingDays, dietaryFilters }) 
               onChange={e => setEmail(e.target.value)}
               required
             />
-            {error && <div style={{ fontSize: 12, color: '#f87171' }}>{error}</div>}
+            {error && <div style={{ fontSize: 12, color: '#B23A26' }}>{error}</div>}
             <button type="submit" className="btn-primary" disabled={sending} style={{ whiteSpace: 'nowrap' }}>
               {sending ? 'SENDING…' : 'SEND MY PLAN →'}
             </button>
@@ -503,8 +503,8 @@ function LeadCTA({ result, macros, mealsPerDay, trainingDays, dietaryFilters }) 
 
       {/* Coaching CTA */}
       <div style={{
-        background: 'rgba(0,200,150,0.06)',
-        border: '1.5px solid rgba(0,200,150,0.2)',
+        background: 'rgba(138,106,59,0.06)',
+        border: '1.5px solid rgba(138,106,59,0.2)',
         borderTop: 'none',
         borderRadius: '0 0 12px 12px',
         padding: '20px 24px',
