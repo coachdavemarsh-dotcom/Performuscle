@@ -239,10 +239,10 @@ function renderAuth(msg,err){
 }
 
 /* ---------- Plan ---------- */
-const HUB_MODS=[{id:'regulate',track:'body'},{id:'sleep',track:'body'},{id:'recovery',track:'body'},{id:'mobility',track:'body'},{id:'strength',track:'body'},{id:'metabolism',track:'body'},{id:'nutrition',track:'body'},{id:'hormones',track:'body'},{id:'awareness',track:'mind'},{id:'values',track:'mind'},{id:'identity',track:'mind'},{id:'limits',track:'mind'},{id:'boundaries',track:'mind'},{id:'growth',track:'mind'},{id:'release',track:'heart'},{id:'grief',track:'heart'},{id:'purpose',track:'heart'},{id:'polarity',track:'heart'},{id:'devotion',track:'heart'},{id:'service',track:'heart'}];
+const HUB_MODS=[{id:'regulate',track:'body'},{id:'sleep',track:'body'},{id:'recovery',track:'body'},{id:'mobility',track:'body'},{id:'strength',track:'body'},{id:'metabolism',track:'body'},{id:'nutrition',track:'body'},{id:'hormones',track:'body'},{id:'awareness',track:'mind'},{id:'values',track:'mind'},{id:'identity',track:'mind'},{id:'limits',track:'mind'},{id:'boundaries',track:'mind'},{id:'growth',track:'mind'},{id:'release',track:'heart'},{id:'grief',track:'heart'},{id:'purpose',track:'heart'},{id:'polarity',track:'heart'},{id:'devotion',track:'heart'},{id:'service',track:'heart'},{id:'presence',track:'mind'}];
 const HUB_TRACKS=[['body','Regulate','Body','var(--ink)'],['mind','Rehearse','Mind','var(--accent)'],['heart','Release','Heart','#E8A87C']];
 const HUB_LEVELS=[['Not started',0],['Aware',150],['Building',800],['Consistent',2500],['Owned',4500]];
-const HUB_SPOKE={somatics:['regulate','awareness'],identity:['identity','values'],limits:['limits','growth'],boundaries:['boundaries'],recovery:['sleep','recovery'],movement:['mobility','strength'],nutrition:['nutrition','metabolism','hormones']};
+const HUB_SPOKE={somatics:['regulate','awareness','presence'],identity:['identity','values'],limits:['limits','growth'],boundaries:['boundaries'],recovery:['sleep','recovery'],movement:['mobility','strength'],nutrition:['nutrition','metabolism','hormones']};
 let hub=null;
 const HUB_SAMPLE={regulate:{pct:58,xp:150,done:false},identity:{pct:12,xp:25,done:false}};
 async function loadHub(){

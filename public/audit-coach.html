@@ -324,6 +324,9 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .frow span{min-width:0;overflow-wrap:anywhere}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
+.pathgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin-top:10px}
+.prow{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px}
+.prow select{max-width:150px}
 </style>
 </head>
 <body>
@@ -1215,7 +1218,7 @@ async function openSub(id){
       const extra=[ex.rhr?`Resting HR ${ex.rhr} bpm`:'',ex.bloods==='yes'?'Has blood work from the last 12 months':''].filter(Boolean).join(' · ');
       if(extra)notes.recovery=extra;
     }
-    isSample=false;$('sampleTag').hidden=true;showFiles(row);clientFiles(row);clientHub(row);renderInner();
+    isSample=false;$('sampleTag').hidden=true;hubPath={...((row.coach_data||{}).hubPath||{})};hubPath.weeks={...(hubPath.weeks||{})};showFiles(row);clientFiles(row);clientHub(row);renderInner();
     $('subStatus').value=row.status==='new'?'reviewed':row.status;$('saveRow').hidden=false;
     update();loadSubsSilently();
     subMsg(`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
@@ -1238,7 +1241,7 @@ function showFiles(row){
   }));
 }
 /* ---------- Inner work (Heart + Alignment) ---------- */
-let inner={};
+let inner={},hubPath={};
 const INNER=[
  {h:'Heart · Desire and meaning'},
  {k:'contribution',l:'Contribution',ph:'Who this is for beyond them. e.g. Showing my kids what keeping your word looks like.',score:1},
@@ -1278,10 +1281,11 @@ function buildPlan(){
    phase:{index:a.phase,name:['Health','Function','Performance','Mindset'][a.phase],mode:a.mode,weeks:a.weeks,lead:CLIENT_LEAD[a.key]},
    launchpad:SPOKES.map(x=>({id:x.id,side:x.side,short:x.short,name:x.name,score:sc(spokes[x.id]),about:ABOUT[x.id]||toYou(x.d),actions:acts(x.id)})),
    northStar:{year:ns.year||'',weeks:ns.weeks||'',week:ns.week||'',why:(ns.why||[]).filter(Boolean),laws:(ns.laws||[]).filter(Boolean)},
-   track:TRACK.slice()};
+   track:TRACK.slice(),
+   hubPath:{start:hubPath.start||localISO(new Date()),weeks:{...(hubPath.weeks||{})}}};
 }
 async function saveReview(){
-  const coach_data={state,ans,spokes,notes,mv,ns,ik,inner,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
+  const coach_data={state,ans,spokes,notes,mv,ns,ik,inner,hubPath,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
   await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(openId)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({coach_data,status:$('subStatus').value})});
 }
 async function publishPlan(){
@@ -1289,6 +1293,7 @@ async function publishPlan(){
   if(!email){subMsg('This audit has no email, so there is no client login to publish to.',1);return}
   $('subPublish').disabled=true;subMsg('Publishing…');
   try{
+    if(!hubPath.start)hubPath.start=localISO(new Date());
     await saveReview();
     await sb('/rest/v1/client_plans?on_conflict=audit_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({audit_id:openId,email,plan:buildPlan(),published:true})});
     await loadSubs().catch(()=>{});
@@ -1313,7 +1318,29 @@ async function clientFiles(row){
   }catch(e){/* table not created yet: nothing to show */}
 }
 /* ---------- Client Hub: progress, answers and video links ---------- */
-const HUB=[['regulate',"Somatics: Regulate the body",'Regulate · Body'],['sleep',"Sleep: The foundation",'Regulate · Body'],['recovery',"Recovery: Read the signals",'Regulate · Body'],['mobility',"Mobility: Own your range",'Regulate · Body'],['strength',"Strength training: Build the base",'Regulate · Body'],['metabolism',"Metabolism: Build the engine",'Regulate · Body'],['nutrition',"Nutrition: Fuel the work",'Regulate · Body'],['hormones',"Hormones: Your daily environment",'Regulate · Body'],['awareness',"Awareness: Notice the pattern",'Rehearse · Mind'],['values',"Values: The Human Formula to Win",'Rehearse · Mind'],['identity',"Identity: Old self, new self",'Rehearse · Mind'],['limits',"Self-limits: The inner voice",'Rehearse · Mind'],['boundaries',"Boundaries: Protect the standard",'Rehearse · Mind'],['growth',"Growth: Choose the challenge",'Rehearse · Mind'],['release',"Release: Head to heart",'Release · Heart'],['grief',"Grief: The other side of love",'Release · Heart'],['purpose',"Purpose: From proving to purpose",'Release · Heart'],['polarity',"Polarity: Masculine and feminine",'Release · Heart'],['devotion',"Devotion: Discipline with love",'Release · Heart'],['service',"Service: Give it back",'Release · Heart']];
+const HUB=[['regulate',"Somatics: Regulate the body",'Regulate · Body'],['sleep',"Sleep: The foundation",'Regulate · Body'],['recovery',"Recovery: Read the signals",'Regulate · Body'],['mobility',"Mobility: Own your range",'Regulate · Body'],['strength',"Strength training: Build the base",'Regulate · Body'],['metabolism',"Metabolism: Build the engine",'Regulate · Body'],['nutrition',"Nutrition: Fuel the work",'Regulate · Body'],['hormones',"Hormones: Your daily environment",'Regulate · Body'],['awareness',"Awareness: Notice the pattern",'Rehearse · Mind'],['values',"Values: The Human Formula to Win",'Rehearse · Mind'],['identity',"Identity: Old self, new self",'Rehearse · Mind'],['limits',"Self-limits: The inner voice",'Rehearse · Mind'],['boundaries',"Boundaries: Protect the standard",'Rehearse · Mind'],['growth',"Growth: Choose the challenge",'Rehearse · Mind'],['release',"Release: Head to heart",'Release · Heart'],['grief',"Grief: The other side of love",'Release · Heart'],['purpose',"Purpose: From proving to purpose",'Release · Heart'],['polarity',"Polarity: Masculine and feminine",'Release · Heart'],['devotion',"Devotion: Discipline with love",'Release · Heart'],['service',"Service: Give it back",'Release · Heart'],['presence',"Presence under pressure: Perform from presence",'Rehearse · Mind']];
+/* ---------- Client Hub path: one training a week over six months ---------- */
+const PATH_WEEKS={regulate:1,awareness:2,sleep:3,recovery:4,nutrition:5,strength:6,mobility:7,values:8,identity:9,limits:10,boundaries:11,metabolism:12,hormones:13,growth:14,release:15,grief:16,purpose:17,polarity:18,devotion:19,service:20,presence:21};
+const ROAD_NAMES=['Foundations','Build the base','Rewrite the story','Go deeper','Lead from the heart','Integrate'];
+function localISO(d){return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function pathPanel(by){
+  const start=hubPath.start||'',st=start?new Date(start+'T00:00:00'):new Date();st.setHours(0,0,0,0);
+  const today=new Date();today.setHours(0,0,0,0);
+  const wk=Math.max(1,Math.min(24,Math.floor((today-st)/(7*864e5))+1));
+  const w=id=>+((hubPath.weeks||{})[id])||PATH_WEEKS[id]||1;
+  const rows=HUB.slice().sort((x,y)=>w(x[0])-w(y[0]));
+  return `<details class="hubm" id="pathBox" open><summary><span><b>Client Hub path</b> <span class="submsg">${start?`Started ${st.toLocaleDateString('en-AU')} · week ${wk} of 24 · month ${Math.min(6,Math.ceil(wk/4))}, ${ROAD_NAMES[Math.min(5,Math.ceil(wk/4)-1)]}`:'Starts the day you first publish'}</span></span></summary>
+   <p class="submsg">One training a week over six months. Each training unlocks on its week; change a week to bring one forward or push it back. Locked trainings stay visible to the client. Publish to client to apply changes.</p>
+   <div class="row"><div class="field"><label for="pathStart">Start date</label><input id="pathStart" type="date" value="${escH(start)}"></div><button class="btn" type="button" id="pathReset">Reset to the standard path</button></div>
+   <div class="pathgrid">${rows.map(([id,t])=>{const d=by[id],ww=w(id),m=Math.min(6,Math.ceil(ww/4)),open=start&&ww<=wk;
+     return `<div class="prow"><span>${escH(t.split(':')[0])} <span class="submsg">M${m} · ${d&&d.done?'complete':d?(+d.pct||0)+'%':open?'open':'locked'}</span></span><select data-pw="${id}" aria-label="Week for ${escH(t)}">${Array.from({length:24},(_,i)=>`<option value="${i+1}"${i+1===ww?' selected':''}>Week ${i+1}${i+1===PATH_WEEKS[id]?' (standard)':''}</option>`).join('')}</select></div>`}).join('')}</div></details>`;
+}
+function bindPath(){
+  const box=$('pathBox');if(!box)return;
+  $('pathStart').addEventListener('change',e=>{hubPath.start=e.target.value||'';subMsg('Start date changed. Publish to client to apply it.')});
+  box.querySelectorAll('[data-pw]').forEach(sel=>sel.addEventListener('change',()=>{const id=sel.dataset.pw,v=+sel.value;hubPath.weeks=hubPath.weeks||{};if(v===PATH_WEEKS[id])delete hubPath.weeks[id];else hubPath.weeks[id]=v;subMsg('Path changed. Publish to client to apply it.')}));
+  $('pathReset').addEventListener('click',()=>{hubPath.weeks={};box.querySelectorAll('[data-pw]').forEach(sel=>{sel.value=PATH_WEEKS[sel.dataset.pw]});subMsg('Back to the standard path. Publish to client to apply it.')});
+}
 async function clientHub(row){
   const box=$('subHub');box.hidden=true;box.innerHTML='';if(!row.email)return;
   try{
@@ -1325,8 +1352,8 @@ async function clientHub(row){
       return `<details class="hubm"><summary><span><b>${escH(t)}</b> <span class="submsg">${escH(tk)}</span></span><span class="submsg">${d.done?'Complete':(+d.pct||0)+'%'} · ${days}/7 days</span></summary><div class="hb"><i style="width:${+d.pct||0}%"></i></div>
         <dl>${qa.map(x=>`<div><dt>${escH(x.q)}</dt><dd>${escH(x.a)}</dd></div>`).join('')}${d.reflection&&d.reflection.trim()?`<div><dt>${escH(d.reflectQ||'Reflection')}</dt><dd>${escH(d.reflection)}</dd></div>`:''}${qa.length||d.reflection?'':'<div><dd class="submsg">No answers written yet.</dd></div>'}</dl>
         <span class="submsg">Last active ${new Date(d.updated).toLocaleDateString('en-AU')}</span></details>`}).join('');
-    box.hidden=false;
-  }catch(e){/* Hub tables not created yet */}
+    box.insertAdjacentHTML('afterbegin',pathPanel(by));bindPath();box.hidden=false;
+  }catch(e){box.innerHTML=pathPanel({});bindPath();box.hidden=false}
 }
 async function loadVideos(){
   const box=$('hubVids');

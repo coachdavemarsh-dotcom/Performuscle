@@ -143,6 +143,25 @@ section{display:flex;flex-direction:column;gap:16px}
 .soonlist{font-size:13px;color:var(--muted)}
 .soonlist b{color:var(--off);font-weight:600}
 .fw .node:hover circle.face,.fw .node:focus-visible circle.face{stroke:#E0C08A;stroke-width:2}
+.nowgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.mod.locked{cursor:default;opacity:.62;box-shadow:inset 0 0 0 1px var(--line);border:1px dashed var(--line)}
+.mod.locked:hover{transform:none}
+.linkish{background:none;border:0;padding:0;cursor:pointer;color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.road{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+@media (max-width:980px){.road{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.road{grid-template-columns:1fr 1fr}}
+.rm{background:var(--surface);border-radius:16px;padding:14px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:8px}
+.rm.on{background:#141413;color:#F4F1EA;box-shadow:none}
+.rm.on .tk{color:#C9A56B}.rm.on em{color:#8E887C}.rm.on .linkish{color:#E0C08A}
+.rm .tk{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.rm h3{font-size:17px}
+.rm ol{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.rm li{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+.rm li em{font-style:normal;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.rm li.done em{color:var(--accent);font-weight:700}
+.rm li.lock span{color:var(--muted)}
+.rm.on li.lock span{color:#8E887C}
+.fw .node.lockd{cursor:default}
 .hero-side{display:flex;flex-direction:column;gap:20px;min-width:0}
 .hero-side h1{font-size:clamp(40px,6vw,64px)}
 .rrr{font-family:var(--display);font-weight:500;font-size:clamp(15px,1.7vw,20px);letter-spacing:.12em;white-space:nowrap;text-transform:uppercase;color:var(--accent);margin-top:-8px}
@@ -261,8 +280,43 @@ const MODULES=[
   ideas:[["Service completes the circle", "The work you do on yourself isn’t meant to stay with you. It’s meant to be given back."], ["Give from full, not empty", "Service from depletion turns into martyrdom and resentment. Fill your own cup, then pour."], ["Small acts count", "Attention, honesty, a message, showing up when it matters. Service is rarely grand."]],
   qs:[["Who has served you in a way that changed your life?", ""], ["Who do you most want to serve?", "Family, team, clients, community."], ["Where do you give from empty, and what does it cost you?", ""], ["What do you have that others need?", "Skills, time, experience, presence."], ["What would serving from love rather than ego look like for you?", ""], ["What act of service can you give this week without being asked?", ""]],
   practice:["One quiet act of service a day", "Each day, give one act of service without being asked and without telling anyone. Note what you gave and how it felt."],
-  reflect:"What did giving without being seen do for you?"}
+  reflect:"What did giving without being seen do for you?"},
+ {id:"presence",track:"mind",centre:true,short:"PR",title:"Presence under pressure: Perform from presence",sub:"Pressure doesn’t create performance. It reveals your state.",minutes:14,
+  ideas:[["Pressure is a state", "The moment isn’t the problem. Your arousal is. Too wired and you rush and tighten. Too flat and you go through the motions. Find your window and you perform."], ["Routine beats motivation", "A short routine you’ve rehearsed puts you in the right state on demand: breath, body, one cue, first action."], ["Process, not outcome", "Attention on the result pulls you out of the moment. Attention on the next thing you control keeps you in it. That’s where flow lives."]],
+  qs:[["When has pressure brought out your best, and when has it brought out your worst?", ""], ["What happens in your body in the minutes before a big moment?", "Race start, big lift, pitch, hard conversation."], ["Under pressure, do you tend to go wired or flat?", ""], ["What do you do now before you perform, if anything?", ""], ["Which thoughts pull you out of the moment?", "The result, other people, what could go wrong."], ["What one cue word brings you back to the present?", ""]],
+  practice:["Build and rehearse your routine", "Design a 60-second pre-performance routine: breathe, ground, cue, commit. Rehearse it every day before training, a meeting or a hard conversation, so it’s automatic when it counts."],
+  reflect:"What changed when you met pressure with your routine instead of your nerves?"}
 ];
+/* ---------- Six-month roadmap: one training a week ---------- */
+const ROADMAP=[
+ {name:'Foundations',line:'Regulate the body, notice your patterns, protect the night.'},
+ {name:'Build the base',line:'Fuel, strength and range, anchored in what you stand for.'},
+ {name:'Rewrite the story',line:'The identity, the inner voice and the standards that protect it.'},
+ {name:'Go deeper',line:'Your hormonal environment, the challenge you choose and what you let go of.'},
+ {name:'Lead from the heart',line:'Purpose, polarity, devotion and service.'},
+ {name:'Integrate',line:'Presence under pressure, then three weeks to bring it all together.'}];
+const PATH_WEEKS={regulate:1,awareness:2,sleep:3,recovery:4,nutrition:5,strength:6,mobility:7,values:8,identity:9,limits:10,boundaries:11,metabolism:12,hormones:13,growth:14,release:15,grief:16,purpose:17,polarity:18,devotion:19,service:20,presence:21};
+let path={start:null,weeks:{}};
+const DAY=864e5;
+function dayOf(iso){const d=new Date(iso+'T00:00:00');return isNaN(d)?null:d}
+function todayD(){const t=new Date();t.setHours(0,0,0,0);return t}
+function weekOf(id){return +((path.weeks||{})[id])||PATH_WEEKS[id]||1}
+function opensOn(id){const st=dayOf(path.start)||todayD();return new Date(st.getTime()+(weekOf(id)-1)*7*DAY)}
+function curWeek(){const st=dayOf(path.start)||todayD();return Math.max(1,Math.min(24,Math.floor((todayD()-st)/(7*DAY))+1))}
+function isOpen(id){const d=prog[id];if(d&&(d.watched||Object.keys(d.answers||{}).length||(d.days||[]).some(Boolean)||d.reflection))return true;return todayD()>=opensOn(id)}
+const fmtD=d=>d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
+function lockMsg(id){return `Opens in week ${weekOf(id)} · ${fmtD(opensOn(id))}`}
+function byMonth(){const out=[[],[],[],[],[],[]];MODULES.forEach(m=>{const w=weekOf(m.id);out[Math.min(5,Math.ceil(w/4)-1)].push(m)});out.forEach(a=>a.sort((x,y)=>weekOf(x.id)-weekOf(y.id)));return out}
+function pathHTML(){
+  const wk=curWeek(),mi=Math.min(5,Math.ceil(wk/4)-1),months=byMonth(),cur=ROADMAP[mi];
+  const now=months[mi],behind=months.slice(0,mi).flat().filter(m=>!stats(m).done);
+  const card=m=>{const s=stats(m),t=trackOf(m.track),o=isOpen(m.id);return o?`<button class="mod" style="--c:${t.c}" data-open="${m.id}"><span class="mt"><b>${esc(m.title)}</b><em>Week ${weekOf(m.id)}</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><div class="bar"><i style="width:${s.pct}%"></i></div><span class="chip ${s.done?'done':''}">${s.done?'Complete':s.pct?`In progress · ${s.pct}%`:'Start'}</span></button>`
+     :`<div class="mod locked" style="--c:${t.c}"><span class="mt"><b>${esc(m.title)}</b><em>Week ${weekOf(m.id)}</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><span class="chip">${esc(lockMsg(m.id))}</span></div>`};
+  return `<section><span class="eyebrow">Month ${mi+1} of 6 · Week ${wk} of 24</span><h2>Your trainings this month</h2><p class="lede" style="font-size:15.5px">${esc(cur.name)}. ${esc(cur.line)}</p>
+   <div class="nowgrid">${now.map(card).join('')||'<p class="small">No new trainings this month. Use it to go back over the ones that mattered most.</p>'}</div>
+   ${behind.length?`<p class="small"><b style="color:var(--ink)">Still open from earlier:</b> ${behind.map(m=>`<button class="linkish" data-open="${m.id}">${esc(m.title.split(':')[0])}</button>`).join(' · ')}</p>`:''}</section>
+  <section><span class="eyebrow">Your six months</span><h2>The roadmap</h2><div class="road">${ROADMAP.map((r,i)=>`<div class="rm ${i===mi?'on':''} ${i<mi?'past':''}"><span class="tk">Month ${i+1}</span><h3>${esc(r.name)}</h3><ol>${months[i].map(m=>{const s=stats(m),o=isOpen(m.id);return `<li class="${s.done?'done':o?'open':'lock'}">${o?`<button class="linkish" data-open="${m.id}">${esc(m.title.split(':')[0])}</button>`:`<span>${esc(m.title.split(':')[0])}</span>`}<em>${s.done?'Done':o?(s.pct?s.pct+'%':'Open'):'Wk '+weekOf(m.id)}</em></li>`}).join('')}${i===5?'<li class="lock"><span>Bring it together</span><em>Wk 22–24</em></li>':''}</ol></div>`).join('')}</div></section>`;
+}
 const LEVELS=[['Not started',0],['Aware',150],['Building',800],['Consistent',2500],['Owned',4500]];
 
 /* ---------- Setup ---------- */
@@ -346,10 +400,11 @@ function renderHome(){
     <div class="lvl"><span class="eyebrow">Level ${T.li+1} of 5</span><span class="name">${T.level}</span><div class="bar"><i style="width:${T.lvlPct}%"></i></div><span class="small">${T.next?`${T.toNext} XP to ${T.next[0]}`:'Top level reached. Soul Meets Strength.'}</span>
      <div class="stats"><span><b>${T.xp}</b> XP</span><span><b>${T.streak}</b>-day streak</span><span><b>${T.done}</b> of ${MODULES.length} complete</span></div>
      <div class="badges">${MODULES.map(m=>{const s=stats(m),t=trackOf(m.track);return `<span class="bdg ${s.done?'on':''}" style="--c:${t.c}" title="${esc(m.title)}${s.done?' · complete':''}">${m.short}</span>`}).join('')}</div></div></div></div></section>
-  <section><span class="eyebrow">Your trainings</span><h2>Three tracks</h2><div class="tracks">${TRACKS.map(t=>{const ms=MODULES.filter(m=>m.track===t.id),p=Math.round(ms.reduce((a,m)=>a+stats(m).pct,0)/ms.length);
+  ${pathHTML()}
+  <section><span class="eyebrow">Every training</span><h2>Three tracks</h2><div class="tracks">${TRACKS.map(t=>{const ms=MODULES.filter(m=>m.track===t.id),p=Math.round(ms.reduce((a,m)=>a+stats(m).pct,0)/ms.length);
     return `<div class="track" style="--c:${t.c}"><div class="th"><div><span class="tk">${t.sys}</span><h3>${t.key}</h3></div><div class="mini">${ring(p,56,5,t.c)}<b>${p}%</b></div></div><p>${t.line}</p>
      ${(FW_SOON[t.id]||[]).length?`<p class="soonlist"><b>Coming soon:</b> ${(FW_SOON[t.id]||[]).map(x=>esc(FW_SOON_FULL[x]||x)).join(' · ')}</p>`:''}
-     ${ms.map(m=>{const s=stats(m);return `<button class="mod" data-open="${m.id}"><span class="mt"><b>${esc(m.title)}</b><em>${(videos[m.id]&&videos[m.id].minutes)||m.minutes} min</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><div class="bar"><i style="width:${s.pct}%"></i></div><span class="chip ${s.done?'done':''}">${s.done?'Complete':s.pct?`In progress · ${s.pct}%`:'Start'}</span></button>`}).join('')}</div>`}).join('')}</div></section>
+     ${ms.map(m=>{const s=stats(m);if(!isOpen(m.id))return `<div class="mod locked"><span class="mt"><b>${esc(m.title)}</b><em>Week ${weekOf(m.id)}</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><span class="chip">${esc(lockMsg(m.id))}</span></div>`;return `<button class="mod" data-open="${m.id}"><span class="mt"><b>${esc(m.title)}</b><em>${(videos[m.id]&&videos[m.id].minutes)||m.minutes} min</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><div class="bar"><i style="width:${s.pct}%"></i></div><span class="chip ${s.done?'done':''}">${s.done?'Complete':s.pct?`In progress · ${s.pct}%`:'Start'}</span></button>`}).join('')}</div>`}).join('')}</div></section>
   <p class="care">This is coaching, not therapy. If something heavy comes up while you work through these, tell Dave and we’ll make sure you have the right support.</p>`;
   document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
   drawFramework();
@@ -357,7 +412,7 @@ function renderHome(){
 /* Mind, Body, Heart around Alignment; each training is a satellite with its progress ring */
 const FW_POS={body:{x:200,y:105,a0:-178,dir:1,st:25.4,r:150},mind:{x:80,y:300,a0:88,dir:1,st:30,r:125},heart:{x:320,y:300,a0:92,dir:-1,st:30,r:125}};
 const FW_SUB={body:['Regulate','Nervous system'],mind:['Rehearse','Beliefs · story'],heart:['Release','Desire · meaning']};
-const FW_NAME={regulate:'Somatics',sleep:'Sleep',recovery:'Recovery',mobility:'Mobility',strength:'Strength',metabolism:'Metabolism',nutrition:'Nutrition',hormones:'Hormones',awareness:'Awareness',values:'Values',identity:'Identity',limits:'Self-limits',boundaries:'Boundaries',growth:'Growth',release:'Release',grief:'Grief',purpose:'Purpose',polarity:'Polarity',devotion:'Devotion',service:'Service'};
+const FW_NAME={regulate:'Somatics',sleep:'Sleep',recovery:'Recovery',mobility:'Mobility',strength:'Strength',metabolism:'Metabolism',nutrition:'Nutrition',hormones:'Hormones',awareness:'Awareness',values:'Values',identity:'Identity',limits:'Self-limits',boundaries:'Boundaries',growth:'Growth',release:'Release',grief:'Grief',purpose:'Purpose',polarity:'Polarity',devotion:'Devotion',service:'Service',presence:'Presence'};
 /* Trainings still to come: shown on the circle as "Soon" until they are built */
 const FW_SOON={body:[],mind:[],heart:[]};
 const FW_SOON_FULL={Strength:'Strength training',Growth:'Growth: Choose the challenge',Values:'Values: The Human Formula to Win',Polarity:'Polarity: Masculine and feminine'};
@@ -374,12 +429,16 @@ function drawFramework(){
       <text x="200" y="350" font-size="9" letter-spacing="2" text-anchor="middle" style="fill:#8E887C">SUBCONSCIOUS</text>
       <text x="104" y="206" font-size="9.5" letter-spacing="3" text-anchor="middle" style="fill:#8E887C" transform="rotate(-58 104 206)">BREATH</text>
       <text x="296" y="206" font-size="9.5" letter-spacing="3" text-anchor="middle" style="fill:#8E887C" transform="rotate(58 296 206)">PURPOSE</text>`;
+  {const pm=MODULES.find(m=>m.id==='presence'),ps=stats(pm),po=isOpen('presence'),pc=2*Math.PI*82;
   h+=`<circle cx="200" cy="232" r="78" fill="rgba(201,165,107,.06)" stroke="#C9A56B" stroke-width="1.2" stroke-dasharray="4 5"/>
-      <text x="200" y="236" font-size="15" font-weight="600" text-anchor="middle" style="font-family:Oswald,Arial Narrow,sans-serif;letter-spacing:2px;fill:#C9A56B">PRESENCE</text>
+      ${ps.pct?`<circle cx="200" cy="232" r="82" fill="none" stroke="#C9A56B" stroke-width="3" stroke-linecap="round" stroke-dasharray="${pc*ps.pct/100} ${pc}" transform="rotate(-90 200 232)"/>`:''}
+      <g class="node ${po?'':'lockd'}" data-fw="presence" tabindex="0" role="button" aria-label="Presence under pressure, ${po?ps.pct+'% complete':esc(lockMsg('presence'))}"><circle cx="200" cy="232" r="20" fill="transparent"/><rect x="150" y="220" width="100" height="22" fill="transparent"/>
+      <text x="200" y="236" font-size="15" font-weight="600" text-anchor="middle" style="font-family:Oswald,Arial Narrow,sans-serif;letter-spacing:2px;fill:#C9A56B">PRESENCE</text></g>`;}
+  h+=`
       <text x="200" y="327" font-size="10" font-weight="700" letter-spacing="3" text-anchor="middle" style="fill:#C9A56B">ALIGNMENT</text>`;
   [['Permission',200,190],['Intention',158,268],['Direction',242,268]].forEach(([t,x,y])=>{h+=`<circle cx="${x}" cy="${y}" r="27" fill="#1E1D1B" stroke="rgba(244,241,234,.12)" stroke-width="1.2"/><text x="${x}" y="${y+4}" font-size="10.5" font-weight="700" text-anchor="middle">${t}</text>`});
   for(const t of TRACKS){
-    const p=FW_POS[t.id],ms=MODULES.filter(m=>m.track===t.id),col=t.id==='body'?'#C9A56B':t.id==='mind'?'#9DB38F':'#D98B6A';
+    const p=FW_POS[t.id],ms=MODULES.filter(m=>m.track===t.id&&!m.centre),col=t.id==='body'?'#C9A56B':t.id==='mind'?'#9DB38F':'#D98B6A';
     const soon=FW_SOON[t.id]||[],n=ms.length+soon.length,slots=Array.from({length:n},(_,i)=>fwSlot(t.id,i));
     slots.forEach(([sx,sy],i)=>{h+=`<line x1="${p.x}" y1="${p.y}" x2="${sx}" y2="${sy}" stroke="rgba(244,241,234,${i<ms.length?.16:.08})" stroke-width="1.2"/>`});
     const tp=Math.round(ms.reduce((a,m)=>a+stats(m).pct,0)/ms.length);
@@ -388,6 +447,7 @@ function drawFramework(){
         <text x="${p.x}" y="${p.y+10}" font-size="10" font-weight="700" letter-spacing="1.5" text-anchor="middle" style="fill:${col}">${FW_SUB[t.id][0].toUpperCase()}</text>
         <text x="${p.x}" y="${p.y+24}" font-size="9.5" text-anchor="middle" style="fill:#8E887C">${tp}% done</text>`;
     ms.forEach((m,i)=>{const [sx,sy]=slots[i],s=stats(m),r=34,c=2*Math.PI*r;
+      if(!isOpen(m.id)){h+=`<g class="node lockd" data-fw="${m.id}" tabindex="0" role="button" aria-label="${esc(m.title)}, ${esc(lockMsg(m.id))}"><circle class="face" cx="${sx}" cy="${sy}" r="30" fill="#141413" stroke="rgba(244,241,234,.22)" stroke-width="1.2" stroke-dasharray="3 4"/><text x="${sx}" y="${sy-1}" font-size="9.5" font-weight="700" text-anchor="middle" style="fill:#8E887C">${FW_NAME[m.id]||esc(m.short)}</text><text x="${sx}" y="${sy+13}" font-size="9.5" text-anchor="middle" style="fill:#6E695F">Wk ${weekOf(m.id)}</text></g>`;return}
       h+=`<g class="node" data-fw="${m.id}" tabindex="0" role="button" aria-label="${esc(m.title)}, ${s.pct}% complete"><circle class="face" cx="${sx}" cy="${sy}" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"/>
         <circle cx="${sx}" cy="${sy}" r="${r}" fill="none" stroke="#34322E" stroke-width="3"/>${s.pct?`<circle cx="${sx}" cy="${sy}" r="${r}" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${c*s.pct/100} ${c}" transform="rotate(-90 ${sx} ${sy})"/>`:''}
         <text x="${sx}" y="${sy-1}" font-size="9.5" font-weight="700" text-anchor="middle">${FW_NAME[m.id]||esc(m.short)}</text><text x="${sx}" y="${sy+13}" font-size="10" text-anchor="middle" style="fill:${col}">${s.done?'Done':s.pct+'%'}</text></g>`});
@@ -397,6 +457,7 @@ function drawFramework(){
   W.querySelectorAll('[data-fw]').forEach(g=>{const go=()=>openModule(g.dataset.fw);g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
 }
 function openModule(id){
+  if(!isOpen(id)){toast(lockMsg(id));return}
   const m=MODULES.find(x=>x.id===id),t=trackOf(m.track),d=prog[id]=prog[id]||{},v=videos[id]||{},e=embed(v.url);
   view=id;
   const s=stats(m);
@@ -438,11 +499,13 @@ const SAMPLE_PROG={regulate:{watched:true,answers:{0:'Jaw and shoulders. I clenc
 async function boot(){
   if(!LIVE){try{prog=JSON.parse(localStorage.getItem('hub_preview')||'null')||SAMPLE_PROG}catch(e){prog=SAMPLE_PROG}
     const today=new Date().toISOString().slice(0,10),yest=new Date(Date.now()-864e5).toISOString().slice(0,10);if(prog===SAMPLE_PROG)prog.regulate.touched=[yest,today];
+    path={start:new Date(Date.now()-10*864e5).toISOString().slice(0,10),weeks:{}};
     renderHome();return}
   loadSess();if(!sess){renderSignin();return}
   $('signOut').hidden=false;
   try{
-    const [p,c]=await Promise.all([authFetch('/rest/v1/client_progress?select=module,data'),authFetch('/rest/v1/hub_content?select=module,video_url,minutes')]);
+    const [p,c,pl]=await Promise.all([authFetch('/rest/v1/client_progress?select=module,data'),authFetch('/rest/v1/hub_content?select=module,video_url,minutes'),authFetch('/rest/v1/client_plans?select=plan&published=eq.true&order=updated_at.desc&limit=1')]);
+    if(pl.ok){const rows=await pl.json();const hp=rows[0]&&rows[0].plan&&rows[0].plan.hubPath;if(hp&&hp.start)path={start:hp.start,weeks:hp.weeks||{}}}
     if(p.ok)(await p.json()).forEach(r=>{prog[r.module]=r.data||{}});
     if(c.ok)(await c.json()).forEach(r=>{videos[r.module]={url:r.video_url,minutes:r.minutes}});
     renderHome();
