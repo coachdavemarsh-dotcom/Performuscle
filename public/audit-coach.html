@@ -1280,7 +1280,7 @@ async function clientScreen(row){
     box.hidden=false;
     box.querySelectorAll('[data-sf]').forEach(btn=>btn.addEventListener('click',async()=>{
       const f=all[+btn.dataset.sf];btn.disabled=true;
-      try{const j=await sb(`/storage/v1/object/sign/screen-uploads/${f.path.split('/').map(encodeURIComponent).join('/')}`,{method:'POST',body:JSON.stringify({expiresIn:900})});
+      try{const j=await sb(`/storage/v1/object/sign/audit-uploads/${f.path.split('/').map(encodeURIComponent).join('/')}`,{method:'POST',body:JSON.stringify({expiresIn:900})});
         const url=SB.url+'/storage/v1'+(j.signedURL||j.signedUrl);const w=window.open(url,'_blank','noopener');if(!w)subMsg('Allow pop-ups to open the clip.')}
       catch(err){subMsg(err.message,1)}finally{btn.disabled=false}
     }));

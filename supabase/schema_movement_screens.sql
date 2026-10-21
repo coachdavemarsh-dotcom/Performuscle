@@ -1,5 +1,5 @@
--- Movement screen: client uploads after the Performance Audit, read by the coach dashboard.
--- Paste into Supabase > SQL Editor > Run. Safe to run more than once.
+-- Movement screen. Paste into Supabase > SQL Editor > Run. Safe to run more than once.
+-- Part 1: the table that holds each client's screen.
 create table if not exists public.movement_screens (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
@@ -24,14 +24,10 @@ create policy "Coaches update screens" on public.movement_screens for update to 
   using (exists (select 1 from public.profiles p where p.id = (select auth.uid()) and p.is_coach))
   with check (exists (select 1 from public.profiles p where p.id = (select auth.uid()) and p.is_coach));
 
--- Private bucket for the clips: anyone can upload, only coaches can view. 50 MB per file.
-insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('screen-uploads', 'screen-uploads', false, 52428800,
-  array['video/mp4','video/quicktime','video/webm','video/3gpp','image/jpeg','image/png','image/heic','image/heif','image/webp','application/pdf'])
-on conflict (id) do update set file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types, public = false;
-drop policy if exists "Public can upload screen files" on storage.objects;
-create policy "Public can upload screen files" on storage.objects for insert to anon, authenticated
-  with check (bucket_id = 'screen-uploads');
-drop policy if exists "Coaches can read screen files" on storage.objects;
-create policy "Coaches can read screen files" on storage.objects for select to authenticated
-  using (bucket_id = 'screen-uploads' and exists (select 1 from public.profiles p where p.id = (select auth.uid()) and p.is_coach));
+-- Part 2: let the existing private audit-uploads folder take short videos (up to 50 MB).
+-- It already lets clients upload and only you view. If this line errors, do it in
+-- Storage > audit-uploads > Edit bucket instead (see the steps in the chat).
+update storage.buckets
+   set file_size_limit = 52428800,
+       allowed_mime_types = array['application/pdf','image/jpeg','image/png','image/heic','image/heif','image/webp','video/mp4','video/quicktime','video/webm','video/3gpp']
+ where id = 'audit-uploads';
