@@ -2189,11 +2189,11 @@
     ============================================================ */
     html{overflow-x:clip}
     body{background:var(--black)!important;color:var(--white)}
-    .nav,.hero,.stats,.cta-section,.footer,.program-card,.result-card,.tools-promo__panel,.reset-feature__stack{
+    .nav,.hero,.stats,.cta-section,.footer,.program-card,.result-card,.tools-promo__panel,.reset-feature__stack,.pillars,.testimonials,.meal-planner-promo{
       --black:#141413; --surface:#1E1D1B; --surface-2:#262522; --surface-3:#34322E;
       --white:#F4F1EA; --off-white:#BDB7AA; --muted:#8E887C; --subtle:#6E6A62;
       --border:rgba(244,241,234,.12); --border-hi:rgba(201,165,107,.4);
-      --accent:#C9A56B; --accent-hi:#E0C08A; --accent-dim:rgba(201,165,107,.14); --on:#141413; --tint:rgba(255,255,255,.04);
+      --accent:#C9A56B; --accent-hi:#E0C08A; --accent-dim:rgba(201,165,107,.14); --on:#141413; --tint:rgba(255,255,255,.05); --body-c:#C9A56B; --mind-c:#9DB38F; --heart-c:#D98B6A;
       color:var(--white)}
     .nav{background:#141413!important;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:1px solid rgba(244,241,234,.08)}
     .nav__mobile{background:#141413}
@@ -2224,8 +2224,8 @@
     .pillars__fw text{font-family:var(--font-body)}
     .pillars__fw .fw-t{font-family:var(--font-display);font-size:17px;font-weight:600;letter-spacing:.06em}
     .pillars__fw .fw-s2{font-size:10.5px;fill:var(--muted)}
-    .pillars__fw .fw-c{font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:.08em;fill:#F4F1EA}
-    .pillars__fw .fw-s{font-size:8.5px;fill:#C9A56B}
+    .pillars__fw .fw-c{font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:.08em;fill:#141413}
+    .pillars__fw .fw-s{font-size:8.5px;fill:#141413}
     /* Numbers band: dark panel instead of the old teal band */
     .stats{background:#141413!important}
     .stats__grid{background:var(--border)!important}
@@ -2240,6 +2240,8 @@
     .form-input{background:var(--surface-2)!important;color:var(--white)}
     .hero__sub,.hero__pillar{color:#F4F1EA!important}
     .footer{border-top:0}
+    .pillars,.testimonials,.meal-planner-promo{background:#141413!important}
+    .pillars__grid{background:rgba(244,241,234,.08)!important}
     .educator{margin-top:28px;background:#141413;color:#F4F1EA;border-radius:18px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;max-width:520px}
     .educator__k{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#C9A56B}
     .educator__lede{font-size:14.5px;color:#BDB7AA;line-height:1.55}
@@ -2436,14 +2438,14 @@
             Most coaches optimise for one thing. We build all three simultaneously — because they're inseparable.
           </p>
           <svg class="pillars__fw" viewBox="0 0 360 300" role="img" aria-label="Health, Function and Performance overlap. Where all three meet is peak performance.">
-            <circle cx="180" cy="104" r="84" fill="rgba(156,116,56,.12)" stroke="#9C7438" stroke-width="1.5"/>
-            <circle cx="122" cy="200" r="84" fill="rgba(94,113,84,.12)" stroke="#5E7154" stroke-width="1.5"/>
-            <circle cx="238" cy="200" r="84" fill="rgba(169,87,58,.10)" stroke="#A9573A" stroke-width="1.5"/>
-            <circle cx="180" cy="168" r="30" fill="#141413"/>
+            <circle cx="180" cy="104" r="84" fill="rgba(201,165,107,.12)" stroke="#C9A56B" stroke-width="1.5"/>
+            <circle cx="122" cy="200" r="84" fill="rgba(157,179,143,.12)" stroke="#9DB38F" stroke-width="1.5"/>
+            <circle cx="238" cy="200" r="84" fill="rgba(217,139,106,.12)" stroke="#D98B6A" stroke-width="1.5"/>
+            <circle cx="180" cy="168" r="30" fill="#C9A56B"/>
             <text x="180" y="165" text-anchor="middle" class="fw-c">PEAK</text><text x="180" y="180" text-anchor="middle" class="fw-s">performance</text>
-            <text x="180" y="62" text-anchor="middle" class="fw-t" fill="#9C7438">HEALTH</text><text x="180" y="78" text-anchor="middle" class="fw-s2">Metabolic · hormones · sleep</text>
-            <text x="92" y="238" text-anchor="middle" class="fw-t" fill="#5E7154">FUNCTION</text><text x="92" y="254" text-anchor="middle" class="fw-s2">Movement · balance</text>
-            <text x="268" y="238" text-anchor="middle" class="fw-t" fill="#A9573A">PERFORMANCE</text><text x="268" y="254" text-anchor="middle" class="fw-s2">Strength · body comp</text>
+            <text x="180" y="62" text-anchor="middle" class="fw-t" fill="#C9A56B">HEALTH</text><text x="180" y="78" text-anchor="middle" class="fw-s2">Metabolic · hormones · sleep</text>
+            <text x="92" y="238" text-anchor="middle" class="fw-t" fill="#9DB38F">FUNCTION</text><text x="92" y="254" text-anchor="middle" class="fw-s2">Movement · balance</text>
+            <text x="268" y="238" text-anchor="middle" class="fw-t" fill="#D98B6A">PERFORMANCE</text><text x="268" y="254" text-anchor="middle" class="fw-s2">Strength · body comp</text>
           </svg>
         </div>
       </div>
