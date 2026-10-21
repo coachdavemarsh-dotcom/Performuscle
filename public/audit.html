@@ -462,6 +462,7 @@ async function submit(){
     }
     try{localStorage.setItem('pa_handoff',JSON.stringify({first:D.state.first||'',last:D.state.last||'',email:D.state.email||'',uploadId:uploadId()}))}catch(e){}
     try{localStorage.removeItem(KEY)}catch(e){}
+    if(!previewMode()){try{fetch('/.netlify/functions/notify-coach',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'audit',email:payload.email}),keepalive:true}).catch(()=>{})}catch(e){}}
     sending=false;cur++;render();window.scrollTo(0,0);
   }catch(e){
     sending=false;render();showErr('Your audit didn’t send. Check your connection and press Submit again. Your answers are still saved on this device.');

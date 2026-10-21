@@ -351,6 +351,13 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .mvcf .btn{font-size:12px;padding:6px 10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .painflag{color:var(--bad);font-weight:700}
 [hidden]{display:none!important}
+
+.subrow .flags{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:-2px}
+.fl{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+.fl.ok{background:rgba(94,113,84,.16);color:#3F5236}
+.fl.no{background:rgba(169,87,58,.13);color:#8A3F24}
+.fl.ex{background:var(--sunk);color:var(--text2)}
+.btn.nudge{font-size:12px;padding:5px 12px;text-decoration:none;background:#141413;color:#F4F1EA}
 /* Existing clients */
 .exadd{display:flex;flex-direction:column;gap:10px;background:var(--surface);border-radius:16px;padding:16px 18px;box-shadow:inset 0 0 0 1px var(--line);margin:10px 0}
 .excheck{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--text2);cursor:pointer}
@@ -1264,12 +1271,20 @@ $('signin').addEventListener('submit',async e=>{
 $('signOut').addEventListener('click',()=>{tok=null;openId=null;$('subHub').hidden=true;$('subHub').innerHTML='';$('hubVids').hidden=true;$('subFiles').hidden=true;$('subFiles').innerHTML='';try{sessionStorage.removeItem('pa_coach')}catch(e){};$('subList').innerHTML='';$('saveRow').hidden=true;showSubs();subMsg('Signed out.')});
 $('subRefresh').addEventListener('click',()=>loadSubs());
 $('subFilter').addEventListener('change',()=>loadSubs());
+function nudge(x){
+  const first=(x.full_name||'').split(' ')[0]||'there';
+  const body=`Hi ${first},\n\nThanks for doing your Performance Audit. I've been through your answers.\n\nTwo quick steps so our strategy call starts at the deep end:\n\n1. Film your movement screen (about 15 minutes, on your phone): https://coachdavemarsh.net/screen\n2. Book your strategy call: https://calendly.com/coachdavemarsh/client-triage-call\n\nAny questions, just reply here.\n\nDave`;
+  return 'mailto:'+encodeURIComponent(x.email)+'?subject='+encodeURIComponent('Your next step: the movement screen')+'&body='+encodeURIComponent(body);
+}
 async function loadSubs(){
   subMsg('Loading submissions…');
   try{
     const f=$('subFilter').value,q=f==='all'?'':f==='open'?'&status=in.(new,reviewed)':'&status=eq.'+f;
-    subs=await sb(`/rest/v1/${SB.table}?select=id,created_at,full_name,email,status&order=created_at.desc&limit=200${q}`);
-    $('subList').innerHTML=subs.length?subs.map(x=>`<div class="subrow ${x.id===openId?'on':''}"><div><div class="nm">${escH(x.full_name)}</div><div class="dt">${escH(x.email)}</div></div><div class="dt">${new Date(x.created_at).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</div><span class="stp ${x.status}">${x.status}</span><button class="btn" data-open="${x.id}">Open</button></div>`).join(''):'<p class="submsg">No submissions in this view yet.</p>';
+    subs=await sb(`/rest/v1/${SB.table}?select=id,created_at,full_name,email,status,source&order=created_at.desc&limit=200${q}`);
+    let screened=new Set();try{(await sb('/rest/v1/movement_screens?select=email&limit=1000')||[]).forEach(r=>screened.add((r.email||'').toLowerCase()))}catch(e){}
+    const flag=x=>{if(x.source==='existing-client')return '<span class="fl ex">Existing client</span>';const scr=screened.has((x.email||'').toLowerCase()),old=Date.now()-new Date(x.created_at)>864e5,open=x.status==='new'||x.status==='reviewed';
+      return (scr?'<span class="fl ok">Screen in</span>':'<span class="fl no">No screen</span>')+(x.status==='booked'||x.status==='client'?'':'<span class="fl no">No call booked</span>')+(!scr&&old&&open?`<a class="btn nudge" href="${nudge(x)}">Nudge</a>`:'')};
+    $('subList').innerHTML=subs.length?subs.map(x=>`<div class="subrow ${x.id===openId?'on':''}"><div><div class="nm">${escH(x.full_name)}</div><div class="dt">${escH(x.email)}</div></div><div class="dt">${new Date(x.created_at).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</div><span class="stp ${x.status}">${x.status}</span><button class="btn" data-open="${x.id}">Open</button><div class="flags">${flag(x)}</div></div>`).join(''):'<p class="submsg">No submissions in this view yet.</p>';
     $('subList').querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openSub(b.dataset.open)));
     subMsg(subs.length?`${subs.length} submission${subs.length>1?'s':''}.`:'');loadVideos();
   }catch(err){subMsg(err.message,1)}

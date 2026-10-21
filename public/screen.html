@@ -223,6 +223,7 @@ async function send(){
   const body={email:S.email,name:[S.first,S.last].filter(Boolean).join(' '),upload_id:S.uploadId,tests,files:S.bloods.filter(f=>f.state==='done').map(({name,size,type,path})=>({name,size,type,path,kind:'bloods'}))};
   const b=$('send');b.disabled=true;m.className='msg';m.textContent='Sending…';
   try{if(LIVE){const r=await fetch(`${SB.url}/rest/v1/${SB.table}`,{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status)}
+    if(LIVE){try{fetch('/.netlify/functions/notify-coach',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'screen',email:S.email}),keepalive:true}).catch(()=>{})}catch(e){}}
     S.sent=true;save();try{localStorage.removeItem('pa_handoff')}catch(e){}render();window.scrollTo(0,0)}
   catch(e){b.disabled=false;err('That didn’t send. Check your connection and try again. Your uploads are saved.')}
 }
