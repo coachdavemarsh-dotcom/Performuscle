@@ -171,6 +171,13 @@ input[type=number]{-moz-appearance:textfield}
   background:#141413!important;color:var(--ink);border-radius:28px;padding:32px;box-shadow:none!important}
 @media (max-width:600px){.hero,.base{padding:22px 16px;border-radius:22px}}
 .hero h1{color:var(--ink)}
+.base{grid-template-columns:minmax(0,1fr) 230px!important;gap:24px!important}
+.base .orbwrap{width:230px!important}
+.base .orbtxt b{font-size:48px}
+.base .dom{padding:12px}
+.base .dom .dn{letter-spacing:.1em;min-width:0;overflow-wrap:anywhere}
+.base .dom .dv{font-size:26px}
+@media (max-width:720px){.base{grid-template-columns:1fr!important}.base .orbwrap{width:min(240px,64vw)!important}}
 </style>
 </head>
 <body>
