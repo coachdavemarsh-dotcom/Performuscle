@@ -16,19 +16,24 @@
        DESIGN TOKENS
     ============================================================ */
     :root {
-      --black:       #0B0B0A;
-      --surface:     #121211;
-      --surface-2:   #181816;
-      --surface-3:   #201F1C;
-      --accent:      #00C896;
-      --accent-hi:   #00FFB8;
-      --accent-dim:  rgba(0, 200, 150, 0.12);
-      --white:       #F4F2EC;
-      --off-white:   #D9D6CE;
-      --muted:       #9A968E;
-      --subtle:      #4a5568;
-      --border:      rgba(255,255,255,0.08);
-      --border-hi:   rgba(0,200,150,0.25);
+      --black:       #F1EDE4;
+      --surface:     #FBFAF6;
+      --surface-2:   #F1EDE4;
+      --surface-3:   #E4DED2;
+      --accent:      #8A6A3B;
+      --accent-hi:   #6F5530;
+      --accent-dim:  rgba(138,106,59,0.12);
+      --white:       #141413;
+      --off-white:   #4A4740;
+      --muted:       #77726A;
+      --subtle:      #9A9488;
+      --border:      #DDD7CB;
+      --border-hi:   rgba(138,106,59,0.4);
+      --on:          #FBFAF6;
+      --tint:        rgba(20,20,19,0.05);
+      --body-c:      #9C7438;
+      --mind-c:      #5E7154;
+      --heart-c:     #A9573A;
 
       --font-display: 'Oswald', 'Arial Narrow', Arial, sans-serif;
       --font-sub:     'DM Sans', system-ui, -apple-system, sans-serif;
@@ -356,7 +361,7 @@
       right: -5%;
       width: 55%;
       height: 80%;
-      background: radial-gradient(ellipse at center, rgba(0,200,150,0.07) 0%, transparent 70%);
+      background: radial-gradient(ellipse at center, rgba(138,106,59,0.07) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -1058,7 +1063,7 @@
       border-radius: 0;
       transition: border-color var(--ease);
     }
-    .form-input:focus { border-color: var(--accent); background: rgba(0,200,150,0.04); }
+    .form-input:focus { border-color: var(--accent); background: rgba(138,106,59,0.04); }
     .form-input::placeholder { color: var(--subtle); font-size: 12px; letter-spacing: 0.06em; }
     select.form-input { appearance: none; cursor: pointer; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -1203,7 +1208,7 @@
       transform: translateY(-50%);
       font-family: var(--font-display);
       font-size: clamp(100px, 16vw, 220px);
-      color: rgba(0,200,150,0.04);
+      color: rgba(138,106,59,0.04);
       letter-spacing: -0.02em;
       line-height: 1;
       user-select: none;
@@ -1391,7 +1396,7 @@
       right: -10%;
       width: 55%;
       height: 120%;
-      background: radial-gradient(ellipse at center, rgba(0,200,150,0.06) 0%, transparent 65%);
+      background: radial-gradient(ellipse at center, rgba(138,106,59,0.06) 0%, transparent 65%);
       pointer-events: none;
     }
     .meal-planner-promo__inner {
@@ -1492,7 +1497,7 @@
       left: -10%;
       width: 55%;
       height: 120%;
-      background: radial-gradient(ellipse at center, rgba(0,200,150,0.06) 0%, transparent 65%);
+      background: radial-gradient(ellipse at center, rgba(138,106,59,0.06) 0%, transparent 65%);
       pointer-events: none;
     }
     .tools-promo__inner {
@@ -1566,7 +1571,7 @@
       letter-spacing: 0.12em;
       padding: 3px 8px;
     }
-    .tools-promo__row-status.on-target { color: #00C896; background: rgba(0,200,150,0.1); }
+    .tools-promo__row-status.on-target { color: #8A6A3B; background: rgba(138,106,59,0.1); }
     .tools-promo__row-status.close     { color: #F59E0B; background: rgba(245,158,11,0.1); }
     .tools-promo__row-status.deficit   { color: #EF4444; background: rgba(239,68,68,0.1); }
     .tools-promo__panel-cta {
@@ -1598,7 +1603,7 @@
       left: -10%;
       width: 60%;
       height: 140%;
-      background: radial-gradient(ellipse at center, rgba(0,200,150,0.05) 0%, transparent 65%);
+      background: radial-gradient(ellipse at center, rgba(138,106,59,0.05) 0%, transparent 65%);
       pointer-events: none;
     }
 
@@ -1688,8 +1693,8 @@
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--accent);
-      background: rgba(0,200,150,0.1);
-      border: 1px solid rgba(0,200,150,0.2);
+      background: rgba(138,106,59,0.1);
+      border: 1px solid rgba(138,106,59,0.2);
       padding: 6px 14px;
     }
     .audit__count {
@@ -1735,12 +1740,12 @@
       text-align: left;
     }
     .audit__option:hover {
-      border-color: rgba(0,200,150,0.3);
-      background: rgba(0,200,150,0.04);
+      border-color: rgba(138,106,59,0.3);
+      background: rgba(138,106,59,0.04);
     }
     .audit__option.selected {
       border-color: var(--accent);
-      background: rgba(0,200,150,0.08);
+      background: rgba(138,106,59,0.08);
     }
     .audit__option-dot {
       width: 18px;
@@ -2057,7 +2062,7 @@
     .ig-post__overlay {
       position: absolute;
       inset: 0;
-      background: rgba(0,200,150,0.12);
+      background: rgba(138,106,59,0.12);
       opacity: 0;
       transition: opacity var(--ease);
       display: flex;
@@ -2143,7 +2148,7 @@
        HOUSE STYLE 2026 — Oswald + DM Sans, near-black, white type,
        teal used sparingly. Matches the Performance Audit.
     ============================================================ */
-    body{background:radial-gradient(1000px 560px at 90% -6%,rgba(0,200,150,.10),transparent 62%),radial-gradient(800px 600px at -12% 38%,rgba(0,200,150,.04),transparent 60%),var(--black);background-attachment:fixed;font-size:16px;line-height:1.6}
+    body{background:radial-gradient(1000px 560px at 90% -6%,rgba(138,106,59,.10),transparent 62%),radial-gradient(800px 600px at -12% 38%,rgba(138,106,59,.04),transparent 60%),var(--black);background-attachment:fixed;font-size:16px;line-height:1.6}
     .display-1,.display-2,.display-3{font-weight:600;letter-spacing:.005em;line-height:1.02}
     .display-1{font-size:clamp(56px,8vw,112px)}
     .display-2{font-size:clamp(38px,4.8vw,64px)}
@@ -2176,6 +2181,69 @@
     .ticker{background:var(--surface)!important}
     .ticker__item{color:var(--off-white)!important}
     .ticker__sep{color:var(--accent)!important}
+
+    /* ============================================================
+       SOUL MEETS STRENGTH 2026 — matches the Client Hub and My Plan.
+       Sand page, ink type, gold accent. Dark panels for the nav, hero,
+       numbers, booking and footer, like the Hub hero and deck covers.
+    ============================================================ */
+    html{overflow-x:clip}
+    body{background:var(--black)!important;color:var(--white)}
+    .nav,.hero,.stats,.cta-section,.footer,.program-card,.result-card,.tools-promo__panel,.reset-feature__stack{
+      --black:#141413; --surface:#1E1D1B; --surface-2:#262522; --surface-3:#34322E;
+      --white:#F4F1EA; --off-white:#BDB7AA; --muted:#8E887C; --subtle:#6E6A62;
+      --border:rgba(244,241,234,.12); --border-hi:rgba(201,165,107,.4);
+      --accent:#C9A56B; --accent-hi:#E0C08A; --accent-dim:rgba(201,165,107,.14); --on:#141413; --tint:rgba(255,255,255,.04);
+      color:var(--white)}
+    .nav{background:#141413!important;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:1px solid rgba(244,241,234,.08)}
+    .nav__mobile{background:#141413}
+    .eyebrow{color:var(--accent)}
+    .eyebrow::before{display:none}
+    /* Buttons, as in the Hub: ink pills on sand, light pills on dark */
+    .btn-primary{background:var(--white)!important;color:var(--black)!important}
+    .btn-primary:hover{background:var(--accent)!important;color:var(--on)!important}
+    .btn-outline{color:var(--white);border-color:var(--border)!important;box-shadow:inset 0 0 0 1px var(--white);border:0!important}
+    .btn-outline:hover{background:var(--white);color:var(--black)}
+    .btn-ghost:hover{color:var(--accent)}
+    /* Watermark numbers and words */
+    .pillar-card__number,.step__bg-num{color:var(--tint)!important}
+    .reset-feature [class*=watermark],.reset-feature [class*=bg-num],.reset-feature [class*=bg-text]{color:var(--tint)!important}
+    /* Ticker: a quiet band */
+    .ticker{background:var(--surface)!important}
+    .ticker__item{color:var(--off-white)!important}
+    .ticker__sep{color:var(--accent)!important}
+    /* Pillars: one colour per pillar, like Body, Mind and Heart in the Hub */
+    .pillar-card:nth-child(1) .pillar-card__icon *{stroke:var(--body-c)}
+    .pillar-card:nth-child(2) .pillar-card__icon *{stroke:var(--mind-c)}
+    .pillar-card:nth-child(3) .pillar-card__icon *{stroke:var(--heart-c)}
+    .pillar-card:nth-child(3) .pillar-card__icon circle{fill:var(--heart-c)}
+    .pillar-card:nth-child(1):hover::before{background:var(--body-c)}
+    .pillar-card:nth-child(2):hover::before{background:var(--mind-c)}
+    .pillar-card:nth-child(3):hover::before{background:var(--heart-c)}
+    .pillars__fw{width:100%;max-width:380px;margin-top:28px;display:block}
+    .pillars__fw text{font-family:var(--font-body)}
+    .pillars__fw .fw-t{font-family:var(--font-display);font-size:17px;font-weight:600;letter-spacing:.06em}
+    .pillars__fw .fw-s2{font-size:10.5px;fill:var(--muted)}
+    .pillars__fw .fw-c{font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:.08em;fill:#F4F1EA}
+    .pillars__fw .fw-s{font-size:8.5px;fill:#C9A56B}
+    /* Numbers band: dark panel instead of the old teal band */
+    .stats{background:#141413!important}
+    .stats__grid{background:var(--border)!important}
+    .stat-item{background:#141413!important}
+    .stat-item__number{color:var(--accent)!important}
+    .stat-item__label{color:var(--muted)!important}
+    /* Cards: soft surfaces with a hairline, as in the Hub */
+    .pillar-card,.testimonial-card,.credential,.blog-card,.step,.reset-day,.meal-planner-promo__panel,.tools-promo__panel{box-shadow:inset 0 0 0 1px var(--border)}
+    .blog-card{background:var(--surface)!important}
+    .about__tag,.meal-planner-promo__panel-badge,.tools-promo__panel-badge{color:var(--on)!important}
+    .meal-planner-promo__feature::before,.tools-promo__feature::before{background:var(--accent)}
+    .form-input{background:var(--surface-2)!important;color:var(--white)}
+    .hero__sub,.hero__pillar{color:#F4F1EA!important}
+    .footer{border-top:0}
+    .pillars__header{align-items:start!important}
+    @media (max-width:480px){.hero .display-1{font-size:clamp(44px,14vw,64px)}}
+    .calendly-panel__btn{background:var(--white)!important;color:var(--black)!important;border-radius:999px!important}
+    .calendly-panel__btn:hover{background:var(--accent)!important;color:var(--on)!important}
   </style>
 </head>
 <body>
@@ -2350,6 +2418,16 @@
           <p class="body-lg">
             Most coaches optimise for one thing. We build all three simultaneously — because they're inseparable.
           </p>
+          <svg class="pillars__fw" viewBox="0 0 360 300" role="img" aria-label="Health, Function and Performance overlap. Where all three meet is peak performance.">
+            <circle cx="180" cy="104" r="84" fill="rgba(156,116,56,.12)" stroke="#9C7438" stroke-width="1.5"/>
+            <circle cx="122" cy="200" r="84" fill="rgba(94,113,84,.12)" stroke="#5E7154" stroke-width="1.5"/>
+            <circle cx="238" cy="200" r="84" fill="rgba(169,87,58,.10)" stroke="#A9573A" stroke-width="1.5"/>
+            <circle cx="180" cy="168" r="30" fill="#141413"/>
+            <text x="180" y="165" text-anchor="middle" class="fw-c">PEAK</text><text x="180" y="180" text-anchor="middle" class="fw-s">performance</text>
+            <text x="180" y="62" text-anchor="middle" class="fw-t" fill="#9C7438">HEALTH</text><text x="180" y="78" text-anchor="middle" class="fw-s2">Metabolic · hormones · sleep</text>
+            <text x="92" y="238" text-anchor="middle" class="fw-t" fill="#5E7154">FUNCTION</text><text x="92" y="254" text-anchor="middle" class="fw-s2">Movement · balance</text>
+            <text x="268" y="238" text-anchor="middle" class="fw-t" fill="#A9573A">PERFORMANCE</text><text x="268" y="254" text-anchor="middle" class="fw-s2">Strength · body comp</text>
+          </svg>
         </div>
       </div>
       <div class="pillars__grid">
@@ -2358,7 +2436,7 @@
           <span class="pillar-card__number">01</span>
           <!-- Health Icon -->
           <svg class="pillar-card__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 35C20 35 5 26 5 15C5 10.6 8.1 7 12.5 7C15.2 7 17.6 8.5 19 10.7C20.4 8.5 22.8 7 25.5 7C29.9 7 33 10.6 33 15C33 26 20 35 20 35Z" stroke="#00C896" stroke-width="1.5" fill="none"/>
+            <path d="M20 35C20 35 5 26 5 15C5 10.6 8.1 7 12.5 7C15.2 7 17.6 8.5 19 10.7C20.4 8.5 22.8 7 25.5 7C29.9 7 33 10.6 33 15C33 26 20 35 20 35Z" stroke="#8A6A3B" stroke-width="1.5" fill="none"/>
           </svg>
           <div class="pillar-card__title">Health</div>
           <p class="pillar-card__body">
@@ -2370,8 +2448,8 @@
           <span class="pillar-card__number">02</span>
           <!-- Function Icon -->
           <svg class="pillar-card__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 32L20 8L32 32" stroke="#00C896" stroke-width="1.5"/>
-            <path d="M11.5 25H28.5" stroke="#00C896" stroke-width="1.5"/>
+            <path d="M8 32L20 8L32 32" stroke="#8A6A3B" stroke-width="1.5"/>
+            <path d="M11.5 25H28.5" stroke="#8A6A3B" stroke-width="1.5"/>
           </svg>
           <div class="pillar-card__title">Function</div>
           <p class="pillar-card__body">
@@ -2383,8 +2461,8 @@
           <span class="pillar-card__number">03</span>
           <!-- Performance Icon -->
           <svg class="pillar-card__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <polyline points="6,34 14,20 22,27 30,10 38,18" stroke="#00C896" stroke-width="1.5" fill="none"/>
-            <circle cx="38" cy="18" r="2.5" fill="#00C896"/>
+            <polyline points="6,34 14,20 22,27 30,10 38,18" stroke="#8A6A3B" stroke-width="1.5" fill="none"/>
+            <circle cx="38" cy="18" r="2.5" fill="#8A6A3B"/>
           </svg>
           <div class="pillar-card__title">Performance</div>
           <p class="pillar-card__body">
@@ -2587,7 +2665,7 @@
           </div>
           <p class="testimonial-card__quote">"I'd been to physios and chiros for over a year and couldn't fix my movement issues. In 12 weeks with Dave I went from a 20kg front squat in pain to 40kg pain free — and I'm now prepping for a half marathon PB."</p>
           <div class="testimonial-card__author">
-            <div class="testimonial-card__avatar" style="background-color:#1a1a1e;"></div>
+            <div class="testimonial-card__avatar" style="background-color:var(--surface-3);"></div>
             <div>
               <div class="testimonial-card__name">Kara Gibbons</div>
               <div class="testimonial-card__meta">12 Weeks · Mum · Coach · Business Owner</div>
@@ -2601,7 +2679,7 @@
           </div>
           <p class="testimonial-card__quote">"I've been training for over a decade and never looked or performed like this. 7 months in — 5.4kg of muscle added, leaner than ever, and hitting numbers I thought were years away."</p>
           <div class="testimonial-card__author">
-            <div class="testimonial-card__avatar" style="background-color:#1a1a1e;"></div>
+            <div class="testimonial-card__avatar" style="background-color:var(--surface-3);"></div>
             <div>
               <div class="testimonial-card__name">Joe Robinson</div>
               <div class="testimonial-card__meta">7 Months · +5.4kg Muscle · Body Recomp</div>
@@ -2615,7 +2693,7 @@
           </div>
           <p class="testimonial-card__quote">"8 weeks, 5.8kg down, and I actually performed better in the gym throughout. No peptides, no gimmicks. Just Dave's process and showing up. First photoshoot is booked."</p>
           <div class="testimonial-card__author">
-            <div class="testimonial-card__avatar" style="background-color:#1a1a1e;"></div>
+            <div class="testimonial-card__avatar" style="background-color:var(--surface-3);"></div>
             <div>
               <div class="testimonial-card__name">Josh</div>
               <div class="testimonial-card__meta">8 Weeks · -5.8kg · Photoshoot Prep</div>
@@ -2775,9 +2853,9 @@
       <!-- Live Substack feed -->
       <div id="substack-feed" class="blog__grid" style="min-height:200px;">
         <!-- Skeleton cards shown while loading -->
-        <div class="blog-card blog-card--skeleton"><div class="blog-card__img" style="background:#1a1a24;"></div><div class="blog-card__body"><div style="height:12px;width:60px;background:#222;border-radius:4px;margin-bottom:14px;"></div><div style="height:22px;width:85%;background:#222;border-radius:4px;margin-bottom:10px;"></div><div style="height:16px;width:95%;background:#1a1a1a;border-radius:4px;margin-bottom:6px;"></div><div style="height:16px;width:70%;background:#1a1a1a;border-radius:4px;"></div></div></div>
-        <div class="blog-card blog-card--skeleton"><div class="blog-card__img" style="background:#1a1a24;"></div><div class="blog-card__body"><div style="height:12px;width:60px;background:#222;border-radius:4px;margin-bottom:14px;"></div><div style="height:22px;width:75%;background:#222;border-radius:4px;margin-bottom:10px;"></div><div style="height:16px;width:90%;background:#1a1a1a;border-radius:4px;margin-bottom:6px;"></div><div style="height:16px;width:65%;background:#1a1a1a;border-radius:4px;"></div></div></div>
-        <div class="blog-card blog-card--skeleton"><div class="blog-card__img" style="background:#1a1a24;"></div><div class="blog-card__body"><div style="height:12px;width:60px;background:#222;border-radius:4px;margin-bottom:14px;"></div><div style="height:22px;width:80%;background:#222;border-radius:4px;margin-bottom:10px;"></div><div style="height:16px;width:90%;background:#1a1a1a;border-radius:4px;margin-bottom:6px;"></div><div style="height:16px;width:55%;background:#1a1a1a;border-radius:4px;"></div></div></div>
+        <div class="blog-card blog-card--skeleton"><div class="blog-card__img" style="background:var(--surface-3);"></div><div class="blog-card__body"><div style="height:12px;width:60px;background:var(--surface-3);border-radius:4px;margin-bottom:14px;"></div><div style="height:22px;width:85%;background:var(--surface-3);border-radius:4px;margin-bottom:10px;"></div><div style="height:16px;width:95%;background:var(--surface-3);border-radius:4px;margin-bottom:6px;"></div><div style="height:16px;width:70%;background:var(--surface-3);border-radius:4px;"></div></div></div>
+        <div class="blog-card blog-card--skeleton"><div class="blog-card__img" style="background:var(--surface-3);"></div><div class="blog-card__body"><div style="height:12px;width:60px;background:var(--surface-3);border-radius:4px;margin-bottom:14px;"></div><div style="height:22px;width:75%;background:var(--surface-3);border-radius:4px;margin-bottom:10px;"></div><div style="height:16px;width:90%;background:var(--surface-3);border-radius:4px;margin-bottom:6px;"></div><div style="height:16px;width:65%;background:var(--surface-3);border-radius:4px;"></div></div></div>
+        <div class="blog-card blog-card--skeleton"><div class="blog-card__img" style="background:var(--surface-3);"></div><div class="blog-card__body"><div style="height:12px;width:60px;background:var(--surface-3);border-radius:4px;margin-bottom:14px;"></div><div style="height:22px;width:80%;background:var(--surface-3);border-radius:4px;margin-bottom:10px;"></div><div style="height:16px;width:90%;background:var(--surface-3);border-radius:4px;margin-bottom:6px;"></div><div style="height:16px;width:55%;background:var(--surface-3);border-radius:4px;"></div></div></div>
       </div>
 
       <!-- Subscribe CTA -->
@@ -2809,7 +2887,7 @@
     function card(item) {
       var imgHtml = item.image
         ? '<img src="' + item.image + '" alt="' + item.title + '" style="width:100%;height:100%;object-fit:cover;display:block;">'
-        : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#0d1f1a,#0a2e22);display:flex;align-items:center;justify-content:center;"><span style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;letter-spacing:.15em;color:#00C896;">SUBSTACK</span></div>';
+        : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#141413,#2A241B);display:flex;align-items:center;justify-content:center;"><span style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;letter-spacing:.15em;color:#C9A56B;">SUBSTACK</span></div>';
 
       return '<a class="blog-card" href="' + item.link + '" target="_blank" rel="noopener" style="text-decoration:none;cursor:pointer;">'
         + '<div class="blog-card__img" style="overflow:hidden;">' + imgHtml + '</div>'
@@ -2825,7 +2903,7 @@
 
     function fallback() {
       feed.innerHTML = '<a class="blog-card" href="https://substack.com/@coachdavemarsh" target="_blank" rel="noopener" style="text-decoration:none;grid-column:1/-1;max-width:480px;margin:0 auto;">'
-        + '<div class="blog-card__img" style="background:linear-gradient(135deg,#0d1f1a,#0a2e22);display:flex;align-items:center;justify-content:center;"><span style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:.15em;color:#00C896;">SUBSTACK</span></div>'
+        + '<div class="blog-card__img" style="background:linear-gradient(135deg,#141413,#2A241B);display:flex;align-items:center;justify-content:center;"><span style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:.15em;color:#C9A56B;">SUBSTACK</span></div>'
         + '<div class="blog-card__body"><div class="blog-card__cat">From The Coach</div>'
         + '<div class="blog-card__title">All Articles on Substack</div>'
         + '<p class="blog-card__excerpt">Training, nutrition, hormones and performance. Everything in one place.</p>'
@@ -3013,7 +3091,7 @@
       e.preventDefault();
       const btn = e.target.querySelector('button[type="submit"]');
       btn.textContent = 'Application Sent!';
-      btn.style.background = '#00FFB8';
+      btn.style.background = '#C9A56B';
       btn.disabled = true;
     }
 
