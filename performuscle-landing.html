@@ -2245,7 +2245,11 @@
     .educator__lede{font-size:14.5px;color:#BDB7AA;line-height:1.55}
     .educator__list{display:flex;flex-direction:column;gap:8px}
     .educator__list div{border-left:2px solid #C9A56B;padding:2px 0 2px 12px}
-    .educator__list b{font-family:var(--font-display);font-weight:600;font-size:18px;text-transform:uppercase;letter-spacing:.02em}
+    .educator__list{gap:14px!important}
+    .educator__list div{display:flex;flex-direction:column;gap:3px}
+    .educator__list b{font-family:var(--font-display);font-weight:600;font-size:19px;text-transform:uppercase;letter-spacing:.02em}
+    .educator__org{font-size:12px;font-weight:600;color:#E0C08A}
+    .educator__list p{font-size:14px;color:#BDB7AA;line-height:1.5}
     .pillars__header{align-items:start!important}
     @media (max-width:480px){.hero .display-1{font-size:clamp(44px,14vw,64px)}}
     .calendly-panel__btn{background:var(--white)!important;color:var(--black)!important;border-radius:999px!important}
@@ -2405,11 +2409,10 @@
             <span class="credential">Evidence-Based Methods</span>
           </div>
           <div class="educator">
-            <span class="educator__k">Educator · Institute of Health</span>
-            <p class="educator__lede">I teach the Institute of Health's practitioners how to apply exercise and metabolism in practice.</p>
+            <span class="educator__k">Educator</span>
             <div class="educator__list">
-              <div><b>The New Age of Exercise Science</b></div>
-              <div><b>The Optimised Coach: Coaching Clinics</b></div>
+              <div><span class="educator__org">Institute of Health</span><b>The New Age of Exercise Science</b><p>Teaching doctors and clinicians how to apply exercise and metabolism in practice.</p></div>
+              <div><span class="educator__org">The Optimised Coach · Head of Coach Education</span><b>Coaching Clinics</b><p>A globally recognised mentoring group building better online coaches and better coaching businesses. I lead the coach education, raising the standard of coaching knowledge.</p></div>
             </div>
           </div>
         </div>

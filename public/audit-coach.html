@@ -340,6 +340,10 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
   --dim:#5E4D36; --orb:240,201,135; --orbcore:60,44,24;
   color-scheme:dark;
 ;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
+
+/* Baseline: black panel with the gold orb, like My Plan and the Hub */
+.hero{--bg:#141413; --surface:#1E1D1B; --sunk:#262522; --ink:#F4F1EA; --text2:#BDB7AA; --muted:#8E887C; --line:rgba(244,241,234,.12); --gold:#C9A56B; --gold2:#E0C08A; --orb:224,192,138; --orbcore:74,56,30;
+  background:#141413!important;color:var(--ink);box-shadow:none!important;border-radius:28px}
 </style>
 </head>
 <body>
@@ -1019,16 +1023,16 @@ let orbLevel=0.5;
     P=Array.from({length:170},()=>{const edge=Math.random()<0.55;const rad=edge?0.42+Math.random()*0.08:Math.sqrt(Math.random())*0.44;return {a:Math.random()*Math.PI*2,r:rad,s:(Math.random()*0.6+0.2)*(Math.random()<.5?-1:1)*0.0016,z:Math.random()*1.6+0.4,t:Math.random()*Math.PI*2}})}
   function frame(ts){
     if(!W){size()}
-    const cs=getComputedStyle(document.documentElement),OC=cs.getPropertyValue('--orb').trim()||'240,201,135',CC=cs.getPropertyValue('--orbcore').trim()||'60,44,24';
+    const cs=getComputedStyle(c),OC=cs.getPropertyValue('--orb').trim()||'240,201,135',CC=cs.getPropertyValue('--orbcore').trim()||'60,44,24';
     ctx.clearRect(0,0,W,W);const cx=W/2,cy=W/2;
     const g=ctx.createRadialGradient(cx,cy,W*0.05,cx,cy,W*0.5);
-    g.addColorStop(0,`rgba(${CC},0.95)`);g.addColorStop(0.6,`rgba(${CC},0.45)`);g.addColorStop(1,'rgba(251,250,246,0)');
+    g.addColorStop(0,`rgba(${CC},0.95)`);g.addColorStop(0.6,`rgba(${CC},0.45)`);g.addColorStop(1,'rgba(20,20,19,0)');
     ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,W*0.5,0,Math.PI*2);ctx.fill();
     for(const p of P){
       if(!reduce)p.a+=p.s*(0.6+orbLevel);
       const tw=reduce?0.8:0.55+0.45*Math.sin(ts/600+p.t);
       const x=cx+Math.cos(p.a)*p.r*W,y=cy+Math.sin(p.a)*p.r*W;
-      ctx.fillStyle=p.r>0.4?`rgba(${OC},${0.75*tw})`:`rgba(20,20,19,${0.45*tw})`;
+      ctx.fillStyle=p.r>0.4?`rgba(${OC},${0.8*tw})`:`rgba(244,241,234,${0.45*tw})`;
       ctx.beginPath();ctx.arc(x,y,p.z,0,Math.PI*2);ctx.fill();
     }
     if(!reduce)requestAnimationFrame(frame);

@@ -165,6 +165,12 @@ input[type=number]{-moz-appearance:textfield}
   --text:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   color-scheme:dark;
 ;background:#141413!important;color:#F4F1EA;border-color:rgba(244,241,234,.08)!important}
+
+/* Baseline panels: black with the gold orb, like My Plan and the Hub */
+.hero,.base{--bg:#141413; --surface:#1E1D1B; --surface-2:#262522; --surface-3:#34322E; --ink:#F4F1EA; --off:#BDB7AA; --muted:#8E887C; --line:rgba(244,241,234,.12); --accent:#C9A56B; --accent-hi:#E0C08A; --accent-dim:rgba(201,165,107,.14);
+  background:#141413!important;color:var(--ink);border-radius:28px;padding:32px;box-shadow:none!important}
+@media (max-width:600px){.hero,.base{padding:22px 16px;border-radius:22px}}
+.hero h1{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -474,9 +480,9 @@ function startOrb(){
   (function frame(ts){
     if(!document.body.contains(c))return;
     ctx.clearRect(0,0,W,W);const cx=W/2;
-    const g=ctx.createRadialGradient(cx,cx,W*.05,cx,cx,W*.5);g.addColorStop(0,'rgba(237,227,210,.95)');g.addColorStop(.6,'rgba(236,231,220,.5)');g.addColorStop(1,'rgba(251,250,246,0)');
+    const g=ctx.createRadialGradient(cx,cx,W*.05,cx,cx,W*.5);g.addColorStop(0,'rgba(74,56,30,.95)');g.addColorStop(.6,'rgba(48,37,22,.5)');g.addColorStop(1,'rgba(20,20,19,0)');
     ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cx,W*.5,0,Math.PI*2);ctx.fill();
-    for(const p of P){if(!reduce)p.a+=p.s;const tw=reduce?.8:.55+.45*Math.sin((ts||0)/600+p.t);ctx.fillStyle=p.r>.4?`rgba(111,85,48,${.75*tw})`:`rgba(20,20,19,${.45*tw})`;ctx.beginPath();ctx.arc(cx+Math.cos(p.a)*p.r*W,cx+Math.sin(p.a)*p.r*W,p.z,0,Math.PI*2);ctx.fill()}
+    for(const p of P){if(!reduce)p.a+=p.s;const tw=reduce?.8:.55+.45*Math.sin((ts||0)/600+p.t);ctx.fillStyle=p.r>.4?`rgba(224,192,138,${.8*tw})`:`rgba(244,241,234,${.45*tw})`;ctx.beginPath();ctx.arc(cx+Math.cos(p.a)*p.r*W,cx+Math.sin(p.a)*p.r*W,p.z,0,Math.PI*2);ctx.fill()}
     if(!reduce)orbRaf=requestAnimationFrame(frame);
   })();
 }
