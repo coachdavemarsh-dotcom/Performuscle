@@ -2189,7 +2189,7 @@
     ============================================================ */
     html{overflow-x:clip}
     body{background:var(--black)!important;color:var(--white)}
-    .nav,.hero,.stats,.cta-section,.footer,.program-card,.result-card,.tools-promo__panel,.reset-feature__stack,.pillars,.testimonials,.meal-planner-promo{
+    .nav,.hero,.stats,.cta-section,.footer,.program-card,.result-card,.tools-promo__panel,.reset-feature__stack,.testimonials,.meal-planner-promo,.model{
       --black:#141413; --surface:#1E1D1B; --surface-2:#262522; --surface-3:#34322E;
       --white:#F4F1EA; --off-white:#BDB7AA; --muted:#8E887C; --subtle:#6E6A62;
       --border:rgba(244,241,234,.12); --border-hi:rgba(201,165,107,.4);
@@ -2224,8 +2224,8 @@
     .pillars__fw text{font-family:var(--font-body)}
     .pillars__fw .fw-t{font-family:var(--font-display);font-size:17px;font-weight:600;letter-spacing:.06em}
     .pillars__fw .fw-s2{font-size:10.5px;fill:var(--muted)}
-    .pillars__fw .fw-c{font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:.08em;fill:#141413}
-    .pillars__fw .fw-s{font-size:8.5px;fill:#141413}
+    .pillars__fw .fw-c{font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:.08em;fill:#F4F1EA}
+    .pillars__fw .fw-s{font-size:8.5px;fill:#C9A56B}
     /* Numbers band: dark panel instead of the old teal band */
     .stats{background:#141413!important}
     .stats__grid{background:var(--border)!important}
@@ -2240,8 +2240,19 @@
     .form-input{background:var(--surface-2)!important;color:var(--white)}
     .hero__sub,.hero__pillar{color:#F4F1EA!important}
     .footer{border-top:0}
-    .pillars,.testimonials,.meal-planner-promo{background:#141413!important}
-    .pillars__grid{background:rgba(244,241,234,.08)!important}
+    .model{padding-block:var(--pad-v)}
+    .model__inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:56px;align-items:center}
+    @media (max-width:1024px){.model__inner{grid-template-columns:1fr;gap:40px}}
+    .model__copy{display:flex;flex-direction:column;gap:22px}
+    .model__fw{width:100%;max-width:620px;justify-self:center;overflow:visible}
+    .model__fw text{fill:#F4F1EA;font-family:var(--font-body)}
+    .model__tracks{display:flex;flex-direction:column;gap:12px}
+    .mtrack{background:#1E1D1B;border-radius:16px;padding:16px 18px;border-left:3px solid var(--c);display:flex;flex-direction:column;gap:4px}
+    .mtrack__k{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
+    .mtrack b{font-family:var(--font-display);font-weight:600;font-size:20px;text-transform:uppercase;color:#F4F1EA}
+    .mtrack p{font-size:14px;color:#BDB7AA;line-height:1.5}
+    .model__note{font-size:14px;color:#8E887C}
+    .testimonials,.meal-planner-promo,.model{background:#141413!important}
     .educator{margin-top:28px;background:#141413;color:#F4F1EA;border-radius:18px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;max-width:520px}
     .educator__k{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#C9A56B}
     .educator__lede{font-size:14.5px;color:#BDB7AA;line-height:1.55}
@@ -2438,14 +2449,14 @@
             Most coaches optimise for one thing. We build all three simultaneously — because they're inseparable.
           </p>
           <svg class="pillars__fw" viewBox="0 0 360 300" role="img" aria-label="Health, Function and Performance overlap. Where all three meet is peak performance.">
-            <circle cx="180" cy="104" r="84" fill="rgba(201,165,107,.12)" stroke="#C9A56B" stroke-width="1.5"/>
-            <circle cx="122" cy="200" r="84" fill="rgba(157,179,143,.12)" stroke="#9DB38F" stroke-width="1.5"/>
-            <circle cx="238" cy="200" r="84" fill="rgba(217,139,106,.12)" stroke="#D98B6A" stroke-width="1.5"/>
-            <circle cx="180" cy="168" r="30" fill="#C9A56B"/>
+            <circle cx="180" cy="104" r="84" fill="rgba(156,116,56,.12)" stroke="#9C7438" stroke-width="1.5"/>
+            <circle cx="122" cy="200" r="84" fill="rgba(94,113,84,.12)" stroke="#5E7154" stroke-width="1.5"/>
+            <circle cx="238" cy="200" r="84" fill="rgba(169,87,58,.10)" stroke="#A9573A" stroke-width="1.5"/>
+            <circle cx="180" cy="168" r="30" fill="#141413"/>
             <text x="180" y="165" text-anchor="middle" class="fw-c">PEAK</text><text x="180" y="180" text-anchor="middle" class="fw-s">performance</text>
-            <text x="180" y="62" text-anchor="middle" class="fw-t" fill="#C9A56B">HEALTH</text><text x="180" y="78" text-anchor="middle" class="fw-s2">Metabolic · hormones · sleep</text>
-            <text x="92" y="238" text-anchor="middle" class="fw-t" fill="#9DB38F">FUNCTION</text><text x="92" y="254" text-anchor="middle" class="fw-s2">Movement · balance</text>
-            <text x="268" y="238" text-anchor="middle" class="fw-t" fill="#D98B6A">PERFORMANCE</text><text x="268" y="254" text-anchor="middle" class="fw-s2">Strength · body comp</text>
+            <text x="180" y="62" text-anchor="middle" class="fw-t" fill="#9C7438">HEALTH</text><text x="180" y="78" text-anchor="middle" class="fw-s2">Metabolic · hormones · sleep</text>
+            <text x="92" y="238" text-anchor="middle" class="fw-t" fill="#5E7154">FUNCTION</text><text x="92" y="254" text-anchor="middle" class="fw-s2">Movement · balance</text>
+            <text x="268" y="238" text-anchor="middle" class="fw-t" fill="#A9573A">PERFORMANCE</text><text x="268" y="254" text-anchor="middle" class="fw-s2">Strength · body comp</text>
           </svg>
         </div>
       </div>
@@ -2492,6 +2503,90 @@
       </div>
     </div>
   </section>
+  <!-- ============================================================
+       THE COACHING MODEL — the Client Hub framework
+  ============================================================ -->
+  <section class="model" id="model">
+    <div class="container">
+      <div class="model__inner">
+        <div class="model__copy" data-reveal>
+          <div class="eyebrow">Inside the Client Hub</div>
+          <div class="display-2">From performance<br>to presence</div>
+          <p class="body-lg">Health, function and performance are the outcomes. This is how we get there. Body, mind and heart, one training a week across six months. When all three align, performance stops being something you force and starts coming from presence.</p>
+          <div class="model__tracks">
+            <div class="mtrack" style="--c:#C9A56B"><span class="mtrack__k">Body · Regulate</span><b>Nervous system first</b><p>Somatics, sleep, recovery, mobility, strength, metabolism, nutrition and hormones.</p></div>
+            <div class="mtrack" style="--c:#9DB38F"><span class="mtrack__k">Mind · Rehearse</span><b>The voice, the story, the standard</b><p>Awareness, values, identity, self-limits, boundaries and growth.</p></div>
+            <div class="mtrack" style="--c:#D98B6A"><span class="mtrack__k">Heart · Release</span><b>Desire and meaning</b><p>Release, grief, purpose, polarity, devotion and service.</p></div>
+          </div>
+          <p class="model__note">Presence under pressure sits at the centre. Every one-to-one client gets the full path inside their Client Hub.</p>
+          <a href="#apply" class="btn-primary" style="margin-top:8px;align-self:flex-start">Work With Me <span class="arrow">→</span></a>
+        </div>
+        <svg class="model__fw" data-reveal data-reveal-delay="2" viewBox="-100 -66 600 540" role="img" aria-label="The coaching model: Body, Mind and Heart around Alignment, with Presence at the centre. Each training sits on its system."><defs><marker id="smsah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8E887C"></path></marker></defs><path d="M58 250 C 40 160, 90 100, 148 92" fill="none" stroke="#8E887C" stroke-width="1.4" marker-start="url(#smsah)" marker-end="url(#smsah)"></path>
+      <path d="M252 92 C 310 100, 360 160, 342 250" fill="none" stroke="#8E887C" stroke-width="1.4" marker-start="url(#smsah)" marker-end="url(#smsah)"></path>
+      <path d="M118 342 C 165 385, 235 385, 282 342" fill="none" stroke="#8E887C" stroke-width="1.4" marker-start="url(#smsah)" marker-end="url(#smsah)"></path>
+      <text x="93" y="153" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(-56 93 153)">Inspired action</text>
+      <text x="307" y="153" font-size="11" font-weight="700" text-anchor="middle" transform="rotate(56 307 153)">Refinement</text>
+      <text x="214" y="404" font-size="12" font-weight="700" text-anchor="middle">Feedback</text>
+      <text x="200" y="350" font-size="9" letter-spacing="2" text-anchor="middle" style="fill:#8E887C">SUBCONSCIOUS</text>
+      <text x="104" y="206" font-size="9.5" letter-spacing="3" text-anchor="middle" style="fill:#8E887C" transform="rotate(-58 104 206)">BREATH</text>
+      <text x="296" y="206" font-size="9.5" letter-spacing="3" text-anchor="middle" style="fill:#8E887C" transform="rotate(58 296 206)">PURPOSE</text><circle cx="200" cy="232" r="78" fill="rgba(201,165,107,.06)" stroke="#C9A56B" stroke-width="1.2" stroke-dasharray="4 5"></circle>
+      
+      <g aria-label="Presence under pressure, 0% complete"><circle cx="200" cy="232" r="20" fill="transparent"></circle><rect x="150" y="220" width="100" height="22" fill="transparent"></rect>
+      <text x="200" y="236" font-size="15" font-weight="600" text-anchor="middle" style="font-family:Oswald,Arial Narrow,sans-serif;letter-spacing:2px;fill:#C9A56B">PRESENCE</text></g>
+      <text x="200" y="327" font-size="10" font-weight="700" letter-spacing="3" text-anchor="middle" style="fill:#C9A56B">ALIGNMENT</text><circle cx="200" cy="190" r="27" fill="#1E1D1B" stroke="rgba(244,241,234,.12)" stroke-width="1.2"></circle><text x="200" y="194" font-size="10.5" font-weight="700" text-anchor="middle">Permission</text><circle cx="158" cy="268" r="27" fill="#1E1D1B" stroke="rgba(244,241,234,.12)" stroke-width="1.2"></circle><text x="158" y="272" font-size="10.5" font-weight="700" text-anchor="middle">Intention</text><circle cx="242" cy="268" r="27" fill="#1E1D1B" stroke="rgba(244,241,234,.12)" stroke-width="1.2"></circle><text x="242" y="272" font-size="10.5" font-weight="700" text-anchor="middle">Direction</text><line x1="200" y1="105" x2="50.091375947135646" y2="99.7650754946249" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="200" y1="105" x2="66.82769222953982" y2="35.97003228242218" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="200" y1="105" x2="109.31013277064378" y2="-14.47948770362946" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="200" y1="105" x2="169.32559222373146" y2="-41.830108314252755" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="200" y1="105" x2="235.2713169653885" y2="-40.79415008678194" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="200" y1="105" x2="294.39805865747564" y2="-11.571894218545623" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="200" y1="105" x2="335.27487896076707" y2="40.1871376797026" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="200" y1="105" x2="349.99908614866854" y2="104.4764022877164" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><circle cx="200" cy="105" r="50" fill="#1E1D1B" stroke="#C9A56B" stroke-width="1.6"></circle>
+        <text x="200" y="97" font-size="19" font-weight="600" text-anchor="middle" style="font-family:Oswald,Arial Narrow,sans-serif">BODY</text>
+        <text x="200" y="115" font-size="10" font-weight="700" letter-spacing="1.5" text-anchor="middle" style="fill:#C9A56B">REGULATE</text>
+        <g aria-label="Somatics: Regulate the body, 0% complete"><circle class="face" cx="50.091375947135646" cy="99.7650754946249" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="50.091375947135646" cy="99.7650754946249" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="50.091375947135646" y="102.77" font-size="9.5" font-weight="700" text-anchor="middle">Somatics</text></g><g aria-label="Sleep: The foundation, 0% complete"><circle class="face" cx="66.82769222953982" cy="35.97003228242218" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="66.82769222953982" cy="35.97003228242218" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="66.82769222953982" y="38.97" font-size="9.5" font-weight="700" text-anchor="middle">Sleep</text></g><g aria-label="Recovery: Read the signals, 0% complete"><circle class="face" cx="109.31013277064378" cy="-14.47948770362946" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="109.31013277064378" cy="-14.47948770362946" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="109.31013277064378" y="-15.47948770362946" font-size="9.5" font-weight="700" text-anchor="middle">Recovery</text></g><g aria-label="Mobility: Own your range, 0% complete"><circle class="face" cx="169.32559222373146" cy="-41.830108314252755" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="169.32559222373146" cy="-41.830108314252755" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="169.32559222373146" y="-42.830108314252755" font-size="9.5" font-weight="700" text-anchor="middle">Mobility</text></g><g aria-label="Strength training: Build the base, 0% complete"><circle class="face" cx="235.2713169653885" cy="-40.79415008678194" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="235.2713169653885" cy="-40.79415008678194" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="235.2713169653885" y="-41.79415008678194" font-size="9.5" font-weight="700" text-anchor="middle">Strength</text></g><g aria-label="Metabolism: Build the engine, 0% complete"><circle class="face" cx="294.39805865747564" cy="-11.571894218545623" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="294.39805865747564" cy="-11.571894218545623" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="294.39805865747564" y="-12.571894218545623" font-size="9.5" font-weight="700" text-anchor="middle">Metabolism</text></g><g aria-label="Nutrition: Fuel the work, 0% complete"><circle class="face" cx="335.27487896076707" cy="40.1871376797026" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="335.27487896076707" cy="40.1871376797026" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="335.27487896076707" y="43.19" font-size="9.5" font-weight="700" text-anchor="middle">Nutrition</text></g><g aria-label="Hormones: Your daily environment, 0% complete"><circle class="face" cx="349.99908614866854" cy="104.4764022877164" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="349.99908614866854" cy="104.4764022877164" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="349.99908614866854" y="107.48" font-size="9.5" font-weight="700" text-anchor="middle">Hormones</text></g><line x1="80" y1="300" x2="84.36243708781264" y2="424.923853377387" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="80" y1="300" x2="21.316054651763686" y2="410.3684491073659" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="80" y1="300" x2="-26.00601201955324" y2="366.2399080291506" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="80" y1="300" x2="-44.923853377386976" y2="304.36243708781257" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="80" y1="300" x2="-30.368449107365862" y2="241.31605465176364" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="80" y1="300" x2="13.760091970849373" y2="193.99398798044678" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><circle cx="80" cy="300" r="50" fill="#1E1D1B" stroke="#9DB38F" stroke-width="1.6"></circle>
+        <text x="80" y="292" font-size="19" font-weight="600" text-anchor="middle" style="font-family:Oswald,Arial Narrow,sans-serif">MIND</text>
+        <text x="80" y="310" font-size="10" font-weight="700" letter-spacing="1.5" text-anchor="middle" style="fill:#9DB38F">REHEARSE</text>
+        <g aria-label="Awareness: Notice the pattern, 0% complete"><circle class="face" cx="84.36243708781264" cy="424.923853377387" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="84.36243708781264" cy="424.923853377387" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="84.36243708781264" y="427.92" font-size="9.5" font-weight="700" text-anchor="middle">Awareness</text></g><g aria-label="Values: The Human Formula to Win, 0% complete"><circle class="face" cx="21.316054651763686" cy="410.3684491073659" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="21.316054651763686" cy="410.3684491073659" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="21.316054651763686" y="413.37" font-size="9.5" font-weight="700" text-anchor="middle">Values</text></g><g aria-label="Identity: Old self, new self, 0% complete"><circle class="face" cx="-26.00601201955324" cy="366.2399080291506" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="-26.00601201955324" cy="366.2399080291506" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="-26.00601201955324" y="365.2399080291506" font-size="9.5" font-weight="700" text-anchor="middle">Identity</text></g><g aria-label="Self-limits: The inner voice, 0% complete"><circle class="face" cx="-44.923853377386976" cy="304.36243708781257" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="-44.923853377386976" cy="304.36243708781257" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="-44.923853377386976" y="303.36243708781257" font-size="9.5" font-weight="700" text-anchor="middle">Self-limits</text></g><g aria-label="Boundaries: Protect the standard, 0% complete"><circle class="face" cx="-30.368449107365862" cy="241.31605465176364" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="-30.368449107365862" cy="241.31605465176364" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="-30.368449107365862" y="240.31605465176364" font-size="9.5" font-weight="700" text-anchor="middle">Boundaries</text></g><g aria-label="Growth: Choose the challenge, 0% complete"><circle class="face" cx="13.760091970849373" cy="193.99398798044678" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="13.760091970849373" cy="193.99398798044678" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="13.760091970849373" y="196.99" font-size="9.5" font-weight="700" text-anchor="middle">Growth</text></g><line x1="320" y1="300" x2="315.63756291218743" y2="424.923853377387" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="320" y1="300" x2="378.68394534823636" y2="410.36844910736585" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="320" y1="300" x2="426.0060120195532" y2="366.2399080291506" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="320" y1="300" x2="444.923853377387" y2="304.3624370878126" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="320" y1="300" x2="430.3684491073659" y2="241.31605465176364" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><line x1="320" y1="300" x2="386.2399080291506" y2="193.99398798044678" stroke="rgba(244,241,234,0.16)" stroke-width="1.2"></line><circle cx="320" cy="300" r="50" fill="#1E1D1B" stroke="#D98B6A" stroke-width="1.6"></circle>
+        <text x="320" y="292" font-size="19" font-weight="600" text-anchor="middle" style="font-family:Oswald,Arial Narrow,sans-serif">HEART</text>
+        <text x="320" y="310" font-size="10" font-weight="700" letter-spacing="1.5" text-anchor="middle" style="fill:#D98B6A">RELEASE</text>
+        <g aria-label="Release: Head to heart, 0% complete"><circle class="face" cx="315.63756291218743" cy="424.923853377387" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="315.63756291218743" cy="424.923853377387" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="315.63756291218743" y="427.92" font-size="9.5" font-weight="700" text-anchor="middle">Release</text></g><g aria-label="Grief: The other side of love, 0% complete"><circle class="face" cx="378.68394534823636" cy="410.36844910736585" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="378.68394534823636" cy="410.36844910736585" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="378.68394534823636" y="413.37" font-size="9.5" font-weight="700" text-anchor="middle">Grief</text></g><g aria-label="Purpose: From proving to purpose, 0% complete"><circle class="face" cx="426.0060120195532" cy="366.2399080291506" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="426.0060120195532" cy="366.2399080291506" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="426.0060120195532" y="369.24" font-size="9.5" font-weight="700" text-anchor="middle">Purpose</text></g><g aria-label="Polarity: Masculine and feminine, 0% complete"><circle class="face" cx="444.923853377387" cy="304.3624370878126" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="444.923853377387" cy="304.3624370878126" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="444.923853377387" y="307.36" font-size="9.5" font-weight="700" text-anchor="middle">Polarity</text></g><g aria-label="Devotion: Discipline with love, 0% complete"><circle class="face" cx="430.3684491073659" cy="241.31605465176364" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="430.3684491073659" cy="241.31605465176364" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="430.3684491073659" y="244.32" font-size="9.5" font-weight="700" text-anchor="middle">Devotion</text></g><g aria-label="Service: Give it back, 0% complete"><circle class="face" cx="386.2399080291506" cy="193.99398798044678" r="30" fill="#141413" stroke="rgba(244,241,234,.12)"></circle>
+        <circle cx="386.2399080291506" cy="193.99398798044678" r="34" fill="none" stroke="#34322E" stroke-width="3"></circle>
+        <text x="386.2399080291506" y="196.99" font-size="9.5" font-weight="700" text-anchor="middle">Service</text></g></svg>
+      </div>
+    </div>
+  </section>
+
 
 
   <!-- ============================================================
