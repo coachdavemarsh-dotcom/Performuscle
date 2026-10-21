@@ -173,6 +173,7 @@ function render(){
   prog();
   if(S.sent){$('app').innerHTML=`<section class="done dark"><span class="eyebrow">Screen sent</span><h1>That’s everything${S.first?', '+esc(S.first):''}.</h1>
     <p class="lede">Dave now has your audit${S.bloods.some(f=>f.state==='done')?', your movement and your blood work':' and your movement'}. The call is where it all comes together into your six-month roadmap, built inside your Client Hub.</p>
+    <p class="lede" style="color:#F4F1EA">After your strategy call, Dave will send you a link to your Client Hub.</p>
     <div class="flow"><div class="fd"><i>✓</i>Performance Audit</div><div class="fd"><i>✓</i>Movement screen</div><div class="fn"><i>3</i>Strategy call</div><div><i>4</i>Your roadmap in the Client Hub</div></div>
     <a class="btn primary" style="align-self:flex-start;background:#F4F1EA;color:#141413" href="${CALENDLY}" target="_blank" rel="noopener">Book your strategy call →</a></section>`;return}
   const n=TESTS.filter(t=>doneTest(t.id)).length;
