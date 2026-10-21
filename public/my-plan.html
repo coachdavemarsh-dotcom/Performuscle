@@ -239,10 +239,10 @@ function renderAuth(msg,err){
 }
 
 /* ---------- Plan ---------- */
-const HUB_MODS=[{id:'regulate',track:'body'},{id:'identity',track:'mind'},{id:'limits',track:'mind'},{id:'boundaries',track:'mind'},{id:'release',track:'heart'}];
+const HUB_MODS=[{id:'regulate',track:'body'},{id:'sleep',track:'body'},{id:'recovery',track:'body'},{id:'mobility',track:'body'},{id:'strength',track:'body'},{id:'metabolism',track:'body'},{id:'nutrition',track:'body'},{id:'hormones',track:'body'},{id:'awareness',track:'mind'},{id:'values',track:'mind'},{id:'identity',track:'mind'},{id:'limits',track:'mind'},{id:'boundaries',track:'mind'},{id:'growth',track:'mind'},{id:'release',track:'heart'},{id:'grief',track:'heart'},{id:'purpose',track:'heart'},{id:'polarity',track:'heart'},{id:'devotion',track:'heart'},{id:'service',track:'heart'}];
 const HUB_TRACKS=[['body','Regulate','Body','var(--ink)'],['mind','Rehearse','Mind','var(--accent)'],['heart','Release','Heart','#E8A87C']];
-const HUB_LEVELS=[['Not started',0],['Aware',100],['Building',400],['Consistent',900],['Owned',1400]];
-const HUB_SPOKE={somatics:'regulate',identity:'identity',limits:'limits',boundaries:'boundaries'};
+const HUB_LEVELS=[['Not started',0],['Aware',150],['Building',800],['Consistent',2500],['Owned',4500]];
+const HUB_SPOKE={somatics:['regulate','awareness'],identity:['identity','values'],limits:['limits','growth'],boundaries:['boundaries'],recovery:['sleep','recovery'],movement:['mobility','strength'],nutrition:['nutrition','metabolism','hormones']};
 let hub=null;
 const HUB_SAMPLE={regulate:{pct:58,xp:150,done:false},identity:{pct:12,xp:25,done:false}};
 async function loadHub(){
@@ -256,7 +256,7 @@ function hubHTML(){
   let li=0;HUB_LEVELS.forEach((l,i)=>{if(xp>=l[1])li=i});const nx=HUB_LEVELS[li+1];
   const lp=nx?Math.round(100*(xp-HUB_LEVELS[li][1])/(nx[1]-HUB_LEVELS[li][1])):100;
   const all=Math.round(HUB_MODS.reduce((a,m)=>a+pct(m.id),0)/HUB_MODS.length),r=54,c=2*Math.PI*r;
-  return `<span class="eyebrow">Your Client Hub</span><h2>Regulate. Rehearse. Release.</h2><p class="lede">Short trainings from ${esc((plan&&plan.coach)||'Dave')} with worksheets and homework. Every step earns XP, and the outer ring on your Launchpad fills as you go.</p>
+  return `<span class="eyebrow">Your Client Hub</span><h2>Soul Meets Strength.</h2><p class="lede">Short trainings from ${esc((plan&&plan.coach)||'Dave')} with worksheets and homework. Every step earns XP, and the outer ring on your Launchpad fills as you go.</p>
    <div class="hubc"><div class="hring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--surface-3)" stroke-width="9"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*all/100} ${c}"/></svg><div><b>${all}%</b><span>Complete</span></div></div>
     <div class="hlv"><span class="eyebrow">Level ${li+1} of 5</span><span class="nm">${HUB_LEVELS[li][0]}</span><div class="hbar"><i style="width:${lp}%"></i></div><span class="small">${xp} XP · ${done} of ${HUB_MODS.length} trainings complete${nx?` · ${nx[1]-xp} XP to ${nx[0]}`:''}</span><a class="btn primary" href="/hub" style="align-self:flex-start;margin-top:6px;text-decoration:none">Open your Hub →</a></div>
     <div class="htr">${HUB_TRACKS.map(([id,k,sys,col])=>{const ms=HUB_MODS.filter(m=>m.track===id),p=Math.round(ms.reduce((a,m)=>a+pct(m.id),0)/ms.length);return `<div style="--c:${col}"><span><b>${k}</b><em>${sys} · ${p}%</em></span><div class="hbar"><i style="width:${p}%"></i></div></div>`}).join('')}</div></div>`;
@@ -351,7 +351,7 @@ function lpDraw(){
   sp.forEach((s,i)=>{
     const a0=(-90+i*step)*Math.PI/180+gap,a1=(-90+(i+1)*step)*Math.PI/180-gap,body=s.side==='body',c=body?'var(--ink)':'var(--accent)',soft=body?'rgba(244,242,236,.08)':'rgba(0,200,150,.15)';
     const sc=s.score||0,rr=R0+(R1-R0)*sc/5,on=sel===s.id;
-    const hm=HUB_SPOKE[s.id];if(hm&&hub){const hp=Math.max(0,Math.min(100,+((hub[hm]||{}).pct)||0));h+=`<path d="${lpArc(cx,cy,R1+4,R1+8,a0,a1)}" fill="var(--surface-3)"/>`+(hp?`<path d="${lpArc(cx,cy,R1+4,R1+8,a0,a0+(a1-a0)*hp/100)}" fill="var(--accent-hi)"><title>Hub training ${hp}% complete</title></path>`:'')}
+    const hm=HUB_SPOKE[s.id];if(hm&&hub){const hp=Math.round(hm.reduce((a,k)=>a+Math.max(0,Math.min(100,+((hub[k]||{}).pct)||0)),0)/hm.length);h+=`<path d="${lpArc(cx,cy,R1+4,R1+8,a0,a1)}" fill="var(--surface-3)"/>`+(hp?`<path d="${lpArc(cx,cy,R1+4,R1+8,a0,a0+(a1-a0)*hp/100)}" fill="var(--accent-hi)"><title>Hub training ${hp}% complete</title></path>`:'')}
     h+=`<g class="wedge" data-id="${s.id}" tabindex="0" role="button" aria-label="${esc(s.name)}: ${sc?sc+' of 5':'not scored yet'}"><path d="${lpArc(cx,cy,R0,R1,a0,a1)}" fill="${soft}" stroke="${on?c:'none'}" stroke-width="2"/>${sc?`<path d="${lpArc(cx,cy,R0,rr,a0,a1)}" fill="${c}" opacity="${on?1:.82}"/>`:''}</g>`;
     const am=(a0+a1)/2,lx=cx+(R1+16)*Math.cos(am),ly=cy+(R1+16)*Math.sin(am),cos=Math.cos(am),anchor=Math.abs(cos)<0.2?'middle':cos>0?'start':'end';
     h+=`<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle" font-size="14" font-weight="${on?700:600}" style="fill:${on?c:'var(--ink)'}">${esc(s.short)}</text><text x="${lx}" y="${ly+16}" text-anchor="${anchor}" dominant-baseline="middle" font-size="11" style="fill:var(--muted)">${sc?sc+'/5':'–'}</text>`;
