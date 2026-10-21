@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Performuscle — Health | Function | Performance</title>
-  <meta name="description" content="Performuscle — elite online coaching built on three pillars: Health, Function, and Performance. Transform your body and your life." />
+  <meta name="description" content="Performuscle — high performance coaching built on three pillars: Health, Function, and Performance. Transform your body and your life." />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -2240,6 +2240,8 @@
     .form-input{background:var(--surface-2)!important;color:var(--white)}
     .hero__sub,.hero__pillar{color:#F4F1EA!important}
     .footer{border-top:0}
+    .programs__grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    @media (max-width:1100px){.programs__grid{grid-template-columns:1fr!important}}
     .model{padding-block:var(--pad-v)}
     .model__inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:56px;align-items:center}
     @media (max-width:1024px){.model__inner{grid-template-columns:1fr;gap:40px}}
@@ -2280,7 +2282,7 @@
         <ul class="nav__links">
           <li><a href="#about">Peak Human Performance</a></li>
           <li><a href="/audit">Performance Audit</a></li>
-          <li><a href="#process">90 Day Human Reset</a></li>
+          <li><a href="#model">The Model</a></li>
           <li><a href="#results">Results</a></li>
           <li><a href="#blog">Blog</a></li>
           <li><a href="/coach-tools">Tools</a></li>
@@ -2296,7 +2298,7 @@
       <ul>
         <li><a href="#about" onclick="toggleMenu()">Peak Human Performance</a></li>
         <li><a href="/audit" onclick="toggleMenu()">Performance Audit</a></li>
-        <li><a href="#process" onclick="toggleMenu()">90 Day Human Reset</a></li>
+        <li><a href="#model" onclick="toggleMenu()">The Model</a></li>
         <li><a href="#results" onclick="toggleMenu()">Results</a></li>
         <li><a href="#blog" onclick="toggleMenu()">Blog</a></li>
         <li><a href="/coach-tools" onclick="toggleMenu()">Tools</a></li>
@@ -2331,7 +2333,7 @@
           Performance
         </div>
         <p class="body-lg hero__sub">
-          Elite Performance Coaching that enables you to operate at your highest potential, that doesn't sacrifice your health for aesthetics. Real results through evidence-based training and nutrition.
+          High Performance Coaching that enables you to operate at your highest potential, that doesn't sacrifice your health for aesthetics. Real results through evidence-based training and nutrition.
         </p>
         <div class="cta-row">
           <a href="/audit" class="btn-primary">Take Audit <span class="arrow">→</span></a>
@@ -2621,20 +2623,9 @@
           <div class="program-card__bg" style="background-image:url('hero.jpg'); background-size:cover; background-position:center top;"></div>
           <div class="program-card__overlay"></div>
           <div class="program-card__content">
-            <div class="program-card__tag">Full Access</div>
-            <div class="program-card__title">Elite Performance<br>Coaching</div>
-            <p class="program-card__body">Access to educational hub, personalised programming, nutrition, weekly check-ins, technique review and direct one-to-one coach access. For those who want to perform at their highest potential.</p>
-            <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="program-card__link">Discover More <span>→</span></a>
-          </div>
-        </div>
-
-        <div class="program-card" data-reveal data-reveal-delay="3">
-          <div class="program-card__bg" style="background-image:url('clients.jpg'); background-size:cover; background-position:center top;"></div>
-          <div class="program-card__overlay"></div>
-          <div class="program-card__content">
-            <div class="program-card__tag">Structured Protocol</div>
-            <div class="program-card__title">90 Day Human<br>Reset</div>
-            <p class="program-card__body">A defined 90-day protocol targeting health, function and performance simultaneously — building the foundations of a high-performing body and mind.</p>
+            <div class="program-card__tag">Six-month programme</div>
+            <div class="program-card__title">High Performance<br>Coaching</div>
+            <p class="program-card__body">Six months one-to-one: your Client Hub, personalised programming, nutrition, weekly check-ins, technique review and direct one-to-one coach access. For those who want to perform at their highest potential.</p>
             <a href="https://calendly.com/coachdavemarsh/client-triage-call" target="_blank" rel="noopener" class="program-card__link">Discover More <span>→</span></a>
           </div>
         </div>
@@ -2644,48 +2635,7 @@
   </section>
 
 
-  <!-- ============================================================
-       90 DAY HUMAN RESET — FEATURE SECTION
-  ============================================================ -->
-  <section class="reset-feature" id="reset">
-    <div class="reset-feature__bg-text">90</div>
-    <div class="container">
-      <div class="reset-feature__inner">
-        <div data-reveal>
-          <div class="eyebrow">The Protocol</div>
-          <div class="reset-feature__hook">
-            Don't want to<br>
-            recognise yourself<br>
-            in <em>90 days?</em>
-          </div>
-          <div class="reset-feature__days">
-            <div class="reset-day">
-              <span class="reset-day__num">30</span>
-              <span class="reset-day__label">Audit &amp; Reset</span>
-            </div>
-            <div class="reset-day">
-              <span class="reset-day__num">60</span>
-              <span class="reset-day__label">Build &amp; Adapt</span>
-            </div>
-            <div class="reset-day">
-              <span class="reset-day__num">90</span>
-              <span class="reset-day__label">Perform &amp; Own</span>
-            </div>
-          </div>
-        </div>
-        <div class="reset-feature__body" data-reveal data-reveal-delay="2">
-          <p>Imagine waking up full of energy, feeling ten years younger — mind clear, ready to perform. You've just come out of a deep sleep. The sun hasn't risen yet and you're ready to start your day with a programmed workout.</p>
-          <p>You're <strong>leaner, stronger, sharper</strong> — but most of all you feel a new sense of purpose. Instead of reacting to life, you move with intent and clarity. <strong>Present and ready to perform.</strong></p>
-          <p>The 90 Day Human Reset is a complete overhaul of your physiology and psychology. We audit your sleep, nutrition, movement, stress, and recovery — then rebuild you from the ground up.</p>
-          <p>This isn't a crash course. It's a permanent upgrade.</p>
-          <div class="cta-row" style="margin-top:36px;">
-            <a href="#apply" class="btn-primary">Start Your Reset <span class="arrow">→</span></a>
-            <a href="#apply" class="btn-ghost">Book a Free Audit →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+
 
 
   <!-- ============================================================
@@ -3055,7 +3005,7 @@
         </div>
         <div class="calendly-panel" data-reveal data-reveal-delay="2">
           <div class="calendly-panel__title">Book Your<br>Free Audit Call</div>
-          <p class="calendly-panel__sub">A 30-minute no-obligation call to audit your current situation and map out exactly what your next 90 days could look like.</p>
+          <p class="calendly-panel__sub">A 30-minute no-obligation call to audit your current situation and map out exactly what your first six months could look like.</p>
           <div class="calendly-panel__trust">
             <div class="trust-item">30-minute strategy call — completely free</div>
             <div class="trust-item">No forms, no waiting — instant booking</div>
@@ -3119,7 +3069,7 @@
           <div class="footer__brand-name">Perfor<span>muscle</span></div>
           <div class="footer__tagline">Health · Function · Performance</div>
           <p class="footer__bio">
-            Elite online personal coaching built on three non-negotiable pillars. Changing bodies and lives through evidence, not extremes.
+            High performance coaching built on three non-negotiable pillars. Changing bodies and lives through evidence, not extremes.
           </p>
           <div class="footer__social">
             <a href="#" aria-label="Instagram">
@@ -3138,7 +3088,7 @@
           <ul class="footer__links">
             <li><a href="#about">Peak Human Performance</a></li>
             <li><a href="/audit">Performance Audit</a></li>
-            <li><a href="#reset">90 Day Human Reset</a></li>
+            <li><a href="#model">The Model</a></li>
             <li><a href="#results">Results</a></li>
             <li><a href="#blog">Blog</a></li>
           </ul>
@@ -3148,7 +3098,7 @@
           <ul class="footer__links">
             <li><a href="#programs">1-on-1 Mentoring</a></li>
             <li><a href="#programs">Coach Mentoring</a></li>
-            <li><a href="#reset">90 Day Human Reset</a></li>
+            <li><a href="#programs">High Performance Coaching</a></li>
           </ul>
         </div>
         <div>
