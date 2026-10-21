@@ -39,6 +39,7 @@ echo "  → Copying tool pages..."
 [ -f "public/body-composition.html" ]   && cp public/body-composition.html   dist/body-composition.html
 [ -f "public/physique-peaking.html" ]      && cp public/physique-peaking.html      dist/physique-peaking.html
 [ -f "public/audit.html" ]                 && cp public/audit.html                 dist/audit.html
+[ -f "public/screen.html" ]                && cp public/screen.html                dist/screen.html
 [ -f "public/audit-coach.html" ]           && cp public/audit-coach.html           dist/audit-coach.html
 [ -f "public/my-plan.html" ]               && cp public/my-plan.html               dist/my-plan.html
 [ -f "public/hub.html" ]                   && cp public/hub.html                   dist/hub.html

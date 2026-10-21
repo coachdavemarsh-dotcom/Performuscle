@@ -344,6 +344,12 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 /* Baseline: black panel with the gold orb, like My Plan and the Hub */
 .hero{--bg:#141413; --surface:#1E1D1B; --sunk:#262522; --ink:#F4F1EA; --text2:#BDB7AA; --muted:#8E887C; --line:rgba(244,241,234,.12); --gold:#C9A56B; --gold2:#E0C08A; --orb:224,192,138; --orbcore:74,56,30;
   background:#141413!important;color:var(--ink);box-shadow:none!important;border-radius:28px}
+.mvclient{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.mvc{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.mvcrow{background:var(--sunk);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.mvcf{display:flex;flex-wrap:wrap;gap:6px}
+.mvcf .btn{font-size:12px;padding:6px 10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.painflag{color:var(--bad);font-weight:700}
 </style>
 </head>
 <body>
@@ -449,6 +455,7 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
   <section class="panel">
     <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 5 · Movement</span><h2>Movement assessment</h2></div><span class="eyebrow">From the Movement Assessment Guide</span></div>
     <p class="intro">Score from the client's photos and videos, or live on the call. Findings set the Movement spoke, flag asymmetries and pull pattern work into the launch pack. Mark any test that produced pain.</p>
+    <div class="mvclient" id="mvClient" hidden></div>
     <div class="mvsum" id="mvSum"></div>
     <div class="mvgrid" id="mvGrid"></div>
   </section>
@@ -1235,7 +1242,7 @@ async function openSub(id){
       const extra=[ex.rhr?`Resting HR ${ex.rhr} bpm`:'',ex.bloods==='yes'?'Has blood work from the last 12 months':''].filter(Boolean).join(' · ');
       if(extra)notes.recovery=extra;
     }
-    isSample=false;$('sampleTag').hidden=true;hubPath={...((row.coach_data||{}).hubPath||{})};hubPath.weeks={...(hubPath.weeks||{})};showFiles(row);clientFiles(row);clientHub(row);renderInner();
+    isSample=false;$('sampleTag').hidden=true;hubPath={...((row.coach_data||{}).hubPath||{})};hubPath.weeks={...(hubPath.weeks||{})};showFiles(row);clientFiles(row);clientHub(row);clientScreen(row);renderInner();
     $('subStatus').value=row.status==='new'?'reviewed':row.status;$('saveRow').hidden=false;
     update();loadSubsSilently();
     subMsg(`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
@@ -1256,6 +1263,28 @@ function showFiles(row){
       subMsg(w?'File opened in a new tab. The link expires in 10 minutes.':'');if(!w){$('subMsg').innerHTML=`<a href="${url}" target="_blank" rel="noopener">Open ${escH(f.name)}</a> (link expires in 10 minutes)`}}
     catch(err){subMsg(err.message,1)}finally{btn.disabled=false}
   }));
+}
+/* ---------- Client's movement screen (from /screen) ---------- */
+const SCREEN_NAMES={posture:'Static posture',stance:'Stance and feet',toe:'Toe touch',slr:'Straight leg raise',tspine:'Thoracic rotation',shoulder:'Overhead reach',apley:'Apley’s scratch',squat:'Squat',split:'Split squat'};
+async function clientScreen(row){
+  const box=$('mvClient');box.hidden=true;box.innerHTML='';if(!row.email)return;
+  try{
+    const rows=await sb(`/rest/v1/movement_screens?select=created_at,tests,files&email=ilike.${encodeURIComponent(row.email.replace(/[%_]/g,'\\$&'))}&order=created_at.desc&limit=1`);
+    const r=(rows||[])[0];if(!r)return;
+    const all=[];const t=r.tests||{};
+    const item=f=>{all.push(f);return `<button class="btn" data-sf="${all.length-1}">${/^video/.test(f.type||'')?'Play':'Open'} · ${escH(f.name)}</button>`};
+    box.innerHTML=`<span class="eyebrow gold">Client’s screen · sent ${new Date(r.created_at).toLocaleDateString('en-AU')}</span>
+      <div class="mvc">${Object.keys(SCREEN_NAMES).map(id=>{const d=t[id]||{},fl=d.files||[];
+        return `<div class="mvcrow"><b>${SCREEN_NAMES[id]}</b><span class="submsg">${d.skip?'Couldn’t do it':fl.length?fl.length+' file'+(fl.length===1?'':'s'):'Not filmed'}${d.pain?' · <span class="painflag">Pain</span>':''}${d.note?' · '+escH(d.note):''}</span><div class="mvcf">${fl.map(item).join('')}</div></div>`}).join('')}
+      ${(r.files||[]).length?`<div class="mvcrow"><b>Blood work</b><span class="submsg">${r.files.length} file${r.files.length===1?'':'s'}</span><div class="mvcf">${r.files.map(item).join('')}</div></div>`:''}</div>`;
+    box.hidden=false;
+    box.querySelectorAll('[data-sf]').forEach(btn=>btn.addEventListener('click',async()=>{
+      const f=all[+btn.dataset.sf];btn.disabled=true;
+      try{const j=await sb(`/storage/v1/object/sign/screen-uploads/${f.path.split('/').map(encodeURIComponent).join('/')}`,{method:'POST',body:JSON.stringify({expiresIn:900})});
+        const url=SB.url+'/storage/v1'+(j.signedURL||j.signedUrl);const w=window.open(url,'_blank','noopener');if(!w)subMsg('Allow pop-ups to open the clip.')}
+      catch(err){subMsg(err.message,1)}finally{btn.disabled=false}
+    }));
+  }catch(e){/* screen table not set up yet */}
 }
 /* ---------- Inner work (Heart + Alignment) ---------- */
 let inner={},hubPath={};

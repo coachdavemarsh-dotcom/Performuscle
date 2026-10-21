@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Movement Screen</title>
+<meta name="description" content="Your movement screen: nine short clips filmed on your phone, plus any functional blood work, before your first call.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* Layout: dark intro panel, then one card per test (how to film, upload, flags), blood work, details and submit. */
+:root{
+  --bg:#F1EDE4; --surface:#FBFAF6; --surface-2:#ECE7DC; --surface-3:#E4DED2;
+  --ink:#141413; --off:#4A4740; --muted:#77726A; --line:#DDD7CB;
+  --accent:#8A6A3B; --accent-hi:#6F5530; --bad:#B23A26; --on:#FBFAF6;
+  --display:"Oswald","Arial Narrow",Arial,sans-serif;
+  --text:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+.dark{--bg:#141413; --surface:#1E1D1B; --surface-2:#262522; --surface-3:#34322E; --ink:#F4F1EA; --off:#BDB7AA; --muted:#8E887C; --line:rgba(244,241,234,.12); --accent:#C9A56B; --accent-hi:#E0C08A; --on:#141413; color:var(--ink)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--text);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+[hidden]{display:none!important}
+a{color:var(--accent)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:#141413}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:#141413;border-bottom:1px solid rgba(244,241,234,.08)}
+.top-in{max-width:860px;margin:0 auto;padding:14px max(20px,env(safe-area-inset-right,0px)) 14px max(20px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.02em;text-decoration:none;color:#F4F1EA}
+.logo span{color:#C9A56B}
+.prog{font-size:13px;color:#8E887C}
+.prog b{color:#E0C08A}
+main{max-width:860px;margin:0 auto;padding:32px max(20px,env(safe-area-inset-right,0px)) 80px max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:28px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(36px,6.5vw,60px);line-height:1;text-transform:uppercase;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(26px,4vw,34px);line-height:1.05;text-transform:uppercase}
+h3{font-family:var(--display);font-weight:600;font-size:22px;line-height:1.1;text-transform:uppercase}
+.lede{color:var(--off);font-size:17px;max-width:62ch}
+.small{font-size:13px;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:14px}
+.hero{background:#141413;border-radius:28px;padding:32px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:720px){.hero{grid-template-columns:1fr;padding:24px 18px;border-radius:22px}}
+.flow{display:flex;flex-direction:column;gap:8px}
+.flow div{display:flex;gap:12px;align-items:center;font-size:14.5px;color:var(--off)}
+.flow i{flex:none;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:700;box-shadow:inset 0 0 0 1px var(--line);color:var(--muted)}
+.flow .fd i{background:var(--accent);color:var(--on);box-shadow:none}
+.flow .fn i{box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent)}
+.flow .fn{color:var(--ink);font-weight:600}
+.need{display:flex;flex-direction:column;gap:8px;background:var(--surface);border-radius:18px;padding:18px 20px}
+.need ul{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:14.5px;color:var(--off)}
+.need li::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:10px;vertical-align:2px}
+.card{background:var(--surface);border-radius:20px;padding:22px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:14px}
+.test{border-left:3px solid var(--surface-3)}
+.test.ok{border-left-color:var(--accent)}
+.th{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.th .n{font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--accent)}
+.th .st{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.test.ok .th .st{color:var(--accent)}
+.what{font-size:15px;color:var(--off)}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.how div{background:var(--surface-2);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--off)}
+.how b{display:block;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);margin-bottom:4px}
+.upl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{border:0;border-radius:999px;padding:13px 22px;font-size:14px;font-weight:700;letter-spacing:.04em;cursor:pointer;background:var(--surface-2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn.primary{background:var(--ink);color:var(--on);box-shadow:none}
+.btn.primary:hover{background:var(--accent)}
+.btn:disabled{opacity:.5;cursor:default}
+label.btn input{position:absolute;width:1px;height:1px;opacity:0}
+.files{display:flex;flex-direction:column;gap:6px;font-size:14px;width:100%}
+.files div{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:10px;background:var(--surface-2);min-width:0}
+.files span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.files em{font-style:normal;color:var(--muted);white-space:nowrap}
+.files .ok{color:var(--accent)}.files .bad{color:var(--bad)}
+.flags{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:0;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;background:var(--surface-2);color:var(--off);cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--on)}
+.in{width:100%;background:var(--surface-2);border:0;box-shadow:inset 0 0 0 1px var(--line);border-radius:12px;padding:12px 14px;font-size:16px;color:var(--ink)}
+.in:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--accent)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.row2{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:6px}
+.f label{font-size:13px;font-weight:600;color:var(--off)}
+.consent{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--off);cursor:pointer}
+.consent input{width:20px;height:20px;accent-color:var(--accent);flex:none;margin-top:2px}
+.msg{font-size:14px;color:var(--off)}
+.msg.err{color:var(--bad);font-weight:600}
+.done{background:#141413;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:16px}
+.care{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in"><a class="logo" href="/">Movement <span>Screen</span></a><span class="prog" id="prog"></span></div></header>
+<main id="app"></main>
+<script>
+/* Movement screen: step 2 of onboarding. Audit -> screen -> call -> roadmap in the Client Hub. */
+const SB={url:'https://opccfbudpovmxfmpanvj.supabase.co',key:'sb_publishable_brN2Be820KKzLyA8gfGltQ_Tvvus9Lg',bucket:'screen-uploads',table:'movement_screens'};
+const CALENDLY='https://calendly.com/coachdavemarsh/client-triage-call';
+const MAX=52428800;
+const LIVE=/(^|\.)coachdavemarsh\.net$|^localhost$|^127\.0\.0\.1$|netlify\.app$/.test(location.hostname);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* The same nine tests Dave scores in the coach dashboard (ids match), written for filming at home */
+const TESTS=[
+ {id:'posture',name:'Static posture',kind:'4 photos',what:'How you stand when you are not thinking about it.',
+  set:'Fitted clothing, shoes off. Phone at hip height, 2–3 metres away, whole body in frame.',
+  do:'Stand relaxed, feet hip-width, arms by your sides. Take one photo from the front, back, left side and right side.'},
+ {id:'stance',name:'Stance and feet',kind:'2 photos',what:'Foot arches, knee position and how your feet turn out.',
+  set:'Barefoot. Phone at knee height, from mid-thigh down.',
+  do:'Stand relaxed. One photo from the front and one from behind, plus one looking down at the tops of your feet.'},
+ {id:'toe',name:'Toe touch',kind:'Video · 10 s',what:'Hamstring and back length, and how you hinge.',
+  set:'Side-on, whole body in frame.',
+  do:'Feet together, legs straight. Reach down slowly as far as you can, pause, come back up. Twice.'},
+ {id:'slr',name:'Straight leg raise',kind:'Video · 15 s',what:'Hip flexion range on each side.',
+  set:'Lie on your back. Phone side-on at floor height.',
+  do:'Keep one leg flat on the floor. Lift the other leg, straight, as high as it goes without the flat leg lifting. Both sides.'},
+ {id:'tspine',name:'Thoracic rotation',kind:'Video · 15 s',what:'How far your upper back turns each way.',
+  set:'Sit on the floor or a box. Phone in front of you, or above if someone can hold it.',
+  do:'Squeeze a pillow or foam roller between your knees, cross your arms on your chest, and turn as far as you can each way. Twice each side.'},
+ {id:'shoulder',name:'Overhead reach',kind:'Video · 10 s',what:'Shoulder range overhead without your ribs flaring.',
+  set:'Lie on your back, knees bent. Phone side-on at floor height.',
+  do:'Keep your lower back flat. Reach both arms overhead toward the floor, palms up, and hold for three seconds.'},
+ {id:'apley',name:'Apley’s scratch',kind:'Photo or video',what:'Shoulder rotation on each side.',
+  set:'Stand with your back to the phone, upper body in frame.',
+  do:'Reach one hand over your shoulder down your back and the other up from below. Try to touch. Swap sides.'},
+ {id:'squat',name:'Squat',kind:'Video · 3 angles',what:'Ankles, knees, hips and trunk working together.',
+  set:'Barefoot. Whole body in frame. Film from the front, the side and behind.',
+  do:'Arms out in front. Five squats to whatever depth is comfortable, at a steady pace.'},
+ {id:'split',name:'Split squat',kind:'Video · 2 angles',what:'Single-leg control, knee tracking and balance.',
+  set:'Whole body in frame. Film from the front and the side.',
+  do:'Long split stance. Two slow reps lowering the back knee toward the floor, then swap legs.'}
+];
+
+let S={first:'',last:'',email:'',uploadId:'',tests:{},bloods:[],consent:false,sent:false};
+const KEY='pa_screen_v1';
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)S=Object.assign(S,s)}catch(e){}
+try{const h=JSON.parse(localStorage.getItem('pa_handoff')||'null');if(h){S.first=S.first||h.first||'';S.last=S.last||h.last||'';S.email=S.email||h.email||'';S.uploadId=S.uploadId||h.uploadId||''}}catch(e){}
+if(!S.uploadId)S.uploadId=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));
+TESTS.forEach(t=>{S.tests[t.id]=S.tests[t.id]||{files:[],pain:false,skip:false,note:''}});
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const doneTest=id=>{const t=S.tests[id];return t.files.some(f=>f.state==='done')||t.skip};
+function prog(){const n=TESTS.filter(t=>doneTest(t.id)).length;$('prog').innerHTML=S.sent?'Sent':`<b>${n}</b> of ${TESTS.length} tests`}
+
+function fileRow(f){return `<div><span>${esc(f.name)}</span><em class="${f.state==='error'?'bad':f.state==='done'?'ok':''}">${f.state==='done'?'Uploaded':f.state==='error'?(f.err||'Didn’t upload'):'Uploading…'}</em></div>`}
+function testCard(t,i){const d=S.tests[t.id],ok=doneTest(t.id);
+  return `<div class="card test ${ok?'ok':''}" id="t_${t.id}"><div class="th"><div><span class="n">${String(i+1).padStart(2,'0')} · ${esc(t.kind)}</span><h3>${esc(t.name)}</h3></div><span class="st">${ok?(d.skip?'Skipped':'Done'):'To do'}</span></div>
+   <p class="what">${esc(t.what)}</p>
+   <div class="how"><div><b>Set up</b>${esc(t.set)}</div><div><b>Do this</b>${esc(t.do)}</div></div>
+   <div class="upl"><label class="btn ${ok?'':'primary'}">${d.files.length?'Add more':'Upload video or photos'}<input type="file" accept="video/*,image/*" multiple data-up="${t.id}"></label>
+    <div class="flags"><button type="button" class="chip" data-pain="${t.id}" aria-pressed="${d.pain}">This hurt</button><button type="button" class="chip" data-skip="${t.id}" aria-pressed="${d.skip}">I can’t do this one</button></div></div>
+   ${d.files.length?`<div class="files">${d.files.map(fileRow).join('')}</div>`:''}
+   ${d.pain||d.skip?`<input class="in" data-note="${t.id}" placeholder="${d.pain?'Where did it hurt, and how much (1–10)?':'What stopped you?'}" value="${esc(d.note)}">`:''}</div>`}
+
+function render(){
+  prog();
+  if(S.sent){$('app').innerHTML=`<section class="done dark"><span class="eyebrow">Screen sent</span><h1>That’s everything${S.first?', '+esc(S.first):''}.</h1>
+    <p class="lede">Dave now has your audit${S.bloods.some(f=>f.state==='done')?', your movement and your blood work':' and your movement'}. The call is where it all comes together into your six-month roadmap, built inside your Client Hub.</p>
+    <div class="flow"><div class="fd"><i>✓</i>Performance Audit</div><div class="fd"><i>✓</i>Movement screen</div><div class="fn"><i>3</i>Book your call</div><div><i>4</i>Your roadmap in the Client Hub</div></div>
+    <a class="btn primary" style="align-self:flex-start;background:#F4F1EA;color:#141413" href="${CALENDLY}" target="_blank" rel="noopener">Book your call →</a></section>`;return}
+  const n=TESTS.filter(t=>doneTest(t.id)).length;
+  $('app').innerHTML=`${LIVE?'':'<p class="small">Preview: uploads and sending are simulated on this page.</p>'}
+  <section class="hero dark"><div style="display:flex;flex-direction:column;gap:16px"><span class="eyebrow">Step 2 of 4 · Movement screen</span><h1>Show me how you move.</h1>
+    <p class="lede">Nine short tests, filmed on your phone. About 15 minutes. Dave watches every clip before your call, so the first session already fits your body.</p>
+    <div class="flow"><div class="fd"><i>✓</i>Performance Audit</div><div class="fn"><i>2</i>Movement screen</div><div><i>3</i>Book your call</div><div><i>4</i>Your roadmap in the Client Hub</div></div></div>
+   <div class="need"><span class="eyebrow">You’ll need</span><ul><li>Your phone, and a friend or something to lean it on</li><li>Fitted clothing, shoes off</li><li>A clear space about 3 metres long</li><li>Clips under 20 seconds each (under 50 MB)</li></ul><p class="small">Never push into pain. If a test hurts, stop, tick “This hurt” and tell us where.</p></div></section>
+  <section><span class="eyebrow">The tests · ${n} of ${TESTS.length} done</span>${TESTS.map(testCard).join('')}</section>
+  <section class="card"><span class="eyebrow">Optional</span><h2>Functional blood work</h2><p class="what">Had bloods done in the last 12 months? Upload the PDF or photos so Dave can review them against your audit before the call.</p>
+   <div class="upl"><label class="btn">Upload results<input type="file" accept="application/pdf,image/*" multiple id="bloodUp"></label></div>${S.bloods.length?`<div class="files">${S.bloods.map(fileRow).join('')}</div>`:''}</section>
+  <section class="card"><span class="eyebrow">Your details</span><div class="row2"><div class="f"><label for="first">First name</label><input class="in" id="first" autocomplete="given-name" value="${esc(S.first)}"></div><div class="f"><label for="last">Last name</label><input class="in" id="last" autocomplete="family-name" value="${esc(S.last)}"></div></div>
+   <div class="f"><label for="email">Email, the same one you used for your audit</label><input class="in" id="email" type="email" autocomplete="email" value="${esc(S.email)}"></div>
+   <label class="consent"><input type="checkbox" id="consent" ${S.consent?'checked':''}><span>I agree that my videos, photos and results are stored securely and seen only by Dave to prepare my coaching.</span></label>
+   <button class="btn primary" id="send" style="align-self:flex-start">Send my screen →</button><p class="msg" id="msg">${n<TESTS.length?`${TESTS.length-n} test${TESTS.length-n===1?'':'s'} still to do. You can send what you have and finish the rest on the call.`:'All nine done.'}</p></section>
+  <p class="care">This is a movement screen for coaching, not a medical assessment. If you have pain that is getting worse, see your doctor or physio.</p>`;
+  bind();
+}
+async function upload(file,list,prefix){
+  const safe=file.name.replace(/[^A-Za-z0-9._-]+/g,'_').slice(-80);
+  const f={name:file.name,size:file.size,type:file.type,path:`${S.uploadId}/${prefix}-${Date.now()}-${safe}`,state:'uploading'};list.push(f);render();
+  if(file.size>MAX){f.state='error';f.err='Over 50 MB: trim it';render();save();return}
+  try{if(LIVE){const r=await fetch(`${SB.url}/storage/v1/object/${SB.bucket}/${f.path}`,{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+SB.key,'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});if(!r.ok)throw new Error(r.status)}
+    else await new Promise(r=>setTimeout(r,500));f.state='done'}
+  catch(e){f.state='error'}
+  save();render();
+}
+function bind(){
+  document.querySelectorAll('[data-up]').forEach(inp=>inp.addEventListener('change',()=>{const id=inp.dataset.up;[...inp.files].forEach(file=>upload(file,S.tests[id].files,id))}));
+  document.querySelectorAll('[data-pain]').forEach(b=>b.addEventListener('click',()=>{const t=S.tests[b.dataset.pain];t.pain=!t.pain;save();render();setTimeout(()=>{const n=document.querySelector(`[data-note="${b.dataset.pain}"]`);if(n)n.focus()},0)}));
+  document.querySelectorAll('[data-skip]').forEach(b=>b.addEventListener('click',()=>{const t=S.tests[b.dataset.skip];t.skip=!t.skip;save();render()}));
+  document.querySelectorAll('[data-note]').forEach(n=>n.addEventListener('input',()=>{S.tests[n.dataset.note].note=n.value;save()}));
+  const bu=$('bloodUp');if(bu)bu.addEventListener('change',()=>[...bu.files].forEach(file=>upload(file,S.bloods,'bloods')));
+  ['first','last','email'].forEach(k=>{const el=$(k);if(el)el.addEventListener('input',()=>{S[k]=el.value.trim();save()})});
+  const c=$('consent');if(c)c.addEventListener('change',()=>{S.consent=c.checked;save()});
+  const s=$('send');if(s)s.addEventListener('click',send);
+}
+async function send(){
+  const m=$('msg'),err=t=>{m.textContent=t;m.className='msg err'};
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(S.email))return err('Add the email you used for your audit.');
+  if(!S.consent)return err('Tick the box to agree to how your files are stored.');
+  const all=[...S.bloods,...TESTS.flatMap(t=>S.tests[t.id].files)];
+  if(all.some(f=>f.state==='uploading'))return err('Hang on, a file is still uploading.');
+  if(!all.some(f=>f.state==='done')&&!TESTS.some(t=>S.tests[t.id].skip))return err('Upload at least one test first.');
+  const tests={};TESTS.forEach(t=>{const d=S.tests[t.id];tests[t.id]={pain:d.pain,skip:d.skip,note:d.note,files:d.files.filter(f=>f.state==='done').map(({name,size,type,path})=>({name,size,type,path}))}});
+  const body={email:S.email,name:[S.first,S.last].filter(Boolean).join(' '),upload_id:S.uploadId,tests,files:S.bloods.filter(f=>f.state==='done').map(({name,size,type,path})=>({name,size,type,path,kind:'bloods'}))};
+  const b=$('send');b.disabled=true;m.className='msg';m.textContent='Sending…';
+  try{if(LIVE){const r=await fetch(`${SB.url}/rest/v1/${SB.table}`,{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+SB.key,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status)}
+    S.sent=true;save();try{localStorage.removeItem('pa_handoff')}catch(e){}render();window.scrollTo(0,0)}
+  catch(e){b.disabled=false;err('That didn’t send. Check your connection and try again. Your uploads are saved.')}
+}
+render();
+</script>
+</body>
+</html>

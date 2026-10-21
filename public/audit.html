@@ -348,13 +348,14 @@ function render(){
   if(s.done){
     const first=esc(D.state.first||'');
     m.innerHTML=`<section class="screen"><span class="eyebrow">Audit complete</span><h1>Thank you${first?', '+first:''}.</h1>${baselineHTML()}
-      <p class="help">This is your starting point from your answers. ${esc(BRAND.coach)} reads every one and adds your blood work and movement screen before the call. ${previewMode()?'<br><strong>Preview mode:</strong> on this page your answers are kept on this device only and not sent.':''}</p>
+      <p class="help">This is your starting point from your answers. ${esc(BRAND.coach)} reads every one. Next, film your movement screen so the call starts with everything in hand. ${previewMode()?'<br><strong>Preview mode:</strong> on this page your answers are kept on this device only and not sent.':''}</p>
       <div class="list">
-        <div class="li"><b>1 · Book your call</b><span>Pick a time that suits you. Thirty minutes, no obligation.</span></div>
-        <div class="li"><b>2 · Your audit is reviewed</b><span>Your answers are turned into a baseline and a first-phase plan.</span></div>
-        <div class="li"><b>3 · We start at the deep end</b><span>The call is about what it means for you, not filling in forms.</span></div>
+        <div class="li"><b>1 · Performance Audit ✓</b><span>Where you are, where you’re going and why.</span></div>
+        <div class="li"><b>2 · Movement screen · next</b><span>Nine short tests filmed on your phone, plus any functional blood work. About 15 minutes.</span></div>
+        <div class="li"><b>3 · Book your call</b><span>With your audit and screen in hand, the call starts at the deep end.</span></div>
+        <div class="li"><b>4 · Your roadmap</b><span>Your six-month plan, built inside your Client Hub.</span></div>
       </div>
-      <div><a class="btn primary" style="display:inline-block;text-decoration:none" href="${BRAND.calendly}" target="_blank" rel="noopener">Book your call →</a></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><a class="btn primary" style="display:inline-block;text-decoration:none" href="/screen">Start your movement screen →</a><a class="btn ghost" style="display:inline-block;text-decoration:none" href="${BRAND.calendly}" target="_blank" rel="noopener">Book your call first</a></div>
       <p class="help" style="font-family:var(--display);text-transform:uppercase;font-size:22px;color:var(--ink)">${esc(BRAND.tagline)}</p></section>`;
     startOrb();return;
   }
@@ -452,6 +453,7 @@ async function submit(){
       const r=await fetch(`${SUPABASE.url}/rest/v1/${SUPABASE.table}`,{method:'POST',headers:{'apikey':SUPABASE.key,'Authorization':'Bearer '+SUPABASE.key,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(payload)});
       if(!r.ok)throw new Error('status '+r.status);
     }
+    try{localStorage.setItem('pa_handoff',JSON.stringify({first:D.state.first||'',last:D.state.last||'',email:D.state.email||'',uploadId:uploadId()}))}catch(e){}
     try{localStorage.removeItem(KEY)}catch(e){}
     sending=false;cur++;render();window.scrollTo(0,0);
   }catch(e){
