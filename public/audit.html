@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Performance Audit · Performuscle</title>
+<title>Performance Audit</title>
 <meta name="description" content="The Performance Audit: where you are, where you're going and why. Ten minutes before our first call, so the call starts at the deep end.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -177,7 +177,7 @@ input[type=number]{-moz-appearance:textfield}
 <header class="top">
   <div class="top-in">
     <div class="brandrow">
-      <div style="display:flex;align-items:center;gap:12px"><a class="logo" id="logo" href="/">Perfor<span>muscle</span></a><span class="badge">Audit</span></div>
+      <div style="display:flex;align-items:center;gap:12px"><a class="logo" id="logo" href="/">Performance <span>Audit</span></a></div>
       <span class="saved" id="saved">Saved on this device</span>
     </div>
     <nav class="secs" id="secs" aria-label="Audit sections"></nav>
@@ -199,7 +199,7 @@ input[type=number]{-moz-appearance:textfield}
 /* =========================================================
    CONFIG: brand, links and storage. Change these, not the code.
    ========================================================= */
-const BRAND={name:'Performuscle',logoA:'Perfor',logoB:'muscle',coach:'Dave',tagline:'Stand in Your Standard.',calendly:'https://calendly.com/coachdavemarsh/client-triage-call',home:'/'};
+const BRAND={name:'Performuscle',logoA:'Performance ',logoB:'Audit',coach:'Dave',tagline:'Stand in Your Standard.',calendly:'https://calendly.com/coachdavemarsh/client-triage-call',home:'/'};
 const SUPABASE={url:'https://opccfbudpovmxfmpanvj.supabase.co',key:'sb_publishable_brN2Be820KKzLyA8gfGltQ_Tvvus9Lg',table:'performance_audits'};
 const SECTIONS=['Start','You','North Star','Lifestyle','Deep dive','Body','Commitment'];
 
@@ -332,7 +332,7 @@ function render(){
 
   if(s.welcome){
     m.innerHTML=`<section class="screen"><div class="hero"><div style="display:flex;flex-direction:column;gap:20px">
-      <span class="eyebrow">${esc(BRAND.name)} · Performance Audit</span>
+      <span class="eyebrow">Performance Audit</span>
       <h1>Your baseline, before day one.</h1>
       <p class="help">Ten minutes on where you are, where you're going and why. ${esc(BRAND.coach)} reads every answer before your call, so the call starts at the deep end.</p>
       <p class="tb"><em>Time back</em>We skip the forms and talk about what matters.</p>
