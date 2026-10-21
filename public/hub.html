@@ -317,7 +317,7 @@ function todayD(){const t=new Date();t.setHours(0,0,0,0);return t}
 function weekOf(id){return +((path.weeks||{})[id])||PATH_WEEKS[id]||1}
 function opensOn(id){const st=dayOf(path.start)||todayD();return new Date(st.getTime()+(weekOf(id)-1)*7*DAY)}
 function curWeek(){const st=dayOf(path.start)||todayD();return Math.max(1,Math.min(24,Math.floor((todayD()-st)/(7*DAY))+1))}
-function isOpen(id){const d=prog[id];if(d&&(d.watched||Object.keys(d.answers||{}).length||(d.days||[]).some(Boolean)||d.reflection))return true;return todayD()>=opensOn(id)}
+function isOpen(id){if(path.allOpen)return true;const d=prog[id];if(d&&(d.watched||Object.keys(d.answers||{}).length||(d.days||[]).some(Boolean)||d.reflection))return true;return todayD()>=opensOn(id)}
 const fmtD=d=>d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
 function lockMsg(id){return `Opens in week ${weekOf(id)} · ${fmtD(opensOn(id))}`}
 function byMonth(){const out=[[],[],[],[],[],[]];MODULES.forEach(m=>{const w=weekOf(m.id);out[Math.min(5,Math.ceil(w/4)-1)].push(m)});out.forEach(a=>a.sort((x,y)=>weekOf(x.id)-weekOf(y.id)));return out}
@@ -533,7 +533,7 @@ async function boot(){
   $('signOut').hidden=false;
   try{
     const [p,c,pl]=await Promise.all([authFetch('/rest/v1/client_progress?select=module,data'),authFetch('/rest/v1/hub_content?select=module,video_url,minutes'),authFetch('/rest/v1/client_plans?select=plan&published=eq.true&order=updated_at.desc&limit=1')]);
-    if(pl.ok){const rows=await pl.json();const hp=rows[0]&&rows[0].plan&&rows[0].plan.hubPath;if(hp&&hp.start)path={start:hp.start,weeks:hp.weeks||{}}}
+    if(pl.ok){const rows=await pl.json();const hp=rows[0]&&rows[0].plan&&rows[0].plan.hubPath;if(hp&&hp.start)path={start:hp.start,weeks:hp.weeks||{},allOpen:!!hp.allOpen}}
     if(p.ok)(await p.json()).forEach(r=>{prog[r.module]=r.data||{}});
     if(c.ok)(await c.json()).forEach(r=>{videos[r.module]={url:r.video_url,minutes:r.minutes}});
     renderHome();

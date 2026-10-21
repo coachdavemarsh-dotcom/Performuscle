@@ -183,6 +183,15 @@ button.it{cursor:pointer}
 .jrnl label{font-size:15px;font-weight:600;color:var(--off)}
 .jrnl textarea{resize:vertical;min-height:140px;font-size:16px;line-height:1.5}
 @media (max-width:560px){.top .badge,#whoName{display:none}}
+/* Existing-client page */
+.exhero{background:#141413;border-radius:28px;padding:32px;display:flex;flex-direction:column;gap:16px}
+@media (max-width:600px){.exhero{padding:24px 18px;border-radius:22px}}
+.exfocus{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.exf{display:flex;gap:14px;background:var(--surface);border-radius:18px;padding:18px 20px;box-shadow:inset 0 0 0 1px var(--line)}
+.exf .n{font-family:var(--display);font-size:22px;font-weight:600;color:var(--accent);line-height:1}
+.exf div{display:flex;flex-direction:column;gap:4px}
+.exf b{font-family:var(--display);font-size:20px;font-weight:600;text-transform:uppercase;line-height:1.1}
+.exf span{font-size:14.5px;color:var(--off)}
 footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -317,7 +326,7 @@ function hubHTML(){
   let li=0;HUB_LEVELS.forEach((l,i)=>{if(xp>=l[1])li=i});const nx=HUB_LEVELS[li+1];
   const lp=nx?Math.round(100*(xp-HUB_LEVELS[li][1])/(nx[1]-HUB_LEVELS[li][1])):100;
   const all=Math.round(HUB_MODS.reduce((a,m)=>a+pct(m.id),0)/HUB_MODS.length),r=54,c=2*Math.PI*r;
-  return `<span class="eyebrow">Your Client Hub</span><h2>Soul Meets Strength.</h2><p class="lede">Short trainings from ${esc((plan&&plan.coach)||'Dave')} with worksheets and homework. Every step earns XP, and the outer ring on your Launchpad fills as you go.</p>
+  return `<span class="eyebrow">Your Client Hub</span><h2>Soul Meets Strength.</h2><p class="lede">Short trainings from ${esc((plan&&plan.coach)||'Dave')} with worksheets and homework. Every step earns XP${plan&&plan.kind==='existing'?'':', and the outer ring on your Launchpad fills as you go'}.</p>
    <div class="hubc"><div class="hring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--surface-3)" stroke-width="9"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*all/100} ${c}"/></svg><div><b>${all}%</b><span>Complete</span></div></div>
     <div class="hlv"><span class="eyebrow">Level ${li+1} of 5</span><span class="nm">${HUB_LEVELS[li][0]}</span><div class="hbar"><i style="width:${lp}%"></i></div><span class="small">${xp} XP · ${done} of ${HUB_MODS.length} trainings complete${nx?` · ${nx[1]-xp} XP to ${nx[0]}`:''}</span><a class="btn primary" href="/hub" style="align-self:flex-start;margin-top:6px;text-decoration:none">Open your Hub →</a></div>
     <div class="htr">${HUB_TRACKS.map(([id,k,sys,col])=>{const ms=HUB_MODS.filter(m=>m.track===id),p=Math.round(ms.reduce((a,m)=>a+pct(m.id),0)/ms.length);return `<div style="--c:${col}"><span><b>${k}</b><em>${sys} · ${p}%</em></span><div class="hbar"><i style="width:${p}%"></i></div></div>`}).join('')}</div></div>`;
@@ -329,6 +338,7 @@ function allSpokes(){
   return (lp||[]).map(x=>x.id==='peptides'?{...x,short:'Supplements',name:'Supplements',about:'Which supplements earn a place in your plan, matched to your bloods and goals.'}:x).map(x=>({...x,short:x.short||x.name,sysName:x.side==='body'?'Body':'Mind'}));
 }
 function renderPlan(){
+  if(plan.kind==='existing')return renderExisting();
   $('who').hidden=false;$('whoName').textContent=plan.client.name;
   const b=plan.baseline,ph=plan.phase;
   const card=x=>`<div class="dom ${x.k===b.focus?'low':''}"><span class="dn">${x.k}${x.k===b.focus?'<small>First focus</small>':''}</span><span class="dv">${x.v==null?'–':x.v.toFixed(1)}<span>/10</span></span><div class="tr"><i style="width:${(x.v||0)*10}%"></i></div></div>`;
@@ -357,7 +367,20 @@ function renderPlan(){
   <section><span class="eyebrow">Blood work</span><h2>Add new results</h2><div class="bloods"><p class="lede" style="font-size:16px">Had new bloods done? Upload the results here and ${esc(plan.coach)} will review them against your last panel.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>
 
   <footer>Stand in Your Standard. Questions about your plan go to ${esc(plan.coach)} in your check-in.</footer>`;
-  drawWheel();renderDetail();startOrb();bindExtras();if(!hub)loadHub();
+  drawWheel();renderDetail();startOrb();bindExtras();bindWeek();if(!hub)loadHub();
+}
+/* Existing clients: no audit, so no baseline or Launchpad. Focus from Dave, this week, the Hub and blood work. */
+function renderExisting(){
+  $('who').hidden=false;$('whoName').textContent=plan.client.name||plan.client.first||'';
+  const focus=(plan.focus||[]).filter(f=>f&&(f.t||f.d));
+  $('app').innerHTML=`${needPw?`<div class="notice"><b>Set a password for next time</b><span class="small" style="color:var(--off)">You're signed in with your email link. Choose a password so you can sign in straight away next time.</span><form class="row" id="pwForm"><div class="f"><label for="newPw">New password</label><input class="in" id="newPw" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters"></div><button class="btn primary" type="submit">Save password</button></form><p class="msg" id="pwMsg"></p></div>`:''}
+  <section class="exhero dark"><span class="eyebrow">Welcome to your Client Hub</span><h1>${esc(plan.client.first||'')}${plan.client.first?', ':''}everything in one place.</h1><p class="lede">Your focus from ${esc(plan.coach)}, your weekly trainings and your blood work. Same coaching, now with a home.</p><a class="btn primary" href="/hub" style="align-self:flex-start;text-decoration:none">Open your Hub →</a></section>
+  ${focus.length?`<section><span class="eyebrow">From ${esc(plan.coach)}</span><h2>Your focus right now</h2><div class="exfocus">${focus.map((f,i)=>`<div class="exf"><span class="n">${String(i+1).padStart(2,'0')}</span><div><b>${esc(f.t||'')}</b>${f.d?`<span>${esc(f.d)}</span>`:''}</div></div>`).join('')}</div></section>`:''}
+  ${hubPathOf()?`<section id="weekSec">${thisWeekHTML()}</section>`:''}
+  <section id="hubSec">${hubHTML()}</section>
+  <section><span class="eyebrow">Blood work</span><h2>Add your results</h2><div class="bloods"><p class="lede" style="font-size:16px">Upload your latest functional blood work, and any new panels as you get them. ${esc(plan.coach)} reviews them against your plan.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>
+  <footer>Stand in Your Standard. Questions go to ${esc(plan.coach)} in your check-in.</footer>`;
+  bindExtras();bindWeek();if(!hub)loadHub();
 }
 function fileRow(f){return `<div><span>${esc(f.name)}</span><em class="${f.state==='error'?'bad':f.state==='uploading'?'':'ok'}">${f.state==='uploading'?'Uploading…':f.state==='error'?'Didn\u2019t upload':new Date(f.created_at||Date.now()).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}</em></div>`}
 function drawFiles(){const el=$('fileList');if(el)el.innerHTML=files.length?files.map(fileRow).join(''):'<p class="small">No uploads yet.</p>'}
@@ -392,6 +415,7 @@ function renderWaiting(){
   bindExtras();if(!hub)loadHub();
 }
 async function boot(){
+  if(!LIVE&&/existing/.test(location.search)){plan={kind:'existing',client:{first:'Sam',name:'Sam K.'},coach:'Dave',publishedAt:new Date().toISOString(),focus:[{t:'Protect the morning',d:'Ten minutes of light and a protein breakfast before your phone.'},{t:'Two lifts a week stay heavy',d:'Bench and trap-bar deadlift: top set at RPE 8, then back-offs.'},{t:'Bloods before Christmas',d:'Book a full functional panel and upload it here.'}],hubPath:{start:new Date(Date.now()-3*864e5).toISOString().slice(0,10),weeks:{},allOpen:true}};try{journal=JSON.parse(localStorage.getItem('plan_journal')||'null')}catch(e){}renderPlan();return}
   if(!LIVE){plan=SAMPLE;plan.hubPath={start:new Date(Date.now()-10*864e5).toISOString().slice(0,10),weeks:{}};try{journal=JSON.parse(localStorage.getItem('plan_journal')||'null')}catch(e){}renderPlan();return}
   loadSess();if(!sess){renderAuth();return}
   $('app').innerHTML='<p class="small">Loading your plan…</p>';

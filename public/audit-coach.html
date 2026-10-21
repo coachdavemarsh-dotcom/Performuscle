@@ -350,6 +350,20 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .mvcf{display:flex;flex-wrap:wrap;gap:6px}
 .mvcf .btn{font-size:12px;padding:6px 10px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .painflag{color:var(--bad);font-weight:700}
+[hidden]{display:none!important}
+/* Existing clients */
+.exadd{display:flex;flex-direction:column;gap:10px;background:var(--surface);border-radius:16px;padding:16px 18px;box-shadow:inset 0 0 0 1px var(--line);margin:10px 0}
+.excheck{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--text2);cursor:pointer}
+.excheck input{width:18px;height:18px;accent-color:var(--gold)}
+.exbox{display:flex;flex-direction:column;gap:12px;background:#141413;color:#F4F1EA;border-radius:18px;padding:18px 20px;margin-top:12px}
+.exbox .eyebrow{color:#C9A56B!important}.exbox .submsg,.exbox .excheck{color:#BDB7AA}
+.exitems{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.exitem{display:flex;flex-direction:column;gap:8px;background:#1E1D1B;border-radius:12px;padding:12px}
+.exitem input,.exitem textarea{background:#262522;color:#F4F1EA;border:0;border-radius:8px;padding:9px 11px;font:inherit;font-size:14px}
+.exitem input{font-weight:700}.exitem textarea{min-height:64px;resize:vertical}
+.exitem .btn,.exbox > .btn{align-self:flex-start}
+body.exmode main > section:not(.subs),body.exmode .wrap > section:not(.subs){display:none!important}
+
 /* Launch pack: one full-width block per spoke, actions in a grid; black and orange boxes */
 .pack2{display:flex;flex-direction:column;gap:36px}
 .packgrp{display:flex;flex-direction:column;gap:14px}
@@ -407,10 +421,17 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
     <div id="subPanel" hidden>
       <div class="row" style="justify-content:space-between">
         <div class="row"><div class="field"><label for="subFilter">Show</label><select id="subFilter"><option value="open">New and reviewed</option><option value="all">All</option><option value="new">New</option><option value="reviewed">Reviewed</option><option value="booked">Booked</option><option value="client">Became client</option><option value="archived">Archived</option></select></div>
-        <button class="btn" type="button" id="subRefresh">Refresh</button></div>
+        <button class="btn" type="button" id="subRefresh">Refresh</button><button class="btn" type="button" id="exAddBtn">Add existing client</button></div>
         <div class="row" id="saveRow" hidden><div class="field"><label for="subStatus">Status</label><select id="subStatus"><option value="new">New</option><option value="reviewed">Reviewed</option><option value="booked">Booked</option><option value="client">Became client</option><option value="archived">Archived</option></select></div><button class="btn primary" type="button" id="subSave">Save review</button><button class="btn" type="button" id="subPublish" title="Save and publish the client version to their My Plan page">Publish to client</button><button class="btn" type="button" id="signOut">Sign out</button></div>
       </div>
+      <form class="exadd" id="exAdd" hidden>
+        <span class="eyebrow gold">Existing client · no audit needed</span>
+        <p class="submsg">For clients already coached. They skip the audit and movement screen and go straight to My Plan, the Client Hub and blood work upload.</p>
+        <div class="row"><div class="field"><label for="exFirst">First name</label><input id="exFirst" required autocomplete="off"></div><div class="field"><label for="exLast">Last name</label><input id="exLast" autocomplete="off"></div><div class="field"><label for="exEmail">Email</label><input id="exEmail" type="email" required autocomplete="off"></div></div>
+        <div class="row"><div class="field"><label for="exStart">Hub start date</label><input id="exStart" type="date"></div><label class="excheck"><input type="checkbox" id="exAll" checked> Open every training now</label><button class="btn primary" type="submit" id="exCreate">Create client</button><button class="btn" type="button" id="exCancel">Cancel</button></div>
+      </form>
       <div class="sublist" id="subList"></div>
+      <div id="subExisting" hidden></div>
       <div id="subFiles" hidden></div>
       <div id="subHub" hidden></div>
       <details id="hubVids" hidden><summary class="eyebrow gold" style="cursor:pointer">Client Hub videos</summary><p class="submsg">Paste a YouTube, Vimeo or Loom link (or a direct video file) for each training. Clients see it at coachdavemarsh.net/hub.</p><div id="vidRows"></div><button class="btn primary" type="button" id="vidSave" style="align-self:flex-start">Save video links</button></details>
@@ -1222,7 +1243,7 @@ async function sb(path,opt={}){
   const r=await fetch(SB.url+path,{...opt,headers:{apikey:SB.key,'Content-Type':'application/json',...(tok?{Authorization:'Bearer '+tok.access}:{}),...(opt.headers||{})}});
   if(r.status===401){tok=null;try{sessionStorage.removeItem('pa_coach')}catch(e){};showSubs();throw new Error('Your sign-in expired. Sign in again.')}
   if(!r.ok){let m='';try{m=(await r.json()).message}catch(e){};throw new Error(m||('Request failed ('+r.status+')'))}
-  return r.status===204?null:r.json();
+  if(r.status===204)return null;const t=await r.text();return t?JSON.parse(t):null;
 }
 function showSubs(){
   $('signin').hidden=!!tok;$('subPanel').hidden=!tok;
@@ -1260,7 +1281,7 @@ async function openSub(id){
     const [row]=await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(id)}&select=*`);
     if(!row)throw new Error('That submission no longer exists.');
     openId=id;
-    if(row.coach_data&&row.coach_data.state){const c=row.coach_data;loadAll(c.state,c.ans||{},c.spokes||{},c.mv||{},c.ns||{},c.ik||{});notes=c.notes||{};inner={...(c.inner||{})}}
+    if(row.coach_data&&row.coach_data.state&&!(row.source==='existing-client')){const c=row.coach_data;loadAll(c.state,c.ans||{},c.spokes||{},c.mv||{},c.ns||{},c.ik||{});notes=c.notes||{};inner={...(c.inner||{})}}
     else{
       const a=row.answers||{},st=a.state||{},ex=a.extra||{};
       const state={clientName:row.full_name||st.clientName||'',clientAge:st.clientAge||'',sex:st.sex==='f'?'f':'m',ethnic:'eu',cycle:'regular',height:st.height||'',sleep:st.sleep||'',stress:st.stress===''||st.stress==null?'':Math.max(1,+st.stress),vo2:ex.vo2||''};
@@ -1269,10 +1290,10 @@ async function openSub(id){
       const extra=[ex.rhr?`Resting HR ${ex.rhr} bpm`:'',ex.bloods==='yes'?'Has blood work from the last 12 months':''].filter(Boolean).join(' · ');
       if(extra)notes.recovery=extra;
     }
-    isSample=false;$('sampleTag').hidden=true;invitedAt=(row.coach_data||{}).invitedAt||null;hubPath={...((row.coach_data||{}).hubPath||{})};hubPath.weeks={...(hubPath.weeks||{})};showFiles(row);clientFiles(row);clientHub(row);clientScreen(row);renderInner();
+    isSample=false;$('sampleTag').hidden=true;invitedAt=(row.coach_data||{}).invitedAt||null;existing=(row.source==='existing-client'||(row.answers||{}).existing)?{focus:[],...((row.coach_data||{}).existing||{})}:null;renderExisting(row);hubPath={...((row.coach_data||{}).hubPath||{})};hubPath.weeks={...(hubPath.weeks||{})};showFiles(row);clientFiles(row);clientHub(row);clientScreen(row);renderInner();
     $('subStatus').value=row.status==='new'?'reviewed':row.status;$('saveRow').hidden=false;
     update();loadSubsSilently();
-    subMsg(`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
+    subMsg(existing?`Opened ${row.full_name}, an existing client. Set their focus and Hub path, then Publish to client.`:`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
     window.scrollTo({top:0,behavior:'smooth'});
   }catch(err){subMsg(err.message,1)}
 }
@@ -1314,7 +1335,7 @@ async function clientScreen(row){
   }catch(e){/* screen table not set up yet */}
 }
 /* ---------- Inner work (Heart + Alignment) ---------- */
-let inner={},hubPath={},invitedAt=null;
+let inner={},hubPath={},invitedAt=null,existing=null;
 const INNER=[
  {h:'Heart · Desire and meaning'},
  {k:'contribution',l:'Contribution',ph:'Who this is for beyond them. e.g. Showing my kids what keeping your word looks like.',score:1},
@@ -1358,7 +1379,7 @@ function buildPlan(){
    hubPath:{start:hubPath.start||localISO(new Date()),weeks:{...(hubPath.weeks||{})}}};
 }
 async function saveReview(){
-  const coach_data={state,ans,spokes,notes,mv,ns,ik,inner,hubPath,invitedAt,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
+  const coach_data={state,ans,spokes,notes,mv,ns,ik,inner,hubPath,invitedAt,existing,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
   await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(openId)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({coach_data,status:$('subStatus').value})});
 }
 async function publishPlan(){
@@ -1368,13 +1389,53 @@ async function publishPlan(){
   try{
     if(!hubPath.start)hubPath.start=localISO(new Date());
     await saveReview();
-    await sb('/rest/v1/client_plans?on_conflict=audit_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({audit_id:openId,email,plan:buildPlan(),published:true})});
+    const planBody=existing?existingPlan():buildPlan();
+    await sb('/rest/v1/client_plans?on_conflict=audit_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({audit_id:openId,email,plan:planBody,published:true})});
     await loadSubs().catch(()=>{});
     const mail=invitedAt?{state:'already'}:await sendWelcome(email);
     showPublished(email,mail);
   }catch(err){subMsg(/client_plans/.test(err.message)||/relation/.test(err.message)?'Publishing needs the client_plans table. Run client_plans_and_files.sql in Supabase first.':err.message,1)}
   finally{$('subPublish').disabled=false}
 }
+/* ---------- Existing clients: skip the audit ---------- */
+function existingPlan(){
+  const nm=(state.clientName||'').trim(),first=nm.split(' ')[0]||'';
+  return {kind:'existing',client:{first,name:nm},coach:'Dave',publishedAt:new Date().toISOString(),
+    focus:(existing.focus||[]).filter(f=>f.t||f.d).map(f=>({t:f.t||'',d:f.d||''})),
+    hubPath:{start:hubPath.start||localISO(new Date()),weeks:{...(hubPath.weeks||{})},allOpen:!!hubPath.allOpen}};
+}
+function renderExisting(row){
+  const box=$('subExisting');document.body.classList.toggle('exmode',!!existing);
+  if(!existing){box.hidden=true;box.innerHTML='';return}
+  const draw=()=>{
+    box.innerHTML=`<div class="exbox"><div class="row" style="justify-content:space-between;align-items:center"><span class="eyebrow gold">Existing client · ${escH(row.full_name)}</span><label class="excheck"><input type="checkbox" id="exAllOpen" ${hubPath.allOpen?'checked':''}> Every training open now</label></div>
+      <p class="submsg">Highlight what they should focus on. It shows at the top of their My Plan. Then press Publish to client to send their welcome email.</p>
+      <div class="exitems">${(existing.focus.length?existing.focus:[{t:'',d:''}]).map((f,i)=>`<div class="exitem"><input data-ft="${i}" placeholder="Focus, e.g. Protect the morning" value="${escH(f.t||'')}"><textarea data-fd="${i}" placeholder="What to do, in one or two lines">${escH(f.d||'')}</textarea><button class="btn" type="button" data-fx="${i}" aria-label="Remove focus ${i+1}">Remove</button></div>`).join('')}</div>
+      <button class="btn" type="button" id="exAddFocus">Add a focus</button></div>`;
+    if(!existing.focus.length)existing.focus=[{t:'',d:''}];
+    box.querySelectorAll('[data-ft]').forEach(el=>el.addEventListener('input',()=>{existing.focus[+el.dataset.ft].t=el.value}));
+    box.querySelectorAll('[data-fd]').forEach(el=>el.addEventListener('input',()=>{existing.focus[+el.dataset.fd].d=el.value}));
+    box.querySelectorAll('[data-fx]').forEach(el=>el.addEventListener('click',()=>{existing.focus.splice(+el.dataset.fx,1);draw()}));
+    $('exAddFocus').addEventListener('click',()=>{existing.focus.push({t:'',d:''});draw();const ins=box.querySelectorAll('[data-ft]');ins[ins.length-1].focus()});
+    $('exAllOpen').addEventListener('change',e=>{hubPath.allOpen=e.target.checked;subMsg('Publish to client to apply it.')});
+  };
+  draw();box.hidden=false;
+}
+$('exAddBtn').addEventListener('click',()=>{const f=$('exAdd');f.hidden=!f.hidden;if(!f.hidden){$('exStart').value=$('exStart').value||localISO(new Date());$('exFirst').focus()}});
+$('exCancel').addEventListener('click',()=>{$('exAdd').hidden=true});
+$('exAdd').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const first=$('exFirst').value.trim(),last=$('exLast').value.trim(),email=$('exEmail').value.trim().toLowerCase();
+  if(!first||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){subMsg('Add a first name and a valid email.',1);return}
+  const btn=$('exCreate');btn.disabled=true;subMsg('Creating client…');
+  try{
+    const rows=await sb(`/rest/v1/${SB.table}`,{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({full_name:[first,last].filter(Boolean).join(' '),email,consent:true,source:'existing-client',answers:{existing:true,state:{first,last,email}}})});
+    const id=rows[0].id;
+    await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:'client',coach_data:{existing:{focus:[]},hubPath:{start:$('exStart').value||localISO(new Date()),weeks:{},allOpen:$('exAll').checked}}})});
+    $('exAdd').reset();$('exAdd').hidden=true;$('subFilter').value='all';await loadSubs();await openSub(id);
+    subMsg(`${first} is set up. Add their focus, then Publish to client to send the welcome email.`);
+  }catch(err){subMsg(err.message,1)}finally{btn.disabled=false}
+});
 /* ---------- Welcome email: sent once, on the first publish ---------- */
 async function sendWelcome(email){
   try{
