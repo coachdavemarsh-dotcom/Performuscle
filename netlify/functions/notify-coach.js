@@ -9,6 +9,7 @@
 //   RESEND_API_KEY             Resend > API Keys > Create (Sending access)
 //   COACH_EMAIL                optional, defaults to coachdavemarsh@gmail.com
 
+const { TEMPLATES } = require('../lib/client-email');
 const SB_URL = 'https://opccfbudpovmxfmpanvj.supabase.co';
 const FROM = 'Performance Audit <noreply@coachdavemarsh.net>';
 const DASH = 'https://coachdavemarsh.net/audit-coach';
@@ -48,12 +49,13 @@ exports.handler = async function (event) {
   const since = new Date(Date.now() - 15 * 60 * 1000).toISOString();
   const q = encodeURIComponent(email.replace(/[%_]/g, '\\$&'));
 
-  let subject, html;
+  let subject, html, clientName = null;
   try {
     if (kind === 'audit') {
       const rows = await sb(`/rest/v1/performance_audits?select=full_name,email,phone,created_at,answers&email=ilike.${q}&created_at=gte.${encodeURIComponent(since)}&order=created_at.desc&limit=1`, service);
       const r = rows[0]; if (!r) return json(404, { error: 'No recent audit.' });
       const a = r.answers || {}, b = a.baseline || {}, ns = a.ns || {}, ik = a.ik || {}, ex = a.extra || {};
+      clientName = r.full_name || '';
       subject = `New Performance Audit: ${r.full_name}`;
       html = shell('New Performance Audit', r.full_name, [
         ['Email', r.email], ['Phone', r.phone || ''],
@@ -80,5 +82,11 @@ exports.handler = async function (event) {
     body: JSON.stringify({ from: FROM, to: [to], reply_to: email, subject, html })
   });
   if (!s.ok) { let m = ''; try { m = (await s.json()).message; } catch (e) {} return json(502, { error: m || `Email failed (${s.status}).` }); }
+  // The client gets a thank-you that sends them straight to the movement screen
+  if (kind === 'audit' && clientName !== null) {
+    const t = TEMPLATES.thanks(clientName);
+    await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: `Bearer ${resend}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: 'Dave Marsh <noreply@coachdavemarsh.net>', to: [email], reply_to: to, subject: t.subject, html: t.html }) }).catch(() => {});
+  }
   return json(200, { sent: true });
 };

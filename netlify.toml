@@ -17,3 +17,7 @@
   from   = "/meal-planner/*"
   to     = "/meal-planner/index.html"
   status = 200
+
+# Hourly follow-ups for audits that stall (no movement screen / no call booked)
+[functions."follow-ups"]
+  schedule = "@hourly"

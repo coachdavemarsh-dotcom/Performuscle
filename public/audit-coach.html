@@ -1280,10 +1280,10 @@ async function loadSubs(){
   subMsg('Loading submissions…');
   try{
     const f=$('subFilter').value,q=f==='all'?'':f==='open'?'&status=in.(new,reviewed)':'&status=eq.'+f;
-    subs=await sb(`/rest/v1/${SB.table}?select=id,created_at,full_name,email,status,source&order=created_at.desc&limit=200${q}`);
+    subs=await sb(`/rest/v1/${SB.table}?select=id,created_at,full_name,email,status,source,followups:coach_data->followups,booking:coach_data->booking&order=created_at.desc&limit=200${q}`);
     let screened=new Set();try{(await sb('/rest/v1/movement_screens?select=email&limit=1000')||[]).forEach(r=>screened.add((r.email||'').toLowerCase()))}catch(e){}
     const flag=x=>{if(x.source==='existing-client')return '<span class="fl ex">Existing client</span>';const scr=screened.has((x.email||'').toLowerCase()),old=Date.now()-new Date(x.created_at)>864e5,open=x.status==='new'||x.status==='reviewed';
-      return (scr?'<span class="fl ok">Screen in</span>':'<span class="fl no">No screen</span>')+(x.status==='booked'||x.status==='client'?'':'<span class="fl no">No call booked</span>')+(!scr&&old&&open?`<a class="btn nudge" href="${nudge(x)}">Nudge</a>`:'')};
+      return (scr?'<span class="fl ok">Screen in</span>':'<span class="fl no">No screen</span>')+(x.booking&&x.booking.start?`<span class="fl ok">Call ${new Date(x.booking.start).toLocaleString('en-AU',{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</span>`:x.status==='booked'||x.status==='client'?'':'<span class="fl no">No call booked</span>')+(()=>{const f=x.followups||{};return f.call1?'<span class="fl ex">Call prompt sent</span>':f.screen2?'<span class="fl ex">2 reminders sent</span>':f.screen1?'<span class="fl ex">Reminder sent</span>':''})()+(!scr&&old&&open?`<a class="btn nudge" href="${nudge(x)}">Nudge</a>`:'')};
     $('subList').innerHTML=subs.length?subs.map(x=>`<div class="subrow ${x.id===openId?'on':''}"><div><div class="nm">${escH(x.full_name)}</div><div class="dt">${escH(x.email)}</div></div><div class="dt">${new Date(x.created_at).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</div><span class="stp ${x.status}">${x.status}</span><button class="btn" data-open="${x.id}">Open</button><div class="flags">${flag(x)}</div></div>`).join(''):'<p class="submsg">No submissions in this view yet.</p>';
     $('subList').querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openSub(b.dataset.open)));
     subMsg(subs.length?`${subs.length} submission${subs.length>1?'s':''}.`:'');loadVideos();
@@ -1305,7 +1305,7 @@ async function openSub(id){
       const extra=[ex.rhr?`Resting HR ${ex.rhr} bpm`:'',ex.bloods==='yes'?'Has blood work from the last 12 months':''].filter(Boolean).join(' · ');
       if(extra)notes.recovery=extra;
     }
-    isSample=false;$('sampleTag').hidden=true;invitedAt=(row.coach_data||{}).invitedAt||null;existing=(row.source==='existing-client'||(row.answers||{}).existing)?{focus:[],...((row.coach_data||{}).existing||{})}:null;renderExisting(row);hubPath={...((row.coach_data||{}).hubPath||{})};hubPath.weeks={...(hubPath.weeks||{})};showFiles(row);clientFiles(row);clientHub(row);clientScreen(row);renderInner();
+    isSample=false;$('sampleTag').hidden=true;invitedAt=(row.coach_data||{}).invitedAt||null;followups=(row.coach_data||{}).followups||{};booking=(row.coach_data||{}).booking||null;existing=(row.source==='existing-client'||(row.answers||{}).existing)?{focus:[],...((row.coach_data||{}).existing||{})}:null;renderExisting(row);hubPath={...((row.coach_data||{}).hubPath||{})};hubPath.weeks={...(hubPath.weeks||{})};showFiles(row);clientFiles(row);clientHub(row);clientScreen(row);renderInner();
     $('subStatus').value=row.status==='new'?'reviewed':row.status;$('saveRow').hidden=false;
     update();loadSubsSilently();
     subMsg(existing?`Opened ${row.full_name}, an existing client. Set their focus and Hub path, then Publish to client.`:`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
@@ -1350,7 +1350,7 @@ async function clientScreen(row){
   }catch(e){/* screen table not set up yet */}
 }
 /* ---------- Inner work (Heart + Alignment) ---------- */
-let inner={},hubPath={},invitedAt=null,existing=null;
+let inner={},hubPath={},invitedAt=null,existing=null,followups={},booking=null;
 const INNER=[
  {h:'Heart · Desire and meaning'},
  {k:'contribution',l:'Contribution',ph:'Who this is for beyond them. e.g. Showing my kids what keeping your word looks like.',score:1},
@@ -1394,7 +1394,7 @@ function buildPlan(){
    hubPath:{start:hubPath.start||localISO(new Date()),weeks:{...(hubPath.weeks||{})}}};
 }
 async function saveReview(){
-  const coach_data={state,ans,spokes,notes,mv,ns,ik,inner,hubPath,invitedAt,existing,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
+  const coach_data={state,ans,spokes,notes,mv,ns,ik,inner,hubPath,invitedAt,existing,followups,booking,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
   await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(openId)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({coach_data,status:$('subStatus').value})});
 }
 async function publishPlan(){
