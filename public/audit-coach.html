@@ -284,6 +284,7 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .ikn input{font-family:var(--display);font-size:24px;font-weight:500;max-width:120px}
 .ikn span{font-size:12px;color:var(--muted)}
 .ikf .fl button{background:var(--bg)}
+.ikf .fl button.on{background:var(--gold);color:#FBFAF6;font-weight:700;box-shadow:0 0 0 2px var(--gold)}
 
 /* Submissions (coach sign-in + list) */
 .subs{display:flex;flex-direction:column;gap:14px;padding:20px 22px;border-radius:20px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
@@ -1106,7 +1107,7 @@ let orbLevel=0.5;
 /* ---------- Intake (from the consult form) ---------- */
 const IK=[
  {t:'Contact',f:[{id:'phone',l:'Phone',type:'text'},{id:'email',l:'Email',type:'text'},{id:'call',l:'Best time to call',type:'choice',o:['Morning 7–9 am','Afternoon 12–1 pm','Evening 5–7 pm']}]},
- {t:'Commitment',f:[{id:'commit',l:'How motivated are you?',type:'choice',o:['100% committed, no financial constraints','Committed, budget of $150 a week','Unsure, would like more information']}]},
+ {t:'Commitment',f:[{id:'commit',l:'How motivated are you?',type:'choice',o:['100% committed, no financial constraints','Committed, with a budget of $150 a week','Unsure, I’d like more information']}]},
  {t:'Body & activity',f:[{id:'weight',l:'Weight',type:'num',u:'kg'},{id:'activity',l:'How active are you?',type:'choice',o:['Sedentary','1–2 times a week','2–4 times a week','5–6 times a week','Intense, 5–6 times a week']},{id:'steps',l:'Daily steps',type:'num',u:'steps'},{id:'bpknown',l:'Blood pressure, if known',type:'text'}]},
  {t:'Nutrition & stimulants',f:[{id:'tracks',l:'Tracks nutrition?',type:'yn'},{id:'kcal',l:'Daily calories',type:'num',u:'kcal',show:'tracks'},{id:'water',l:'Water a day',type:'num',u:'L'},{id:'caff',l:'Caffeinated drinks a week',type:'num',u:'per week'},{id:'alc',l:'Alcoholic drinks a week',type:'num',u:'per week'},{id:'digest',l:'Foods that disrupt digestion?',type:'yn'},{id:'foods',l:'Which foods?',type:'text',show:'digest'}]},
  {t:'Stress',f:[{id:'destress',l:'What do you do to de-stress?',type:'text'}]},
@@ -1132,7 +1133,7 @@ function renderIntake(){
       if(f.id==='life')w.style.gridColumn='1/-1';
       if(f.type==='text')w.innerHTML=`<label for="ik_${f.id}">${f.l}</label><input id="ik_${f.id}">`;
       if(f.type==='num')w.innerHTML=`<label for="ik_${f.id}">${f.l}</label><div class="ikn"><input id="ik_${f.id}" type="number" step="any" inputmode="decimal" placeholder="–"><span>${f.u}</span></div>`;
-      if(f.type==='choice'||f.type==='yn'){const o=f.type==='yn'?[['yes','Yes'],['no','No']]:f.o.map(x=>[x,x]);
+      if(f.type==='choice'||f.type==='yn'){const o=f.type==='yn'?[['yes','Yes'],['no','No']]:f.o.map(x=>[x,x]);if(f.type==='choice'&&ik[f.id]&&!o.some(([v])=>v===ik[f.id]))o.push([ik[f.id],ik[f.id]]);
         w.innerHTML=`<span class="lb">${f.l}</span><div class="fl">${o.map(([v,t])=>`<button data-v="${v}" class="${ik[f.id]===v?'on':''}">${t}</button>`).join('')}</div>`;
         w.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ik[f.id]=ik[f.id]===b.dataset.v?'':b.dataset.v;w.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.v===ik[f.id]));markDirty();ikShow();update()}));}
       box.appendChild(w);

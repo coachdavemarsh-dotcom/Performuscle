@@ -264,7 +264,7 @@ const SCREENS=[
  {sec:2,eyebrow:'North Star',title:'And twelve weeks from now?',help:'If we were talking in twelve weeks, what would you want to have achieved?',fields:[{k:'ns.weeks',t:'textarea',ph:'e.g. Sleeping 7 hours and training three times a week'}]},
  {sec:2,eyebrow:'North Star',title:'Why does that matter?',help:'Five levels down, until you hit the reason that gets you up on a wet Tuesday.',fields:[{t:'ladder'}]},
  {sec:2,eyebrow:'North Star',title:'Your non-negotiables',help:'Up to three rules you won’t break, whatever the week throws at you.',fields:[{t:'laws'}]},
- {sec:3,eyebrow:'Lifestyle',title:'How active are you right now?',fields:[{k:'ik.activity',t:'choice',o:['Sedentary','1–2 times a week','2–4 times a week','5–6 times a week','Intense, 5–6 times a week'],auto:1}]},
+ {sec:3,eyebrow:'Lifestyle',title:'How active are you right now?',fields:[{k:'ik.activity',t:'choice',req:1,o:['Sedentary','1–2 times a week','2–4 times a week','5–6 times a week','Intense, 5–6 times a week'],auto:1}]},
  {sec:3,eyebrow:'Lifestyle',title:'Sleep and steps',help:'Your best estimate is fine. If you wear a tracker, use its weekly average.',fields:[{row:[{k:'state.sleep',l:'Sleep a night',t:'number',u:'hours'},{k:'ik.steps',l:'Steps a day',t:'number',u:'steps'}]}]},
  {sec:3,eyebrow:'Lifestyle',title:'How stressed are you, most days?',fields:[{k:'state.stress',t:'slider',min:0,max:10,lo:'Not stressed at all',hi:'Completely overwhelmed'},{k:'ik.destress',l:'What do you do to de-stress?',t:'text'}]},
  {sec:3,eyebrow:'Lifestyle',title:'Food and water',fields:[{k:'ik.tracks',l:'Do you track your nutrition?',t:'yn'},{k:'ik.kcal',l:'Roughly how many calories a day?',t:'number',u:'kcal',show:['ik.tracks','yes']},{k:'ik.water',l:'Water a day',t:'number',u:'litres'}]},
@@ -279,8 +279,8 @@ const SCREENS=[
    {k:'ik.radiate',l:'Does it radiate anywhere?',t:'text',show:['ik.injury','yes']},
    {k:'ik.life',l:'How does it affect your training and daily life?',t:'text',show:['ik.injury','yes']}]},
  {sec:5,eyebrow:'Body',title:'Any numbers you already have?',help:'All optional. Skip anything you don’t know.',fields:[{row:[{k:'extra.rhr',l:'Resting heart rate',t:'number',u:'bpm',opt:1},{k:'extra.vo2',l:'VO₂ max',t:'number',u:'ml/kg',opt:1}]},{k:'ik.bpknown',l:'Blood pressure, if you know it',t:'text',opt:1},{k:'extra.bloods',l:'Do you have blood work from the last 12 months?',t:'yn'},{t:'upload',show:['extra.bloods','yes']}]},
- {sec:6,eyebrow:'Commitment',title:'How ready are you?',fields:[{k:'ik.commit',t:'choice',o:['100% committed, no financial constraints','Committed, with a budget of $150 a week','Unsure, I’d like more information'],auto:1}]},
- {sec:6,eyebrow:'Last step',title:'When should we call?',fields:[{k:'ik.call',t:'choice',o:['Morning 7–9 am','Afternoon 12–1 pm','Evening 5–7 pm'],inline:1},{t:'consent'}],submit:1},
+ {sec:6,eyebrow:'Commitment',title:'How ready are you?',fields:[{k:'ik.commit',t:'choice',req:1,o:['100% committed, no financial constraints','Committed, with a budget of $150 a week','Unsure, I’d like more information'],auto:1}]},
+ {sec:6,eyebrow:'Last step',title:'When should we call?',fields:[{k:'ik.call',t:'choice',req:1,o:['Morning 7–9 am','Afternoon 12–1 pm','Evening 5–7 pm'],inline:1},{t:'consent'}],submit:1},
  {sec:6,done:true}
 ];
 
@@ -442,7 +442,7 @@ function showErr(t){const e=$('err');if(e){e.textContent=t;e.hidden=false}}
 function validate(){
   const s=SCREENS[cur];
   const flat=(s.fields||[]).flatMap(f=>f.row?f.row:[f]);
-  for(const f of flat){if(f.req&&!String(get(f.k)||'').trim()){showErr(`Please add your ${f.l.toLowerCase()}.`);return false}}
+  for(const f of flat){if(f.req&&!String(get(f.k)||'').trim()){showErr(f.t==='choice'?'Choose one of the options to carry on.':`Please add your ${f.l.toLowerCase()}.`);return false}}
   if(flat.some(f=>f.k==='ik.email')&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(D.ik.email||'')){showErr('That email doesn’t look right. Check it and try again.');return false}
   if(s.submit&&!consent){showErr('Tick the box to agree to how your answers are stored.');return false}
   return true;
