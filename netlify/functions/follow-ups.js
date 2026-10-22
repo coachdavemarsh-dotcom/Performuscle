@@ -51,6 +51,7 @@ async function run() {
   for (const a of audits || []) {
     if (sent.length >= MAX_PER_RUN) break;
     if (!a.email) continue;
+    if (a.email.toLowerCase() === (process.env.COACH_EMAIL || REPLY).toLowerCase()) continue; // your own test audits
     const key = due(a, latest[a.email.toLowerCase()], now);
     if (!key) continue;
     try {
