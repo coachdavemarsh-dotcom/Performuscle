@@ -162,6 +162,20 @@ h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,4vw,40px);lin
 .files div{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;border-radius:10px;background:var(--surface-2)}
 .files em{font-style:normal;color:var(--muted);white-space:nowrap}
 .files .ok{color:var(--accent)}.files .bad{color:var(--bad)}
+.bwl{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.bwg{display:flex;flex-direction:column;gap:8px}
+.bwg .k{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.bwr{background:var(--surface);border-radius:14px;padding:12px 14px;box-shadow:inset 0 0 0 1px var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:baseline}
+.bwr.off{box-shadow:inset 3px 0 0 var(--accent-hi),inset 0 0 0 1px var(--line)}
+.bwr b{display:block;font-size:15px}
+.bwr .v{font-family:var(--display);font-size:22px;font-weight:600;white-space:nowrap}
+.bwr .v em{font-family:var(--text);font-style:normal;font-size:12px;color:var(--muted);font-weight:400}
+.bwb{grid-column:1/-1;position:relative;height:16px;margin-top:4px}
+.bwb i{position:absolute;display:block}
+.bwb .t{left:0;right:0;top:6px;height:4px;border-radius:2px;background:var(--surface-3)}
+.bwb .l{top:5px;height:6px;border-radius:3px;background:rgba(119,114,106,.35)}
+.bwb .f{top:4px;height:8px;border-radius:4px;background:var(--accent-hi)}
+.bwb .d{top:8px;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);background:var(--surface);border:3px solid var(--ink)}
 .notice{background:var(--accent-dim);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:inset 0 0 0 1px rgba(138,106,59,.35)}
 .notice .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 .notice .row .f{flex:1;min-width:200px}
@@ -397,6 +411,7 @@ function renderPlan(){
    <div class="nsb"><span class="k">Non-negotiables</span><ul class="list">${plan.northStar.laws.filter(Boolean).map(l=>`<li>${esc(l)}</li>`).join('')}</ul><span class="k" style="margin-top:10px">Track daily</span><ul class="list">${plan.track.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
   </div></section>
 
+  <section id="bwSec" hidden></section>
   <section><span class="eyebrow">Blood work</span><h2>Add new results</h2><div class="bloods"><p class="lede" style="font-size:16px">Had new bloods done? Upload the results here and ${esc(plan.coach)} will review them against your last panel.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>
 
   <footer>Stand in Your Standard. Questions about your plan go to ${esc(plan.coach)} in your check-in.</footer>`;
@@ -412,6 +427,7 @@ function renderExisting(){
   ${hubPathOf()?`<section id="weekSec">${thisWeekHTML()}</section>`:''}
   <section id="haltsSec">${haltsHTML()}</section>
   <section id="hubSec">${hubHTML()}</section>
+  <section id="bwSec" hidden></section>
   <section><span class="eyebrow">Blood work</span><h2>Add your results</h2><div class="bloods"><p class="lede" style="font-size:16px">Upload your latest functional blood work, and any new panels as you get them. ${esc(plan.coach)} reviews them against your plan.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>
   <footer>Stand in Your Standard. Questions go to ${esc(plan.coach)} in your check-in.</footer>`;
   bindExtras();bindWeek();bindHalts();if(!hub)loadHub();
@@ -434,9 +450,37 @@ async function upload(file){
   }catch(e){item.state='error'}
   drawFiles();
 }
+/* Reviewed blood work against Dave's approved functional ranges */
+const BW_CAT={metabolic:'Metabolic',thyroid:'Thyroid',iron:'Iron',vitamins:'Vitamins',lipids:'Lipids',inflammation:'Inflammation',hormones:'Hormones',blood_count:'Blood count',liver:'Liver',kidney:'Kidney',electrolytes:'Electrolytes'};
+const bwU=u=>String(u||'').toLowerCase().replace(/\s/g,'').replace(/µ|μ/g,'u').replace(/miu/g,'mu');
+async function loadBloods(){
+  const sec=$('bwSec');if(!sec||!LIVE||!sess)return;
+  try{
+    let r=await authFetch('/rest/v1/bloodwork_panels?select=id,collected_on,created_at,sex&status=eq.reviewed&order=created_at.desc&limit=1');if(!r.ok)return;
+    const [p]=await r.json();if(!p)return;
+    r=await authFetch(`/rest/v1/bloodwork_results?select=marker_key,raw_name,value,unit,lab_low,lab_high,category&panel_id=eq.${p.id}&status=eq.confirmed&order=sort_order.asc`);if(!r.ok)return;
+    const res=(await r.json()).filter(x=>x.value!=null);if(!res.length)return;
+    r=await authFetch('/rest/v1/bloodwork_markers?select=marker_key,display_name,unit,category,sex,optimal_low,optimal_high,notes&range_status=eq.approved');
+    const mk=r.ok?await r.json():[];const sex=p.sex||'female';
+    const m=k=>mk.find(x=>x.marker_key===k&&x.sex===sex)||null;
+    const rows=res.map(x=>{const mm=x.marker_key?m(x.marker_key):null,ok=mm&&(!x.unit||!mm.unit||bwU(x.unit)===bwU(mm.unit)),lo=ok?mm.optimal_low:null,hi=ok?mm.optimal_high:null,v=+x.value;
+      const st=lo==null&&hi==null?'':lo!=null&&v<lo?'Below your target':hi!=null&&v>hi?'Above your target':'In your target range';
+      return {...x,name:mm?mm.display_name:x.raw_name,cat:(mm&&mm.category)||x.category||'other',lo,hi,st,note:mm&&mm.notes}});
+    const flagged=rows.filter(x=>/Below|Above/.test(x.st)).length;
+    const bar=x=>{const pts=[+x.value,x.lab_low,x.lab_high,x.lo,x.hi].filter(n=>n!=null).map(Number);let a=Math.min(...pts),b=Math.max(...pts);if(a===b){a*=.8;b=b*1.2||1}const pad=(b-a)*.15;a=Math.max(0,a-pad);b+=pad;const X=n=>((n-a)/(b-a)*100).toFixed(1)+'%',W=(p,q)=>(((q-p)/(b-a))*100).toFixed(1)+'%';
+      const fl=x.lo??a,fh=x.hi??b,ll=x.lab_low??a,lh=x.lab_high??b;
+      return `<div class="bwb"><i class="t"></i>${x.lab_low!=null||x.lab_high!=null?`<i class="l" style="left:${X(ll)};width:${W(ll,lh)}"></i>`:''}${x.lo!=null||x.hi!=null?`<i class="f" style="left:${X(fl)};width:${W(fl,fh)}"></i>`:''}<i class="d" style="left:${X(+x.value)}"></i></div>`};
+    const cats=Object.keys(BW_CAT).filter(c=>rows.some(x=>x.cat===c));if(rows.some(x=>!BW_CAT[x.cat]))cats.push('other');
+    sec.innerHTML=`<span class="eyebrow">Blood work · ${p.collected_on?new Date(p.collected_on+'T00:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}):'latest panel'}</span><h2>Your results</h2>
+      <p class="lede">Reviewed by ${esc(plan.coach)}. The gold band is the functional target we coach to, which is narrower than the lab’s “normal” range (grey). ${flagged?`${flagged} marker${flagged>1?'s sit':' sits'} outside it, and that’s what we work on together.`:'Everything with a target sits inside it.'}</p>
+      <div class="bwl">${cats.map(c=>`<div class="bwg"><span class="k">${esc(BW_CAT[c]||'Other')}</span>${rows.filter(x=>(BW_CAT[x.cat]?x.cat:'other')===c).map(x=>`<div class="bwr${/Below|Above/.test(x.st)?' off':''}"${x.note?` title="${esc(x.note)}"`:''}><div><b>${esc(x.name)}</b><span class="small">${x.st||'Lab range'}${x.lo!=null||x.hi!=null?` · target ${x.lo??''}${x.lo!=null&&x.hi!=null?'–':x.lo!=null?'+':'under '}${x.hi??''} ${esc(x.unit||'')}`:''}</span></div><span class="v">${esc(String(+(+x.value).toFixed(2)))} <em>${esc(x.unit||'')}</em></span>${bar(x)}</div>`).join('')}</div>`).join('')}</div>
+      <p class="small">Coaching guidance, not a diagnosis. Anything your doctor needs to see, ${esc(plan.coach)} will flag with you.</p>`;
+    sec.hidden=false;
+  }catch(e){/* blood work not set up yet */}
+}
 function bindExtras(){
   const up=$('bloodUp');if(up)up.addEventListener('change',()=>{[...up.files].forEach(upload);up.value=''});
-  loadFiles();
+  loadFiles();loadBloods();
   const f=$('pwForm');if(f)f.addEventListener('submit',async e=>{e.preventDefault();const pw=$('newPw').value;if(pw.length<8){$('pwMsg').textContent='Use at least 8 characters.';$('pwMsg').className='msg err';return}
     try{const r=await authFetch('/auth/v1/user',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error(j.msg||'That didn\u2019t save. Try again.')}needPw=false;plan?renderPlan():renderWaiting()}catch(err){$('pwMsg').textContent=err.message;$('pwMsg').className='msg err'}});
 }

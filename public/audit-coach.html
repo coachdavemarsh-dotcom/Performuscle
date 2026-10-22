@@ -398,6 +398,41 @@ body.exmode main > section:not(.subs),body.exmode .wrap > section:not(.subs){dis
 .boxes .box.ref .eyebrow{color:#D98B6A!important}
 .boxes .box.ref li::before{background:#D98B6A}
 @media (max-width:600px){.spk-h{padding:12px 14px;gap:10px}.spk-h h3{font-size:19px}.acts{padding:12px}}
+/* ---------- Functional blood work ---------- */
+#bwBody,#bwRanges{display:flex;flex-direction:column;gap:16px}
+.bwsrc{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border-radius:14px;padding:12px 16px}
+.bwhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+.bwcat{display:flex;flex-direction:column;gap:6px}
+.bwcat h3{font-size:15px;letter-spacing:.14em;text-transform:uppercase;display:flex;justify-content:space-between;gap:10px}
+.bwrow{display:grid;grid-template-columns:minmax(0,1.3fr) 150px minmax(0,1.6fr) 120px auto;gap:14px;align-items:center;background:var(--surface);border-radius:12px;padding:10px 14px;box-shadow:inset 3px 0 0 transparent}
+.bwrow[data-s="opt"]{box-shadow:inset 3px 0 0 var(--opt)}.bwrow[data-s="warn"]{box-shadow:inset 3px 0 0 var(--warn)}.bwrow[data-s="bad"]{box-shadow:inset 3px 0 0 var(--bad)}
+.bwrow.rej{opacity:.45}
+.bwrow .nm{font-weight:600;font-size:14px;line-height:1.3}
+.bwrow .raw{font-size:12px;color:var(--muted)}
+.bwrow select{font-size:12px;border:0;border-bottom:1px solid var(--line);background:transparent;max-width:100%}
+.bwval{display:flex;align-items:baseline;gap:6px}
+.bwval input{width:78px;border:0;border-bottom:1px solid var(--line);background:transparent;font-weight:600;font-size:16px;padding:2px}
+.bwval span{font-size:12px;color:var(--muted)}
+.bwbar{position:relative;height:22px}
+.bwbar .track{position:absolute;left:0;right:0;top:9px;height:4px;border-radius:2px;background:var(--line)}
+.bwbar .lab{position:absolute;top:7px;height:8px;border-radius:4px;background:#77726A40}
+.bwbar .fn{position:absolute;top:7px;height:8px;border-radius:4px;background:#C9A56B}
+.bwbar .dot{position:absolute;top:11px;width:13px;height:13px;border-radius:50%;transform:translate(-50%,-50%);background:var(--surface);border:3px solid var(--ink)}
+.bwbar .tk{position:absolute;top:-2px;font-size:10px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+.bwst{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.bwact{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end}
+.bwact .btn{padding:4px 10px;font-size:12px}
+.bwact .btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.bwchk{font-size:11px;color:var(--bad);font-weight:600}
+.bwnote{font-size:12.5px;color:var(--muted)}
+.rgtable{width:100%;border-collapse:collapse;font-size:13px}
+.rgtable th{text-align:left;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+.rgtable td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.rgtable input{width:64px;border:0;border-bottom:1px solid var(--line);background:transparent;font-weight:600}
+.rgtable .ev{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:999px;white-space:nowrap}
+.ev-strong{background:#5E715426;color:var(--opt)}.ev-moderate{background:#C9A56B33;color:var(--gold2)}.ev-contested{background:#B23A2620;color:var(--bad)}.ev-convention{background:var(--sunk);color:var(--muted)}
+.rgwrap{overflow-x:auto}
+@media (max-width:900px){.bwrow{grid-template-columns:minmax(0,1fr) 130px;row-gap:8px}.bwrow .bwbar{grid-column:1/-1}.bwact{justify-content:flex-start}}
 </style>
 </head>
 <body>
@@ -506,6 +541,13 @@ body.exmode main > section:not(.subs),body.exmode .wrap > section:not(.subs){dis
       </section>
     </div>
   </div>
+
+  <section class="panel" id="bwPanel" aria-label="Functional blood work">
+    <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 4b · Blood work</span><h2>Functional blood work</h2></div><div class="actions"><button class="btn" type="button" id="bwRangeBtn">Functional ranges</button></div></div>
+    <p class="intro">Claude reads the client’s uploaded report. Check each value against the photo, confirm it, then send the numbers to the audit markers. Gold band = your functional range · grey band = the lab’s range. Clients only see confirmed values once you mark the report reviewed, against ranges you’ve approved.</p>
+    <div id="bwBody"><p class="submsg">Sign in and open a client to see their blood work.</p></div>
+    <div id="bwRanges" hidden></div>
+  </section>
 
   <section class="panel">
     <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 5 · Movement</span><h2>Movement assessment</h2></div><span class="eyebrow">From the Movement Assessment Guide</span></div>
@@ -1269,7 +1311,7 @@ $('signin').addEventListener('submit',async e=>{
     $('siPass').value='';showSubs();await loadSubs();
   }catch(err){subMsg(err.message,1)}finally{$('siBtn').disabled=false}
 });
-$('signOut').addEventListener('click',()=>{tok=null;openId=null;$('subHub').hidden=true;$('subHub').innerHTML='';$('hubVids').hidden=true;$('subFiles').hidden=true;$('subFiles').innerHTML='';try{sessionStorage.removeItem('pa_coach')}catch(e){};$('subList').innerHTML='';$('saveRow').hidden=true;showSubs();subMsg('Signed out.')});
+$('signOut').addEventListener('click',()=>{tok=null;openId=null;clearTimeout(bw.poll);bw.panel=null;$('bwBody').innerHTML='<p class="submsg">Sign in and open a client to see their blood work.</p>';$('bwRanges').hidden=true;$('subHub').hidden=true;$('subHub').innerHTML='';$('hubVids').hidden=true;$('subFiles').hidden=true;$('subFiles').innerHTML='';try{sessionStorage.removeItem('pa_coach')}catch(e){};$('subList').innerHTML='';$('saveRow').hidden=true;showSubs();subMsg('Signed out.')});
 $('subRefresh').addEventListener('click',()=>loadSubs());
 $('subFilter').addEventListener('change',()=>loadSubs());
 function nudge(x){
@@ -1306,7 +1348,7 @@ async function openSub(id){
       const extra=[ex.rhr?`Resting HR ${ex.rhr} bpm`:'',ex.bloods==='yes'?'Has blood work from the last 12 months':''].filter(Boolean).join(' · ');
       if(extra)notes.recovery=extra;
     }
-    isSample=false;$('sampleTag').hidden=true;invitedAt=(row.coach_data||{}).invitedAt||null;followups=(row.coach_data||{}).followups||{};booking=(row.coach_data||{}).booking||null;existing=(row.source==='existing-client'||(row.answers||{}).existing)?{focus:[],...((row.coach_data||{}).existing||{})}:null;renderExisting(row);hubPath={...((row.coach_data||{}).hubPath||{})};hubPath.weeks={...(hubPath.weeks||{})};showFiles(row);clientFiles(row);clientHub(row);clientScreen(row);renderInner();
+    isSample=false;$('sampleTag').hidden=true;invitedAt=(row.coach_data||{}).invitedAt||null;followups=(row.coach_data||{}).followups||{};booking=(row.coach_data||{}).booking||null;existing=(row.source==='existing-client'||(row.answers||{}).existing)?{focus:[],...((row.coach_data||{}).existing||{})}:null;renderExisting(row);hubPath={...((row.coach_data||{}).hubPath||{})};hubPath.weeks={...(hubPath.weeks||{})};showFiles(row);clientFiles(row);clientHub(row);clientScreen(row);bwOpen(row);renderInner();
     $('subStatus').value=row.status==='new'?'reviewed':row.status;$('saveRow').hidden=false;
     update();loadSubsSilently();
     subMsg(existing?`Opened ${row.full_name}, an existing client. Set their focus and Hub path, then Publish to client.`:`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
@@ -1552,6 +1594,197 @@ $('subSave').addEventListener('click',async()=>{
   }catch(err){subMsg(err.message,1)}finally{$('subSave').disabled=false}
 });
 $('subPublish').addEventListener('click',publishPlan);
+
+/* ---------- Functional blood work ---------- */
+const BW_CATS={metabolic:'Metabolic',thyroid:'Thyroid',iron:'Iron',vitamins:'Vitamins',lipids:'Lipids',inflammation:'Inflammation',hormones:'Hormones',blood_count:'Blood count',liver:'Liver',kidney:'Kidney',electrolytes:'Electrolytes',other:'Not matched'};
+const BW_TO_AUDIT={glucose_fasting:'glu',hba1c:'a1c',insulin_fasting:'ins',triglycerides:'tg',hdl:'hdl',apob:'apob',crp_hs:'crp',testosterone_total:'test',tsh:'tsh',free_t3:'ft3',ferritin:'fer',vitamin_d:'vitd',cortisol_am:'cort'};
+const EV_LBL={strong:'Strong evidence',moderate:'Moderate evidence',contested:'Contested',convention:'Convention'};
+let bw={row:null,email:'',markers:[],panels:[],panel:null,results:[],sources:[],poll:null,rangeSex:null};
+const bwNum=v=>v===''||v==null||isNaN(+v)?null:+v;
+const bwUnit=u=>String(u||'').toLowerCase().replace(/\s/g,'').replace(/µ|μ/g,'u').replace(/miu/g,'mu');
+const bwSex=()=>(bw.panel&&bw.panel.sex)||(state.sex==='f'?'female':'male');
+const bwMk=(key,sex)=>bw.markers.find(m=>m.marker_key===key&&m.sex===(sex||bwSex()))||bw.markers.find(m=>m.marker_key===key);
+function bwFmt(v){if(v==null)return '–';const n=+v;return Math.abs(n)>=100?String(Math.round(n)):String(+n.toFixed(2))}
+async function bwFn(body){
+  const r=await fetch(SB.url+'/functions/v1/extract-bloodwork',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Authorization:'Bearer '+tok.access},body:JSON.stringify(body)});
+  let j={};try{j=await r.json()}catch(e){}
+  if(!r.ok){
+    if(/ANTHROPIC_API_KEY/.test(j.error||''))throw new Error('The blood work reader needs your Anthropic API key. Add ANTHROPIC_API_KEY in Supabase → Edge Functions → Secrets, then try again.');
+    if(r.status===401){tok=null;showSubs();throw new Error('Your sign-in expired. Sign in again.')}
+    throw new Error(j.error||j.message||('The reader failed ('+r.status+')'));
+  }
+  return j;
+}
+async function bwOpen(row){
+  clearTimeout(bw.poll);bw={...bw,row,email:(row.email||'').trim(),panels:[],panel:null,results:[],sources:[],rangeSex:null};
+  const body=$('bwBody');if(!bw.email){body.innerHTML='<p class="submsg">This client has no email, so there is no blood work to find.</p>';return}
+  body.innerHTML='<p class="submsg">Loading blood work…</p>';
+  const em=encodeURIComponent(bw.email.replace(/[%_]/g,'\\$&'));
+  try{
+    if(!bw.markers.length)bw.markers=await sb('/rest/v1/bloodwork_markers?select=*&order=sort_order.asc,marker_key.asc')||[];
+    bw.panels=await sb(`/rest/v1/bloodwork_panels?select=*&email=ilike.${em}&order=created_at.desc`)||[];
+    // Every place the client may have uploaded blood work
+    const ex=((row.answers||{}).extra||{}).bloodFiles||[];
+    if(ex.length)bw.sources.push({label:'Audit form upload',files:ex});
+    try{const scr=await sb(`/rest/v1/movement_screens?select=id,created_at,files&email=ilike.${em}&order=created_at.desc&limit=1`)||[];
+      const s=scr[0];const f=s?(s.files||[]).filter(x=>x.kind==='bloods'):[];if(f.length)bw.sources.push({label:`Movement screen · ${new Date(s.created_at).toLocaleDateString('en-AU')}`,files:f,screenId:s.id})}catch(e){}
+    try{const cf=await sb(`/rest/v1/client_files?select=name,path,size,kind,created_at&email=ilike.${em}&order=created_at.desc`)||[];
+      const f=cf.filter(x=>!x.kind||/blood/i.test(x.kind));if(f.length)bw.sources.push({label:'Uploaded from My Plan',files:f.map(x=>({name:x.name,path:x.path,type:/\.pdf$/i.test(x.name||'')?'application/pdf':/\.png$/i.test(x.name||'')?'image/png':'image/jpeg'}))})}catch(e){}
+    bw.panel=bw.panels[0]||null;
+    await bwLoadResults();bwRender();
+  }catch(err){body.innerHTML=`<p class="submsg err">${escH(/bloodwork/.test(err.message)?'The blood work tables aren’t set up yet.':err.message)}</p>`}
+}
+async function bwLoadResults(){
+  bw.results=bw.panel?await sb(`/rest/v1/bloodwork_results?select=*&panel_id=eq.${bw.panel.id}&order=sort_order.asc`)||[]:[];
+}
+function bwSourcesHTML(){
+  if(!bw.sources.length)return '<p class="submsg">No blood work uploaded yet. Ask the client to upload it from their movement screen or My Plan.</p>';
+  return bw.sources.map((s,i)=>`<div class="bwsrc"><span><b>${escH(s.label)}</b> <span class="submsg">${s.files.length} file${s.files.length===1?'':'s'}</span></span><button class="btn primary" type="button" data-bwread="${i}">Read with Claude</button></div>`).join('');
+}
+function bwRender(){
+  const body=$('bwBody'),p=bw.panel;
+  if(!p){body.innerHTML=bwSourcesHTML();bwBindSources();return}
+  const head=`<div class="bwhead"><div><span class="eyebrow gold">${p.status==='reviewed'?'Reviewed · client can see confirmed values':p.status==='needs_review'?'Needs your review':p.status==='extracting'?'Reading…':p.status==='failed'?'Read failed':'Pending'}</span>
+    <div class="submsg">${p.collected_on?'Collected '+new Date(p.collected_on+'T00:00:00').toLocaleDateString('en-AU'):'Collection date not found'}${p.lab_name?' · '+escH(p.lab_name):''} · read ${new Date(p.created_at).toLocaleDateString('en-AU')}${bw.panels.length>1?` · <select id="bwPick" aria-label="Choose report">${bw.panels.map(x=>`<option value="${x.id}"${x.id===p.id?' selected':''}>${new Date(x.created_at).toLocaleDateString('en-AU')} · ${x.status.replace('_',' ')}</option>`).join('')}</select>`:''}</div></div>
+    <div class="actions">${p.status==='needs_review'||p.status==='reviewed'?`<div class="field"><label for="bwSexSel">Ranges for</label><select id="bwSexSel"><option value="female"${bwSex()==='female'?' selected':''}>Female</option><option value="male"${bwSex()==='male'?' selected':''}>Male</option></select></div>
+      <button class="btn" type="button" id="bwConfirmHi">Confirm all checked-off values</button><button class="btn" type="button" id="bwToAudit">Send to audit markers</button><button class="btn primary" type="button" id="bwReviewed">${p.status==='reviewed'?'Hide from client':'Mark reviewed'}</button>`:''}
+      <button class="btn" type="button" id="bwReread">Read again</button></div></div>`;
+  if(p.status==='extracting'){body.innerHTML=head+'<p class="submsg">Claude is reading the report. This usually takes under a minute; this panel updates by itself.</p>';bwBindHead();bwPoll();return}
+  if(p.status==='failed'){body.innerHTML=head+`<p class="submsg err">${escH(p.error||'The read failed.')}</p>`+bwSourcesHTML();bwBindHead();bwBindSources();return}
+  const pend=bw.results.filter(r=>r.status==='pending'),chk=pend.filter(r=>r.needs_check).length;
+  const sum=`<p class="bwnote">${bw.results.length} values read · ${bw.results.filter(r=>r.status==='confirmed').length} confirmed · ${pend.length} to review${chk?` · <b class="bwchk">${chk} need a closer look</b>`:''}. Check flagged rows against the photo before confirming.${p.extraction_notes?`<br>Reader’s note: ${escH(p.extraction_notes)}`:''}</p>`;
+  const groups={};bw.results.forEach(r=>{const m=r.marker_key?bwMk(r.marker_key):null;const c=(m&&m.category)||r.category||'other';(groups[c]=groups[c]||[]).push(r)});
+  const order=Object.keys(BW_CATS).filter(c=>groups[c]);
+  body.innerHTML=head+sum+order.map(c=>{const rs=groups[c],flags=rs.filter(r=>bwState(r).s!=='opt'&&bwState(r).s!=='na').length;
+    return `<div class="bwcat"><h3><span>${BW_CATS[c]}</span><span class="submsg">${flags?flags+' outside functional range':''}</span></h3>${rs.map(bwRowHTML).join('')}</div>`}).join('');
+  bwBindHead();bwBindRows();
+}
+function bwState(r){
+  if(r.status==='rejected')return {s:'na',t:'Rejected'};
+  const v=bwNum(r.value);if(v==null)return {s:'na',t:'No number'};
+  const m=r.marker_key?bwMk(r.marker_key):null,lo=m?bwNum(m.optimal_low):null,hi=m?bwNum(m.optimal_high):null;
+  const labOut=(r.lab_low!=null&&v<r.lab_low)||(r.lab_high!=null&&v>r.lab_high)||/^(h|l|hh|ll|high|low|\*)/i.test(r.lab_flag||'');
+  if(labOut)return {s:'bad',t:'Outside lab range'};
+  if(lo==null&&hi==null)return {s:'na',t:m?'Lab range only':'Not matched'};
+  if(m&&r.unit&&m.unit&&bwUnit(r.unit)!==bwUnit(m.unit))return {s:'na',t:'Unit differs'};
+  if(lo!=null&&v<lo)return {s:'warn',t:'Below functional'};
+  if(hi!=null&&v>hi)return {s:'warn',t:'Above functional'};
+  return {s:'opt',t:'Functional'};
+}
+function bwBar(r){
+  const v=bwNum(r.value),m=r.marker_key?bwMk(r.marker_key):null;
+  const unitOk=!m||!r.unit||!m.unit||bwUnit(r.unit)===bwUnit(m.unit);
+  const lo=m&&unitOk?bwNum(m.optimal_low):null,hi=m&&unitOk?bwNum(m.optimal_high):null;
+  const pts=[v,r.lab_low,r.lab_high,lo,hi].filter(x=>x!=null).map(Number);if(!pts.length)return '<div class="bwbar"></div>';
+  let a=Math.min(...pts),b=Math.max(...pts);if(a===b){a=a*.8;b=b*1.2||1}const pad=(b-a)*.15;a=Math.max(0,a-pad);b=b+pad;
+  const x=n=>((n-a)/(b-a)*100).toFixed(1)+'%',w=(p,q)=>(((q-p)/(b-a))*100).toFixed(1)+'%';
+  const labL=r.lab_low!=null?r.lab_low:a,labH=r.lab_high!=null?r.lab_high:b,fl=lo!=null?lo:a,fh=hi!=null?hi:b;
+  return `<div class="bwbar" title="Grey: lab range ${escH(r.lab_range_text||'')} · Gold: functional ${lo??'–'}–${hi??'–'}"><span class="track"></span>${r.lab_low!=null||r.lab_high!=null?`<span class="lab" style="left:${x(labL)};width:${w(labL,labH)}"></span>`:''}${lo!=null||hi!=null?`<span class="fn" style="left:${x(fl)};width:${w(fl,fh)}"></span>`:''}${v!=null?`<span class="dot" style="left:${x(v)}"></span>`:''}</div>`;
+}
+function bwRowHTML(r){
+  const st=bwState(r),m=r.marker_key?bwMk(r.marker_key):null,keys=[...new Set(bw.markers.map(x=>x.marker_key))];
+  return `<div class="bwrow${r.status==='rejected'?' rej':''}" data-s="${st.s}" data-id="${r.id}">
+    <div><div class="nm">${escH(m?m.display_name:r.raw_name)}</div><div class="raw">${escH(r.raw_name)}${r.lab_range_text?' · lab '+escH(r.lab_range_text):''}${r.lab_flag?' · <b>'+escH(r.lab_flag)+'</b>':''}</div>
+      <select data-bwkey="${r.id}" aria-label="Marker for ${escH(r.raw_name)}"><option value="">Not matched</option>${keys.map(k=>{const mm=bwMk(k);return `<option value="${k}"${k===r.marker_key?' selected':''}>${escH(mm.display_name)}</option>`}).join('')}</select></div>
+    <div><div class="bwval"><input data-bwval="${r.id}" type="number" step="any" inputmode="decimal" value="${r.value??''}" aria-label="Value for ${escH(r.raw_name)}"><span>${escH(r.unit||'')}</span></div>${r.needs_check&&r.status==='pending'?`<div class="bwchk">Check${r.confidence!=='high'?' · '+r.confidence+' confidence':''}${m&&r.unit&&m.unit&&bwUnit(r.unit)!==bwUnit(m.unit)?' · unit':''}</div>`:''}${r.value_text&&String(r.value_text)!==String(r.value??'')?`<div class="raw">printed “${escH(r.value_text)}”</div>`:''}</div>
+    ${bwBar(r)}
+    <div class="bwst s-${st.s}">${st.t}${m&&(m.optimal_low!=null||m.optimal_high!=null)?`<div class="raw" style="text-transform:none;letter-spacing:0;font-weight:400">${m.optimal_low==null?'under '+m.optimal_high:m.optimal_high==null?m.optimal_low+'+':m.optimal_low+'–'+m.optimal_high} ${escH(m.unit||'')}${m.range_status==='draft'?' · draft':''}</div>`:''}</div>
+    <div class="bwact">${r.source_file?`<button class="btn" type="button" data-bwsrc="${r.id}" title="Open the photo this came from">Photo</button>`:''}<button class="btn${r.status==='confirmed'?' on':''}" type="button" data-bwok="${r.id}" aria-pressed="${r.status==='confirmed'}">${r.status==='confirmed'?'Confirmed':'Confirm'}</button><button class="btn" type="button" data-bwno="${r.id}">${r.status==='rejected'?'Restore':'Reject'}</button></div></div>`;
+}
+async function bwPatch(id,patch){
+  await sb(`/rest/v1/bloodwork_results?id=eq.${id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(patch)});
+  const r=bw.results.find(x=>x.id===id);Object.assign(r,patch);
+}
+function bwBindSources(){
+  $('bwBody').querySelectorAll('[data-bwread]').forEach(btn=>btn.addEventListener('click',async()=>{
+    const s=bw.sources[+btn.dataset.bwread];btn.disabled=true;btn.textContent='Starting…';
+    try{
+      const sex=state.sex==='f'?'female':'male';
+      const j=await bwFn(s.screenId?{movement_screen_id:s.screenId,sex}:{email:bw.email,sex,files:s.files.map(f=>({path:f.path,name:f.name,type:f.type||''}))});
+      const [p]=await sb(`/rest/v1/bloodwork_panels?select=*&id=eq.${j.panel_id}`);bw.panel=p;bw.panels.unshift(p);bw.results=[];bwRender();
+    }catch(err){subMsg(err.message,1);btn.disabled=false;btn.textContent='Read with Claude'}
+  }));
+}
+function bwPoll(){
+  clearTimeout(bw.poll);const id=bw.panel&&bw.panel.id;if(!id)return;
+  bw.poll=setTimeout(async()=>{
+    try{const [p]=await sb(`/rest/v1/bloodwork_panels?select=*&id=eq.${id}`);if(!p||!bw.panel||bw.panel.id!==id)return;
+      bw.panel=p;bw.panels=bw.panels.map(x=>x.id===id?p:x);
+      if(p.status==='extracting'){bwPoll();return}
+      await bwLoadResults();bwRender();if(p.status==='needs_review')toast(`${bw.results.length} values read. Check and confirm them.`);
+    }catch(e){bwPoll()}
+  },5000);
+}
+function bwBindHead(){
+  const pick=$('bwPick');if(pick)pick.addEventListener('change',async()=>{bw.panel=bw.panels.find(x=>x.id===pick.value);await bwLoadResults();bwRender()});
+  const sx=$('bwSexSel');if(sx)sx.addEventListener('change',async()=>{const v=sx.value;try{await sb(`/rest/v1/bloodwork_panels?id=eq.${bw.panel.id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({sex:v})});bw.panel.sex=v;bwRender()}catch(err){subMsg(err.message,1)}});
+  const rr=$('bwReread');if(rr)rr.addEventListener('click',async()=>{
+    if(bw.results.some(r=>r.status==='confirmed')&&!confirm('Read the report again? Values you’ve confirmed stay; everything still pending is replaced.'))return;
+    rr.disabled=true;try{await bwFn({panel_id:bw.panel.id});bw.panel.status='extracting';bwRender()}catch(err){subMsg(err.message,1);rr.disabled=false}});
+  const ch=$('bwConfirmHi');if(ch)ch.addEventListener('click',async()=>{
+    const ids=bw.results.filter(r=>r.status==='pending'&&!r.needs_check&&bwNum(r.value)!=null).map(r=>r.id);
+    if(!ids.length){toast('Nothing left that’s safe to bulk-confirm. Check the flagged rows one by one.');return}
+    try{await sb(`/rest/v1/bloodwork_results?id=in.(${ids.join(',')})`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:'confirmed'})});bw.results.forEach(r=>{if(ids.includes(r.id))r.status='confirmed'});bwRender();toast(`${ids.length} values confirmed. Flagged rows still need you.`)}catch(err){subMsg(err.message,1)}});
+  const rv=$('bwReviewed');if(rv)rv.addEventListener('click',async()=>{
+    const to=bw.panel.status==='reviewed'?'needs_review':'reviewed';
+    if(to==='reviewed'&&bw.results.some(r=>r.status==='pending')&&!confirm('Some values are still pending. Only confirmed values show to the client. Mark reviewed anyway?'))return;
+    try{await sb(`/rest/v1/bloodwork_panels?id=eq.${bw.panel.id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:to,reviewed_at:to==='reviewed'?new Date().toISOString():null})});bw.panel.status=to;bwRender();toast(to==='reviewed'?'Reviewed. Confirmed values now show on the client’s My Plan.':'Hidden from the client.')}catch(err){subMsg(err.message,1)}});
+  const ta=$('bwToAudit');if(ta)ta.addEventListener('click',()=>{
+    const sent=[],skipped=[];
+    for(const r of bw.results){const id=BW_TO_AUDIT[r.marker_key];if(!id||r.status!=='confirmed'||bwNum(r.value)==null)continue;
+      const am=markers(state.sex,state.ethnic).flatMap(g=>g.items).find(x=>x.id===id);if(!am)continue;
+      if(r.unit&&am.unit&&bwUnit(r.unit)!==bwUnit(am.unit)){skipped.push(`${am.label} (${r.unit} vs ${am.unit})`);continue}
+      state[id]=bwNum(r.value);sent.push(am.label)}
+    if(!sent.length&&!skipped.length){toast('Confirm some values first. Only confirmed values go to the audit.');return}
+    markDirty();renderMarkers();update();
+    subMsg(`${sent.length?`Sent ${sent.join(', ')} to the audit markers. Save review to keep them.`:''}${skipped.length?` Skipped because the units differ: ${skipped.join(', ')}.`:''}`,!sent.length);
+  });
+}
+function bwBindRows(){
+  const body=$('bwBody');
+  body.querySelectorAll('[data-bwval]').forEach(el=>el.addEventListener('change',async()=>{const id=el.dataset.bwval;try{await bwPatch(id,{value:bwNum(el.value),needs_check:false});bwRender()}catch(err){subMsg(err.message,1)}}));
+  body.querySelectorAll('[data-bwkey]').forEach(el=>el.addEventListener('change',async()=>{const id=el.dataset.bwkey,m=el.value?bwMk(el.value):null;try{await bwPatch(id,{marker_key:el.value||null,category:m?m.category:null});bwRender()}catch(err){subMsg(err.message,1)}}));
+  body.querySelectorAll('[data-bwok]').forEach(el=>el.addEventListener('click',async()=>{const r=bw.results.find(x=>x.id===el.dataset.bwok);
+    if(r.status!=='confirmed'&&bwNum(r.value)==null){toast('Add the number first.');return}
+    try{await bwPatch(r.id,{status:r.status==='confirmed'?'pending':'confirmed',needs_check:false});bwRender()}catch(err){subMsg(err.message,1)}}));
+  body.querySelectorAll('[data-bwno]').forEach(el=>el.addEventListener('click',async()=>{const r=bw.results.find(x=>x.id===el.dataset.bwno);try{await bwPatch(r.id,{status:r.status==='rejected'?'pending':'rejected'});bwRender()}catch(err){subMsg(err.message,1)}}));
+  body.querySelectorAll('[data-bwsrc]').forEach(el=>el.addEventListener('click',async()=>{const r=bw.results.find(x=>x.id===el.dataset.bwsrc);el.disabled=true;
+    try{const j=await sb(`/storage/v1/object/sign/audit-uploads/${r.source_file.split('/').map(encodeURIComponent).join('/')}`,{method:'POST',body:JSON.stringify({expiresIn:600})});
+      const url=SB.url+'/storage/v1'+(j.signedURL||j.signedUrl);if(!window.open(url,'_blank','noopener'))subMsg('Allow pop-ups to open the photo.')}catch(err){subMsg(err.message,1)}finally{el.disabled=false}}));
+}
+/* Functional range editor */
+async function bwRangesOpen(){
+  const box=$('bwRanges');
+  if(!tok){box.hidden=false;box.innerHTML='<p class="submsg">Sign in to edit your functional ranges.</p>';return}
+  if(!box.hidden){box.hidden=true;return}
+  box.hidden=false;box.innerHTML='<p class="submsg">Loading ranges…</p>';
+  try{bw.markers=await sb('/rest/v1/bloodwork_markers?select=*&order=sort_order.asc,marker_key.asc')||[];bwRangesRender()}catch(err){box.innerHTML=`<p class="submsg err">${escH(err.message)}</p>`}
+}
+function bwRangesRender(){
+  const box=$('bwRanges'),sx=bw.rangeSex||bwSex(),rows=bw.markers.filter(m=>m.sex===sx),drafts=rows.filter(m=>m.range_status==='draft').length;
+  box.innerHTML=`<div class="bwhead"><div><span class="eyebrow gold">Your functional ranges · ${sx==='female'?'Women':'Men'}</span><div class="submsg">${drafts?`${drafts} still draft. Drafts show on your dashboard but never to clients.`:'All approved.'} Hover a marker for the reasoning.</div></div>
+    <div class="actions"><div class="field"><label for="rgSex">Show</label><select id="rgSex"><option value="female"${sx==='female'?' selected':''}>Women</option><option value="male"${sx==='male'?' selected':''}>Men</option></select></div><button class="btn" type="button" id="rgSave">Save changes</button><button class="btn primary" type="button" id="rgApprove">Approve all shown</button></div></div>
+    <div class="rgwrap"><table class="rgtable"><thead><tr><th>Marker</th><th>Low</th><th>High</th><th>Unit</th><th>Evidence</th><th>Source</th><th>Status</th></tr></thead><tbody>
+    ${rows.map(m=>`<tr data-rg="${m.id}"><td title="${escH(m.notes||'')}"><b>${escH(m.display_name)}</b><div class="submsg">${escH(BW_CATS[m.category]||m.category)}${m.notes?' · '+escH(m.notes):''}</div></td>
+      <td><input data-rglo value="${m.optimal_low??''}" type="number" step="any" aria-label="${escH(m.display_name)} low"></td><td><input data-rghi value="${m.optimal_high??''}" type="number" step="any" aria-label="${escH(m.display_name)} high"></td>
+      <td>${escH(m.unit||'')}</td><td>${m.range_evidence?`<span class="ev ev-${m.range_evidence}">${EV_LBL[m.range_evidence]}</span>`:'<span class="submsg">Lab range</span>'}</td><td class="submsg">${escH(m.range_source||'')}</td>
+      <td><select data-rgst aria-label="${escH(m.display_name)} status"><option value="draft"${m.range_status==='draft'?' selected':''}>Draft</option><option value="approved"${m.range_status==='approved'?' selected':''}>Approved</option></select></td></tr>`).join('')}
+    </tbody></table></div>`;
+  $('rgSex').addEventListener('change',e=>{bw.rangeSex=e.target.value;bwRangesRender()});
+  $('rgSave').addEventListener('click',async()=>{
+    const ch=[];box.querySelectorAll('[data-rg]').forEach(tr=>{const m=bw.markers.find(x=>x.id===tr.dataset.rg),lo=bwNum(tr.querySelector('[data-rglo]').value),hi=bwNum(tr.querySelector('[data-rghi]').value),st=tr.querySelector('[data-rgst]').value;
+      if(lo!==bwNum(m.optimal_low)||hi!==bwNum(m.optimal_high)||st!==m.range_status)ch.push({m,patch:{optimal_low:lo,optimal_high:hi,range_status:st,updated_at:new Date().toISOString(),...(lo!==bwNum(m.optimal_low)||hi!==bwNum(m.optimal_high)?{range_source:'Edited by Dave'+(m.range_source&&!/^Edited by Dave/.test(m.range_source)?' (was: '+m.range_source+')':'')}:{})}})});
+    const bad=ch.find(c=>c.patch.optimal_low!=null&&c.patch.optimal_high!=null&&c.patch.optimal_low>=c.patch.optimal_high);
+    if(bad){subMsg(`${bad.m.display_name}: low must be below high.`,1);return}
+    if(!ch.length){toast('No changes to save.');return}
+    try{for(const c of ch){await sb(`/rest/v1/bloodwork_markers?id=eq.${c.m.id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(c.patch)});Object.assign(c.m,c.patch)}
+      toast(`${ch.length} range${ch.length>1?'s':''} saved.`);bwRangesRender();if(bw.panel)bwRender()}catch(err){subMsg(err.message,1)}});
+  $('rgApprove').addEventListener('click',async()=>{
+    if(!confirm(`Approve every ${sx==='female'?'women’s':'men’s'} range as shown? Approved ranges show on clients’ My Plan.`))return;
+    try{await sb(`/rest/v1/bloodwork_markers?sex=eq.${sx}&range_status=eq.draft`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({range_status:'approved',updated_at:new Date().toISOString()})});
+      bw.markers.forEach(m=>{if(m.sex===sx)m.range_status='approved'});toast('Approved.');bwRangesRender();if(bw.panel)bwRender()}catch(err){subMsg(err.message,1)}});
+}
+$('bwRangeBtn').addEventListener('click',bwRangesOpen);
 renderInner();
 showSubs();if(tok&&onSite())loadSubs();
 </script>
