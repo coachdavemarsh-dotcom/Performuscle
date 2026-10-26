@@ -423,20 +423,35 @@ function baselineHTML(){
 /* ---------- Blood work uploads ---------- */
 function fileRow(x){return `<div><span>${esc(x.name)}</span><em class="${x.state==='error'?'bad':x.state==='done'?'ok':''}">${x.state==='done'?'Uploaded':x.state==='error'?'Didn’t upload':'Uploading…'}</em></div>`}
 function uploadId(){if(!D.extra.uploadId){D.extra.uploadId=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));save()}return D.extra.uploadId}
-async function uploadFile(file){
+// Phones pick the type from the extension when the browser leaves it blank
+function mimeOf(file){if(file.type)return file.type;const x=(file.name.split('.').pop()||'').toLowerCase();return {pdf:'application/pdf',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',heic:'image/heic',heif:'image/heif',webp:'image/webp'}[x]||'application/octet-stream'}
+// A file left "uploading" from an earlier visit was cut off: mark it so it can be chosen again
+(D.extra.bloodFiles||[]).forEach(x=>{if(x.state==='uploading')x.state='error'});
+// Uploads go one at a time: several big phone photos at once stall on slow mobile connections
+let upQueue=Promise.resolve();
+function pendingUploads(){return (D.extra.bloodFiles||[]).filter(x=>x.state==='uploading').length}
+function uploadFile(file){
   const list=D.extra.bloodFiles=D.extra.bloodFiles||[];
   const safe=file.name.replace(/[^A-Za-z0-9._-]+/g,'_').slice(-80);
-  const item={name:file.name,size:file.size,path:`${uploadId()}/${Date.now()}-${safe}`,state:'uploading'};
+  const item={name:file.name,size:file.size,path:`${uploadId()}/${Date.now()}-${list.length}-${safe}`,state:'uploading'};
   list.push(item);const redraw=()=>{const el=$('fileList');if(el)el.innerHTML=list.map(fileRow).join('');save()};redraw();
   if(file.size>10485760){item.state='error';redraw();showErr(`${file.name} is over 10 MB. Try a smaller photo or a PDF.`);return}
-  try{
-    if(!previewMode()){
-      const r=await fetch(`${SUPABASE.url}/storage/v1/object/audit-uploads/${item.path}`,{method:'POST',headers:{apikey:SUPABASE.key,Authorization:'Bearer '+SUPABASE.key,'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});
-      if(!r.ok)throw new Error(r.status);
-    }
-    item.state='done';
-  }catch(e){item.state='error';showErr(`${file.name} didn’t upload. Check your connection and choose it again.`)}
-  redraw();
+  upQueue=upQueue.then(async()=>{
+    try{
+      if(!previewMode()){
+        let r,tries=0;
+        while(true){
+          try{r=await fetch(`${SUPABASE.url}/storage/v1/object/audit-uploads/${item.path}`,{method:'POST',headers:{apikey:SUPABASE.key,Authorization:'Bearer '+SUPABASE.key,'Content-Type':mimeOf(file),'x-upsert':'false'},body:file});if(r.ok)break;
+            // A retry after a lost response finds the file already there: that's a success
+            if(tries>0){const t=await r.text().catch(()=>'');if(/Duplicate|already exists|"409"/i.test(t))break}
+            throw new Error(r.status)}
+          catch(e){if(++tries>=3)throw e;await new Promise(res=>setTimeout(res,1500*tries))}
+        }
+      }
+      item.state='done';
+    }catch(e){item.state='error';showErr(`${file.name} didn’t upload. Check your connection and choose it again.`)}
+    redraw();
+  });
 }
 function showErr(t){const e=$('err');if(e){e.textContent=t;e.hidden=false}}
 function validate(){
@@ -452,6 +467,8 @@ function previewMode(){return !/(^|\.)coachdavemarsh\.net$|^localhost$|^127\.0\.
 async function submit(){
   if($('company')&&$('company').value){cur++;render();return}
   sending=true;render();
+  // Wait for any photos still uploading, so none are left off the audit
+  if(pendingUploads()){$('next').textContent=`Finishing ${pendingUploads()} upload${pendingUploads()===1?'':'s'}…`;await upQueue}
   const payload={full_name:[D.state.first,D.state.last].filter(Boolean).join(' ').trim(),email:(D.ik.email||'').trim(),phone:(D.ik.phone||'').trim()||null,consent:true,
     answers:{...D,state:{...D.state,clientName:[D.state.first,D.state.last].filter(Boolean).join(' '),sex:D.state.sex==='Female'?'f':D.state.sex==='Male'?'m':''},submittedAt:new Date().toISOString(),version:1,baseline:clientBaseline()}};
   payload.answers.extra={...payload.answers.extra,bloodFiles:(D.extra.bloodFiles||[]).filter(x=>x.state==='done').map(({name,size,path})=>({name,size,path}))};

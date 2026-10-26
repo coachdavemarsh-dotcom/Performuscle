@@ -151,20 +151,36 @@ try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)S=Object.assign(S
 try{const h=JSON.parse(localStorage.getItem('pa_handoff')||'null');if(h){S.first=S.first||h.first||'';S.last=S.last||h.last||'';S.email=S.email||h.email||'';S.uploadId=S.uploadId||h.uploadId||''}}catch(e){}
 if(!S.uploadId)S.uploadId=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));
 TESTS.forEach(t=>{S.tests[t.id]=S.tests[t.id]||{files:[],pain:false,skip:false,note:''}});
+// A file still marked "uploading" from an earlier visit was cut off; without this, Send stays blocked forever
+[...S.bloods,...TESTS.flatMap(t=>S.tests[t.id].files)].forEach(f=>{if(f.state==='uploading'){f.state='error';f.err='Interrupted: choose it again'}});
+function mimeOf(file){if(file.type)return file.type;const x=(file.name.split('.').pop()||'').toLowerCase();return {mov:'video/quicktime',mp4:'video/mp4',m4v:'video/mp4',webm:'video/webm','3gp':'video/3gpp',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',heic:'image/heic',heif:'image/heif',webp:'image/webp',pdf:'application/pdf'}[x]||'application/octet-stream'}
+let upQueue=Promise.resolve();
+const pending=()=>[...S.bloods,...TESTS.flatMap(t=>S.tests[t.id].files)].filter(f=>f.state==='uploading').length;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const doneTest=id=>{const t=S.tests[id];return t.files.some(f=>f.state==='done')||t.skip};
 function prog(){const n=TESTS.filter(t=>doneTest(t.id)).length;$('prog').innerHTML=S.sent?'Sent':`<b>${n}</b> of ${TESTS.length} tests`}
 
-function fileRow(f){return `<div><span>${esc(f.name)}</span><em class="${f.state==='error'?'bad':f.state==='done'?'ok':''}">${f.state==='done'?'Uploaded':f.state==='error'?(f.err||'Didn’t upload'):'Uploading…'}</em></div>`}
+function fileRow(f){return `<div><span>${esc(f.name)}</span><em class="${f.state==='error'?'bad':f.state==='done'?'ok':''}">${f.state==='done'?'Uploaded':f.state==='error'?(f.err||'Didn’t upload: choose it again'):f.state==='queued'?'Waiting…':'Uploading…'}${f.state==='error'?` <button type="button" class="link" data-rm="${esc(f.path)}" style="background:none;border:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit">Remove</button>`:''}</em></div>`}
+// Updates file lists and progress in place. Redrawing the whole page mid-upload removed the file
+// pickers, and on iPhone that cancelled every photo after the first one.
+function paint(){
+  TESTS.forEach(t=>{const d=S.tests[t.id],ok=doneTest(t.id),fl=$('fl_'+t.id),card=$('t_'+t.id),st=$('st_'+t.id);
+    if(fl)fl.innerHTML=d.files.map(fileRow).join('');if(card)card.classList.toggle('ok',ok);if(st)st.textContent=ok?(d.skip?'Skipped':'Done'):'To do'});
+  const fb=$('fl_bloods');if(fb)fb.innerHTML=S.bloods.map(fileRow).join('');
+  prog();bindRemove();
+  const m=$('msg'),n=TESTS.filter(t=>doneTest(t.id)).length,p=pending();
+  if(m&&!m.classList.contains('err'))m.textContent=p?`Uploading ${p} file${p===1?'':'s'}. Keep this page open.`:n<TESTS.length?`${TESTS.length-n} test${TESTS.length-n===1?'':'s'} still to do. You can send what you have and finish the rest on the call.`:'All nine done.';
+}
+function bindRemove(){document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{const p=b.dataset.rm;[S.bloods,...TESTS.map(t=>S.tests[t.id].files)].forEach(l=>{const i=l.findIndex(f=>f.path===p&&f.state==='error');if(i>=0)l.splice(i,1)});save();paint()})}
 function testCard(t,i){const d=S.tests[t.id],ok=doneTest(t.id);
-  return `<div class="card test ${ok?'ok':''}" id="t_${t.id}"><div class="th"><div><span class="n">${String(i+1).padStart(2,'0')} · ${esc(t.kind)}</span><h3>${esc(t.name)}</h3></div><span class="st">${ok?(d.skip?'Skipped':'Done'):'To do'}</span></div>
+  return `<div class="card test ${ok?'ok':''}" id="t_${t.id}"><div class="th"><div><span class="n">${String(i+1).padStart(2,'0')} · ${esc(t.kind)}</span><h3>${esc(t.name)}</h3></div><span class="st" id="st_${t.id}">${ok?(d.skip?'Skipped':'Done'):'To do'}</span></div>
    <p class="what">${esc(t.what)}</p>
    <div class="how"><div><b>Send</b><ol>${t.send.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div><div><b>Instructions</b>${esc(t.do)}</div></div>
    ${t.img?`<figure class="ex"><img src="${EX[t.img]}" alt="Example ${esc(t.name.toLowerCase())} photos" loading="lazy"><figcaption>Example: match these angles</figcaption></figure>`:''}
    ${t.vimeo?(openEx[t.id]?exFrame(t):`<div class="exv" id="exv_${t.id}"><button type="button" class="btn" data-ex="${t.id}">▶ Watch the example</button><a class="small" href="https://vimeo.com/${t.vimeo[0]}/${t.vimeo[1]}" target="_blank" rel="noopener">Open on Vimeo</a></div>`):''}
    <div class="upl"><label class="btn ${ok?'':'primary'}">${d.files.length?'Add more':'Upload video or photos'}<input type="file" accept="video/*,image/*" multiple data-up="${t.id}"></label>
     <div class="flags"><button type="button" class="chip" data-pain="${t.id}" aria-pressed="${d.pain}">This hurt</button><button type="button" class="chip" data-skip="${t.id}" aria-pressed="${d.skip}">I can’t do this one</button></div></div>
-   ${d.files.length?`<div class="files">${d.files.map(fileRow).join('')}</div>`:''}
+   <div class="files" id="fl_${t.id}">${d.files.map(fileRow).join('')}</div>
    ${d.pain||d.skip?`<input class="in" data-note="${t.id}" placeholder="${d.pain?'Where did it hurt, and how much (1–10)?':'What stopped you?'}" value="${esc(d.note)}">`:''}</div>`}
 
 const openEx={};
@@ -184,7 +200,7 @@ function render(){
    <div class="need"><span class="eyebrow">You’ll need</span><ul><li>Your phone, and a friend or something to lean it on</li><li>A well-lit space, and minimal clothing if you’re comfortable</li><li>A foam roller (for thoracic rotation) and a clear wall</li><li>A clear space about 3 metres long</li><li>Clips under 20 seconds each (under 50 MB)</li></ul><p class="small">Never push into pain. If a test hurts, stop, tick “This hurt” and tell us where.</p></div></section>
   <section><span class="eyebrow">The tests · ${n} of ${TESTS.length} done</span>${TESTS.map(testCard).join('')}</section>
   <section class="card"><span class="eyebrow">Optional</span><h2>Functional blood work</h2><p class="what">Had bloods done in the last 12 months? Upload the PDF or photos so Dave can review them against your audit before the call.</p>
-   <div class="upl"><label class="btn">Upload results<input type="file" accept="application/pdf,image/*" multiple id="bloodUp"></label></div>${S.bloods.length?`<div class="files">${S.bloods.map(fileRow).join('')}</div>`:''}</section>
+   <div class="upl"><label class="btn">Upload results<input type="file" accept="application/pdf,image/*" multiple id="bloodUp"></label></div><div class="files" id="fl_bloods">${S.bloods.map(fileRow).join('')}</div></section>
   <section class="card"><span class="eyebrow">Your details</span><div class="row2"><div class="f"><label for="first">First name</label><input class="in" id="first" autocomplete="given-name" value="${esc(S.first)}"></div><div class="f"><label for="last">Last name</label><input class="in" id="last" autocomplete="family-name" value="${esc(S.last)}"></div></div>
    <div class="f"><label for="email">Email, the same one you used for your audit</label><input class="in" id="email" type="email" autocomplete="email" value="${esc(S.email)}"></div>
    <label class="consent"><input type="checkbox" id="consent" ${S.consent?'checked':''}><span>I agree that my videos, photos and results are stored securely and seen only by Dave to prepare my coaching.</span></label>
@@ -192,32 +208,41 @@ function render(){
   <p class="care">This is a movement screen for coaching, not a medical assessment. If you have pain that is getting worse, see your doctor or physio.</p>`;
   bind();
 }
-async function upload(file,list,prefix){
+function upload(file,list,prefix){
   const safe=file.name.replace(/[^A-Za-z0-9._-]+/g,'_').slice(-80);
-  const f={name:file.name,size:file.size,type:file.type,path:`${S.uploadId}/${prefix}-${Date.now()}-${safe}`,state:'uploading'};list.push(f);render();
-  if(file.size>MAX){f.state='error';f.err='Over 50 MB: trim it';render();save();return}
-  try{if(LIVE){const r=await fetch(`${SB.url}/storage/v1/object/${SB.bucket}/${f.path}`,{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+SB.key,'Content-Type':file.type||'application/octet-stream','x-upsert':'false'},body:file});if(!r.ok)throw new Error(r.status)}
-    else await new Promise(r=>setTimeout(r,500));f.state='done'}
-  catch(e){f.state='error'}
-  save();render();
+  const f={name:file.name,size:file.size,type:mimeOf(file),path:`${S.uploadId}/${prefix}-${Date.now()}-${list.length}-${safe}`,state:'uploading'};list.push(f);save();paint();
+  if(file.size>MAX){f.state='error';f.err='Over 50 MB: film a shorter clip or at 1080p';save();paint();return}
+  // One at a time, with retries: several big clips at once stall on phone connections
+  upQueue=upQueue.then(async()=>{
+    try{if(LIVE){let r,tries=0;
+        while(true){try{r=await fetch(`${SB.url}/storage/v1/object/${SB.bucket}/${f.path}`,{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+SB.key,'Content-Type':f.type,'x-upsert':'false'},body:file});if(r.ok)break;
+            if(tries>0){const t=await r.text().catch(()=>'');if(/Duplicate|already exists|"409"/i.test(t))break}
+            if(r.status===413||r.status===415){f.err=r.status===413?'Too big: film a shorter clip':'That file type isn’t supported';throw new Error(r.status)}
+            throw new Error(r.status)}
+          catch(e){if(f.err||++tries>=3)throw e;await new Promise(res=>setTimeout(res,1500*tries))}}}
+      else await new Promise(r=>setTimeout(r,500));f.state='done'}
+    catch(e){f.state='error'}
+    save();paint();
+  });
 }
 function bind(){
   document.querySelectorAll('[data-up]').forEach(inp=>inp.addEventListener('change',()=>{const id=inp.dataset.up;[...inp.files].forEach(file=>upload(file,S.tests[id].files,id))}));
-  document.querySelectorAll('[data-pain]').forEach(b=>b.addEventListener('click',()=>{const t=S.tests[b.dataset.pain];t.pain=!t.pain;save();render();setTimeout(()=>{const n=document.querySelector(`[data-note="${b.dataset.pain}"]`);if(n)n.focus()},0)}));
-  document.querySelectorAll('[data-skip]').forEach(b=>b.addEventListener('click',()=>{const t=S.tests[b.dataset.skip];t.skip=!t.skip;save();render()}));
+  document.querySelectorAll('[data-pain]').forEach(b=>b.addEventListener('click',()=>{const t=S.tests[b.dataset.pain];t.pain=!t.pain;save();if(pending()){b.setAttribute('aria-pressed',t.pain);upQueue.then(render);return}render();setTimeout(()=>{const n=document.querySelector(`[data-note="${b.dataset.pain}"]`);if(n)n.focus()},0)}));
+  document.querySelectorAll('[data-skip]').forEach(b=>b.addEventListener('click',()=>{const t=S.tests[b.dataset.skip];t.skip=!t.skip;save();if(pending()){b.setAttribute('aria-pressed',t.skip);paint();upQueue.then(render);return}render()}));
   document.querySelectorAll('[data-note]').forEach(n=>n.addEventListener('input',()=>{S.tests[n.dataset.note].note=n.value;save()}));
   document.querySelectorAll('[data-ex]').forEach(b=>b.addEventListener('click',()=>{const t=TESTS.find(x=>x.id===b.dataset.ex);openEx[t.id]=1;const box=$('exv_'+t.id);box.outerHTML=exFrame(t)}));
   const bu=$('bloodUp');if(bu)bu.addEventListener('change',()=>[...bu.files].forEach(file=>upload(file,S.bloods,'bloods')));
   ['first','last','email'].forEach(k=>{const el=$(k);if(el)el.addEventListener('input',()=>{S[k]=el.value.trim();save()})});
   const c=$('consent');if(c)c.addEventListener('change',()=>{S.consent=c.checked;save()});
   const s=$('send');if(s)s.addEventListener('click',send);
+  bindRemove();
 }
 async function send(){
   const m=$('msg'),err=t=>{m.textContent=t;m.className='msg err'};
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(S.email))return err('Add the email you used for your audit.');
   if(!S.consent)return err('Tick the box to agree to how your files are stored.');
   const all=[...S.bloods,...TESTS.flatMap(t=>S.tests[t.id].files)];
-  if(all.some(f=>f.state==='uploading'))return err('Hang on, a file is still uploading.');
+  if(pending()){const b0=$('send');b0.disabled=true;m.className='msg';m.textContent=`Finishing ${pending()} upload${pending()===1?'':'s'}, then sending…`;await upQueue;b0.disabled=false}
   if(!all.some(f=>f.state==='done')&&!TESTS.some(t=>S.tests[t.id].skip))return err('Upload at least one test first.');
   const tests={};TESTS.forEach(t=>{const d=S.tests[t.id];tests[t.id]={pain:d.pain,skip:d.skip,note:d.note,files:d.files.filter(f=>f.state==='done').map(({name,size,type,path})=>({name,size,type,path}))}});
   const body={email:S.email,name:[S.first,S.last].filter(Boolean).join(' '),upload_id:S.uploadId,tests,files:S.bloods.filter(f=>f.state==='done').map(({name,size,type,path})=>({name,size,type,path,kind:'bloods'}))};
