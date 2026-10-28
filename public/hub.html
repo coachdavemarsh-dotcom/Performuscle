@@ -142,8 +142,10 @@ section{display:flex;flex-direction:column;gap:16px}
 .edu{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .educ{background:var(--surface);border-radius:16px;padding:18px;box-shadow:inset 0 0 0 1px var(--line);border-top:3px solid var(--accent);display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:0}
 .educ.on{grid-column:1/-1}
+.edug{display:flex;flex-direction:column;gap:10px}
+.edug h3{font-family:var(--display);font-size:22px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;color:var(--ink);border-bottom:1px solid var(--line);padding-bottom:6px}
 .educ .tk{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent)}
-.educ b{overflow-wrap:anywhere;font-family:var(--display);font-size:21px;font-weight:600;text-transform:uppercase;line-height:1.1}
+.educ b{overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto;font-family:var(--display);font-size:21px;font-weight:600;text-transform:uppercase;line-height:1.1}
 .educ .au{font-size:13.5px;font-weight:600;color:var(--off)}
 .educ p{font-size:14px;color:var(--off)}
 .educ .vid{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;margin:6px 0}
@@ -353,7 +355,7 @@ const SB={url:'https://opccfbudpovmxfmpanvj.supabase.co',key:'sb_publishable_brN
 const LIVE=/(^|\.)coachdavemarsh\.net$|^localhost$|^127\.0\.0\.1$|netlify\.app$/.test(location.hostname);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let sess=null,prog={},videos={},edu=[],eduOpen=null,view='home',saveTimers={};
+let sess=null,prog={},videos={},edu=[],eduOpen=null,eduF='all',view='home',saveTimers={};
 function jwt(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))}catch(e){return {}}}
 function loadSess(){try{sess=JSON.parse(localStorage.getItem('pm_session')||'null')}catch(e){sess=null}}
 function saveSess(j){sess={access:j.access_token,refresh:j.refresh_token,exp:Date.now()+((+j.expires_in||3600)*1000),email:(sess&&sess.email)||jwt(j.access_token).email};try{localStorage.setItem('pm_session',JSON.stringify(sess))}catch(e){}}
@@ -449,14 +451,21 @@ function libraryHTML(){
    <div class="libf" role="group" aria-label="Filter books">${[['all','All'],...TRACKS.map(t=>[t.id,t.sys])].map(([k,n])=>`<button type="button" data-lib="${k}" class="${libF===k?'on':''}" aria-pressed="${libF===k}">${esc(n)}</button>`).join('')}</div>
    <div class="lib">${list.map(bookCard).join('')}</div>`}
 /* Education library: guest calls, webinars and articles. Stored as hub_content module 'library' (JSON list), edited from the coach dashboard */
-const SAMPLE_EDU=[{t:'The Human Formula to Win',by:'James Silvas',kind:'Guest call',d:'What winners actually do differently, in sport, business and life.',url:'',min:60},{t:'Psychoneuroimmunology',by:'Dr Kat Yu',kind:'Guest call',d:'How your thoughts and stress talk to your immune system, and what to do about it.',url:'',min:60}];
+const EDU_TOPICS=['Fundamentals','Fitness','Nutrition','Mindset','Longevity'];
+const SAMPLE_EDU=[{t:'The Human Formula to Win',by:'James Silvas',kind:'Guest call',topic:'Mindset',d:'What winners actually do differently, in sport, business and life.',url:'',min:60},{t:'Psychoneuroimmunology',by:'Dr Kat Yu',kind:'Guest call',topic:'Longevity',d:'How your thoughts and stress talk to your immune system, and what to do about it.',url:'',min:60}];
+function eduCard(e,i){const em=embed(e.url),open=eduOpen===i;return `<div class="educ ${open?'on':''}"><span class="tk">${esc(e.kind||'Session')}${e.min?` · ${+e.min} min`:''}</span><b>${esc(e.t)}</b>${e.by?`<span class="au">${esc(e.by)}</span>`:''}${e.d?`<p>${esc(e.d)}</p>`:''}
+    ${open&&em?`<div class="vid">${em.f?`<iframe src="${esc(em.f)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(e.t)}"></iframe>`:`<video src="${esc(em.v)}" controls playsinline></video>`}</div>`:''}
+    ${!e.url?'<span class="chip">Coming soon</span>':em?`<button class="btn" data-edu="${i}">${open?'Close':'Watch'}</button>`:/^https:\/\//.test(e.url)?`<a class="btn" href="${esc(e.url)}" target="_blank" rel="noopener">Open</a>`:''}</div>`}
 function eduHTML(){
   if(!edu.length)return '';
-  return `<span class="eyebrow">Education library</span><h2>Guest calls and webinars</h2><p class="lede" style="font-size:15.5px">Extra sessions with Dave and the people he learns from. Watch them any time. They sit alongside your weekly trainings, not instead of them.</p>
-   <div class="edu">${edu.map((e,i)=>{const em=embed(e.url),open=eduOpen===i;return `<div class="educ ${open?'on':''}"><span class="tk">${esc(e.kind||'Session')}${e.min?` · ${+e.min} min`:''}</span><b>${esc(e.t)}</b>${e.by?`<span class="au">${esc(e.by)}</span>`:''}${e.d?`<p>${esc(e.d)}</p>`:''}
-    ${open&&em?`<div class="vid">${em.f?`<iframe src="${esc(em.f)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(e.t)}"></iframe>`:`<video src="${esc(em.v)}" controls playsinline></video>`}</div>`:''}
-    ${!e.url?'<span class="chip">Coming soon</span>':em?`<button class="btn" data-edu="${i}">${open?'Close':'Watch'}</button>`:/^https:\/\//.test(e.url)?`<a class="btn" href="${esc(e.url)}" target="_blank" rel="noopener">Open</a>`:''}</div>`}).join('')}</div>`}
-function bindEdu(){document.querySelectorAll('[data-edu]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.edu;eduOpen=eduOpen===i?null:i;$('eduSec').innerHTML=eduHTML();bindEdu()}))}
+  const topicOf=e=>EDU_TOPICS.includes(e.topic)?e.topic:'Fundamentals';
+  const used=EDU_TOPICS.filter(t=>edu.some(e=>topicOf(e)===t));if(eduF!=='all'&&!used.includes(eduF))eduF='all';
+  const shown=eduF==='all'?used:[eduF];
+  return `<span class="eyebrow">Education library</span><h2>Guest calls and webinars</h2><p class="lede" style="font-size:15.5px">Extra sessions with Dave and the people he learns from, sorted by topic. Watch them any time. They sit alongside your weekly trainings, not instead of them.</p>
+   ${used.length>1?`<div class="libf" role="group" aria-label="Filter by topic">${[['all','All'],...used.map(t=>[t,t])].map(([k,n])=>`<button type="button" data-eduf="${esc(k)}" class="${eduF===k?'on':''}" aria-pressed="${eduF===k}">${esc(n)}</button>`).join('')}</div>`:''}
+   ${shown.map(t=>`<div class="edug"><h3>${esc(t)}</h3><div class="edu">${edu.map((e,i)=>topicOf(e)===t?eduCard(e,i):'').join('')}</div></div>`).join('')}`}
+function bindEdu(){document.querySelectorAll('[data-edu]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.edu;eduOpen=eduOpen===i?null:i;$('eduSec').innerHTML=eduHTML();bindEdu()}));
+  document.querySelectorAll('[data-eduf]').forEach(b=>b.addEventListener('click',()=>{eduF=b.dataset.eduf;eduOpen=null;$('eduSec').innerHTML=eduHTML();bindEdu()}))}
 function bindLibrary(){
   document.querySelectorAll('[data-lib]').forEach(b=>b.addEventListener('click',()=>{libF=b.dataset.lib;$('libSec').innerHTML=libraryHTML();bindLibrary()}));
   document.querySelectorAll('#libSec [data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
