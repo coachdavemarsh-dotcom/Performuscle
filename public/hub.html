@@ -139,6 +139,15 @@ section{display:flex;flex-direction:column;gap:16px}
 .book p{font-size:14px;color:var(--off)}
 .book .tags{font-size:12.5px;color:var(--muted);margin-top:2px}
 .libf{display:flex;gap:6px;flex-wrap:wrap}
+.edu{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.educ{background:var(--surface);border-radius:16px;padding:18px;box-shadow:inset 0 0 0 1px var(--line);border-top:3px solid var(--accent);display:flex;flex-direction:column;gap:6px;align-items:flex-start;min-width:0}
+.educ.on{grid-column:1/-1}
+.educ .tk{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.educ b{overflow-wrap:anywhere;font-family:var(--display);font-size:21px;font-weight:600;text-transform:uppercase;line-height:1.1}
+.educ .au{font-size:13.5px;font-weight:600;color:var(--off)}
+.educ p{font-size:14px;color:var(--off)}
+.educ .vid{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;margin:6px 0}
+.educ .vid iframe,.educ .vid video{width:100%;height:100%;border:0;display:block}
 .libf button{border:0;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);border-radius:999px;padding:7px 15px;font-size:13px;font-weight:600;color:var(--off);cursor:pointer}
 .libf button.on{background:var(--ink);color:var(--on);box-shadow:none}
 .deeper{display:flex;flex-direction:column;gap:10px}
@@ -312,19 +321,20 @@ const ROADMAP=[
  {name:'Lead from the heart',line:'Purpose, polarity, devotion and service.'},
  {name:'Integrate',line:'Presence under pressure, then three weeks to bring it all together.'}];
 const PATH_WEEKS={regulate:1,awareness:2,halts:2,sleep:3,recovery:4,nutrition:5,strength:6,mobility:7,values:8,identity:9,limits:10,boundaries:11,metabolism:12,hormones:13,growth:14,release:15,grief:16,purpose:17,polarity:18,devotion:19,service:20,presence:21};
-let path={start:null,weeks:{}};
+let path={start:null};
 /* Further reading: books that go deeper on each training. tr = training ids */
 const BOOKS=[{"t": "The Body Keeps the Score", "a": "Bessel van der Kolk", "w": "How stress and trauma live in the body, and why healing starts there.", "tr": ["regulate", "release"]}, {"t": "Breath", "a": "James Nestor", "w": "Why how you breathe changes how you feel, sleep and perform.", "tr": ["regulate", "presence"]}, {"t": "Wherever You Go, There You Are", "a": "Jon Kabat-Zinn", "w": "Short, practical chapters on paying attention to your life as it happens.", "tr": ["awareness"]}, {"t": "The Power of Now", "a": "Eckhart Tolle", "w": "Stepping out of the running commentary in your head and into the present.", "tr": ["awareness", "presence"]}, {"t": "Why We Sleep", "a": "Matthew Walker", "w": "What sleep does for your body and brain, and what you lose without it.", "tr": ["sleep"]}, {"t": "Sleep", "a": "Nick Littlehales", "w": "A practical, sport-tested way to plan sleep in cycles rather than hours.", "tr": ["sleep", "recovery"]}, {"t": "Good to Go", "a": "Christie Aschwanden", "w": "What the science actually says about recovery, and which fads to ignore.", "tr": ["recovery"]}, {"t": "Built to Move", "a": "Kelly Starrett & Juliet Starrett", "w": "Ten simple daily habits to keep your body moving well for life.", "tr": ["mobility"]}, {"t": "Starting Strength", "a": "Mark Rippetoe", "w": "The classic guide to the big barbell lifts and how to progress them.", "tr": ["strength"]}, {"t": "Outlive", "a": "Peter Attia", "w": "Training, nutrition and sleep for a long healthspan, with zone 2 and strength at the core.", "tr": ["metabolism", "strength"]}, {"t": "Burn", "a": "Herman Pontzer", "w": "How your body really spends energy, and what that means for weight and health.", "tr": ["metabolism", "nutrition"]}, {"t": "In Defense of Food", "a": "Michael Pollan", "w": "A clear, common-sense case for eating real food.", "tr": ["nutrition"]}, {"t": "Why Zebras Don’t Get Ulcers", "a": "Robert Sapolsky", "w": "How chronic stress hormones affect sleep, gut, immunity and mood.", "tr": ["hormones", "regulate"]}, {"t": "Dare to Lead", "a": "Brené Brown", "w": "Naming your core values and living them when it’s uncomfortable.", "tr": ["values", "boundaries"]}, {"t": "Atomic Habits", "a": "James Clear", "w": "Building identity-based habits that stick, one small action at a time.", "tr": ["identity", "devotion"]}, {"t": "The Chimp Paradox", "a": "Steve Peters", "w": "A simple model for managing the emotional, reactive part of your mind.", "tr": ["limits", "presence"]}, {"t": "No More Mr Nice Guy", "a": "Robert Glover", "w": "Breaking the habit of seeking approval and learning to ask for what you need.", "tr": ["boundaries", "polarity"]}, {"t": "Mindset", "a": "Carol Dweck", "w": "Why believing you can grow changes how you meet challenge and failure.", "tr": ["growth", "limits"]}, {"t": "Peak", "a": "Anders Ericsson & Robert Pool", "w": "How deliberate practice at the edge of your ability builds real skill.", "tr": ["growth", "strength"]}, {"t": "Letting Go", "a": "David R. Hawkins", "w": "A practical method for surrendering feelings instead of suppressing them.", "tr": ["release"]}, {"t": "When the Body Says No", "a": "Gabor Maté", "w": "The link between hidden stress, emotion and the immune system.", "tr": ["grief", "release"]}, {"t": "It’s OK That You’re Not OK", "a": "Megan Devine", "w": "Grief without the pressure to fix it or move on.", "tr": ["grief"]}, {"t": "Man’s Search for Meaning", "a": "Viktor Frankl", "w": "Finding purpose even in the hardest circumstances.", "tr": ["purpose", "grief"]}, {"t": "The Way of the Superior Man", "a": "David Deida", "w": "Masculine and feminine energy, purpose and presence in relationships.", "tr": ["polarity", "purpose"]}, {"t": "King, Warrior, Magician, Lover", "a": "Robert Moore & Douglas Gillette", "w": "Four mature masculine archetypes and their shadows.", "tr": ["polarity", "identity"]}, {"t": "Discipline Is Destiny", "a": "Ryan Holiday", "w": "Self-discipline as a daily practice of character, not punishment.", "tr": ["devotion", "boundaries"]}, {"t": "Give and Take", "a": "Adam Grant", "w": "Why generous people often succeed, and how to give without burning out.", "tr": ["service"]}, {"t": "Leaders Eat Last", "a": "Simon Sinek", "w": "Service and trust as the foundation of leadership.", "tr": ["service", "purpose"]}, {"t": "The Inner Game of Tennis", "a": "W. Timothy Gallwey", "w": "Quieting the inner critic so the body can perform. Not really about tennis.", "tr": ["presence", "limits"]}];
 let libF='all';
 const DAY=864e5;
 function dayOf(iso){const d=new Date(iso+'T00:00:00');return isNaN(d)?null:d}
 function todayD(){const t=new Date();t.setHours(0,0,0,0);return t}
-function weekOf(id){return +((path.weeks||{})[id])||PATH_WEEKS[id]||1}
-function opensOn(id){const st=dayOf(path.start)||todayD();return new Date(st.getTime()+(weekOf(id)-1)*7*DAY)}
+function weekOf(id){return PATH_WEEKS[id]||1}
+/* One fixed course: each week opens that week's training and the next one, so clients are always up to two weeks ahead */
+function opensOn(id){const st=dayOf(path.start)||todayD();return new Date(st.getTime()+Math.max(0,weekOf(id)-2)*7*DAY)}
 function curWeek(){const st=dayOf(path.start)||todayD();return Math.max(1,Math.min(24,Math.floor((todayD()-st)/(7*DAY))+1))}
-function isOpen(id){if(path.allOpen)return true;const d=prog[id];if(d&&(d.watched||Object.keys(d.answers||{}).length||(d.days||[]).some(Boolean)||d.reflection))return true;return todayD()>=opensOn(id)}
+function isOpen(id){if(path.allOpen)return true;const d=prog[id];if(d&&(d.watched||Object.keys(d.answers||{}).length||(d.days||[]).some(Boolean)||d.reflection))return true;return weekOf(id)<=curWeek()+1}
 const fmtD=d=>d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
-function lockMsg(id){return `Opens in week ${weekOf(id)} · ${fmtD(opensOn(id))}`}
+function lockMsg(id){return `Opens ${fmtD(opensOn(id))}`}
 function byMonth(){const out=[[],[],[],[],[],[]];MODULES.forEach(m=>{const w=weekOf(m.id);out[Math.min(5,Math.ceil(w/4)-1)].push(m)});out.forEach(a=>a.sort((x,y)=>weekOf(x.id)-weekOf(y.id)));return out}
 function pathHTML(){
   const wk=curWeek(),mi=Math.min(5,Math.ceil(wk/4)-1),months=byMonth(),cur=ROADMAP[mi];
@@ -343,7 +353,7 @@ const SB={url:'https://opccfbudpovmxfmpanvj.supabase.co',key:'sb_publishable_brN
 const LIVE=/(^|\.)coachdavemarsh\.net$|^localhost$|^127\.0\.0\.1$|netlify\.app$/.test(location.hostname);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let sess=null,prog={},videos={},view='home',saveTimers={};
+let sess=null,prog={},videos={},edu=[],eduOpen=null,view='home',saveTimers={};
 function jwt(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))}catch(e){return {}}}
 function loadSess(){try{sess=JSON.parse(localStorage.getItem('pm_session')||'null')}catch(e){sess=null}}
 function saveSess(j){sess={access:j.access_token,refresh:j.refresh_token,exp:Date.now()+((+j.expires_in||3600)*1000),email:(sess&&sess.email)||jwt(j.access_token).email};try{localStorage.setItem('pm_session',JSON.stringify(sess))}catch(e){}}
@@ -418,16 +428,17 @@ function renderHome(){
    <div class="card level"><div class="ringwrap">${ring(T.pct,150,10,'#C9A56B')}<div class="ringtxt"><b>${T.pct}%</b><span>Complete</span></div></div>
     <div class="lvl"><span class="eyebrow">Level ${T.li+1} of 5</span><span class="name">${T.level}</span><div class="bar"><i style="width:${T.lvlPct}%"></i></div><span class="small">${T.next?`${T.toNext} XP to ${T.next[0]}`:'Top level reached. Soul Meets Strength.'}</span>
      <div class="stats"><span><b>${T.xp}</b> XP</span><span><b>${T.streak}</b>-day streak</span><span><b>${T.done}</b> of ${MODULES.length} complete</span></div>
-     <div class="badges">${MODULES.map(m=>{const s=stats(m),t=trackOf(m.track);return `<span class="bdg ${s.done?'on':''}" style="--c:${t.c}" title="${esc(m.title)}${s.done?' · complete':''}">${m.short}</span>`}).join('')}</div></div></div></div></section>
+</div></div></div></section>
   ${pathHTML()}
   <section><span class="eyebrow">Every training</span><h2>Three tracks</h2><div class="tracks">${TRACKS.map(t=>{const ms=MODULES.filter(m=>m.track===t.id),p=Math.round(ms.reduce((a,m)=>a+stats(m).pct,0)/ms.length);
     return `<div class="track" style="--c:${t.c}"><div class="th"><div><span class="tk">${t.sys}</span><h3>${t.key}</h3></div><div class="mini">${ring(p,56,5,t.c)}<b>${p}%</b></div></div><p>${t.line}</p>
      ${(FW_SOON[t.id]||[]).length?`<p class="soonlist"><b>Coming soon:</b> ${(FW_SOON[t.id]||[]).map(x=>esc(FW_SOON_FULL[x]||x)).join(' · ')}</p>`:''}
      ${ms.map(m=>{const s=stats(m);if(!isOpen(m.id))return `<div class="mod locked"><span class="mt"><b>${esc(m.title)}</b><em>Week ${weekOf(m.id)}</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><span class="chip">${esc(lockMsg(m.id))}</span></div>`;return `<button class="mod" data-open="${m.id}"><span class="mt"><b>${esc(m.title)}</b><em>${(videos[m.id]&&videos[m.id].minutes)||m.minutes} min</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><div class="bar"><i style="width:${s.pct}%"></i></div><span class="chip ${s.done?'done':''}">${s.done?'Complete':s.pct?`In progress · ${s.pct}%`:'Start'}</span></button>`}).join('')}</div>`}).join('')}</div></section>
+  <section id="eduSec">${eduHTML()}</section>
   <section id="libSec">${libraryHTML()}</section>
   <p class="care">This is coaching, not therapy. If something heavy comes up while you work through these, tell Dave and we’ll make sure you have the right support.</p>`;
   document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
-  bindLibrary();drawFramework();
+  bindLibrary();bindEdu();drawFramework();
 }
 function bookCard(b){const m=MODULES.find(x=>x.id===b.tr[0]),c=m?trackOf(m.track).c:'var(--accent)';
   return `<div class="book" style="--c:${c}"><b>${esc(b.t)}</b><span class="au">${esc(b.a)}</span><p>${esc(b.w)}</p><span class="tags">Goes with ${b.tr.map(id=>isOpen(id)?`<button class="linkish" data-open="${id}">${esc(FW_NAME[id]||id)}</button>`:`<span>${esc(FW_NAME[id]||id)}</span>`).join(' · ')}</span></div>`}
@@ -437,6 +448,15 @@ function libraryHTML(){
   return `<span class="eyebrow">Go deeper</span><h2>Further reading</h2><p class="lede" style="font-size:15.5px">Books ${'Dave'} rates for each part of the work. Read what pulls at you. None of it is homework.</p>
    <div class="libf" role="group" aria-label="Filter books">${[['all','All'],...TRACKS.map(t=>[t.id,t.sys])].map(([k,n])=>`<button type="button" data-lib="${k}" class="${libF===k?'on':''}" aria-pressed="${libF===k}">${esc(n)}</button>`).join('')}</div>
    <div class="lib">${list.map(bookCard).join('')}</div>`}
+/* Education library: guest calls, webinars and articles. Stored as hub_content module 'library' (JSON list), edited from the coach dashboard */
+const SAMPLE_EDU=[{t:'The Human Formula to Win',by:'James Silvas',kind:'Guest call',d:'What winners actually do differently, in sport, business and life.',url:'',min:60},{t:'Psychoneuroimmunology',by:'Dr Kat Yu',kind:'Guest call',d:'How your thoughts and stress talk to your immune system, and what to do about it.',url:'',min:60}];
+function eduHTML(){
+  if(!edu.length)return '';
+  return `<span class="eyebrow">Education library</span><h2>Guest calls and webinars</h2><p class="lede" style="font-size:15.5px">Extra sessions with Dave and the people he learns from. Watch them any time. They sit alongside your weekly trainings, not instead of them.</p>
+   <div class="edu">${edu.map((e,i)=>{const em=embed(e.url),open=eduOpen===i;return `<div class="educ ${open?'on':''}"><span class="tk">${esc(e.kind||'Session')}${e.min?` · ${+e.min} min`:''}</span><b>${esc(e.t)}</b>${e.by?`<span class="au">${esc(e.by)}</span>`:''}${e.d?`<p>${esc(e.d)}</p>`:''}
+    ${open&&em?`<div class="vid">${em.f?`<iframe src="${esc(em.f)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(e.t)}"></iframe>`:`<video src="${esc(em.v)}" controls playsinline></video>`}</div>`:''}
+    ${!e.url?'<span class="chip">Coming soon</span>':em?`<button class="btn" data-edu="${i}">${open?'Close':'Watch'}</button>`:/^https:\/\//.test(e.url)?`<a class="btn" href="${esc(e.url)}" target="_blank" rel="noopener">Open</a>`:''}</div>`}).join('')}</div>`}
+function bindEdu(){document.querySelectorAll('[data-edu]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.edu;eduOpen=eduOpen===i?null:i;$('eduSec').innerHTML=eduHTML();bindEdu()}))}
 function bindLibrary(){
   document.querySelectorAll('[data-lib]').forEach(b=>b.addEventListener('click',()=>{libF=b.dataset.lib;$('libSec').innerHTML=libraryHTML();bindLibrary()}));
   document.querySelectorAll('#libSec [data-open]').forEach(b=>b.addEventListener('click',()=>openModule(b.dataset.open)));
@@ -532,15 +552,15 @@ const SAMPLE_PROG={regulate:{watched:true,answers:{0:'Jaw and shoulders. I clenc
 async function boot(){
   if(!LIVE){try{prog=JSON.parse(localStorage.getItem('hub_preview')||'null')||SAMPLE_PROG}catch(e){prog=SAMPLE_PROG}
     const today=new Date().toISOString().slice(0,10),yest=new Date(Date.now()-864e5).toISOString().slice(0,10);if(prog===SAMPLE_PROG)prog.regulate.touched=[yest,today];
-    path={start:new Date(Date.now()-10*864e5).toISOString().slice(0,10),weeks:{}};
+    path={start:new Date(Date.now()-10*864e5).toISOString().slice(0,10)};edu=SAMPLE_EDU;
     renderHome();return}
   loadSess();if(!sess){renderSignin();return}
   $('signOut').hidden=false;
   try{
     const [p,c,pl]=await Promise.all([authFetch('/rest/v1/client_progress?select=module,data'),authFetch('/rest/v1/hub_content?select=module,video_url,minutes'),authFetch('/rest/v1/client_plans?select=plan&published=eq.true&order=updated_at.desc&limit=1')]);
-    if(pl.ok){const rows=await pl.json();const hp=rows[0]&&rows[0].plan&&rows[0].plan.hubPath;if(hp&&hp.start)path={start:hp.start,weeks:hp.weeks||{},allOpen:!!hp.allOpen}}
+    if(pl.ok){const rows=await pl.json();const hp=rows[0]&&rows[0].plan&&rows[0].plan.hubPath;if(hp&&hp.start)path={start:hp.start,allOpen:!!hp.allOpen}}
     if(p.ok)(await p.json()).forEach(r=>{prog[r.module]=r.data||{}});
-    if(c.ok)(await c.json()).forEach(r=>{videos[r.module]={url:r.video_url,minutes:r.minutes}});
+    if(c.ok)(await c.json()).forEach(r=>{if(r.module==='library'){try{edu=JSON.parse(r.video_url||'[]')||[]}catch(e){edu=[]}}else videos[r.module]={url:r.video_url,minutes:r.minutes}});
     renderHome();
   }catch(e){if(e.message==='signin')renderSignin('Your session ended. Sign in again.');else{$('app').innerHTML='<p class="small">Your Hub didn’t load. Refresh to try again.</p>'}}
 }

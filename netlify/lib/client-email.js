@@ -13,7 +13,7 @@ function steps(done) {
   }).join('');
 }
 
-function build({ preheader, eyebrow, title, lede, button, done, extra }) {
+function build({ preheader, eyebrow, title, lede, button, done, extra, list, foot }) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"></head>
 <body style="margin:0;padding:0;background:#F1EDE4;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(preheader)}</div>
@@ -27,14 +27,16 @@ function build({ preheader, eyebrow, title, lede, button, done, extra }) {
 <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:999px;background:#F4F1EA;"><a href="${button[1]}" style="display:inline-block;padding:15px 30px;font:700 15px Arial,sans-serif;color:#141413;text-decoration:none;border-radius:999px;">${esc(button[0])} &rarr;</a></td></tr></table>
 </td></tr>
 <tr><td style="background:#FBFAF6;padding:28px 32px 18px;">
-<p style="margin:0 0 14px;font:700 11px Arial,sans-serif;letter-spacing:3px;text-transform:uppercase;color:#8A6A3B;">Where you are</p>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${steps(done)}</table>
+${list ? `<p style="margin:0 0 14px;font:700 11px Arial,sans-serif;letter-spacing:3px;text-transform:uppercase;color:#8A6A3B;">${esc(list[0])}</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${list[1].map(t => `<tr><td width="22" style="padding:0 0 10px;vertical-align:top;font:700 15px Arial,sans-serif;color:#C9A56B;">&bull;</td><td style="padding:0 0 10px;font:15px/1.5 Arial,sans-serif;color:#141413;">${esc(t)}</td></tr>`).join('')}</table>`
+  : `<p style="margin:0 0 14px;font:700 11px Arial,sans-serif;letter-spacing:3px;text-transform:uppercase;color:#8A6A3B;">Where you are</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${steps(done)}</table>`}
 ${extra ? `<p style="margin:10px 0 0;font:14px/1.6 Arial,sans-serif;color:#4A4740;">${extra}</p>` : ''}
 <p style="margin:20px 0 0;font:15px/1.6 Arial,sans-serif;color:#141413;">Dave</p>
 </td></tr>
 <tr><td style="background:#141413;border-radius:0 0 20px 20px;padding:22px 32px;">
 <p style="margin:0 0 6px;font:600 15px 'Oswald','Arial Narrow',Arial,sans-serif;letter-spacing:1px;text-transform:uppercase;color:#C9A56B;">Stand in Your Standard.</p>
-<p style="margin:0;font:12px/1.6 Arial,sans-serif;color:#8E887C;">You’re getting this because you took the Performance Audit at coachdavemarsh.net. Just reply to this email to reach Dave.</p>
+<p style="margin:0;font:12px/1.6 Arial,sans-serif;color:#8E887C;">${esc(foot || 'You’re getting this because you took the Performance Audit at coachdavemarsh.net.')} Just reply to this email to reach Dave.</p>
 </td></tr></table></td></tr></table></body></html>`;
 }
 
@@ -68,6 +70,14 @@ const TEMPLATES = {
     html: build({ preheader: 'Your audit and screen are in. Time to talk.', eyebrow: 'Ready when you are', title: `${FIRST(n)}, let’s talk.`,
       lede: 'Your audit and movement screen are both in, and Dave has been through them. Book your strategy call and we’ll map out your six months together.',
       button: ['Book your strategy call', CALL], done: 2 })
+  }),
+  // Client Hub: a training's week has passed and it isn't complete (at most one a week)
+  training: (n, titles) => ({
+    subject: titles.length > 1 ? `${titles.length} trainings are waiting in your Hub` : `${titles[0].split(':')[0]} is waiting in your Hub`,
+    html: build({ preheader: 'Pick up where you left off. About 20 minutes.', eyebrow: 'Client Hub', title: `${FIRST(n)}, pick it back up.`,
+      lede: `Life gets loud, and that’s fine. ${titles.length > 1 ? 'These trainings are' : 'This training is'} still open and waiting for you. Watch the video, answer the worksheet and start the practice. About 20 minutes. New trainings keep opening each week, so the sooner you catch up, the easier it gets.`,
+      button: ['Open your Hub', 'https://coachdavemarsh.net/hub'], list: ['Still to finish', titles],
+      foot: 'You’re getting this because you’re in the Soul Meets Strength Client Hub.' })
   })
 };
 
