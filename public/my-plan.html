@@ -224,6 +224,51 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
 .hl-out .k{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
 .hl-need{display:flex;flex-direction:column;gap:2px}.hl-need b{font-size:15.5px}.hl-need span{font-size:14.5px;color:var(--off);line-height:1.45}
 @media (max-width:460px){.hl span{font-size:11px}.hl{padding:12px 2px}}
+
+.row{display:flex;gap:10px;flex-wrap:wrap}
+/* Tabs */
+.tabs{display:flex;gap:4px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);border-radius:999px;padding:4px;align-self:flex-start;position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:5;max-width:100%;overflow-x:auto}
+.tabs button{border:0;background:transparent;border-radius:999px;padding:10px 20px;font-weight:700;font-size:14.5px;color:var(--off);cursor:pointer;white-space:nowrap}
+.tabs button.on{background:var(--ink);color:var(--on)}
+.tabbody{display:flex;flex-direction:column;gap:56px;margin-top:-24px}
+/* This week hero */
+.whero{background:#141413;color:#F4F1EA;border-radius:24px;padding:32px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;align-items:center}
+.whero h1{font-size:clamp(34px,5.5vw,56px)}
+.wh-l{display:flex;flex-direction:column;gap:14px;min-width:0}
+.perf{background:var(--surface);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:6px}
+.perf .k,.num .k,.card .k,.wins .k{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.perf b{font-family:var(--display);font-size:64px;font-weight:600;line-height:1}.perf b small{font-size:22px;color:var(--muted);margin-left:2px}
+.perf .pt{font-size:13.5px;color:var(--off)}.perf .pt strong{color:var(--accent-hi)}
+.pbar{position:relative;height:8px;border-radius:4px;background:var(--surface-3);margin-top:8px}.pbar i{position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--accent)}.pbar s{position:absolute;top:-5px;width:3px;height:18px;border-radius:2px;background:var(--ink);transform:translateX(-50%)}
+/* Numbers and wins */
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.num{background:var(--surface);border-radius:18px;padding:18px 20px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:4px;min-width:0}
+.num b{font-family:var(--display);font-size:44px;font-weight:600;line-height:1.05}.num b small{font-size:17px;color:var(--muted);margin-left:3px;font-weight:500}.num b.none{color:var(--muted)}
+.num em,.test em{font-style:normal;font-size:13px;font-weight:600}
+em.up{color:#3E7B4F}em.dn{color:var(--bad)}em.dz{color:var(--muted);font-weight:500}
+.wins{background:var(--surface);border-radius:18px;padding:18px 20px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:10px}
+.win{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:baseline;font-size:15px}.win i{color:var(--accent);font-style:normal}.win small{color:var(--muted);font-size:12.5px}.win em{font-style:normal;font-size:12.5px;color:var(--muted)}
+/* Check-in */
+.ciform{gap:18px}.ct{font-family:var(--display);font-size:22px;font-weight:600;text-transform:uppercase}
+.cig{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.cig .f{justify-content:space-between}
+.lab{font-size:13px;font-weight:600;color:var(--off)}.opt-lab{font-weight:400;color:var(--muted)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{border:0;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line);border-radius:12px;min-width:46px;padding:11px 14px;font-weight:700;font-size:15px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--ink);color:var(--on);box-shadow:none}
+.bios{display:flex;flex-direction:column;gap:10px}
+.bio{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.bn{display:flex;flex-direction:column}.bn b{font-size:15.5px}.bn small{font-size:12.5px;color:var(--muted)}
+.in.note{font-family:var(--text);font-size:16px;min-height:0}
+.cidone{flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap}.cidone>div{display:flex;flex-direction:column;gap:4px}
+/* Trends and tests */
+.trends{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.spark{width:100%;height:auto;display:block;margin-top:6px;overflow:visible}.sparkx{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.tests{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.test b{font-family:var(--display);font-size:40px;font-weight:600;line-height:1.05}.test b small{font-size:16px;color:var(--muted);font-weight:500}
+.hist{display:flex;flex-direction:column;background:var(--surface);border-radius:18px;box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.hr{display:grid;grid-template-columns:1.1fr repeat(5,1fr);gap:8px;padding:11px 18px;font-size:14px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.hr.hh{border-top:0;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+@media (max-width:760px){.whero{grid-template-columns:1fr;padding:24px}.bio{grid-template-columns:1fr}.hr{grid-template-columns:1.2fr repeat(3,1fr)}.hr span:nth-child(5),.hr span:nth-child(6){display:none}.tabs button{padding:9px 14px}}
 </style>
 </head>
 <body>
@@ -379,11 +424,17 @@ function bindHalts(){
   s.querySelectorAll('[data-hl]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.hl;if(haltsPick.has(k))haltsPick.delete(k);else haltsPick.add(k);s.innerHTML=haltsHTML();bindHalts()}));
   $('hlLog').addEventListener('click',()=>{const j=jObj();j.halts=(j.halts||[]).concat([{at:new Date().toISOString(),l:HALTS.map(h=>h[0]).filter(k=>haltsPick.has(k)).join('')}]).slice(-200);haltsPick=new Set();s.innerHTML=haltsHTML();bindHalts();const m=$('hlMsg');if(m)m.textContent='Logged. '+m.textContent;saveJournal()});
 }
-const HUB_SAMPLE={regulate:{pct:58,xp:150,done:false},identity:{pct:12,xp:25,done:false}};
+const HUB_SAMPLE={regulate:{pct:100,xp:300,done:true},identity:{pct:12,xp:25,done:false}};
+function SAMPLE_CI(){const d=n=>{const t=new Date(Date.now()-n*864e5);return t.toISOString().slice(0,10)};const mk=(n,w,wa,ne,rhr,hrv,r)=>({d:d(n),w,waist:wa,neck:ne,rhr,hrv,r:Object.fromEntries(BIO.map((b,i)=>[b[0],r[i]]))});
+  const L=[mk(29,88.4,96,40,62,48,[2,2,2,3,3,2,3,3]),mk(22,87.6,95,40,61,51,[3,3,2,3,3,3,3,3]),mk(15,87.1,94,40,59,55,[3,3,3,4,3,3,4,4]),mk(8,86.5,93,40,58,57,[4,3,3,4,4,3,4,4])];
+  const c={height:182,sex:'m',list:[]};L.forEach(e=>{e.bf=navyBF('m',182,e.waist,e.neck);e.score=bioScore(e,c.list);c.list.push(e)});return c}
+const SAMPLE_CP={targetScore:7.5,targets:['Seven hours of sleep, five nights a week','Waist down 4 cm by the end of the phase','Three strength sessions a week, every week'],habits:['Wake at 6:15 every day, light outside within 30 minutes','Protein at every meal, 40 g at breakfast','Phone out of the bedroom'],tests:[{d:new Date(Date.now()-27*864e5).toISOString().slice(0,10),type:'vo2',v:41.5},{d:new Date(Date.now()-3*864e5).toISOString().slice(0,10),type:'vo2',v:43.2},{d:new Date(Date.now()-27*864e5).toISOString().slice(0,10),type:'strength',name:'Trap-bar deadlift',v:140,u:'kg'},{d:new Date(Date.now()-3*864e5).toISOString().slice(0,10),type:'strength',name:'Trap-bar deadlift',v:150,u:'kg'},{d:new Date(Date.now()-26*864e5).toISOString().slice(0,10),type:'screen',v:62}],wins:[{d:new Date(Date.now()-5*864e5).toISOString().slice(0,10),t:'Slept seven hours five nights in a row'}]};
 async function loadHub(){
   if(!LIVE){hub=HUB_SAMPLE}else{try{const r=await authFetch('/rest/v1/client_progress?select=module,data');hub={};if(r.ok)(await r.json()).forEach(x=>{hub[x.module]=x.data||{}})}catch(e){hub={}}}
   if(hub&&hub.journal){const loc=journal;journal=hub.journal;journal.weeks=journal.weeks||{};
     if(loc&&loc!==journal){Object.entries(loc.weeks||{}).forEach(([k,v])=>{if((v.t||'').trim()||Object.keys(v.c||{}).length)journal.weeks[k]=v});if(loc.halts)journal.halts=(journal.halts||[]).concat(loc.halts)}}
+  if(hub&&hub.checkins&&!(ci&&ci.list&&ci.list.length))ci=hub.checkins;
+  const ae=document.activeElement;if(plan&&!(ae&&/^(INPUT|TEXTAREA)$/.test(ae.tagName))){renderPlan();return}
   const el=$('hubSec');if(el)el.innerHTML=hubHTML();
   const hs=$('haltsSec');if(hs){hs.innerHTML=haltsHTML();bindHalts()}
   const ws=$('weekSec');if(ws&&plan&&!(document.activeElement&&document.activeElement.id==='jText')){ws.innerHTML=thisWeekHTML();bindWeek()}
@@ -406,57 +457,191 @@ function allSpokes(){
   if(!lp&&plan.systems){lp=['body','mind'].flatMap(k=>((plan.systems[k]||{}).spokes||[]).map(x=>({...x,side:k,short:x.name})))}
   return (lp||[]).map(x=>x.id==='peptides'?{...x,short:'Supplements',name:'Supplements',about:'Which supplements earn a place in your plan, matched to your bloods and goals.'}:x).map(x=>({...x,short:x.short||x.name,sysName:x.side==='body'?'Body':'Mind'}));
 }
-function renderPlan(){
-  if(plan.kind==='existing')return renderExisting();
-  $('who').hidden=false;$('whoName').textContent=plan.client.name;
-  const b=plan.baseline,ph=plan.phase;
-  const card=x=>`<div class="dom ${x.k===b.focus?'low':''}"><span class="dn">${x.k}${x.k===b.focus?'<small>First focus</small>':''}</span><span class="dv">${x.v==null?'–':x.v.toFixed(1)}<span>/10</span></span><div class="tr"><i style="width:${(x.v||0)*10}%"></i></div></div>`;
-  $('app').innerHTML=`${needPw?`<div class="notice"><b>Set a password for next time</b><span class="small" style="color:var(--off)">You're signed in with your email link. Choose a password so you can sign in straight away next time.</span><form class="row" id="pwForm"><div class="f"><label for="newPw">New password</label><input class="in" id="newPw" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters"></div><button class="btn primary" type="submit">Save password</button></form><p class="msg" id="pwMsg"></p></div>`:''}
-  <section><span class="eyebrow">Your plan · published ${new Date(plan.publishedAt).toLocaleDateString('en-AU',{day:'numeric',month:'long'})}</span><h1>${esc(plan.client.first)}, here's where you are.</h1><p class="lede">Built from your audit, your numbers and our first call. This is the plan we work from, and it updates as you move through it.</p></section>
+/* ---------- Three tabs: This week · My plan · Progress ---------- */
+const TABS=[['week','This week'],['plan','My plan'],['progress','Progress']];
+let tab=TABS.some(t=>t[0]===location.hash.slice(1))?location.hash.slice(1):'week';
+function tabsHTML(){return `<nav class="tabs" role="tablist" aria-label="My Plan sections">${TABS.map(([k,n])=>`<button type="button" role="tab" id="tab_${k}" aria-selected="${tab===k}" class="${tab===k?'on':''}" data-tab="${k}">${n}</button>`).join('')}</nav>`}
+function bindTabs(){document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)))}
+function go(k){tab=k;try{history.replaceState(null,'','#'+k)}catch(e){}renderPlan();window.scrollTo({top:0})}
+function pwHTML(){return needPw?`<div class="notice"><b>Set a password for next time</b><span class="small" style="color:var(--off)">You're signed in with your email link. Choose a password so you can sign in straight away next time.</span><form class="row" id="pwForm"><div class="f"><label for="newPw">New password</label><input class="in" id="newPw" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters"></div><button class="btn primary" type="submit">Save password</button></form><p class="msg" id="pwMsg"></p></div>`:''}
+
+/* ---------- Check-ins: the client logs weekly; body fat by the US Navy method; biofeedback score out of 100 ---------- */
+const BIO=[['sleep','Sleep','Poor','Deep, restful'],['energy','Energy','Flat','Full of it'],['calm','Stress','Overwhelmed','Calm'],['mood','Mood','Low','Great'],['digest','Digestion','Off','Spot on'],['appetite','Appetite','Cravings everywhere','In control'],['recovery','Recovery','Sore, beat up','Fresh'],['training','Training','Struggling','Strong']];
+let ci=null,ciOpen=false,ciDraft=null;
+function ciObj(){ci=ci||(hub&&hub.checkins)||{list:[]};ci.list=(ci.list||[]).slice().sort((a,b)=>a.d<b.d?-1:1);return ci}
+function navyBF(sex,h,waist,neck,hip){
+  h=+h;waist=+waist;neck=+neck;hip=+hip;if(!h||!waist||!neck||!sex)return null;let v;
+  if(sex==='f'){if(!hip||waist+hip-neck<=0)return null;v=495/(1.29579-0.35004*Math.log10(waist+hip-neck)+0.22100*Math.log10(h))-450}
+  else{if(waist-neck<=0)return null;v=495/(1.0324-0.19077*Math.log10(waist-neck)+0.15456*Math.log10(h))-450}
+  return v>2&&v<70?Math.round(v*10)/10:null}
+/* Score: the eight ratings (1-5) scaled to 100, nudged by resting HR and HRV against the client's own usual levels */
+function bioScore(e,prev){
+  const r=e.r||{},vals=BIO.map(b=>+r[b[0]]).filter(v=>v>=1&&v<=5);if(vals.length<6)return null;
+  let s=vals.reduce((a,v)=>a+(v-1)/4,0)/vals.length*100;
+  const base=k=>{const xs=prev.map(p=>+p[k]).filter(Boolean).sort((a,b)=>a-b);return xs.length>=2?xs[Math.floor(xs.length/2)]:null};
+  const br=base('rhr'),bh=base('hrv');
+  if(br&&+e.rhr){const d=+e.rhr-br;s+=d>=5?-5:d<=-3?3:0}
+  if(bh&&+e.hrv){const d=(+e.hrv-bh)/bh;s+=d<=-.1?-5:d>=.1?3:0}
+  return Math.max(0,Math.min(100,Math.round(s)))}
+function saveCI(){
+  const el=$('ciSaved');
+  if(!LIVE){try{localStorage.setItem('plan_ci',JSON.stringify(ci))}catch(e){}return Promise.resolve()}
+  return authFetch('/rest/v1/client_progress?on_conflict=user_id,module',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:jwt(sess.access).sub,email:sess.email,module:'checkins',data:ci})})
+    .then(r=>{if(!r.ok)throw 0}).catch(()=>{if(el){el.textContent='That didn’t save. Check your connection and try again.';el.style.color='var(--bad)'}throw new Error('save')})}
+const todayISO=()=>{const t=new Date();return new Date(t.getTime()-t.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const addDays=(iso,n)=>{const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+const fmtDay=iso=>new Date(iso+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+const daysSince=iso=>Math.round((new Date(todayISO()+'T12:00:00')-new Date(iso+'T12:00:00'))/864e5);
+function lastCI(){const L=ciObj().list;return L[L.length-1]||null}
+function ciDue(){const l=lastCI();return !l||daysSince(l.d)>=6}
+
+/* Everything Dave adds from the dashboard: target score, phase targets, habits, tests and wins */
+function CP(){const p=(plan&&plan.coachProgress)||{};return {targetScore:+p.targetScore||null,targets:(p.targets||[]).filter(Boolean),habits:(p.habits||[]).filter(Boolean),tests:(p.tests||[]).filter(t=>t&&t.d&&t.v!=null&&t.v!=='').slice().sort((a,b)=>a.d<b.d?-1:1),wins:(p.wins||[]).filter(w=>w&&w.t)}}
+const TEST_T={vo2:['VO2 max','ml/kg/min',1],strength:['Strength','',1],screen:['Movement screen','/100',1],bodyfat:['Body fat','%',-1],weight:['Body weight','kg',0],rhr:['Resting heart rate','bpm',-1],hrv:['HRV','ms',1],other:['Test','',1]};
+const testName=t=>t.type==='strength'||t.type==='other'?(t.name||TEST_T[t.type][0]):(TEST_T[t.type]||[t.name||'Test'])[0];
+const testUnit=t=>String(t.u||(TEST_T[t.type]||[])[1]||'').trim();
+/* One series per measure: client check-ins plus Dave's own tests (e.g. a DEXA body fat) */
+function series(k){
+  const out=ciObj().list.filter(e=>e[k]!=null&&e[k]!=='').map(e=>({d:e.d,v:+e[k]}));
+  const tk={w:'weight',bf:'bodyfat',rhr:'rhr',hrv:'hrv'}[k];
+  if(tk)CP().tests.filter(t=>t.type===tk).forEach(t=>out.push({d:t.d,v:+t.v}));
+  return out.filter(x=>!isNaN(x.v)).sort((a,b)=>a.d<b.d?-1:1)}
+function testGroups(){const g={};CP().tests.filter(t=>!['weight','bodyfat','rhr','hrv'].includes(t.type)).forEach(t=>{const k=t.type+'|'+testName(t).toLowerCase();(g[k]=g[k]||[]).push(t)});return Object.values(g)}
+const n1=v=>Math.round(v*10)/10;
+function delta(s,lowerBetter,unit,since){
+  if(s.length<2)return '';const a=since==='prev'?s[s.length-2].v:s[0].v,b=s[s.length-1].v,d=n1(b-a);
+  if(!d)return `<em class="dz">No change ${since==='prev'?'vs last':'since start'}</em>`;
+  const cls=lowerBetter==null?'dz':(lowerBetter?d<0:d>0)?'up':'dn';
+  return `<em class="${cls}">${d>0?'+':'−'}${Math.abs(d)}${unit} ${since==='prev'?'vs last':'since start'}</em>`}
+
+/* Wins: automatic ones, plus anything Dave adds */
+function winsList(){
+  const out=[],L=ciObj().list,h=hub||{};
+  if(L.length)out.push({d:L[0].d,t:'First check-in logged'});
+  if(L.length>=3){let n=1;for(let i=L.length-1;i>0;i--){if(daysSince(L[i-1].d)-daysSince(L[i].d)<=9)n++;else break}if(n>=3)out.push({d:L[L.length-1].d,t:`${n} weekly check-ins in a row`})}
+  const bf=series('bf');if(bf.length>=2){const last=bf[bf.length-1];if(last.v<Math.min(...bf.slice(0,-1).map(x=>x.v)))out.push({d:last.d,t:`New lowest body fat: ${last.v}%`})}
+  const sc=series('score');if(sc.length>=2){const d=sc[sc.length-1].v-sc[sc.length-2].v;if(d>=5)out.push({d:sc[sc.length-1].d,t:`Biofeedback score up ${d} points`})}
+  testGroups().forEach(g=>{if(g.length<2)return;const T=TEST_T[g[0].type]||TEST_T.other,last=g[g.length-1],prev=g.slice(0,-1).map(x=>+x.v);if(T[2]>0?+last.v>Math.max(...prev):T[2]<0?+last.v<Math.min(...prev):false)out.push({d:last.d,t:`New best: ${testName(last)} ${last.v}${testUnit(last)?' '+testUnit(last):''}`})});
+  HUB_MODS.forEach(m=>{const x=h[m.id];if(x&&x.done)out.push({d:x.doneAt||'',t:`Finished ${(TW[m.id]&&TW[m.id].t)||m.id} in your Hub`})});
+  CP().wins.forEach(w=>out.push({d:w.d||'',t:w.t,coach:1}));
+  return out.sort((a,b)=>(b.d||'')>(a.d||'')?1:-1).slice(0,6)}
+
+/* Small single-series trend line */
+function spark(s,unit){
+  if(s.length<2)return `<p class="small">${s.length?`One reading so far: <b style="color:var(--ink)">${s[0].v}${unit}</b>. The trend appears after your next check-in.`:'No readings yet.'}</p>`;
+  const W=520,H=120,P=14,vs=s.map(x=>x.v),lo=Math.min(...vs),hi=Math.max(...vs),rg=(hi-lo)||1;
+  const X=i=>P+i*(W-2*P)/(s.length-1),Y=v=>H-P-(v-lo)/rg*(H-2*P-16);
+  const pts=s.map((x,i)=>`${X(i).toFixed(1)},${Y(x.v).toFixed(1)}`).join(' '),L=s[s.length-1];
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="Trend from ${s[0].v}${unit} to ${L.v}${unit}"><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>${s.map((x,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(x.v).toFixed(1)}" r="${i===s.length-1?5:3}" fill="${i===s.length-1?'var(--accent)':'var(--surface)'}" stroke="var(--accent)" stroke-width="2"><title>${fmtDay(x.d)}: ${x.v}${unit}</title></circle>`).join('')}<text x="${(X(s.length-1)-8).toFixed(1)}" y="${Math.max(13,Y(L.v)-10).toFixed(1)}" text-anchor="end" font-size="14" font-weight="700" fill="var(--ink)">${L.v}${unit}</text></svg>
+   <div class="sparkx"><span>${fmtDay(s[0].d)}</span><span>${fmtDay(L.d)}</span></div>`}
+
+/* ---------- Tab 1: This week ---------- */
+function numCard(label,s,unit,lowerBetter,empty,since){const L=s[s.length-1];return `<div class="num"><span class="k">${label}</span>${L?`<b>${L.v}<small>${unit}</small></b>${delta(s,lowerBetter,unit==='/100'?'':unit,since)}`:`<b class="none">–</b><em class="dz">${empty}</em>`}</div>`}
+function weekTab(){
+  const ex=plan.kind==='existing',b=plan.baseline,cp=CP(),wk=pathWeek(),due=ciDue(),l=lastCI();
+  const vo2=(testGroups().find(g=>g[0].type==='vo2')||[]).map(t=>({d:t.d,v:+t.v}));
+  const wins=winsList();
+  return `<section class="whero dark"><div class="wh-l"><span class="eyebrow">${wk?`Week ${wk} of 24`:'Your plan'}${plan.phase?` · Phase ${plan.phase.index+1}, ${esc(plan.phase.name)}`:''}</span><h1>${esc(plan.client.first||'')}${plan.client.first?', ':''}here's your week.</h1>
+     <p class="lede">${due?`Your weekly check-in is ${l?'due':'the first thing to do'}. Two minutes, and it keeps your score and your plan honest.`:`Checked in ${fmtDay(l.d)}. Your next check-in is due ${fmtDay(addDays(l.d,7))}.`}</p>
+     <div class="row" style="gap:10px"><button class="btn ${due?'primary':''}" type="button" data-go="progress">${due?'Do your check-in →':'See your progress →'}</button><a class="btn" href="/hub">Open your Hub</a></div></div>
+    ${!ex&&b?`<div class="perf"><span class="k">Performance score</span><b>${b.score.toFixed(1)}<small>/10</small></b><span class="pt">Baseline from your audit${cp.targetScore?` · target <strong>${cp.targetScore.toFixed(1)}</strong>`:''}</span>${cp.targetScore?`<div class="pbar" aria-hidden="true"><i style="width:${Math.min(100,b.score*10)}%"></i><s style="left:${Math.min(100,cp.targetScore*10)}%"></s></div>`:''}</div>`:''}</section>
+  <section><span class="eyebrow">Your numbers</span><div class="nums">
+    ${numCard('Biofeedback score',series('score'),'/100',false,'Log a check-in','prev')}
+    ${numCard('Body fat',series('bf'),'%',true,'Add waist and neck','start')}
+    ${numCard('Body weight',series('w'),' kg',null,'Add your weight','start')}
+    ${vo2.length?numCard('VO2 max',vo2,'',false,'','start'):''}</div>
+   ${wins.length?`<div class="wins"><span class="k">Wins</span>${wins.map(w=>`<div class="win"><i aria-hidden="true">★</i><span>${esc(w.t)}${w.coach?` <small>from ${esc(plan.coach)}</small>`:''}</span>${w.d?`<em>${fmtDay(w.d)}</em>`:''}</div>`).join('')}</div>`:''}</section>
   ${hubPathOf()?`<section id="weekSec">${thisWeekHTML()}</section>`:''}
-  <section id="haltsSec">${haltsHTML()}</section>
-
-  <section class="base dark"><div style="display:flex;flex-direction:column;gap:16px;min-width:0"><span class="eyebrow">Your baseline</span><div class="doms">${b.domains.map(card).join('')}</div><div class="focus"><b>First focus: ${esc(b.focus)}</b><span>${esc(FOCUS[b.focus]||'')}</span></div></div>
-   <div class="orbwrap"><canvas id="orb" aria-hidden="true"></canvas><div class="orbtxt"><b>${b.score.toFixed(1)}</b><span>Baseline</span><em>Phase 1 · ${esc(ph.name)}</em></div></div></section>
-
-  ${walks().length?`<section id="walkSec">${walkHTML()}</section>`:''}
-  <section><span class="eyebrow">Your Launchpad</span><h2>Body and Mind. Where you're starting.</h2><p class="lede">Eight spokes, two sides. The fill shows where each one is today, from 1 to 5. Tap a spoke to see what we're working on first.</p>
-   <div class="legend"><span><i style="background:var(--body)"></i>Body</span><span><i style="background:var(--mind)"></i>Mind</span><span>Fill = where you are now, 1–5</span></div>
-   <div class="frame"><svg class="wheel" id="wheel" viewBox="-80 -20 560 440" role="img" aria-label="Client Launchpad: Body and Mind spokes"></svg><div class="detail" id="detail"></div></div></section>
-
   <section id="hubSec">${hubHTML()}</section>
+  <section id="haltsSec">${haltsHTML()}</section>`}
 
-  <section><span class="eyebrow">Your roadmap</span><h2>Where we're going</h2><div class="road">${PHASES.map((n,i)=>`<div class="stage ${i===ph.index?'now':''}"><span class="n">PHASE ${i+1}${i===ph.index?' · NOW':''}</span><h3>${n}</h3><span class="wk">${ph.weeks[i]?ph.weeks[i]+' weeks':'Not needed'}</span></div>`).join('')}</div><p class="lede">${esc(ph.lead)}</p></section>
-
-  <section><span class="eyebrow">North Star</span><h2>Why we're doing this</h2><div class="ns">
+/* ---------- Tab 2: My plan ---------- */
+function habitsList(){const cp=CP();if(cp.habits.length)return cp.habits.map(t=>({t}));const f=(plan.focus||[]).filter(f=>f&&(f.t||f.d));if(f.length)return f;
+  return [...(((plan.northStar||{}).laws)||[]).filter(Boolean).map(t=>({t,d:'Non-negotiable'})),...(plan.track||[]).map(t=>({t,d:'Track it daily'}))]}
+function planTab(){
+  const ex=plan.kind==='existing',b=plan.baseline,ph=plan.phase,cp=CP(),hb=habitsList();
+  const card=x=>`<div class="dom ${x.k===b.focus?'low':''}"><span class="dn">${x.k}${x.k===b.focus?'<small>First focus</small>':''}</span><span class="dv">${x.v==null?'–':x.v.toFixed(1)}<span>/10</span></span><div class="tr"><i style="width:${(x.v||0)*10}%"></i></div></div>`;
+  return `<section><span class="eyebrow">Start here every week</span><h1>${esc(plan.client.first||'')}${plan.client.first?', ':''}your plan.</h1><p class="lede">Built from ${ex?'our work together':'your audit, your numbers and our first call'}. Read it at the start of each week. It updates as you move through it.</p></section>
+  ${walks().length?`<section id="walkSec">${walkHTML()}</section>`:''}
+  ${ph||cp.targets.length?`<section><span class="eyebrow">${ph?`Phase ${ph.index+1} of 4 · ${esc(ph.name)}`:'This phase'}</span><h2>Phase targets</h2>
+    ${cp.targets.length?`<div class="exfocus">${cp.targets.map((t,i)=>`<div class="exf"><span class="n">${String(i+1).padStart(2,'0')}</span><div><b>${esc(t)}</b></div></div>`).join('')}</div>`:''}
+    ${ph&&ph.lead?`<p class="lede" style="font-size:16px">${esc(ph.lead)}</p>`:''}
+    ${ph?`<div class="road">${PHASES.map((n,i)=>`<div class="stage ${i===ph.index?'now':''}"><span class="n">PHASE ${i+1}${i===ph.index?' · NOW':''}</span><h3>${n}</h3><span class="wk">${ph.weeks[i]?ph.weeks[i]+' weeks':'Not needed'}</span></div>`).join('')}</div>`:''}</section>`:''}
+  ${hb.length?`<section><span class="eyebrow">From ${esc(plan.coach)}</span><h2>Habits and behaviours to focus on</h2><div class="exfocus">${hb.map((f,i)=>`<div class="exf"><span class="n">${String(i+1).padStart(2,'0')}</span><div><b>${esc(f.t||'')}</b>${f.d?`<span>${esc(f.d)}</span>`:''}</div></div>`).join('')}</div></section>`:''}
+  ${!ex&&b?`<section class="base dark"><div style="display:flex;flex-direction:column;gap:16px;min-width:0"><span class="eyebrow">Your baseline</span><div class="doms">${b.domains.map(card).join('')}</div><div class="focus"><b>First focus: ${esc(b.focus)}</b><span>${esc(FOCUS[b.focus]||'')}</span></div></div>
+   <div class="orbwrap"><canvas id="orb" aria-hidden="true"></canvas><div class="orbtxt"><b>${b.score.toFixed(1)}</b><span>Baseline</span><em>Phase 1 · ${esc(ph.name)}</em></div></div></section>`:''}
+  ${!ex&&allSpokes().length?`<section><span class="eyebrow">Your Launchpad</span><h2>Body and Mind. Where you're starting.</h2><p class="lede">Eight spokes, two sides. The fill shows where each one is today, from 1 to 5. Tap a spoke to see what we're working on first.</p>
+   <div class="legend"><span><i style="background:var(--body)"></i>Body</span><span><i style="background:var(--mind)"></i>Mind</span><span>Fill = where you are now, 1–5</span></div>
+   <div class="frame"><svg class="wheel" id="wheel" viewBox="-80 -20 560 440" role="img" aria-label="Client Launchpad: Body and Mind spokes"></svg><div class="detail" id="detail"></div></div></section>`:''}
+  ${plan.northStar?`<section><span class="eyebrow">North Star</span><h2>Why we're doing this</h2><div class="ns">
    <div class="nsb"><span class="k">12 months</span><span class="v">${esc(plan.northStar.year)}</span></div>
    <div class="nsb"><span class="k">12 weeks</span><span class="v">${esc(plan.northStar.weeks)}</span></div>
    <div class="nsb"><span class="k">The why, five levels down</span>${plan.northStar.why.filter(Boolean).map((w,i)=>`<div class="rung" style="margin-left:${Math.min(i*12,48)}px;--a:${(0.15+i*0.15).toFixed(2)}"><b>${i+1}</b>${esc(w)}</div>`).join('')}</div>
-   <div class="nsb"><span class="k">Non-negotiables</span><ul class="list">${plan.northStar.laws.filter(Boolean).map(l=>`<li>${esc(l)}</li>`).join('')}</ul><span class="k" style="margin-top:10px">Track daily</span><ul class="list">${plan.track.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
+   <div class="nsb"><span class="k">Non-negotiables</span><ul class="list">${plan.northStar.laws.filter(Boolean).map(l=>`<li>${esc(l)}</li>`).join('')}</ul></div>
+  </div></section>`:''}`}
+
+/* ---------- Tab 3: Progress ---------- */
+function ciFormHTML(){
+  const c=ciObj(),l=lastCI(),D=ciDraft||{d:todayISO(),r:{}},needHS=!c.height||!c.sex||ciOpen==='hs';
+  const fld=(id,lab,unit,val,step)=>`<div class="f"><label for="ci_${id}">${lab} <span class="opt-lab">${unit}</span></label><input class="in" id="ci_${id}" data-ci="${id}" type="number" inputmode="decimal" step="${step||'0.1'}" min="0" value="${val??''}"></div>`;
+  return `<form class="card ciform" id="ciForm" novalidate>
+   <div class="row" style="justify-content:space-between;align-items:baseline"><b class="ct">Weekly check-in · ${fmtDay(D.d||todayISO())}</b><span class="small">Same day each week, first thing in the morning if you can.</span></div>
+   ${needHS?`<div class="cig"><div class="f"><label for="ci_height">Height <span class="opt-lab">cm, asked once</span></label><input class="in" id="ci_height" type="number" inputmode="decimal" step="0.5" min="100" max="230" value="${c.height||''}"></div>
+     <div class="f"><span class="lab">For the body fat formula</span><div class="seg" role="group" aria-label="Sex for the body fat formula">${[['m','Male'],['f','Female']].map(([k,n])=>`<button type="button" data-sex="${k}" class="${c.sex===k?'on':''}" aria-pressed="${c.sex===k}">${n}</button>`).join('')}</div></div></div>`:''}
+   <div class="cig">${fld('w','Body weight','kg',D.w)}${fld('waist','Waist','cm, at the navel',D.waist)}${fld('neck','Neck','cm, just below the larynx',D.neck)}${c.sex==='f'?fld('hip','Hips','cm, widest point',D.hip):''}${fld('rhr','Resting heart rate','bpm, optional',D.rhr,'1')}${fld('hrv','HRV','ms, optional',D.hrv,'1')}</div>
+   <div class="bios"><span class="lab">How was your week? <span class="opt-lab">1 = rough, 5 = great</span></span>${BIO.map(([k,n,lo,hi])=>`<div class="bio"><span class="bn"><b>${n}</b><small>${lo} → ${hi}</small></span><div class="seg" role="group" aria-label="${n}, 1 to 5">${[1,2,3,4,5].map(v=>`<button type="button" data-bio="${k}" data-v="${v}" class="${+D.r[k]===v?'on':''}" aria-pressed="${+D.r[k]===v}">${v}</button>`).join('')}</div></div>`).join('')}</div>
+   <div class="f"><label for="ci_note">Anything ${esc(plan.coach)} should know? <span class="opt-lab">optional</span></label><textarea class="in note" id="ci_note" rows="3">${esc(D.note||'')}</textarea></div>
+   <div class="row" style="align-items:center"><button class="btn primary" type="submit">Save check-in</button>${l&&!ciDue()?'<button class="btn ghost" type="button" id="ciCancel">Cancel</button>':''}${c.height&&c.sex&&ciOpen!=='hs'?'<button class="link" type="button" id="ciHS" style="color:var(--accent)">Change height</button>':''}<span class="small" id="ciSaved">${LIVE?`${esc(plan.coach)} sees every check-in.`:'Preview: saves in this browser only.'}</span></div></form>`}
+function progressTab(){
+  const l=lastCI(),showForm=ciDue()||ciOpen,L=ciObj().list.slice().reverse().slice(0,8),groups=testGroups();
+  const w=series('w'),f=series('bf'),lw=w[w.length-1],lf=f[f.length-1];
+  return `<section><span class="eyebrow">Progress</span><h1>Your numbers.</h1><p class="lede">Your weekly check-ins and the tests we run together, all in one place.</p>
+    ${showForm?ciFormHTML():`<div class="card cidone"><div><b class="ct">Checked in ${fmtDay(l.d)}${l.score!=null?` · score ${l.score}/100`:''}</b><span class="small">Your next check-in is due ${fmtDay(addDays(l.d,7))}.</span></div><button class="btn" type="button" id="ciEdit">Update this check-in</button></div>`}</section>
+  <section><span class="eyebrow">Trends</span><div class="trends">
+    <div class="card"><span class="k">Biofeedback score</span>${spark(series('score'),'')}<p class="small">Your eight weekly ratings scaled to 100, then nudged by resting heart rate and HRV against your own normal.</p></div>
+    <div class="card"><span class="k">Body fat</span>${spark(f,'%')}<p class="small">US Navy method, from your waist, neck${ciObj().sex==='f'?', hips':''} and height. Best for tracking change rather than as an exact number.</p></div>
+    <div class="card"><span class="k">Body weight</span>${spark(w,' kg')}${lw&&lf?`<p class="small">Latest split: <b style="color:var(--ink)">${n1(lw.v*lf.v/100)} kg</b> fat mass, <b style="color:var(--ink)">${n1(lw.v*(1-lf.v/100))} kg</b> lean mass.</p>`:''}</div>
+    ${series('rhr').length||series('hrv').length?`<div class="card"><span class="k">Resting heart rate</span>${spark(series('rhr'),' bpm')}${series('hrv').length?`<span class="k" style="margin-top:10px">HRV</span>${spark(series('hrv'),' ms')}`:''}</div>`:''}
   </div></section>
-
+  <section><span class="eyebrow">Tested with ${esc(plan.coach)}</span><h2>Performance tests</h2>
+   ${groups.length?`<div class="tests">${groups.map(g=>{const last=g[g.length-1],T=TEST_T[last.type]||TEST_T.other,u=testUnit(last),nm=testName(last);return `<div class="card test"><span class="k">${esc(nm===T[0]?nm:T[0]+' · '+nm)}</span><b>${esc(String(last.v))}<small> ${esc(u)}</small></b>${g.length>1?delta(g.map(t=>({d:t.d,v:+t.v})),T[2]<0,u==='/100'?'':' '+u,'start'):''}<span class="small">${fmtDay(last.d)}${g.length>1?` · ${g.length} tests`:''}</span></div>`}).join('')}</div>`:`<p class="small">VO2 max, strength benchmarks and your movement screen score show here once ${esc(plan.coach)} adds them.</p>`}</section>
+  ${L.length?`<section><span class="eyebrow">History</span><div class="hist" role="table" aria-label="Your recent check-ins"><div class="hr hh" role="row"><span role="columnheader">Date</span><span role="columnheader">Score</span><span role="columnheader">Weight</span><span role="columnheader">Body fat</span><span role="columnheader">RHR</span><span role="columnheader">HRV</span></div>${L.map(e=>`<div class="hr" role="row"><span role="cell">${fmtDay(e.d)}</span><span role="cell">${e.score??'–'}</span><span role="cell">${e.w?e.w+' kg':'–'}</span><span role="cell">${e.bf?e.bf+'%':'–'}</span><span role="cell">${e.rhr||'–'}</span><span role="cell">${e.hrv||'–'}</span></div>`).join('')}</div></section>`:''}
   <section id="bwSec" hidden></section>
-  <section><span class="eyebrow">Blood work</span><h2>Add new results</h2><div class="bloods"><p class="lede" style="font-size:16px">Had new bloods done? Upload the results here and ${esc(plan.coach)} will review them against your last panel.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>
-
-  <footer>Stand in Your Standard. Questions about your plan go to ${esc(plan.coach)} in your check-in.</footer>`;
-  drawWheel();renderDetail();startOrb();bindExtras();bindWalk();bindWeek();bindHalts();if(!hub)loadHub();
+  <section><span class="eyebrow">Blood work</span><h2>Add new results</h2><div class="bloods"><p class="lede" style="font-size:16px">Had new bloods done? Upload the results here and ${esc(plan.coach)} will review them against your last panel.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>`}
+function bindCI(){
+  const f=$('ciForm');
+  if(!f){const e=$('ciEdit');if(e)e.addEventListener('click',()=>{const l=lastCI();ciOpen=true;ciDraft=l?JSON.parse(JSON.stringify(l)):null;renderPlan()});return}
+  ciDraft=ciDraft||{d:todayISO(),r:{}};ciDraft.r=ciDraft.r||{};
+  f.querySelectorAll('[data-ci]').forEach(i=>i.addEventListener('input',()=>{ciDraft[i.dataset.ci]=i.value}));
+  const nt=$('ci_note');nt.addEventListener('input',()=>{ciDraft.note=nt.value});
+  const hEl=$('ci_height');if(hEl)hEl.addEventListener('input',()=>{const v=+hEl.value;if(v>=100&&v<=230)ciObj().height=v});
+  f.querySelectorAll('[data-bio]').forEach(b=>b.addEventListener('click',()=>{ciDraft.r[b.dataset.bio]=+b.dataset.v;f.querySelectorAll(`[data-bio="${b.dataset.bio}"]`).forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)})}));
+  f.querySelectorAll('[data-sex]').forEach(b=>b.addEventListener('click',()=>{ciObj().sex=b.dataset.sex;if(!ciOpen)ciOpen='hs';renderPlan()}));
+  const cc=$('ciCancel');if(cc)cc.addEventListener('click',()=>{ciOpen=false;ciDraft=null;renderPlan()});
+  const hs=$('ciHS');if(hs)hs.addEventListener('click',()=>{ciOpen='hs';renderPlan()});
+  f.addEventListener('submit',async e=>{e.preventDefault();const c=ciObj(),msg=$('ciSaved');msg.style.color='';
+    const rated=BIO.filter(b=>+ciDraft.r[b[0]]).length;
+    if(rated<BIO.length){msg.textContent=`Rate all eight to get your score (${rated} of 8 done).`;msg.style.color='var(--bad)';return}
+    const num=k=>{const v=parseFloat(ciDraft[k]);return isNaN(v)||v<=0?null:Math.round(v*10)/10};
+    const ent={d:ciDraft.d||todayISO(),w:num('w'),waist:num('waist'),neck:num('neck'),hip:c.sex==='f'?num('hip'):null,rhr:num('rhr'),hrv:num('hrv'),r:{...ciDraft.r},note:(ciDraft.note||'').trim(),at:new Date().toISOString()};
+    ent.bf=navyBF(c.sex,c.height,ent.waist,ent.neck,ent.hip);
+    const rest=c.list.filter(x=>x.d!==ent.d);ent.score=bioScore(ent,rest.filter(x=>x.d<ent.d));
+    const before=JSON.stringify(c.list);c.list=rest.concat([ent]).sort((a,b)=>a.d<b.d?-1:1).slice(-160);
+    msg.textContent='Saving…';
+    try{await saveCI();ciOpen=false;ciDraft=null;renderPlan()}catch(err){c.list=JSON.parse(before)}});
 }
-/* Existing clients: no audit, so no baseline or Launchpad. Focus from Dave, this week, the Hub and blood work. */
-function renderExisting(){
+
+function renderPlan(){
   $('who').hidden=false;$('whoName').textContent=plan.client.name||plan.client.first||'';
-  const focus=(plan.focus||[]).filter(f=>f&&(f.t||f.d));
-  $('app').innerHTML=`${needPw?`<div class="notice"><b>Set a password for next time</b><span class="small" style="color:var(--off)">You're signed in with your email link. Choose a password so you can sign in straight away next time.</span><form class="row" id="pwForm"><div class="f"><label for="newPw">New password</label><input class="in" id="newPw" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters"></div><button class="btn primary" type="submit">Save password</button></form><p class="msg" id="pwMsg"></p></div>`:''}
-  <section class="exhero dark"><span class="eyebrow">Welcome to your Client Hub</span><h1>${esc(plan.client.first||'')}${plan.client.first?', ':''}everything in one place.</h1><p class="lede">Your focus from ${esc(plan.coach)}, your weekly trainings and your blood work. Same coaching, now with a home.</p><a class="btn primary" href="/hub" style="align-self:flex-start;text-decoration:none">Open your Hub →</a></section>
-  ${walks().length?`<section id="walkSec">${walkHTML()}</section>`:''}
-  ${focus.length?`<section><span class="eyebrow">From ${esc(plan.coach)}</span><h2>Your focus right now</h2><div class="exfocus">${focus.map((f,i)=>`<div class="exf"><span class="n">${String(i+1).padStart(2,'0')}</span><div><b>${esc(f.t||'')}</b>${f.d?`<span>${esc(f.d)}</span>`:''}</div></div>`).join('')}</div></section>`:''}
-  ${hubPathOf()?`<section id="weekSec">${thisWeekHTML()}</section>`:''}
-  <section id="haltsSec">${haltsHTML()}</section>
-  <section id="hubSec">${hubHTML()}</section>
-  <section id="bwSec" hidden></section>
-  <section><span class="eyebrow">Blood work</span><h2>Add your results</h2><div class="bloods"><p class="lede" style="font-size:16px">Upload your latest functional blood work, and any new panels as you get them. ${esc(plan.coach)} reviews them against your plan.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>
-  <footer>Stand in Your Standard. Questions go to ${esc(plan.coach)} in your check-in.</footer>`;
-  bindWalk();bindExtras();bindWeek();bindHalts();if(!hub)loadHub();
+  ciObj();
+  const body=tab==='plan'?planTab():tab==='progress'?progressTab():weekTab();
+  $('app').innerHTML=`${pwHTML()}${tabsHTML()}<div class="tabbody" role="tabpanel" aria-labelledby="tab_${tab}">${body}</div>
+  <footer>Stand in Your Standard. Questions about your plan go to ${esc(plan.coach)} in your check-in.</footer>`;
+  bindTabs();document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+  if($('wheel')){drawWheel();renderDetail()}
+  startOrb();bindWalk();bindWeek();bindHalts();bindCI();bindExtras();if(!hub)loadHub();
 }
+
 function fileRow(f){return `<div><span>${esc(f.name)}</span><em class="${f.state==='error'?'bad':f.state==='uploading'?'':'ok'}">${f.state==='uploading'?'Uploading…':f.state==='error'?'Didn\u2019t upload':new Date(f.created_at||Date.now()).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}</em></div>`}
 function drawFiles(){const el=$('fileList');if(el)el.innerHTML=files.length?files.map(fileRow).join(''):'<p class="small">No uploads yet.</p>'}
 async function loadFiles(){if(!LIVE||!sess){drawFiles();return}try{const r=await authFetch('/rest/v1/client_files?select=name,size,created_at&order=created_at.desc');if(r.ok)files=await r.json()}catch(e){}drawFiles()}
@@ -518,8 +703,8 @@ function renderWaiting(){
   bindExtras();if(!hub)loadHub();
 }
 async function boot(){
-  if(!LIVE&&/existing/.test(location.search)){plan={kind:'existing',client:{first:'Sam',name:'Sam K.'},coach:'Dave',publishedAt:new Date().toISOString(),focus:[{t:'Protect the morning',d:'Ten minutes of light and a protein breakfast before your phone.'},{t:'Two lifts a week stay heavy',d:'Bench and trap-bar deadlift: top set at RPE 8, then back-offs.'},{t:'Bloods before Christmas',d:'Book a full functional panel and upload it here.'}],hubPath:{start:new Date(Date.now()-3*864e5).toISOString().slice(0,10),weeks:{},allOpen:true}};try{journal=JSON.parse(localStorage.getItem('plan_journal')||'null')}catch(e){}renderPlan();return}
-  if(!LIVE){plan=SAMPLE;plan.hubPath={start:new Date(Date.now()-10*864e5).toISOString().slice(0,10),weeks:{}};try{journal=JSON.parse(localStorage.getItem('plan_journal')||'null')}catch(e){}renderPlan();return}
+  if(!LIVE&&/existing/.test(location.search)){plan={kind:'existing',client:{first:'Sam',name:'Sam K.'},coach:'Dave',publishedAt:new Date().toISOString(),focus:[{t:'Protect the morning',d:'Ten minutes of light and a protein breakfast before your phone.'},{t:'Two lifts a week stay heavy',d:'Bench and trap-bar deadlift: top set at RPE 8, then back-offs.'},{t:'Bloods before Christmas',d:'Book a full functional panel and upload it here.'}],hubPath:{start:new Date(Date.now()-3*864e5).toISOString().slice(0,10),weeks:{},allOpen:true},coachProgress:{habits:[],tests:[],wins:[],targets:['Bench and trap-bar deadlift stay heavy twice a week']}};try{journal=JSON.parse(localStorage.getItem('plan_journal')||'null')}catch(e){}renderPlan();return}
+  if(!LIVE){try{ci=JSON.parse(localStorage.getItem('plan_ci')||'null')}catch(e){}ci=ci||SAMPLE_CI();plan=SAMPLE;plan.coachProgress=SAMPLE_CP;plan.hubPath={start:new Date(Date.now()-10*864e5).toISOString().slice(0,10),weeks:{}};try{journal=JSON.parse(localStorage.getItem('plan_journal')||'null')}catch(e){}renderPlan();return}
   loadSess();if(!sess){renderAuth();return}
   $('app').innerHTML='<p class="small">Loading your plan…</p>';
   try{

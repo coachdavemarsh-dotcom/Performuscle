@@ -328,7 +328,13 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .pathgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin-top:10px}
 .prow{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px}
 .prow select{max-width:150px}
-#eduBox,#walkBox{display:flex;flex-direction:column;gap:10px}
+#eduBox,#walkBox,#progBox{display:flex;flex-direction:column;gap:10px}
+.pgbody{display:flex;flex-direction:column;gap:10px;align-items:stretch}.pgbody>.btn{align-self:flex-start}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.pgrid textarea{width:100%;min-height:84px;resize:vertical;font:inherit;font-size:14px;background:var(--surface-2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.ptrow{display:grid;grid-template-columns:140px 170px minmax(0,1fr) 90px 90px 40px;gap:6px}.pwrow{display:grid;grid-template-columns:140px minmax(0,1fr) 40px;gap:6px}
+.ptrow input,.ptrow select,.pwrow input{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink);font:inherit;font-size:13.5px}
+.ptrow .btn,.pwrow .btn{padding:6px 0}
+@media(max-width:700px){.ptrow{grid-template-columns:1fr 1fr}.ptrow [data-tk=name]{grid-column:1/-1}}
 .erow{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 130px 120px 70px;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
 .erow .wide{grid-column:1/3}.erow .wide+.wide{grid-column:3/5}.erow [data-del]{grid-column:5/6;padding:8px 12px}
 .erow input,.erow select{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink);font:inherit;font-size:13.5px}
@@ -1354,7 +1360,7 @@ async function openSub(id){
       const extra=[ex.rhr?`Resting HR ${ex.rhr} bpm`:'',ex.bloods==='yes'?'Has blood work from the last 12 months':''].filter(Boolean).join(' · ');
       if(extra)notes.recovery=extra;
     }
-    isSample=false;$('sampleTag').hidden=true;invitedAt=(row.coach_data||{}).invitedAt||null;followups=(row.coach_data||{}).followups||{};booking=(row.coach_data||{}).booking||null;existing=(row.source==='existing-client'||(row.answers||{}).existing)?{focus:[],...((row.coach_data||{}).existing||{})}:null;renderExisting(row);hubPath={...((row.coach_data||{}).hubPath||{})};delete hubPath.weeks;walkthroughs=((row.coach_data||{}).walkthroughs||[]).slice();showFiles(row);clientFiles(row);clientHub(row);clientScreen(row);bwOpen(row);renderInner();
+    isSample=false;$('sampleTag').hidden=true;invitedAt=(row.coach_data||{}).invitedAt||null;followups=(row.coach_data||{}).followups||{};booking=(row.coach_data||{}).booking||null;existing=(row.source==='existing-client'||(row.answers||{}).existing)?{focus:[],...((row.coach_data||{}).existing||{})}:null;renderExisting(row);hubPath={...((row.coach_data||{}).hubPath||{})};delete hubPath.weeks;walkthroughs=((row.coach_data||{}).walkthroughs||[]).slice();cprog=JSON.parse(JSON.stringify((row.coach_data||{}).progress||{}));showFiles(row);clientFiles(row);clientHub(row);clientScreen(row);bwOpen(row);renderInner();
     $('subStatus').value=row.status==='new'?'reviewed':row.status;$('saveRow').hidden=false;
     update();loadSubsSilently();
     subMsg(existing?`Opened ${row.full_name}, an existing client. Set their focus and Hub path, then Publish to client.`:`Opened ${row.full_name}'s audit from ${new Date(row.created_at).toLocaleDateString('en-AU')}. Add markers and movement, then Save review.`);
@@ -1399,7 +1405,7 @@ async function clientScreen(row){
   }catch(e){/* screen table not set up yet */}
 }
 /* ---------- Inner work (Heart + Alignment) ---------- */
-let inner={},hubPath={},walkthroughs=[],invitedAt=null,existing=null,followups={},booking=null;
+let inner={},hubPath={},walkthroughs=[],cprog={},invitedAt=null,existing=null,followups={},booking=null;
 const INNER=[
  {h:'Heart · Desire and meaning'},
  {k:'contribution',l:'Contribution',ph:'Who this is for beyond them. e.g. Showing my kids what keeping your word looks like.',score:1},
@@ -1440,10 +1446,10 @@ function buildPlan(){
    launchpad:SPOKES.map(x=>({id:x.id,side:x.side,short:x.short,name:x.name,score:sc(spokes[x.id]),about:ABOUT[x.id]||toYou(x.d),actions:acts(x.id)})),
    northStar:{year:ns.year||'',weeks:ns.weeks||'',week:ns.week||'',why:(ns.why||[]).filter(Boolean),laws:(ns.laws||[]).filter(Boolean)},
    track:TRACK.slice(),
-   hubPath:{start:hubPath.start||localISO(new Date())},walkthroughs:cleanWalks()};
+   hubPath:{start:hubPath.start||localISO(new Date())},walkthroughs:cleanWalks(),coachProgress:cleanProg()};
 }
 async function saveReview(){
-  const coach_data={state,ans,spokes,notes,mv,ns,ik,inner,hubPath,walkthroughs:cleanWalks(),invitedAt,existing,followups,booking,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
+  const coach_data={state,ans,spokes,notes,mv,ns,ik,inner,hubPath,walkthroughs:cleanWalks(),progress:cleanProg(),invitedAt,existing,followups,booking,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
   await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(openId)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({coach_data,status:$('subStatus').value})});
 }
 async function publishPlan(){
@@ -1466,7 +1472,7 @@ function existingPlan(){
   const nm=(state.clientName||'').trim(),first=nm.split(' ')[0]||'';
   return {kind:'existing',client:{first,name:nm},coach:'Dave',publishedAt:new Date().toISOString(),
     focus:(existing.focus||[]).filter(f=>f.t||f.d).map(f=>({t:f.t||'',d:f.d||''})),
-    hubPath:{start:hubPath.start||localISO(new Date()),allOpen:!!hubPath.allOpen},walkthroughs:cleanWalks()};
+    hubPath:{start:hubPath.start||localISO(new Date()),allOpen:!!hubPath.allOpen},walkthroughs:cleanWalks(),coachProgress:cleanProg()};
 }
 function renderExisting(row){
   const box=$('subExisting');document.body.classList.toggle('exmode',!!existing);
@@ -1541,6 +1547,49 @@ const PATH_WEEKS={regulate:1,awareness:2,halts:2,sleep:3,recovery:4,nutrition:5,
 const ROAD_NAMES=['Foundations','Build the base','Rewrite the story','Go deeper','Lead from the heart','Integrate'];
 function localISO(d){return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 const WT_PHASES=['Health','Function','Performance','Mindset'];
+/* Progress, targets and wins: shown on the client's My Plan (This week, My plan and Progress tabs) */
+const PT_TYPES=[['vo2','VO2 max','ml/kg/min'],['strength','Strength','kg'],['screen','Movement screen','/100'],['bodyfat','Body fat (DEXA, InBody…)','%'],['weight','Body weight','kg'],['rhr','Resting heart rate','bpm'],['hrv','HRV','ms'],['other','Other','']];
+const BIO_N={sleep:'Sleep',energy:'Energy',calm:'Stress',mood:'Mood',digest:'Digestion',appetite:'Appetite',recovery:'Recovery',training:'Training'};
+function cleanProg(){const c=cprog||{};return {targetScore:+c.targetScore||null,targets:(c.targets||[]).map(x=>String(x).trim()).filter(Boolean),habits:(c.habits||[]).map(x=>String(x).trim()).filter(Boolean),
+  tests:(c.tests||[]).filter(t=>t&&t.d&&t.v!==''&&t.v!=null&&!isNaN(+t.v)).map(t=>({d:t.d,type:t.type||'other',name:(t.name||'').trim(),v:+t.v,u:(t.u||'').trim()})),
+  wins:(c.wins||[]).filter(w=>w&&(w.t||'').trim()).map(w=>({d:w.d||'',t:w.t.trim()}))}}
+function progPanel(by){
+  const c=cprog||{},ci=((by||{}).checkins||{}),L=(ci.list||[]).slice().sort((a,b)=>a.d<b.d?1:-1).slice(0,6),today=localISO(new Date());
+  const tRow=(t,i)=>`<div class="ptrow" data-ti="${i}"><input type="date" data-tk="d" value="${escH(t.d||today)}" aria-label="Test date"><select data-tk="type" aria-label="Test type">${PT_TYPES.map(([k,n])=>`<option value="${k}"${k===(t.type||'vo2')?' selected':''}>${n}</option>`).join('')}</select><input data-tk="name" placeholder="${t.type==='strength'?'e.g. Trap-bar deadlift':'Name (optional)'}" value="${escH(t.name||'')}" aria-label="Test name"><input data-tk="v" type="number" step="any" placeholder="Value" value="${escH(t.v??'')}" aria-label="Value"><input data-tk="u" placeholder="${escH((PT_TYPES.find(x=>x[0]===(t.type||'vo2'))||[])[2]||'unit')}" value="${escH(t.u||'')}" aria-label="Unit"><button class="btn" type="button" data-tdel="${i}" aria-label="Remove test">×</button></div>`;
+  const wRow=(w,i)=>`<div class="pwrow" data-wi="${i}"><input type="date" data-wk="d" value="${escH(w.d||today)}" aria-label="Win date"><input data-wk="t" placeholder="e.g. First unbroken week of training" value="${escH(w.t||'')}" aria-label="Win"><button class="btn" type="button" data-wdel="${i}" aria-label="Remove win">×</button></div>`;
+  return `<details class="hubm" id="progBox" open><summary><span><b>Progress, targets and wins</b> <span class="submsg">Shows on their My Plan</span></span><span class="submsg">${L.length?`Last check-in ${new Date(L[0].d+'T12:00:00').toLocaleDateString('en-AU')}${L[0].score!=null?' · '+L[0].score+'/100':''}`:'No check-ins yet'}</span></summary><div class="pgbody">
+   <div class="pgrid">
+    <div class="field"><label for="pgTarget">Target performance score <span class="submsg">/10, shown against their audit baseline</span></label><input id="pgTarget" type="number" min="0" max="10" step="0.1" value="${escH(c.targetScore||'')}"></div>
+    <div class="field"><label for="pgTargets">Phase targets <span class="submsg">one per line</span></label><textarea id="pgTargets" rows="3">${escH((c.targets||[]).join('\n'))}</textarea></div>
+    <div class="field"><label for="pgHabits">Habits and behaviours to focus on <span class="submsg">one per line</span></label><textarea id="pgHabits" rows="3">${escH((c.habits||[]).join('\n'))}</textarea></div>
+   </div>
+   <span class="eyebrow gold" style="margin-top:6px">Tests</span><p class="submsg">VO2 max, strength benchmarks, their movement screen score, or a DEXA or InBody body fat. Body weight and body fat join their check-in charts.</p>
+   <div id="ptRows">${(c.tests||[]).map(tRow).join('')}</div><button class="btn" type="button" id="ptAdd" style="align-self:flex-start">Add a test</button>
+   <span class="eyebrow gold" style="margin-top:6px">Wins</span><p class="submsg">Shown with their automatic wins (check-in streaks, new bests, finished trainings).</p>
+   <div id="pwRows">${(c.wins||[]).map(wRow).join('')}</div><button class="btn" type="button" id="pwAdd" style="align-self:flex-start">Add a win</button>
+   <div class="row" style="margin-top:6px"><button class="btn primary" type="button" id="pgSave">Save to their plan</button><span class="submsg" id="pgMsg"></span></div>
+   ${L.length?`<span class="eyebrow gold" style="margin-top:10px">Their check-ins</span><dl>${L.map(e=>`<div><dt>${new Date(e.d+'T12:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})} · ${e.score!=null?e.score+'/100':'no score'}${e.w?' · '+e.w+' kg':''}${e.bf?' · '+e.bf+'% fat':''}${e.rhr?' · RHR '+e.rhr:''}${e.hrv?' · HRV '+e.hrv:''}</dt><dd>${Object.keys(BIO_N).map(k=>`${BIO_N[k]} ${(e.r||{})[k]||'–'}`).join(' · ')}${e.note?`<br>“${escH(e.note)}”`:''}</dd></div>`).join('')}</dl>`:''}
+  </div></details>`}
+function readProg(){const box=$('progBox');if(!box)return;cprog=cprog||{};
+  cprog.targetScore=$('pgTarget').value;cprog.targets=$('pgTargets').value.split('\n');cprog.habits=$('pgHabits').value.split('\n');
+  cprog.tests=[...box.querySelectorAll('.ptrow')].map(r=>{const o={};r.querySelectorAll('[data-tk]').forEach(i=>{o[i.dataset.tk]=i.value});return o});
+  cprog.wins=[...box.querySelectorAll('.pwrow')].map(r=>{const o={};r.querySelectorAll('[data-wk]').forEach(i=>{o[i.dataset.wk]=i.value});return o})}
+function redrawProg(){const box=$('progBox');const by=box._by||{};box.outerHTML=progPanel(by);$('progBox')._by=by;bindProg()}
+function bindProg(){const box=$('progBox');if(!box)return;
+  $('ptAdd').addEventListener('click',()=>{readProg();cprog.tests=(cprog.tests||[]).concat([{d:localISO(new Date()),type:'vo2'}]);redrawProg()});
+  $('pwAdd').addEventListener('click',()=>{readProg();cprog.wins=(cprog.wins||[]).concat([{d:localISO(new Date()),t:''}]);redrawProg()});
+  box.querySelectorAll('[data-tdel]').forEach(b=>b.addEventListener('click',()=>{readProg();cprog.tests.splice(+b.dataset.tdel,1);redrawProg()}));
+  box.querySelectorAll('[data-wdel]').forEach(b=>b.addEventListener('click',()=>{readProg();cprog.wins.splice(+b.dataset.wdel,1);redrawProg()}));
+  box.querySelectorAll('[data-tk="type"]').forEach(sl=>sl.addEventListener('change',()=>{readProg();redrawProg()}));
+  $('pgSave').addEventListener('click',saveProgress)}
+async function saveProgress(){
+  readProg();const m=$('pgMsg'),btn=$('pgSave');if(!openId)return;btn.disabled=true;m.textContent='Saving…';
+  try{await saveReview();
+    const rows=await sb(`/rest/v1/client_plans?select=id,plan&audit_id=eq.${encodeURIComponent(openId)}`);
+    if(rows&&rows[0]&&rows[0].plan){await sb(`/rest/v1/client_plans?id=eq.${encodeURIComponent(rows[0].id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({plan:{...rows[0].plan,coachProgress:cleanProg()}})});m.textContent='Saved. It’s on their plan now.'}
+    else m.textContent='Saved. It goes live when you publish to client.'}
+  catch(e){m.textContent=e.message}finally{btn.disabled=false}}
+
 function cleanWalks(){return (walkthroughs||[]).filter(w=>w&&/^https:\/\//.test((w.url||'').trim())).map(w=>({phase:+w.phase,url:w.url.trim(),note:(w.note||'').trim()}))}
 function pathPanel(by){
   const start=hubPath.start||'',st=start?new Date(start+'T00:00:00'):new Date();st.setHours(0,0,0,0);
@@ -1556,10 +1605,11 @@ function pathPanel(by){
      return `<div class="prow"><span>${escH(t.split(':')[0])}</span><span class="submsg">Wk ${ww} · ${d&&d.done?'complete':d?(+d.pct||0)+'%':open?'open':'locked'}</span></div>`}).join('')}</div></details>
   <details class="hubm" id="walkBox" ${cleanWalks().length?'':'open'}><summary><span><b>Phase walkthrough videos</b> <span class="submsg">Shown at the top of their plan</span></span><span class="submsg">${cleanWalks().length} added</span></summary>
    <p class="submsg">Record your walkthrough (Loom, Vimeo, YouTube unlisted or a video file link), paste the link for the phase, then publish to client. The latest phase shows first; they can switch back to earlier ones.</p>
-   ${WT_PHASES.map((n,i)=>`<div class="vrow"><span>Phase ${i+1} · ${n}</span><input data-wt="${i+1}" type="url" placeholder="https://www.loom.com/share/…" value="${escH(wv(i+1).url||'')}" aria-label="Walkthrough link for phase ${i+1}"><span></span></div>`).join('')}</details>`;
+   ${WT_PHASES.map((n,i)=>`<div class="vrow"><span>Phase ${i+1} · ${n}</span><input data-wt="${i+1}" type="url" placeholder="https://www.loom.com/share/…" value="${escH(wv(i+1).url||'')}" aria-label="Walkthrough link for phase ${i+1}"><span></span></div>`).join('')}</details>
+  ${progPanel(by)}`;
 }
 function bindPath(){
-  const box=$('pathBox');if(!box)return;
+  const box=$('pathBox');if(!box)return;bindProg();
   $('pathStart').addEventListener('change',e=>{hubPath.start=e.target.value||'';subMsg('Start date changed. Publish to client to apply it.')});
   document.querySelectorAll('#walkBox [data-wt]').forEach(inp=>inp.addEventListener('change',()=>{const ph=+inp.dataset.wt,v=inp.value.trim();
     if(v&&!/^https:\/\//.test(v)){subMsg('The walkthrough link needs to start with https://',1);return}
@@ -1581,7 +1631,7 @@ async function clientHub(row){
     const HL={H:'Hungry',A:'Angry',L:'Lonely',T:'Tired',S:'Stressed'},hl=((by.journal||{}).halts)||[];
     if(hl.length){const cut=Date.now()-30*864e5,rec=hl.filter(x=>new Date(x.at)>=cut),ct={};rec.forEach(x=>[...(x.l||'')].forEach(c=>{ct[c]=(ct[c]||0)+1}));
       box.insertAdjacentHTML('beforeend',`<details class="hubm" open><summary><span><b>HALTS checks</b> <span class="submsg">From My Plan</span></span><span class="submsg">${rec.length} in the last 30 days</span></summary><div class="chips" style="margin:10px 0 4px">${Object.keys(HL).map(k=>`<span class="chip ${ct[k]?'hit':''}">${HL[k]} ${ct[k]||0}</span>`).join('')}</div><dl>${hl.slice(-8).reverse().map(x=>`<div><dt>${new Date(x.at).toLocaleString('en-AU',{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</dt><dd>${[...(x.l||'')].map(c=>HL[c]).filter(Boolean).join(', ')||'None of the five'}</dd></div>`).join('')}</dl></details>`)}
-    box.insertAdjacentHTML('afterbegin',pathPanel(by));bindPath();box.hidden=false;
+    box.insertAdjacentHTML('afterbegin',pathPanel(by));if($('progBox'))$('progBox')._by=by;bindPath();box.hidden=false;
   }catch(e){box.innerHTML=pathPanel({});bindPath();box.hidden=false}
 }
 async function loadVideos(){
