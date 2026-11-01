@@ -309,6 +309,11 @@ em.up{color:#3E7B4F}em.dn{color:var(--bad)}em.dz{color:var(--muted);font-weight:
 .dflow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.dflow>div{display:flex;flex-direction:column}.dflow span,.dgrid span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .dflow b{font-family:var(--display);font-size:44px;font-weight:600;line-height:1}.dflow em,.dgrid em{font-style:normal;font-size:13px;color:var(--off)}.dflow i{font-style:normal;font-size:28px;color:var(--accent)}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}.dgrid>div{background:var(--bg);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:1px}.dgrid b{font-family:var(--display);font-size:26px;font-weight:600;line-height:1.1}
+
+.vo2g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:12px}.vo2g .card{gap:10px}.vo2g .k{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.vo2g em{font-style:normal;font-size:13px;font-weight:600}.vo2g .btn{align-self:flex-start}
+.big{font-family:var(--display);font-size:52px;font-weight:600;line-height:1}.big small{font-size:16px;color:var(--muted);font-weight:500}
+@media (max-width:760px){.vo2g{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -543,11 +548,11 @@ const testName=t=>t.type==='strength'||t.type==='other'?(t.name||TEST_T[t.type][
 const testUnit=t=>String(t.u||(TEST_T[t.type]||[])[1]||'').trim();
 /* One series per measure: client check-ins plus Dave's own tests (e.g. a DEXA body fat) */
 function series(k){
-  const out=ciObj().list.filter(e=>e[k]!=null&&e[k]!=='').map(e=>({d:e.d,v:+e[k]}));
-  const tk={w:'weight',bf:'bodyfat',rhr:'rhr',hrv:'hrv'}[k];
+  const out=k==='vo2'?(ciObj().vo2||[]).map(e=>({d:e.d,v:+e.v})):ciObj().list.filter(e=>e[k]!=null&&e[k]!=='').map(e=>({d:e.d,v:+e[k]}));
+  const tk={w:'weight',bf:'bodyfat',rhr:'rhr',hrv:'hrv',vo2:'vo2'}[k];
   if(tk)CP().tests.filter(t=>t.type===tk).forEach(t=>out.push({d:t.d,v:+t.v}));
   return out.filter(x=>!isNaN(x.v)).sort((a,b)=>a.d<b.d?-1:1)}
-function testGroups(){const g={};CP().tests.filter(t=>!['weight','bodyfat','rhr','hrv'].includes(t.type)).forEach(t=>{const k=t.type+'|'+testName(t).toLowerCase();(g[k]=g[k]||[]).push(t)});return Object.values(g)}
+function testGroups(){const g={};CP().tests.filter(t=>!['weight','bodyfat','rhr','hrv','vo2'].includes(t.type)).forEach(t=>{const k=t.type+'|'+testName(t).toLowerCase();(g[k]=g[k]||[]).push(t)});return Object.values(g)}
 const n1=v=>Math.round(v*10)/10;
 function delta(s,lowerBetter,unit,since){
   if(s.length<2)return '';const a=since==='prev'?s[s.length-2].v:s[0].v,b=s[s.length-1].v,d=n1(b-a);
@@ -580,7 +585,7 @@ function spark(s,unit){
 function numCard(label,s,unit,lowerBetter,empty,since){const L=s[s.length-1];return `<div class="num"><span class="k">${label}</span>${L?`<b>${L.v}<small>${unit}</small></b>${delta(s,lowerBetter,unit==='/100'?'':unit,since)}`:`<b class="none">–</b><em class="dz">${empty}</em>`}</div>`}
 function weekTab(){
   const ex=plan.kind==='existing',b=plan.baseline,cp=CP(),wk=pathWeek(),due=ciDue(),l=lastCI();
-  const vo2=(testGroups().find(g=>g[0].type==='vo2')||[]).map(t=>({d:t.d,v:+t.v}));
+  const vo2=series('vo2');
   const wins=winsList();
   return `${obNeeded()?`<section id="obSec">${obHTML()}</section>`:''}<section class="whero dark"><div class="wh-l"><span class="eyebrow">${wk?`Week ${wk} of 24`:'Your plan'}${plan.phase?` · Phase ${plan.phase.index+1}, ${esc(plan.phase.name)}`:''}</span><h1>${esc(plan.client.first||'')}${plan.client.first?', ':''}here's your week.</h1>
      <p class="lede">${due?`Your weekly check-in is ${l?'due':'the first thing to do'}. Two minutes, and it keeps your score and your plan honest.`:`Checked in ${fmtDay(l.d)}. Your next check-in is due ${fmtDay(addDays(l.d,7))}.`}</p>
@@ -645,11 +650,37 @@ function progressTab(){
     <div class="card"><span class="k">Body weight</span>${spark(w,' kg')}${lw&&lf?`<p class="small">Latest split: <b style="color:var(--ink)">${n1(lw.v*lf.v/100)} kg</b> fat mass, <b style="color:var(--ink)">${n1(lw.v*(1-lf.v/100))} kg</b> lean mass.</p>`:''}</div>
     ${series('rhr').length||series('hrv').length?`<div class="card"><span class="k">Resting heart rate</span>${spark(series('rhr'),' bpm')}${series('hrv').length?`<span class="k" style="margin-top:10px">HRV</span>${spark(series('hrv'),' ms')}`:''}</div>`:''}
   </div></section>
+  <section id="vo2Sec">${vo2HTML()}</section>
   <section><span class="eyebrow">Tested with ${esc(plan.coach)}</span><h2>Performance tests</h2>
    ${groups.length?`<div class="tests">${groups.map(g=>{const last=g[g.length-1],T=TEST_T[last.type]||TEST_T.other,u=testUnit(last),nm=testName(last);return `<div class="card test"><span class="k">${esc(nm===T[0]?nm:T[0]+' · '+nm)}</span><b>${esc(String(last.v))}<small> ${esc(u)}</small></b>${g.length>1?delta(g.map(t=>({d:t.d,v:+t.v})),T[2]<0,u==='/100'?'':' '+u,'start'):''}<span class="small">${fmtDay(last.d)}${g.length>1?` · ${g.length} tests`:''}</span></div>`}).join('')}</div>`:`<p class="small">VO2 max, strength benchmarks and your movement screen score show here once ${esc(plan.coach)} adds them.</p>`}</section>
   ${L.length?`<section><span class="eyebrow">History</span><div class="hist" role="table" aria-label="Your recent check-ins"><div class="hr hh" role="row"><span role="columnheader">Date</span><span role="columnheader">Score</span><span role="columnheader">Weight</span><span role="columnheader">Body fat</span><span role="columnheader">RHR</span><span role="columnheader">HRV</span></div>${L.map(e=>`<div class="hr" role="row"><span role="cell">${fmtDay(e.d)}</span><span role="cell">${e.score??'–'}</span><span role="cell">${e.w?e.w+' kg':'–'}</span><span role="cell">${e.bf?e.bf+'%':'–'}</span><span role="cell">${e.rhr||'–'}</span><span role="cell">${e.hrv||'–'}</span></div>`).join('')}</div></section>`:''}
   <section id="bwSec" hidden></section>
   <section><span class="eyebrow">Blood work</span><h2>Add new results</h2><div class="bloods"><p class="lede" style="font-size:16px">Had new bloods done? Upload the results here and ${esc(plan.coach)} will review them against your last panel.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>`}
+/* ---------- VO2 max: field tests clients can run themselves, plus Dave's lab or watch results ---------- */
+const VO2T=[['cooper','12-minute run','Run as far as you can in 12 minutes on a track or flat loop. Enter the distance.'],['run24','2.4 km run','Run 2.4 km (1.5 miles) as fast as you can on flat ground. Enter your time.'],['rockport','1.6 km walk','Walk 1.6 km (1 mile) as fast as you can. Enter your time and your heart rate the moment you finish.'],['watch','Watch or lab result','Enter the VO2 max from your Garmin, Apple Watch or a lab test.']];
+let vo2T='cooper',vo2Open=false;
+const mmss=v=>{const m=String(v||'').trim().match(/^(\d+)(?:[:.](\d{1,2}))?$/);return m?+m[1]+(+(m[2]||0))/60:null};
+function vo2Calc(t,f){const b=bodyNow(),age=+profile().age,sex=bodyNow().sex||ciObj().sex;
+  if(t==='cooper'){const d=+f.dist;return d>500?n1((d-504.9)/44.73):null}
+  if(t==='run24'){const m=mmss(f.time);return m>5?n1(3.5+483/m):null}
+  if(t==='rockport'){const m=mmss(f.time),hr=+f.hr,kg=b.kg||+profile().w;if(!m||!hr||!kg||!age)return null;return n1(132.853-0.0769*kg*2.2046-0.3877*age+6.315*(sex==='f'?0:1)-3.2649*m-0.1565*hr)}
+  if(t==='watch'){const v=+f.v;return v>10&&v<95?n1(v):null}return null}
+function vo2HTML(){
+  const s=series('vo2'),L=s[s.length-1],T=VO2T.find(x=>x[0]===vo2T),needAge=vo2T==='rockport'&&!profile().age;
+  const fld=(id,lab,unit,ph)=>`<div class="f"><label for="v2_${id}">${lab} <span class="opt-lab">${unit}</span></label><input class="in" id="v2_${id}" data-v2="${id}" inputmode="decimal" placeholder="${ph||''}"></div>`;
+  return `<span class="eyebrow">VO2 max</span><h2>Your engine</h2><p class="lede" style="font-size:16px">VO2 max is how much oxygen your body can use at full effort. It's one of the strongest markers of fitness and longevity we have, and it trains up. Test it every 8 to 12 weeks, the same way each time.</p>
+   <div class="vo2g"><div class="card"><span class="k">Your VO2 max</span>${L?`<b class="big">${L.v}<small> ml/kg/min</small></b>${delta(s,false,'','start')}`:'<p class="small">No result yet. Run one of the tests and log it here.</p>'}${spark(s,'')}</div>
+    <div class="card v2form">${vo2Open||!L?`<span class="k">Log a test</span><div class="seg" role="group" aria-label="Test">${VO2T.map(([k,n])=>`<button type="button" data-v2t="${k}" class="${vo2T===k?'on':''}" aria-pressed="${vo2T===k}">${n}</button>`).join('')}</div><p class="small">${esc(T[2])} Warm up for 10 minutes first.</p>
+      <div class="cig">${vo2T==='cooper'?fld('dist','Distance','metres','2600'):vo2T==='run24'?fld('time','Time','min:sec','11:30'):vo2T==='rockport'?fld('time','Time','min:sec','14:20')+fld('hr','Finish heart rate','bpm','150'):fld('v','VO2 max','ml/kg/min','45')}</div>
+      ${needAge?'<p class="small" style="color:var(--bad)">This test needs your age. Finish your onboarding first, or use another test.</p>':''}
+      <div class="row" style="align-items:center"><button class="btn primary" type="button" id="v2Save">Save result</button><span class="small" id="v2Msg"></span></div>`:`<span class="k">Next test</span><p class="small">Last tested ${fmtDay(L.d)}. Retest around ${fmtDay(addDays(L.d,70))} using the same test.</p><button class="btn" type="button" id="v2New">Log a new test</button>`}</div></div>`}
+function bindVO2(){const sec=$('vo2Sec');if(!sec)return;const re=()=>{sec.innerHTML=vo2HTML();bindVO2()};
+  sec.querySelectorAll('[data-v2t]').forEach(b=>b.addEventListener('click',()=>{vo2T=b.dataset.v2t;vo2Open=true;re()}));
+  const nw=$('v2New');if(nw)nw.addEventListener('click',()=>{vo2Open=true;re()});
+  const sv=$('v2Save');if(sv)sv.addEventListener('click',async()=>{const f={};sec.querySelectorAll('[data-v2]').forEach(i=>{f[i.dataset.v2]=i.value});const v=vo2Calc(vo2T,f),m=$('v2Msg');
+    if(v==null){m.textContent='Check the numbers. Times are min:sec, like 11:30.';m.style.color='var(--bad)';return}
+    const c=ciObj();c.vo2=(c.vo2||[]).filter(x=>x.d!==todayISO()).concat([{d:todayISO(),v,method:vo2T,raw:f}]);m.style.color='';m.textContent=`${v} ml/kg/min. Saving…`;
+    try{await saveCI();vo2Open=false;renderPlan()}catch(e){}})}
 function bindCI(){
   const f=$('ciForm');
   if(!f){const e=$('ciEdit');if(e)e.addEventListener('click',()=>{const l=lastCI();ciOpen=true;ciDraft=l?JSON.parse(JSON.stringify(l)):null;renderPlan()});return}
@@ -930,7 +961,7 @@ function renderPlan(){
   <footer>Stand in Your Standard. Questions about your plan go to ${esc(plan.coach)} in your check-in.</footer>`;
   bindTabs();document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
   if($('wheel')){drawWheel();renderDetail()}
-  startOrb();bindWalk();bindWeek();bindHalts();bindCI();bindOb();bindNutrition();bindExtras();if(!hub)loadHub();
+  startOrb();bindWalk();bindWeek();bindHalts();bindCI();bindVO2();bindOb();bindNutrition();bindExtras();if(!hub)loadHub();
 }
 
 function fileRow(f){return `<div><span>${esc(f.name)}</span><em class="${f.state==='error'?'bad':f.state==='uploading'?'':'ok'}">${f.state==='uploading'?'Uploading…':f.state==='error'?'Didn\u2019t upload':new Date(f.created_at||Date.now()).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}</em></div>`}
