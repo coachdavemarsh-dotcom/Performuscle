@@ -333,7 +333,10 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .rmph[open]>*+*{margin-top:10px}
 .rmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .rmmac{display:grid;grid-template-columns:110px repeat(4,minmax(0,90px)) auto;gap:6px;align-items:center}#rmCur{min-width:250px}.rmmac input,#rmCur{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 9px;color:var(--ink);font:inherit;font-size:13.5px;width:100%}
-.rmea{font-size:13px;font-weight:600}.rmea.ok{color:#5E9B6E}.rmea.lo{color:#D9A441}
+.rmea{font-size:13px;font-weight:600}
+[data-rmmaint]{white-space:nowrap;padding:8px 14px}
+.rc{display:flex;flex-direction:column;gap:8px}.rc summary{cursor:pointer}.rcin{grid-template-columns:repeat(auto-fill,minmax(95px,1fr))!important}.rcin>span{grid-column:1/-1}.rcf{display:flex;flex-direction:column;gap:2px}
+.rcres{display:flex;flex-direction:column;gap:3px;font-size:13.5px;background:var(--surface-2);border-radius:10px;padding:10px 12px}.rmea.ok{color:#5E9B6E}.rmea.lo{color:#D9A441}
 .rmph textarea{width:100%;resize:vertical;font:inherit;font-size:14px;background:var(--surface-2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
 @media(max-width:700px){.rmmac{grid-template-columns:repeat(4,1fr)}.rmmac>span{grid-column:1/-1}}
 .pgbody{display:flex;flex-direction:column;gap:10px;align-items:stretch}.pgbody>.btn{align-self:flex-start}
@@ -1558,7 +1561,7 @@ const WT_PHASES=['Health','Function','Performance','Mindset'];
 const PT_TYPES=[['vo2','VO2 max','ml/kg/min'],['strength','Strength','kg'],['screen','Movement screen','/100'],['bodyfat','Body fat (DEXA, InBody…)','%'],['weight','Body weight','kg'],['rhr','Resting heart rate','bpm'],['hrv','HRV','ms'],['other','Other','']];
 const BIO_N={sleep:'Sleep',energy:'Energy',calm:'Stress',mood:'Mood',digest:'Digestion',appetite:'Appetite',recovery:'Recovery',training:'Training'};
 function cleanRoad(){const r=(cprog||{}).roadmap;if(!r||!(r.phases||[]).length)return null;const n=v=>{v=parseFloat(v);return isNaN(v)?null:Math.round(v)};const mm=o=>{o=o||{};const x={kcal:n(o.kcal),p:n(o.p),c:n(o.c),f:n(o.f)};return x.kcal||x.p?x:null};
-  const ph=r.phases.map((p,i)=>({name:(p.name||WT_PHASES[i]||'').trim(),weeks:n(p.weeks),focus:(p.focus||'').trim(),training:(p.training||'').trim(),cardio:(p.cardio||'').trim(),steps:(p.steps||'').trim(),energy:(p.energy||'').trim(),train:mm(p.train),rest:mm(p.rest),meals:n(p.meals),supps:(p.supps||'').trim(),notes:(p.notes||'').trim()}));
+  const ph=r.phases.map((p,i)=>({name:(p.name||WT_PHASES[i]||'').trim(),weeks:n(p.weeks),focus:(p.focus||'').trim(),training:(p.training||'').trim(),cardio:(p.cardio||'').trim(),steps:(p.steps||'').trim(),energy:(p.energy||'').trim(),train:mm(p.train),rest:mm(p.rest),meals:n(p.meals),supps:(p.supps||'').trim(),notes:(p.notes||'').trim(),cut:p.cut||null,rc:p.rc||null}));
   return ph.some(p=>p.weeks||p.focus||p.train||p.training)?{current:r.current===''||r.current==null?null:+r.current,phases:ph}:null}
 function cleanProg(){const c=cprog||{};return {roadmap:cleanRoad(),targetScore:+c.targetScore||null,targets:(c.targets||[]).map(x=>String(x).trim()).filter(Boolean),habits:(c.habits||[]).map(x=>String(x).trim()).filter(Boolean),
   tests:(c.tests||[]).filter(t=>t&&t.d&&t.v!==''&&t.v!=null&&!isNaN(+t.v)).map(t=>({d:t.d,type:t.type||'other',name:(t.name||'').trim(),v:+t.v,u:(t.u||'').trim()})),
@@ -1568,7 +1571,15 @@ const EB=['Maintenance','Energy availability restore','Recomposition','Fat loss 
 function clientEA(by){const c=(by||{}).checkins||{},L=(c.list||[]).slice().sort((a,b)=>a.d<b.d?-1:1),pr=c.profile||{};
   const w=[...L].reverse().find(e=>e.w),f=[...L].reverse().find(e=>e.bf);const kg=(w&&w.w)||pr.w,bf=f&&f.bf;if(!kg||!bf||!pr.doneAt)return null;
   const ffm=kg*(1-bf/100),MET={easy:5,moderate:7,hard:9.5},sk=+pr.sessKcal||((MET[pr.intensity]||7)-1)*kg*(+pr.mins||0)/60,st=+pr.steps?pr.steps*(kg/70)*.04:0;
-  return {kg,bf,ffm:Math.round(ffm*10)/10,sex:c.sex,sess:+pr.sessions||0,sk:Math.round(sk),st:Math.round(st)}}
+  return {kg,bf,ffm:Math.round(ffm*10)/10,sex:c.sex,sess:+pr.sessions||0,sk:Math.round(sk),st:Math.round(st),maint:+pr.maint||null}}
+/* Rate of loss: same maths as the coaching sheet's Weight Loss Calculator (Maria 60 kg 15%->10% at 0.7% = 355 kcal/day deficit, 11 + 3 weeks) */
+const FAT_SHARE=.7125,KCAL_FAT=7830,KCAL_LEAN=1200;
+function rateOfLoss(o){const bw=+o.bw,bf=+o.bf,g=+o.goalBf,r=+o.rate,cur=+o.current;if(!bw||!bf||!(g>0)||!r||g>=bf)return null;
+  const fm=bw*bf/100,lbm=bw-fm,fatLoss=(bf-g)/100*bw,total=fatLoss/FAT_SHARE,wk=r/100*bw,weeks=Math.ceil(total/wk-1e-9),tr=o.tr===''||o.tr==null?2:+o.tr,buf=o.buf===''||o.buf==null?1:+o.buf;
+  const wf=wk*FAT_SHARE,wl=wk-wf,daily=(wf*KCAL_FAT+wl*KCAL_LEAN)/7,r1=v=>Math.round(v*100)/100;
+  return {bw,bf,goalBf:g,rate:r,current:cur||null,lbm:r1(lbm),fatLoss:r1(fatLoss),total:r1(total),goalBw:r1(bw-total),wk:r1(wk),weeks,tr,buf,prep:weeks+tr+buf,daily:Math.round(daily),avg:cur?Math.round(cur-daily):null}}
+function rcOut(rc){const r=rateOfLoss(rc||{});if(!r)return '<span class="submsg">Fill in current calories, weight, body fat, goal body fat and rate to map the phase.</span>';
+  return `<div class="rcres"><span><b>${r.fatLoss} kg</b> fat · <b>${r.total} kg</b> total → about ${r.goalBw} kg</span><span><b>${r.wk} kg</b> a week · <b>${r.weeks}</b> deficit weeks + ${r.tr+r.buf} = <b>${r.prep} weeks</b></span><span>Deficit <b>${r.daily} kcal/day</b>${r.avg?` · average daily calories <b>${r.avg}</b>`:''}</span></div>`}
 function eaZ(ea,sex){return sex==='f'?(ea>=45?'Optimal':ea>=36?'Low':ea>=30?'Critical':'RED-S risk'):(ea>=40?'Performance zone':ea>=20?'Subclinical':'RED-S risk')}
 function phaseEA(p,cl){if(!cl)return '';const kc=o=>o&&(+o.kcal||((+o.p||0)*4+(+o.c||0)*4+(+o.f||0)*9));const tk=kc(p.train),rk=kc(p.rest)||tk;if(!tk)return '';
   const td=Math.max(1,Math.min(7,parseInt(p.training)||cl.sess||4)),et=(tk-cl.st-cl.sk*cl.sess/td)/cl.ffm,er=(rk-cl.st)/cl.ffm,r=v=>Math.round(v*10)/10;
@@ -1583,7 +1594,13 @@ function roadHTML(by){
    <datalist id="ebList">${EB.map(x=>`<option value="${x}">`).join('')}</datalist>
    ${ph.map((p,i)=>`<details class="rmph" ${i===0?'open':''}><summary><b>Phase ${i+1} · ${escH(p.name||WT_PHASES[i])}</b> <span class="submsg">${p.weeks?p.weeks+' weeks':''}${(p.train||{}).kcal?' · '+p.train.kcal+' kcal training day':''}</span></summary>
      <div class="rmg">${inp(i,'name',{name:p.name||WT_PHASES[i]},'Phase name')}${inp(i,'weeks',p,'Weeks','number')}${inp(i,'training',p,'Training','','e.g. 4 days')}${inp(i,'cardio',p,'Cardio','','e.g. 2 x Zone 2, 35 min')}${inp(i,'steps',p,'Steps','','e.g. 10,000')}<div class="field"><label>Energy balance</label><input data-rp="${i}.energy" list="ebList" value="${escH(p.energy||'')}"></div>${inp(i,'meals',p,'Meals a day','number','4')}</div>
+     ${cl&&cl.maint?`<div class="row" style="gap:8px;align-items:center"><span class="submsg">Estimated maintenance from onboarding: <b>${cl.maint} kcal</b> (Mifflin-St Jeor × activity)</span><button class="btn" type="button" data-rmmaint="${i}">Use maintenance for this phase</button></div>`:''}
      ${mac(i,'train',p,'Training day')}${mac(i,'rest',p,'Rest day')}<div id="rmea${i}">${phaseEA(p,cl)}</div>
+     <details class="rc" ${p.rc||p.cut?'open':''}><summary class="submsg">Rate of loss calculator${p.cut?` · ${p.cut.bf}% → ${p.cut.goalBf}% at ${p.cut.rate}% a week`:''}</summary>
+      <div class="rmmac rcin"><span class="submsg">Inputs</span>${[['current','Current kcal',(p.rc||{}).current??(cl&&cl.maint)??''],['bw','Weight kg',(p.rc||{}).bw??(cl&&cl.kg)??''],['bf','Body fat %',(p.rc||{}).bf??(cl&&cl.bf)??''],['goalBf','Goal BF %',(p.rc||{}).goalBf??''],['rate','Rate %/wk',(p.rc||{}).rate??'0.7'],['tr','Transition wks',(p.rc||{}).tr??'2'],['buf','Buffer wks',(p.rc||{}).buf??'1']].map(([k,l,v])=>`<label class="rcf"><span class="submsg">${l}</span><input data-rp="${i}.rc.${k}" type="number" step="any" min="0" value="${escH(v)}" aria-label="${l}"></label>`).join('')}</div>
+      <div id="rcout${i}">${rcOut(p.rc||{current:cl&&cl.maint,bw:cl&&cl.kg,bf:cl&&cl.bf,rate:.7})}</div>
+      <p class="submsg">Typical total loss by starting point: obese 4–6%, moderately overweight 3–4%, average 2–3%, lean 1–2%, very lean 0.5–1% of body weight.</p>
+      <button class="btn" type="button" data-rcapply="${i}">Apply to phase ${i+1}: weeks, calories and macros</button></details>
      <div class="pgrid"><div class="field"><label>Focus for this phase</label><textarea data-rp="${i}.focus" rows="3">${escH(p.focus||'')}</textarea></div><div class="field"><label>Supplements <span class="submsg">one per line</span></label><textarea data-rp="${i}.supps" rows="3">${escH(p.supps||'')}</textarea></div><div class="field"><label>Notes</label><textarea data-rp="${i}.notes" rows="3">${escH(p.notes||'')}</textarea></div></div></details>`).join('')}</div>`}
 function progPanel(by){
   const c=cprog||{},ci=((by||{}).checkins||{}),L=(ci.list||[]).slice().sort((a,b)=>a.d<b.d?1:-1).slice(0,6),today=localISO(new Date());
@@ -1617,6 +1634,16 @@ function bindProg(){const box=$('progBox');if(!box)return;
   box.querySelectorAll('[data-wdel]').forEach(b=>b.addEventListener('click',()=>{readProg();cprog.wins.splice(+b.dataset.wdel,1);redrawProg()}));
   box.querySelectorAll('[data-tk="type"]').forEach(sl=>sl.addEventListener('change',()=>{readProg();redrawProg()}));
   $('pgSave').addEventListener('click',saveProgress);
+  box.querySelectorAll('[data-rp*=".rc."]').forEach(inp=>inp.addEventListener('input',()=>{readProg();const ix=+inp.dataset.rp.split('.')[0],el=$('rcout'+ix);if(el)el.innerHTML=rcOut((cprog.roadmap.phases[ix]||{}).rc)}));
+  const keepOpen=fn=>{const op=[...box.querySelectorAll('details.rmph')].map(d=>d.open),rc=[...box.querySelectorAll('details.rc')].map(d=>d.open);fn();const nb=$('progBox');[...nb.querySelectorAll('details.rmph')].forEach((d,k)=>{d.open=op[k]});[...nb.querySelectorAll('details.rc')].forEach((d,k)=>{d.open=rc[k]})};
+  box.querySelectorAll('[data-rcapply]').forEach(b=>b.addEventListener('click',()=>{readProg();const ix=+b.dataset.rcapply,ph=cprog.roadmap.phases[ix],r=rateOfLoss(ph.rc||{});
+    if(!r||!r.avg){subMsg('Fill in current calories, weight, body fat, goal and rate first.',1);return}
+    const t=ph.train||{},pr=+t.p||Math.round(2.2*r.lbm),fa=+t.f||Math.round(r.avg*.25/9),ca=Math.max(0,Math.round((r.avg-pr*4-fa*9)/4));
+    ph.weeks=String(r.prep);ph.energy='Fat loss (deficit)';ph.train={kcal:String(r.avg),p:String(pr),c:String(ca),f:String(fa)};ph.rest={kcal:String(r.avg),p:String(pr),c:String(ca),f:String(fa)};
+    ph.cut={bw:r.bw,bf:r.bf,goalBf:r.goalBf,rate:r.rate,current:r.current,fatLoss:r.fatLoss,total:r.total,goalBw:r.goalBw,wk:r.wk,weeks:r.weeks,tr:r.tr,buf:r.buf,daily:r.daily,avg:r.avg};
+    keepOpen(redrawProg);subMsg(`Phase ${ix+1} set: ${r.prep} weeks at ${r.avg} kcal. Adjust the training and rest day split if you like, then save to their plan.`)}));
+  box.querySelectorAll('[data-rmmaint]').forEach(b=>b.addEventListener('click',()=>{readProg();const ix=+b.dataset.rmmaint,ph=cprog.roadmap.phases[ix],cl=clientEA(box._by||{});if(!cl||!cl.maint)return;const k=cl.maint,m={kcal:String(k),p:String(Math.round(k*.30/4)),c:String(Math.round(k*.35/4)),f:String(Math.round(k*.35/9))};
+    ph.train={...m};ph.rest={...m};if(!ph.energy)ph.energy='Maintenance';keepOpen(redrawProg);subMsg(`Phase ${ix+1} set to maintenance: ${k} kcal, 30/35/35 protein/carbs/fat.`)}));
   box.querySelectorAll('[data-rp*=".train."],[data-rp*=".rest."],[data-rp$=".training"]').forEach(i=>i.addEventListener('input',()=>{readProg();const ix=+i.dataset.rp.split('.')[0],el=$('rmea'+ix);if(el)el.innerHTML=phaseEA(cprog.roadmap.phases[ix]||{},clientEA(box._by||{}))}))}
 async function saveProgress(){
   readProg();const m=$('pgMsg'),btn=$('pgSave');if(!openId)return;btn.disabled=true;m.textContent='Saving…';
