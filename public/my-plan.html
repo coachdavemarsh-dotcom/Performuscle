@@ -246,6 +246,7 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
 .num b{font-family:var(--display);font-size:44px;font-weight:600;line-height:1.05}.num b small{font-size:17px;color:var(--muted);margin-left:3px;font-weight:500}.num b.none{color:var(--muted)}
 .num em,.test em{font-style:normal;font-size:13px;font-weight:600}
 em.up{color:#3E7B4F}em.dn{color:var(--bad)}em.dz{color:var(--muted);font-weight:500}
+.creply{display:flex;flex-direction:column;gap:12px}.creply .wt{max-width:none}.crt{margin:0;font-size:16px;line-height:1.55;color:var(--ink)}.hr .rp{font-style:normal;font-size:11.5px;color:var(--accent);white-space:nowrap}
 .wins{background:var(--surface);border-radius:18px;padding:18px 20px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:10px}
 .win{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:baseline;font-size:15px}.win i{color:var(--accent);font-style:normal}.win small{color:var(--muted);font-size:12.5px}.win em{font-style:normal;font-size:12.5px;color:var(--muted)}
 /* Check-in */
@@ -557,11 +558,20 @@ const todayISO=()=>{const t=new Date();return new Date(t.getTime()-t.getTimezone
 const addDays=(iso,n)=>{const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
 const fmtDay=iso=>new Date(iso+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});
 const daysSince=iso=>Math.round((new Date(todayISO()+'T12:00:00')-new Date(iso+'T12:00:00'))/864e5);
+/* Tell Dave a check-in landed (server checks it was saved in the last 15 minutes) */
+function notifyCI(){if(!LIVE||!sess)return;authFetch('/auth/v1/user').catch(()=>{}).finally(()=>{fetch('/.netlify/functions/checkins',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+sess.access},body:JSON.stringify({action:'submitted'})}).catch(()=>{})})}
+/* Dave's replies to check-ins: {d (check-in date), at, url (Zoom clip, Loom, YouTube...), text} */
+function replies(){return Object.values(CP().replies).filter(r=>r&&(r.url||r.text)).sort((a,b)=>(a.at||a.d)<(b.at||b.d)?-1:1)}
+function replyHTML(){
+  const r=replies().pop();if(!r||daysSince((r.at||r.d).slice(0,10))>21)return '';
+  const em=r.url&&/^https:\/\//.test(r.url)?vEmbed(r.url):null;
+  const vid=r.url&&/^https:\/\//.test(r.url)?(em?`<div class="wt">${em.f?`<iframe src="${esc(em.f)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Check-in video from ${esc(plan.coach)}"></iframe>`:`<video src="${esc(em.v)}" controls playsinline></video>`}</div>`:`<a class="btn primary" href="${esc(r.url)}" target="_blank" rel="noopener">▶ Watch your check-in video</a>`):'';
+  return `<section id="replySec"><span class="eyebrow">Check-in from your coach · ${fmtDay(r.d)}</span><div class="card creply">${vid}${r.text?`<p class="crt">${esc(r.text).replace(/\n/g,'<br>')}</p>`:''}<span class="small">From ${esc(plan.coach)}${r.at?`, ${fmtDay(r.at.slice(0,10))}`:''}. Reply to the email if you have questions.</span></div></section>`}
 function lastCI(){const L=ciObj().list;return L[L.length-1]||null}
 function ciDue(){const l=lastCI();return !l||daysSince(l.d)>=6}
 
 /* Everything Dave adds from the dashboard: target score, phase targets, habits, tests and wins */
-function CP(){const p=(plan&&plan.coachProgress)||{};return {roadmap:p.roadmap||null,targetScore:+p.targetScore||null,targets:(p.targets||[]).filter(Boolean),habits:(p.habits||[]).filter(Boolean),tests:(p.tests||[]).filter(t=>t&&t.d&&t.v!=null&&t.v!=='').slice().sort((a,b)=>a.d<b.d?-1:1),wins:(p.wins||[]).filter(w=>w&&w.t)}}
+function CP(){const p=(plan&&plan.coachProgress)||{};return {roadmap:p.roadmap||null,targetScore:+p.targetScore||null,targets:(p.targets||[]).filter(Boolean),habits:(p.habits||[]).filter(Boolean),tests:(p.tests||[]).filter(t=>t&&t.d&&t.v!=null&&t.v!=='').slice().sort((a,b)=>a.d<b.d?-1:1),wins:(p.wins||[]).filter(w=>w&&w.t),replies:(p.replies&&typeof p.replies==='object')?p.replies:{}}}
 const TEST_T={vo2:['VO2 max','ml/kg/min',1],strength:['Strength','',1],screen:['Movement screen','/100',1],bodyfat:['Body fat','%',-1],weight:['Body weight','kg',0],rhr:['Resting heart rate','bpm',-1],hrv:['HRV','ms',1],other:['Test','',1]};
 const testName=t=>t.type==='strength'||t.type==='other'?(t.name||TEST_T[t.type][0]):(TEST_T[t.type]||[t.name||'Test'])[0];
 const testUnit=t=>String(t.u||(TEST_T[t.type]||[])[1]||'').trim();
@@ -610,7 +620,7 @@ function weekTab(){
      <p class="lede">${due?`Your weekly check-in is ${l?'due':'the first thing to do'}. Two minutes, and it keeps your score and your plan honest.`:`Checked in ${fmtDay(l.d)}. Your next check-in is due ${fmtDay(addDays(l.d,7))}.`}</p>
      <div class="row" style="gap:10px"><button class="btn ${due?'primary':''}" type="button" data-go="progress">${due?'Do your check-in →':'See your progress →'}</button><a class="btn" href="/hub">Open your Hub</a></div></div>
     ${!ex&&b?`<div class="perf"><span class="k">Performance score</span><b>${b.score.toFixed(1)}<small>/10</small></b><span class="pt">Baseline from your audit${cp.targetScore?` · target <strong>${cp.targetScore.toFixed(1)}</strong>`:''}</span>${cp.targetScore?`<div class="pbar" aria-hidden="true"><i style="width:${Math.min(100,b.score*10)}%"></i><s style="left:${Math.min(100,cp.targetScore*10)}%"></s></div>`:''}</div>`:''}</section>
-  <section><span class="eyebrow">Your numbers</span><div class="nums">
+  ${replyHTML()}<section><span class="eyebrow">Your numbers</span><div class="nums">
     ${numCard('Biofeedback score',series('score'),'/100',false,'Log a check-in','prev')}
     ${numCard('Body fat',series('bf'),'%',true,'Add waist and neck','start')}
     ${numCard('Body weight',series('w'),' kg',null,'Add your weight','start')}
@@ -673,7 +683,7 @@ function progressTab(){
   <section id="vo2Sec">${vo2HTML()}</section>
   <section><span class="eyebrow">Tested with ${esc(plan.coach)}</span><h2>Performance tests</h2>
    ${groups.length?`<div class="tests">${groups.map(g=>{const last=g[g.length-1],T=TEST_T[last.type]||TEST_T.other,u=testUnit(last),nm=testName(last);return `<div class="card test"><span class="k">${esc(nm===T[0]?nm:T[0]+' · '+nm)}</span><b>${esc(String(last.v))}<small> ${esc(u)}</small></b>${g.length>1?delta(g.map(t=>({d:t.d,v:+t.v})),T[2]<0,u==='/100'?'':' '+u,'start'):''}<span class="small">${fmtDay(last.d)}${g.length>1?` · ${g.length} tests`:''}</span></div>`}).join('')}</div>`:`<p class="small">VO2 max, strength benchmarks and your movement screen score show here once ${esc(plan.coach)} adds them.</p>`}</section>
-  ${L.length?`<section><span class="eyebrow">History</span><div class="hist" role="table" aria-label="Your recent check-ins"><div class="hr hh" role="row"><span role="columnheader">Date</span><span role="columnheader">Score</span><span role="columnheader">Weight</span><span role="columnheader">Body fat</span><span role="columnheader">RHR</span><span role="columnheader">HRV</span></div>${L.map(e=>`<div class="hr" role="row"><span role="cell">${fmtDay(e.d)}</span><span role="cell">${e.score??'–'}</span><span role="cell">${e.w?e.w+' kg':'–'}</span><span role="cell">${e.bf?e.bf+'%':'–'}</span><span role="cell">${e.rhr||'–'}</span><span role="cell">${e.hrv||'–'}</span></div>`).join('')}</div></section>`:''}
+  ${L.length?`<section><span class="eyebrow">History</span><div class="hist" role="table" aria-label="Your recent check-ins"><div class="hr hh" role="row"><span role="columnheader">Date</span><span role="columnheader">Score</span><span role="columnheader">Weight</span><span role="columnheader">Body fat</span><span role="columnheader">RHR</span><span role="columnheader">HRV</span></div>${L.map(e=>`<div class="hr" role="row"><span role="cell">${fmtDay(e.d)}${CP().replies[e.d]?' <i class="rp" title="Your coach replied">✓ reply</i>':''}</span><span role="cell">${e.score??'–'}</span><span role="cell">${e.w?e.w+' kg':'–'}</span><span role="cell">${e.bf?e.bf+'%':'–'}</span><span role="cell">${e.rhr||'–'}</span><span role="cell">${e.hrv||'–'}</span></div>`).join('')}</div></section>`:''}
   <section id="bwSec" hidden></section>
   <section><span class="eyebrow">Blood work</span><h2>Add new results</h2><div class="bloods"><p class="lede" style="font-size:16px">Had new bloods done? Upload the results here and ${esc(plan.coach)} will review them against your last panel.</p><label class="btn ghost" for="bloodUp">Upload results</label><input id="bloodUp" type="file" multiple accept="application/pdf,image/*"><div class="files" id="fileList"></div><p class="small">PDF or photos, up to 10 MB each. Only ${esc(plan.coach)} can open them.</p></div></section>`}
 /* ---------- VO2 max: field tests clients can run themselves, plus Dave's lab or watch results ---------- */
@@ -721,7 +731,7 @@ function bindCI(){
     const rest=c.list.filter(x=>x.d!==ent.d);ent.score=bioScore(ent,rest.filter(x=>x.d<ent.d));
     const before=JSON.stringify(c.list);c.list=rest.concat([ent]).sort((a,b)=>a.d<b.d?-1:1).slice(-160);
     msg.textContent='Saving…';
-    try{await saveCI();ciOpen=false;ciDraft=null;renderPlan()}catch(err){c.list=JSON.parse(before)}});
+    try{await saveCI();ciOpen=false;ciDraft=null;renderPlan();notifyCI()}catch(err){c.list=JSON.parse(before)}});
 }
 
 /* ================= Roadmap, onboarding, energy availability, meal planner ================= */

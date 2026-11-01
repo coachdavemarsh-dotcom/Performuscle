@@ -71,6 +71,22 @@ const TEMPLATES = {
       lede: 'Your audit and movement screen are both in, and Dave has been through them. Book your strategy call and we’ll map out your six months together.',
       button: ['Book your strategy call', CALL], done: 2 })
   }),
+  // Weekly check-in due (again = the nudge two days later)
+  checkin: (n, again) => ({
+    subject: again ? 'Your check-in is still open' : 'Time for your weekly check-in',
+    html: build({ preheader: 'Two minutes: weight, waist, how your week felt.', eyebrow: 'Weekly check-in', title: again ? `${FIRST(n)}, quick nudge.` : `${FIRST(n)}, check-in day.`,
+      lede: 'Two minutes in My Plan: your weight and measurements, eight quick ratings on how your week felt, and anything Dave should know. It keeps your score, your body fat and your plan honest, and Dave replies to every one.',
+      button: ['Do my check-in', 'https://coachdavemarsh.net/my-plan#progress'], list: ['What you\u2019ll need', ['Your morning weight', 'A tape for waist and neck (and hips)', 'Resting heart rate and HRV if you track them']],
+      foot: 'You\u2019re getting this because you\u2019re coached by Dave in Soul Meets Strength.' })
+  }),
+  // Dave has replied to a check-in (video and/or written summary)
+  checkinReply: (n, text, hasVideo, d) => ({
+    subject: hasVideo ? 'Check-in from your coach: your video is ready' : 'Check-in from your coach',
+    html: build({ preheader: hasVideo ? 'Dave recorded you a check-in video.' : 'Dave has replied to your check-in.', eyebrow: 'Check-in from your coach', title: `${FIRST(n)}, here\u2019s your feedback.`,
+      lede: (text ? esc(text).replace(/\n/g, '<br>') : 'Dave has replied to your check-in.') + (hasVideo ? '<br><br>There\u2019s a video for you too. Watch it in My Plan.' : ''),
+      button: [hasVideo ? 'Watch your check-in' : 'Open My Plan', 'https://coachdavemarsh.net/my-plan#week'], list: ['This week', ['Read or watch the feedback', 'Make the changes Dave asked for', 'Check in again next week']],
+      foot: 'You\u2019re getting this because you\u2019re coached by Dave in Soul Meets Strength.' })
+  }),
   // Every 12 weeks: the quarterly review (q = quarter number, again = the reminder a week later)
   review: (n, q, again) => ({
     subject: again ? `Reminder: your ${q * 12}-week review` : `Your ${q * 12}-week review is ready`,

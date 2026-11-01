@@ -314,6 +314,7 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .hubm summary::-webkit-details-marker{display:none}
 .hubm .hb{height:5px;border-radius:3px;background:var(--surface-3);overflow:hidden}
 .hubm .hb i{display:block;height:100%;background:var(--gold)}
+.crep{margin-top:8px}.crep summary{cursor:pointer;color:var(--gold2,#A8843F);font-weight:600;font-size:13px}.crep input,.crep textarea{display:block;width:100%;margin-top:8px;font:inherit;font-size:14px;padding:9px 11px;border-radius:10px;border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:inherit}.crf{display:flex;flex-direction:column;gap:8px;margin-top:8px}.crf>input,.crf>textarea{margin:0!important;min-height:0}.crep .row{margin:0!important;padding:0!important;border:0!important;gap:10px;align-items:center;display:flex}.crep .submsg{flex:1}
 .hubm dl{display:flex;flex-direction:column;gap:8px;font-size:13.5px}
 .hubm dt{color:var(--muted)}
 .hubm dd{white-space:pre-wrap;overflow-wrap:anywhere}
@@ -1481,7 +1482,7 @@ function buildPlan(){
 }
 async function saveReview(){
   /* keep what the scheduled emails record on the server (reminder dates), so a save never makes them resend */
-  let keep={};try{const cur=await sb(`/rest/v1/${SB.table}?select=coach_data&id=eq.${encodeURIComponent(openId)}`);const cd=(cur&&cur[0]&&cur[0].coach_data)||{};['hubReminders','reviewMails'].forEach(k=>{if(cd[k])keep[k]=cd[k]})}catch(e){}
+  let keep={};try{const cur=await sb(`/rest/v1/${SB.table}?select=coach_data&id=eq.${encodeURIComponent(openId)}`);const cd=(cur&&cur[0]&&cur[0].coach_data)||{};['hubReminders','reviewMails','ciReminders'].forEach(k=>{if(cd[k])keep[k]=cd[k]})}catch(e){}
   const coach_data={...keep,state,ans,spokes,notes,mv,ns,ik,inner,hubPath,walkthroughs:cleanWalks(),progress:cleanProg(),invitedAt,existing,followups,booking,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
   await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(openId)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({coach_data,status:$('subStatus').value})});
 }
@@ -1588,7 +1589,8 @@ function cleanRoad(){const r=(cprog||{}).roadmap;if(!r||!(r.phases||[]).length)r
   return ph.some(p=>p.weeks||p.focus||p.train||p.training)?{current:r.current===''||r.current==null?null:+r.current,phases:ph}:null}
 function cleanProg(){const c=cprog||{};return {roadmap:cleanRoad(),targetScore:+c.targetScore||null,targets:(c.targets||[]).map(x=>String(x).trim()).filter(Boolean),habits:(c.habits||[]).map(x=>String(x).trim()).filter(Boolean),
   tests:(c.tests||[]).filter(t=>t&&t.d&&t.v!==''&&t.v!=null&&!isNaN(+t.v)).map(t=>({d:t.d,type:t.type||'other',name:(t.name||'').trim(),v:+t.v,u:(t.u||'').trim()})),
-  wins:(c.wins||[]).filter(w=>w&&(w.t||'').trim()).map(w=>({d:w.d||'',t:w.t.trim()}))}}
+  wins:(c.wins||[]).filter(w=>w&&(w.t||'').trim()).map(w=>({d:w.d||'',t:w.t.trim()})),
+  replies:Object.fromEntries(Object.entries(c.replies||{}).filter(([d,r])=>r&&/^\d{4}-\d\d-\d\d$/.test(d)&&(r.url||r.text)).map(([d,r])=>[d,{d,at:r.at||'',url:(r.url||'').trim(),text:(r.text||'').trim()}]))}}
 /* Roadmap editor: replaces the Google Sheets timeline. Energy availability preview uses the client's onboarding */
 const GOAL_PH={"half": {"name": "Half marathon", "ph": ["Build the base: easy kilometres, strength foundations, fix niggles and movement", "Aerobic build: long run grows each week, add tempo, improve running economy", "Race-specific: threshold and race-pace work, then a 7–10 day taper", "Race and reflect: pacing plan, race execution, recovery and what’s next"]}, "marathon": {"name": "Marathon", "ph": ["Base and robustness: strength, mobility, consistent easy volume", "Aerobic and durability build: long run progression, marathon-pace blocks", "Specific: race-pace long runs, fuelling rehearsals, 2–3 week taper", "Race, recover and review"]}, "ultra": {"name": "Ultra marathon", "ph": ["Base and robustness: strength, ankles, easy volume", "Time on feet: back-to-backs, hills, gut training", "Race-specific: terrain, kit and night runs, taper", "Race, recover properly, review"]}, "tri": {"name": "Triathlon", "ph": ["Base: swim technique, aerobic volume in all three, strength", "Build: longer rides and runs, bricks, threshold work", "Race-specific: race-pace bricks, open water, taper", "Race and review"]}, "hyrox": {"name": "Hyrox", "ph": ["Foundations: strength, aerobic base, station technique", "Engine build: threshold running, station volume, compromised runs", "Race-specific: simulations, pacing, transitions, taper", "Race and review"]}, "athx": {"name": "ATHX", "ph": ["Foundations: strength base and aerobic base", "Build: heavy strength blocks, threshold run and row", "Race-specific: zone simulations, refuel practice, taper", "Compete and review"]}, "bodybuilding": {"name": "Bodybuilding show", "ph": ["Off-season build: surplus, progressive overload, weak points", "Pre-prep: lean out slowly, lock in habits and posing", "Contest prep: the cut, cardio, peak week", "Show day, reverse diet and review"]}, "pullups": {"name": "10 strict pull-ups", "ph": ["Foundations: hangs, scapular pull-ups, rows, negatives", "Build reps: sets of 2–4, add volume", "Strength: weighted pull-ups, test max reps", "Own it: keep 10 and set the next target"]}, "deadlift2x": {"name": "Double bodyweight deadlift", "ph": ["Foundations: hinge pattern, bracing, posterior chain volume", "Build: volume at 70–80%, double progression", "Strength: heavier triples, doubles and singles", "Test, then set the next target"]}, "squat15": {"name": "1.5× bodyweight squat", "ph": ["Foundations: depth, positions, mobility, tempo squats", "Build: volume and double progression", "Strength: heavier sets, pauses, singles", "Test, then set the next target"]}};
 const EB=['Maintenance','Energy availability restore','Recomposition','Fat loss (deficit)','Muscle gain (surplus)','Performance fuelling','Peak / taper'];
@@ -1654,8 +1656,28 @@ function progPanel(by){
    <div id="pwRows">${(c.wins||[]).map(wRow).join('')}</div><button class="btn" type="button" id="pwAdd" style="align-self:flex-start">Add a win</button>
    <div class="row" style="margin-top:6px"><button class="btn primary" type="button" id="pgSave">Save to their plan</button><span class="submsg" id="pgMsg"></span></div>
    ${(ci.vo2||[]).length?`<span class="eyebrow gold" style="margin-top:10px">Their VO2 max tests</span><p class="submsg">${(ci.vo2||[]).slice().sort((a,b)=>a.d<b.d?1:-1).map(v=>`${new Date(v.d+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'2-digit'})}: <b>${v.v}</b> ml/kg/min (${({cooper:'12-min run',run24:'2.4 km run',rockport:'1.6 km walk',watch:'watch or lab'})[v.method]||v.method})`).join(' · ')}</p>`:''}
-   ${L.length?`<span class="eyebrow gold" style="margin-top:10px">Their check-ins</span><dl>${L.map(e=>`<div><dt>${new Date(e.d+'T12:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})} · ${e.score!=null?e.score+'/100':'no score'}${e.w?' · '+e.w+' kg':''}${e.bf?' · '+e.bf+'% fat':''}${e.rhr?' · RHR '+e.rhr:''}${e.hrv?' · HRV '+e.hrv:''}</dt><dd>${Object.keys(BIO_N).map(k=>`${BIO_N[k]} ${(e.r||{})[k]||'–'}`).join(' · ')}${e.note?`<br>“${escH(e.note)}”`:''}</dd></div>`).join('')}</dl>`:''}
+   ${L.length?`<span class="eyebrow gold" style="margin-top:10px">Their check-ins</span><dl>${L.map(e=>`<div><dt>${new Date(e.d+'T12:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})} · ${e.score!=null?e.score+'/100':'no score'}${e.w?' · '+e.w+' kg':''}${e.bf?' · '+e.bf+'% fat':''}${e.rhr?' · RHR '+e.rhr:''}${e.hrv?' · HRV '+e.hrv:''}</dt><dd>${Object.keys(BIO_N).map(k=>`${BIO_N[k]} ${(e.r||{})[k]||'–'}`).join(' · ')}${e.note?`<br>“${escH(e.note)}”`:''}${replyBox(e,L)}</dd></div>`).join('')}</dl>`:''}
   </div></details>`}
+/* Check-in replies: Dave's Zoom clip (or Loom/YouTube) link plus a short summary, emailed as "Check-in from your coach" */
+function replyBox(e,L){const r=((cprog||{}).replies||{})[e.d]||{},first=!r.at&&e===L.find(x=>!((cprog||{}).replies||{})[x.d]);
+  return `<details class="crep"${first?' open':''}><summary>${r.at?`✓ Replied ${new Date(r.at).toLocaleDateString('en-AU',{day:'numeric',month:'short'})}${r.url?' · video':''} · edit`:'Reply to this check-in'}</summary><div class="crf">
+   <input type="url" data-rpu="${e.d}" placeholder="Zoom clip, Loom or YouTube link" value="${escH(r.url||'')}" aria-label="Video link">
+   <textarea rows="3" data-rpt="${e.d}" placeholder="Summary: what you saw, and the one or two things to change this week" aria-label="Reply summary">${escH(r.text||'')}</textarea>
+   <div class="row"><button class="btn primary" type="button" data-rpsend="${e.d}">${r.at?'Update and email again':'Send to client'}</button><span class="submsg" id="rpmsg_${e.d}"></span></div></div></details>`}
+async function sendReply(d){
+  const box=$('progBox'),u=box.querySelector(`[data-rpu="${d}"]`).value.trim(),t=box.querySelector(`[data-rpt="${d}"]`).value.trim(),m=$('rpmsg_'+d),b=box.querySelector(`[data-rpsend="${d}"]`);
+  m.className='submsg';if(!u&&!t){m.textContent='Add a video link or a summary.';m.className='submsg err';return}
+  if(u&&!/^https:\/\//.test(u)){m.textContent='The video link needs to start with https://';m.className='submsg err';return}
+  b.disabled=true;m.textContent='Sending…';
+  try{const rows=await sb(`/rest/v1/client_plans?select=id,email,plan&audit_id=eq.${encodeURIComponent(openId)}`);
+    if(!rows||!rows[0]||!rows[0].plan||!rows[0].email)throw new Error('Publish their plan first, so they can see your reply.');
+    readProg();cprog.replies={...(cprog.replies||{}),[d]:{d,at:new Date().toISOString(),url:u,text:t}};
+    await saveReview();
+    await sb(`/rest/v1/client_plans?id=eq.${encodeURIComponent(rows[0].id)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({plan:{...rows[0].plan,coachProgress:cleanProg()}})});
+    const r=await fetch('/.netlify/functions/checkins',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok.access},body:JSON.stringify({action:'reply',email:rows[0].email,name:(state.clientName||'').trim(),d,text:t,video:!!u})});
+    const j=await r.json().catch(()=>({}));
+    m.textContent=r.ok?'Sent. It’s on their This week tab and in their inbox.':'Saved to their plan, but the email didn’t send: '+(j.error||r.status);m.className='submsg'+(r.ok?'':' err')}
+  catch(err){m.textContent=err.message;m.className='submsg err'}finally{b.disabled=false}}
 function readProg(){const box=$('progBox');if(!box)return;cprog=cprog||{};
   if($('rmBox')){const r=cprog.roadmap=cprog.roadmap||{phases:[]};r.current=$('rmCur').value;box.querySelectorAll('[data-rp]').forEach(i=>{const [ix,k,sub]=i.dataset.rp.split('.');const ph=r.phases[+ix]=r.phases[+ix]||{};if(sub){ph[k]=ph[k]||{};ph[k][sub]=i.value}else ph[k]=i.value})}
   cprog.targetScore=$('pgTarget').value;cprog.targets=$('pgTargets').value.split('\n');cprog.habits=$('pgHabits').value.split('\n');
@@ -1669,6 +1691,7 @@ function bindProg(){const box=$('progBox');if(!box)return;
   box.querySelectorAll('[data-wdel]').forEach(b=>b.addEventListener('click',()=>{readProg();cprog.wins.splice(+b.dataset.wdel,1);redrawProg()}));
   box.querySelectorAll('[data-tk="type"]').forEach(sl=>sl.addEventListener('change',()=>{readProg();redrawProg()}));
   $('pgSave').addEventListener('click',saveProgress);
+  box.querySelectorAll('[data-rpsend]').forEach(b=>b.addEventListener('click',()=>sendReply(b.dataset.rpsend)));
   box.querySelectorAll('[data-rp*=".rc."]').forEach(inp=>inp.addEventListener('input',()=>{readProg();const ix=+inp.dataset.rp.split('.')[0],el=$('rcout'+ix);if(el)el.innerHTML=rcOut((cprog.roadmap.phases[ix]||{}).rc)}));
   const keepOpen=fn=>{const op=[...box.querySelectorAll('details.rmph')].map(d=>d.open),rc=[...box.querySelectorAll('details.rc')].map(d=>d.open);fn();const nb=$('progBox');[...nb.querySelectorAll('details.rmph')].forEach((d,k)=>{d.open=op[k]});[...nb.querySelectorAll('details.rc')].forEach((d,k)=>{d.open=rc[k]})};
   const gt=$('goalTpl');if(gt)gt.addEventListener('click',()=>{readProg();const g=((box._by||{}).checkins||{}).goal,G=g&&GOAL_PH[g.id];if(!G)return;const r=cprog.roadmap=cprog.roadmap||{phases:[]};G.ph.forEach((x,i)=>{const ph=r.phases[i]=r.phases[i]||{};if(!(ph.focus||'').trim())ph.focus=x});keepOpen(redrawProg);subMsg('Phase focus filled from their goal where it was empty. Edit, then save to their plan.')});

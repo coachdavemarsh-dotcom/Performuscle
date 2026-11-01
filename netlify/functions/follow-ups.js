@@ -5,6 +5,8 @@
 // Stops as soon as Dave sets the audit to Booked, Became client or Archived.
 // Client Hub: when a training's week has passed and it isn't complete, the client gets one
 // bundled reminder, at most once a week (recorded in coach_data.hubReminders).
+// Weekly check-in: 7 days after their last check-in (or plan start) they get a reminder, and one nudge
+// 2 days later if they still haven't checked in (recorded in coach_data.ciReminders). Sydney daytime only.
 // What was sent is recorded on the audit (coach_data.followups), so nothing is sent twice.
 // Needs SUPABASE_SERVICE_ROLE_KEY and RESEND_API_KEY in Netlify.
 
@@ -114,6 +116,38 @@ async function reviewEmails(service, resend, now, budget) {
   return sent;
 }
 
+async function checkinReminders(service, resend, now, budget) {
+  const hr = +new Intl.DateTimeFormat('en-AU', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Australia/Sydney' }).format(new Date(now));
+  if (hr < 7 || hr >= 19) return [];
+  const plans = await sb('/rest/v1/client_plans?select=audit_id,email,plan&published=eq.true&limit=500', service);
+  const live = (plans || []).filter(p => p.audit_id && p.email && p.plan);
+  if (!live.length) return [];
+  const audits = await sb(`/rest/v1/performance_audits?select=id,full_name,status,coach_data&id=in.(${live.map(p => encodeURIComponent(p.audit_id)).join(',')})`, service);
+  const byId = {}; (audits || []).forEach(a => { byId[a.id] = a; });
+  const prog = await sb('/rest/v1/client_progress?select=email,list:data->list&module=eq.checkins&limit=5000', service);
+  const lastBy = {}; (prog || []).forEach(r => { const ds = (r.list || []).filter(x => x && x.score != null).map(x => x.d).sort(); if (ds.length) lastBy[(r.email || '').toLowerCase()] = ds[ds.length - 1]; });
+  const sent = [];
+  for (const p of live) {
+    if (sent.length >= budget) break;
+    const a = byId[p.audit_id], email = (p.email || '').trim();
+    if (!a || !email || a.status === 'archived') continue;
+    if (email.toLowerCase() === (process.env.COACH_EMAIL || REPLY).toLowerCase()) continue;
+    const base = lastBy[email.toLowerCase()] || (p.plan.hubPath && p.plan.hubPath.start) || (p.plan.publishedAt || '').slice(0, 10);
+    const bt = new Date(base + 'T00:00:00Z').getTime(); if (!base || isNaN(bt)) continue;
+    if (now - bt < 7 * DAY || now - bt > 42 * DAY) continue; // gone quiet for 6+ weeks: Dave follows up personally
+    const cd = a.coach_data || {}, cr = cd.ciReminders || {};
+    let again = false;
+    if (cr.base === base) { if (cr.nudge || now - new Date(cr.sent).getTime() < 2 * DAY) continue; again = true; }
+    try {
+      await send(resend, email, TEMPLATES.checkin(a.full_name || (p.plan.client && (p.plan.client.name || p.plan.client.first)), again));
+      const ciReminders = again ? { ...cr, nudge: new Date().toISOString() } : { base, sent: new Date().toISOString() };
+      await sb(`/rest/v1/performance_audits?id=eq.${encodeURIComponent(a.id)}`, service, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ coach_data: { ...cd, ciReminders } }) });
+      sent.push(`checkin${again ? '-nudge' : ''}:${email}`);
+    } catch (e) { sent.push(`error:${email}:${e.message}`); }
+  }
+  return sent;
+}
+
 async function run() {
   const service = process.env.SUPABASE_SERVICE_ROLE_KEY, resend = process.env.RESEND_API_KEY;
   if (!service || !resend) return { skipped: 'not set up' };
@@ -141,6 +175,8 @@ async function run() {
   catch (e) { sent.push(`error:hub:${e.message}`); }
   try { sent.push(...await reviewEmails(service, resend, now, MAX_PER_RUN - sent.length)); }
   catch (e) { sent.push(`error:hub:${e.message}`); }
+  try { sent.push(...await checkinReminders(service, resend, now, MAX_PER_RUN - sent.length)); }
+  catch (e) { sent.push(`error:checkins:${e.message}`); }
   return { checked: (audits || []).length, sent };
 }
 
