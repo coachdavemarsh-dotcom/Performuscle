@@ -319,6 +319,15 @@ em.up{color:#3E7B4F}em.dn{color:var(--bad)}em.dz{color:var(--muted);font-weight:
 .psg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}.psg>div,.psday>div{background:var(--bg);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:3px}.psg span{font-size:14px;color:var(--off)}
 .psday{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}.psday span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.psday em{font-style:normal;font-size:13px;color:var(--off)}.psday small{font-size:12.5px;color:var(--accent);font-weight:600}
 .pslist li{margin-bottom:6px;font-size:14.5px}.psno{background:var(--bg);border-radius:12px;padding:10px 14px}
+
+.gk{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-top:4px}
+.goals{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}.goalc{border:0;text-align:left;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:2px;cursor:pointer;color:var(--ink)}
+.goalc b{font-family:var(--display);font-size:20px;font-weight:600;text-transform:uppercase;line-height:1.1}.goalc span{font-size:13px;color:var(--muted)}.goalc:hover,.goalc.on{box-shadow:inset 0 0 0 2px var(--accent)}
+.goal{gap:16px}.goal .k{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}.gtop{display:flex;gap:20px;justify-content:space-between;flex-wrap:wrap;align-items:flex-start}.gtop .lede{flex:1;min-width:260px}
+.gdate{display:flex;flex-direction:column;gap:6px;min-width:200px}.gdate b{font-family:var(--display);font-size:24px;font-weight:600}
+.gprog{display:flex;flex-direction:column;gap:10px;background:var(--bg);border-radius:14px;padding:14px 16px}.gprog b{font-family:var(--display);font-size:40px;font-weight:600;line-height:1}.gprog b small{font-size:15px;color:var(--muted);font-weight:500}.gprog>div:first-child{display:flex;flex-direction:column;gap:2px}
+.gt p{font-size:15px;color:var(--off)}.ggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.ggrid>div{display:flex;flex-direction:column;gap:6px}
+.gchip{border:0;align-self:flex-start;background:rgba(201,165,107,.16);color:#E0C08A;border-radius:999px;padding:7px 14px;font-size:13.5px;cursor:pointer}.gchip b{color:#F4F1EA}
 </style>
 </head>
 <body>
@@ -592,7 +601,7 @@ function weekTab(){
   const ex=plan.kind==='existing',b=plan.baseline,cp=CP(),wk=pathWeek(),due=ciDue(),l=lastCI();
   const vo2=series('vo2');
   const wins=winsList();
-  return `${obNeeded()?`<section id="obSec">${obHTML()}</section>`:''}<section class="whero dark"><div class="wh-l"><span class="eyebrow">${wk?`Week ${wk} of 24`:'Your plan'}${plan.phase?` · Phase ${plan.phase.index+1}, ${esc(plan.phase.name)}`:''}</span><h1>${esc(plan.client.first||'')}${plan.client.first?', ':''}here's your week.</h1>
+  return `${obNeeded()?`<section id="obSec">${obHTML()}</section>`:''}<section class="whero dark"><div class="wh-l"><span class="eyebrow">${wk?`Week ${wk} of 24`:'Your plan'}${plan.phase?` · Phase ${plan.phase.index+1}, ${esc(plan.phase.name)}`:''}</span><h1>${esc(plan.client.first||'')}${plan.client.first?', ':''}here's your week.</h1>${(()=>{const G=goalDef(),g=myGoal();if(!G)return '';const wk=g.date?Math.ceil((new Date(g.date+'T12:00:00')-new Date(todayISO()+'T12:00:00'))/(7*864e5)):null;return `<button type="button" class="gchip" data-go="plan">Working towards: <b>${esc(G.name)}</b>${wk>0?` · ${wk} weeks to go`:''}</button>`})()}
      <p class="lede">${due?`Your weekly check-in is ${l?'due':'the first thing to do'}. Two minutes, and it keeps your score and your plan honest.`:`Checked in ${fmtDay(l.d)}. Your next check-in is due ${fmtDay(addDays(l.d,7))}.`}</p>
      <div class="row" style="gap:10px"><button class="btn ${due?'primary':''}" type="button" data-go="progress">${due?'Do your check-in →':'See your progress →'}</button><a class="btn" href="/hub">Open your Hub</a></div></div>
     ${!ex&&b?`<div class="perf"><span class="k">Performance score</span><b>${b.score.toFixed(1)}<small>/10</small></b><span class="pt">Baseline from your audit${cp.targetScore?` · target <strong>${cp.targetScore.toFixed(1)}</strong>`:''}</span>${cp.targetScore?`<div class="pbar" aria-hidden="true"><i style="width:${Math.min(100,b.score*10)}%"></i><s style="left:${Math.min(100,cp.targetScore*10)}%"></s></div>`:''}</div>`:''}</section>
@@ -615,6 +624,7 @@ function planTab(){
   const card=x=>`<div class="dom ${x.k===b.focus?'low':''}"><span class="dn">${x.k}${x.k===b.focus?'<small>First focus</small>':''}</span><span class="dv">${x.v==null?'–':x.v.toFixed(1)}<span>/10</span></span><div class="tr"><i style="width:${(x.v||0)*10}%"></i></div></div>`;
   return `<section><span class="eyebrow">Start here every week</span><h1>${esc(plan.client.first||'')}${plan.client.first?', ':''}your plan.</h1><p class="lede">Built from ${ex?'our work together':'your audit, your numbers and our first call'}. Read it at the start of each week. It updates as you move through it.</p></section>
   ${walks().length?`<section id="walkSec">${walkHTML()}</section>`:''}
+  <section id="goalSec">${goalHTML()}</section>
   ${roadmap()?roadmapHTML()+(cp.targets.length?`<section><span class="eyebrow">This phase</span><h2>Phase targets</h2><div class="exfocus">${cp.targets.map((t,i)=>`<div class="exf"><span class="n">${String(i+1).padStart(2,'0')}</span><div><b>${esc(t)}</b></div></div>`).join('')}</div></section>`:''):ph||cp.targets.length?`<section><span class="eyebrow">${ph?`Phase ${ph.index+1} of 4 · ${esc(ph.name)}`:'This phase'}</span><h2>Phase targets</h2>
     ${cp.targets.length?`<div class="exfocus">${cp.targets.map((t,i)=>`<div class="exf"><span class="n">${String(i+1).padStart(2,'0')}</span><div><b>${esc(t)}</b></div></div>`).join('')}</div>`:''}
     ${ph&&ph.lead?`<p class="lede" style="font-size:16px">${esc(ph.lead)}</p>`:''}
@@ -1009,6 +1019,99 @@ function psmfHTML(){
     <li><b>Stop and tell ${coach} if:</b> you feel faint or have heart palpitations, your cycle stops, sleep or mood fall apart, or your strength drops sharply.</li></ul>
    <p class="small psno"><b>Not for you without your doctor's sign-off if:</b> you're pregnant or breastfeeding, have a history of disordered eating, take diabetes or blood pressure medication, or have gout, gallbladder, kidney or liver disease.</p></div>`}
 
+/* ---------- Long-term performance goals: events and strength standards ---------- */
+/* ph = what each of the four phases means for this goal (Health, Function, Performance, Mindset) */
+const GOALS=[
+ {id:'half',type:'Event',name:'Half marathon',sub:'21.1 km',time:'12–16 weeks from a solid 5–10 km base. 20+ weeks starting from scratch.',
+  what:'A test of aerobic engine and pacing. Most of the work is easy running, with one long run and one or two quality sessions a week.',
+  week:['3–5 runs: one long run building to 16–20 km, one tempo or threshold session, one interval session, the rest easy','About 80% of your running easy, conversational pace','2 strength sessions: single-leg strength, calves, hips and trunk','1 full rest day'],
+  marks:['5 km time trial','Longest run','Weekly kilometres (30–50 km at peak)','Easy-pace heart rate'],
+  fuel:'Carbs up on long-run and quality days. Take 30–60 g of carbs an hour on runs over 75–90 minutes, and practise your race fuel in training.',
+  ph:['Build the base: easy kilometres, strength foundations, fix niggles and movement','Aerobic build: long run grows each week, add tempo, improve running economy','Race-specific: threshold and race-pace work, then a 7–10 day taper','Race and reflect: pacing plan, race execution, recovery and what’s next'],hub:['recovery','nutrition','metabolism']},
+ {id:'marathon',type:'Event',name:'Marathon',sub:'42.2 km',time:'16–20 weeks from a half-marathon base. 24+ weeks from scratch.',
+  what:'Durability and fuelling as much as fitness. The long run, weekly volume and race-day carbs decide most marathons.',
+  week:['4–6 runs: long run building to 30–35 km, a marathon-pace or threshold session, one easy-with-strides run, the rest easy','Weekly volume builds to 50–80 km depending on experience','2 strength sessions, dropping to 1 in the final block','Recovery days really are easy'],
+  marks:['Half-marathon or 10 km time','Long run at marathon pace finish','Weekly kilometres','Resting heart rate and HRV trend'],
+  fuel:'60–90 g of carbs an hour on long runs and race day, with a glucose and fructose mix. Carb-load 1–2 days out at 8–12 g/kg. Train your gut.',
+  ph:['Base and robustness: strength, mobility, consistent easy volume','Aerobic and durability build: long run progression, marathon-pace blocks','Specific: race-pace long runs, fuelling rehearsals, 2–3 week taper','Race, recover and review'],hub:['nutrition','recovery','sleep']},
+ {id:'ultra',type:'Event',name:'Ultra marathon',sub:'50 km and beyond',time:'20–30 weeks from a marathon base. Longer for 100 km and mountain races.',
+  what:'Time on feet, terrain and fuelling. Strength for the downhills and a gut that can take food for hours matter as much as speed.',
+  week:['4–6 runs: back-to-back long runs at the weekend, hills or vertical, easy volume','Hiking practice for steep climbs','2 strength sessions with eccentric and downhill work','Kit, night running and nutrition rehearsals'],
+  marks:['Longest back-to-back weekend','Vertical metres per week','Fuel tolerated per hour','Downhill quad soreness'],
+  fuel:'60–90 g of carbs an hour plus sodium (about 300–800 mg an hour depending on sweat and heat). Real food for long events. Rehearse everything.',
+  ph:['Base and robustness: strength, ankles, easy volume','Time on feet: back-to-backs, hills, gut training','Race-specific: terrain, kit and night runs, taper','Race, recover properly, review'],hub:['nutrition','recovery','growth']},
+ {id:'tri',type:'Event',name:'Triathlon',sub:'Sprint to Ironman',time:'Sprint 8–12 weeks, Olympic 12–16, 70.3 16–24, Ironman 24–40 weeks.',
+  what:'Three sports and the transitions between them. Swim technique, bike volume and running off the bike are the big levers.',
+  week:['2–3 swims (technique and open water), 2–3 rides (one long), 2–3 runs (one long)','A brick session most weeks: bike straight into a run','1–2 short strength sessions','Volume builds in 3-week blocks with an easier fourth week'],
+  marks:['400 m swim time or CSS','Functional threshold power or heart rate on the bike','5 km run off the bike','Weekly training hours'],
+  fuel:'60–90 g of carbs an hour on the bike for 70.3 and Ironman, plus fluid and sodium matched to your sweat test.',
+  ph:['Base: swim technique, aerobic volume in all three, strength','Build: longer rides and runs, bricks, threshold work','Race-specific: race-pace bricks, open water, taper','Race and review'],hub:['nutrition','recovery','sleep']},
+ {id:'hyrox',type:'Event',name:'Hyrox',sub:'8 × 1 km run + 8 stations',time:'12–16 weeks for a solid first race. 8–12 weeks to sharpen if you already train hybrid.',
+  what:'8 × 1 km runs, each followed by a station: SkiErg 1,000 m, sled push, sled pull, burpee broad jumps, row 1,000 m, farmers carry, sandbag lunges, wall balls. Running under fatigue is the skill.',
+  week:['2–3 runs including one compromised session (run straight off stations)','2 strength sessions: legs, pushing, pulling, grip','1–2 hybrid sessions: stations in race order at race intensity','Practise transitions and wall balls when tired'],
+  marks:['1 km repeat pace','Time for 100 wall balls','Sled push and pull at race weight','Full or half simulation time'],
+  fuel:'Fuel like a 60–90 minute race: carbs the meal before, a gel or drink if you’re out longer than an hour, sodium on hot days.',
+  ph:['Foundations: strength, aerobic base, station technique','Engine build: threshold running, station volume, compromised runs','Race-specific: simulations, pacing, transitions, taper','Race and review'],hub:['strength','metabolism','recovery']},
+ {id:'athx',type:'Event',name:'ATHX',sub:'Strength, Endurance, MetCon',time:'12–16 weeks for a first ATHX. Strength takes the longest to move, so start there.',
+  what:'Three scored zones in one day: Strength (strict press 1RM, back squat 3RM, deadlift 5RM in a 20-minute window), Endurance (alternating run and row for distance over 22 minutes) and MetCon X (SkiErg, ground-to-overhead, sandbag carry, box jump overs, dumbbell lunges and burpee broad jumps for time). Formats can change by season, so check the current rules.',
+  week:['2–3 strength sessions built around press, squat and deadlift','2 engine sessions: run and row intervals at threshold','1 MetCon session with the race movements','Practise fuelling between zones'],
+  marks:['Strict press 1RM, squat 3RM, deadlift 5RM','22-minute run and row distance','MetCon X simulation time','Bodyweight and body composition'],
+  fuel:'A long day with refuel windows between zones: carbs and some protein you know you digest well, fluid and sodium throughout.',
+  ph:['Foundations: strength base and aerobic base','Build: heavy strength blocks, threshold run and row','Race-specific: zone simulations, refuel practice, taper','Compete and review'],hub:['strength','metabolism','nutrition']},
+ {id:'bodybuilding',type:'Event',name:'Bodybuilding show',sub:'Physique, figure or bikini',time:'Contest prep is usually 16–24 weeks, after at least 6–12 months of off-season building.',
+  what:'Muscle built in the off-season, revealed in a slow, controlled cut, then presented on stage. Posing is half the score.',
+  week:['4–6 hypertrophy sessions, 10–20 hard sets per muscle per week','Steps and low-intensity cardio added gradually in prep','Posing practice most days in the final 8–12 weeks','Weekly check-in photos in the same light'],
+  marks:['Weekly average bodyweight','Body fat trend','Strength kept in prep','Progress photos and posing videos'],
+  fuel:'Cut at about 0.5–1% of bodyweight a week using the rate-of-loss calculator. Protein high, refeeds and diet breaks planned. Watch energy availability.',
+  ph:['Off-season build: surplus, progressive overload, weak points','Pre-prep: lean out slowly, lock in habits and posing','Contest prep: the cut, cardio, peak week','Show day, reverse diet and review'],hub:['strength','hormones','nutrition']},
+ {id:'pullups',type:'Strength',name:'10 strict pull-ups',sub:'Dead hang to chin over bar',target:10,unit:'reps',time:'8–24 weeks depending on where you start and your bodyweight.',
+  what:'Strict means a full dead hang at the bottom, chin over the bar at the top, no kipping. Relative strength, so body composition helps.',
+  week:['Pull 2–3 times a week','Under 3 reps: slow negatives (3–5 s), band-assisted sets and flexed-arm hangs','3–7 reps: several sets of 2–4 reps, add a rep a week, plus rows and lat work','7+ reps: weighted pull-ups for low reps, plus one max-rep set a week'],
+  marks:['Max strict reps every 2–3 weeks','Weighted pull-up for 3 reps','Bodyweight trend'],
+  fuel:'If you’re carrying extra body fat, a slow cut speeds this up. Protein high to keep the muscle.',
+  ph:['Foundations: hangs, scapular pull-ups, rows, negatives','Build reps: sets of 2–4, add volume','Strength: weighted pull-ups, test max reps','Own it: keep 10 and set the next target'],hub:['strength','mobility']},
+ {id:'deadlift2x',type:'Strength',name:'Double bodyweight deadlift',sub:'1 rep at 2× your bodyweight',target:2,unit:'× bodyweight',time:'6–18 months for most trained lifters. Longer if you’re new to lifting.',
+  what:'A strong, well-built posterior chain and a deadlift that stays technically clean as it gets heavy.',
+  week:['Deadlift or a close variation 1–2 times a week','Main work at RPE 7–9 with double progression','Accessories: RDLs, hip thrusts, rows, grip and trunk','Test a heavy single or estimated 1RM every 8–12 weeks'],
+  marks:['Deadlift estimated 1RM','Ratio to bodyweight','Bar speed and technique on heavy sets'],
+  fuel:'Eat to at least maintenance while chasing it. Strength moves fastest in a small surplus.',
+  ph:['Foundations: hinge pattern, bracing, posterior chain volume','Build: volume at 70–80%, double progression','Strength: heavier triples, doubles and singles','Test, then set the next target'],hub:['strength','recovery']},
+ {id:'squat15',type:'Strength',name:'1.5× bodyweight squat',sub:'1 rep at 1.5× bodyweight, to depth',target:1.5,unit:'× bodyweight',time:'6–12 months for most trained lifters.',
+  what:'A back squat to full depth at one and a half times your bodyweight, with good positions under load.',
+  week:['Squat 2–3 times a week, one heavier day and one lighter or paused day','Main work at RPE 7–9 with double progression','Ankle and hip mobility, single-leg work, trunk','Test every 8–12 weeks'],
+  marks:['Squat estimated 1RM','Ratio to bodyweight','Depth and positions on video'],
+  fuel:'Maintenance or a small surplus. Hard to progress the squat in a big deficit.',
+  ph:['Foundations: depth, positions, mobility, tempo squats','Build: volume and double progression','Strength: heavier sets, pauses, singles','Test, then set the next target'],hub:['strength','mobility']}];
+let goalPick=false;
+function myGoal(){return ciObj().goal||null}
+function goalDef(){const g=myGoal();return g&&GOALS.find(x=>x.id===g.id)}
+function goalStrength(g){const G=GOALS.find(x=>x.id===g.id);if(!G||G.type!=='Strength')return null;const log=(g.log||[]).slice().sort((a,b)=>a.d<b.d?-1:1),last=log[log.length-1],kg=bodyNow().kg||+profile().w;
+  const t=CP().tests.filter(t=>t.type==='strength'&&new RegExp(G.id==='pullups'?'pull':G.id==='deadlift2x'?'deadlift':'squat','i').test(t.name||'')).sort((a,b)=>a.d<b.d?-1:1).pop();
+  let v=last?+last.v:t?+t.v:null,d=last?last.d:t?t.d:null;if(v==null)return {G,v:null};
+  const now=G.id==='pullups'?v:kg?n1(v/kg):null;return {G,v,d,now,pct:now!=null?Math.min(100,Math.round(now/G.target*100)):0}}
+function goalHTML(){
+  const g=myGoal(),G=goalDef();
+  if(!G||goalPick)return `<span class="eyebrow">Your long-term goal</span><h2>What are we working towards?</h2><p class="lede" style="font-size:16px">Pick the goal that gets you out of bed. Your roadmap, training and nutrition are built around it, and you'll see the guidelines and timeline for it here.</p>
+    ${['Event','Strength'].map(ty=>`<span class="k gk">${ty==='Event'?'Events':'Strength standards'}</span><div class="goals">${GOALS.filter(x=>x.type===ty).map(x=>`<button type="button" class="goalc ${g&&g.id===x.id?'on':''}" data-goal="${x.id}"><b>${esc(x.name)}</b><span>${esc(x.sub)}</span></button>`).join('')}</div>`).join('')}
+    ${g?'<button class="link" type="button" id="goalCancel" style="color:var(--accent);align-self:flex-start">Keep my current goal</button>':''}`;
+  const wk=g.date?Math.ceil((new Date(g.date+'T12:00:00')-new Date(todayISO()+'T12:00:00'))/(7*864e5)):null,st=goalStrength(g),r=roadmap();
+  return `<span class="eyebrow">Your long-term goal · ${esc(G.type==='Event'?'Event':'Strength standard')}</span><h2>${esc(G.name)}</h2>
+   <div class="card goal"><div class="gtop"><p class="lede" style="font-size:16px">${esc(G.what)}</p>
+    ${G.type==='Event'?`<div class="gdate"><label class="lab" for="goalDate">Event date</label><input class="in" type="date" id="goalDate" value="${esc(g.date||'')}">${wk!=null?`<b>${wk>0?wk+' weeks to go':wk===0?'This week':'Done'}</b>`:''}</div>`:''}</div>
+    ${st?`<div class="gprog"><div><span class="k">Where you are</span><b>${st.now!=null?st.now:'–'}<small> ${esc(G.unit)}</small></b><span class="small">Target ${G.target} ${esc(G.unit)}${st.v!=null&&G.id!=='pullups'?` · best ${st.v} kg`:''}</span></div><div class="pbar"><i style="width:${st.pct||0}%"></i></div>
+      <div class="row" style="gap:8px;align-items:flex-end"><div class="f"><label class="lab" for="goalLog">${G.id==='pullups'?'Max strict reps':'Best lift (kg, 1 rep or estimated 1RM)'}</label><input class="in" id="goalLog" type="number" inputmode="decimal" style="max-width:180px"></div><button class="btn" type="button" id="goalLogBtn">Log it</button></div></div>`:''}
+    <div class="gt"><span class="k">Typical timeline</span><p>${esc(G.time)}${wk!=null&&wk>0&&r?` You have ${wk} weeks, and your roadmap covers ${r.phases.reduce((a,p)=>a+p.weeks,0)} weeks.`:''}</p></div>
+    <div class="ggrid"><div><span class="k">A training week</span><ul class="list">${G.week.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div><span class="k">What we measure</span><ul class="list">${G.marks.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><span class="k" style="margin-top:10px">Fuel</span><p class="small" style="color:var(--off)">${esc(G.fuel)}</p></div></div>
+    <span class="k">How your four phases build to it</span><div class="road">${G.ph.map((x,i)=>`<div class="stage ${r&&r.cur===i?'now':''}"><span class="n">PHASE ${i+1} · ${PHASES[i]}</span><span class="wk" style="color:inherit;font-size:13.5px">${esc(x)}</span></div>`).join('')}</div>
+    ${(G.hub||[]).length?`<p class="small">Hub trainings that matter most for this: ${G.hub.map(id=>`<a href="/hub" style="color:var(--accent)">${esc((TW[id]&&TW[id].t)||id)}</a>`).join(' · ')}</p>`:''}
+    <div class="row"><button class="btn ghost" type="button" id="goalChange">Change goal</button><span class="small" id="goalMsg"></span></div></div>`}
+function bindGoal(){const sec=$('goalSec');if(!sec)return;const re=()=>{sec.innerHTML=goalHTML();bindGoal()},save=async()=>{const m=$('goalMsg');try{await saveCI();if(m)m.textContent='Saved.'}catch(e){}};
+  sec.querySelectorAll('[data-goal]').forEach(b=>b.addEventListener('click',async()=>{const c=ciObj(),old=c.goal;c.goal={id:b.dataset.goal,set:todayISO(),date:old&&old.id===b.dataset.goal?old.date:'',log:old&&old.id===b.dataset.goal?old.log:[]};goalPick=false;re();await save()}));
+  const cc=$('goalCancel');if(cc)cc.addEventListener('click',()=>{goalPick=false;re()});
+  const ch=$('goalChange');if(ch)ch.addEventListener('click',()=>{goalPick=true;re()});
+  const dt=$('goalDate');if(dt)dt.addEventListener('change',async()=>{ciObj().goal.date=dt.value;re();await save()});
+  const lb=$('goalLogBtn');if(lb)lb.addEventListener('click',async()=>{const v=parseFloat($('goalLog').value);if(!(v>0))return;const g=ciObj().goal;g.log=(g.log||[]).filter(x=>x.d!==todayISO()).concat([{d:todayISO(),v}]);re();await save()})}
+
 function renderPlan(){
   $('who').hidden=false;$('whoName').textContent=plan.client.name||plan.client.first||'';
   ciObj();
@@ -1017,7 +1120,7 @@ function renderPlan(){
   <footer>Stand in Your Standard. Questions about your plan go to ${esc(plan.coach)} in your check-in.</footer>`;
   bindTabs();document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
   if($('wheel')){drawWheel();renderDetail()}
-  startOrb();bindWalk();bindWeek();bindHalts();bindCI();bindVO2();bindOb();bindNutrition();bindExtras();if(!hub)loadHub();
+  startOrb();bindWalk();bindWeek();bindHalts();bindCI();bindVO2();bindGoal();bindOb();bindNutrition();bindExtras();if(!hub)loadHub();
 }
 
 function fileRow(f){return `<div><span>${esc(f.name)}</span><em class="${f.state==='error'?'bad':f.state==='uploading'?'':'ok'}">${f.state==='uploading'?'Uploading…':f.state==='error'?'Didn\u2019t upload':new Date(f.created_at||Date.now()).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})}</em></div>`}
