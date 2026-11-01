@@ -336,6 +336,7 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .rmea{font-size:13px;font-weight:600}
 [data-rmmaint]{white-space:nowrap;padding:8px 14px}
 .rc{display:flex;flex-direction:column;gap:8px}.rc summary{cursor:pointer}.rcin{grid-template-columns:repeat(auto-fill,minmax(95px,1fr))!important}.rcin>span{grid-column:1/-1}.rcf{display:flex;flex-direction:column;gap:2px}
+.rmsel{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 9px;color:var(--ink);font:inherit;font-size:13.5px}.psmfc{background:var(--surface-2);border-radius:10px;padding:10px 12px}
 .rcres{display:flex;flex-direction:column;gap:3px;font-size:13.5px;background:var(--surface-2);border-radius:10px;padding:10px 12px}.rmea.ok{color:#5E9B6E}.rmea.lo{color:#D9A441}
 .rmph textarea{width:100%;resize:vertical;font:inherit;font-size:14px;background:var(--surface-2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
 @media(max-width:700px){.rmmac{grid-template-columns:repeat(4,1fr)}.rmmac>span{grid-column:1/-1}}
@@ -1561,7 +1562,7 @@ const WT_PHASES=['Health','Function','Performance','Mindset'];
 const PT_TYPES=[['vo2','VO2 max','ml/kg/min'],['strength','Strength','kg'],['screen','Movement screen','/100'],['bodyfat','Body fat (DEXA, InBody…)','%'],['weight','Body weight','kg'],['rhr','Resting heart rate','bpm'],['hrv','HRV','ms'],['other','Other','']];
 const BIO_N={sleep:'Sleep',energy:'Energy',calm:'Stress',mood:'Mood',digest:'Digestion',appetite:'Appetite',recovery:'Recovery',training:'Training'};
 function cleanRoad(){const r=(cprog||{}).roadmap;if(!r||!(r.phases||[]).length)return null;const n=v=>{v=parseFloat(v);return isNaN(v)?null:Math.round(v)};const mm=o=>{o=o||{};const x={kcal:n(o.kcal),p:n(o.p),c:n(o.c),f:n(o.f)};return x.kcal||x.p?x:null};
-  const ph=r.phases.map((p,i)=>({name:(p.name||WT_PHASES[i]||'').trim(),weeks:n(p.weeks),focus:(p.focus||'').trim(),training:(p.training||'').trim(),cardio:(p.cardio||'').trim(),steps:(p.steps||'').trim(),energy:(p.energy||'').trim(),train:mm(p.train),rest:mm(p.rest),meals:n(p.meals),supps:(p.supps||'').trim(),notes:(p.notes||'').trim(),cut:p.cut||null,rc:p.rc||null}));
+  const ph=r.phases.map((p,i)=>({name:(p.name||WT_PHASES[i]||'').trim(),weeks:n(p.weeks),focus:(p.focus||'').trim(),training:(p.training||'').trim(),cardio:(p.cardio||'').trim(),steps:(p.steps||'').trim(),energy:(p.energy||'').trim(),train:mm(p.train),rest:mm(p.rest),meals:n(p.meals),supps:(p.supps||'').trim(),notes:(p.notes||'').trim(),cut:p.cut||null,rc:p.rc||null,protocol:p.protocol==='psmf'?'psmf':'',ps:p.ps||null}));
   return ph.some(p=>p.weeks||p.focus||p.train||p.training)?{current:r.current===''||r.current==null?null:+r.current,phases:ph}:null}
 function cleanProg(){const c=cprog||{};return {roadmap:cleanRoad(),targetScore:+c.targetScore||null,targets:(c.targets||[]).map(x=>String(x).trim()).filter(Boolean),habits:(c.habits||[]).map(x=>String(x).trim()).filter(Boolean),
   tests:(c.tests||[]).filter(t=>t&&t.d&&t.v!==''&&t.v!=null&&!isNaN(+t.v)).map(t=>({d:t.d,type:t.type||'other',name:(t.name||'').trim(),v:+t.v,u:(t.u||'').trim()})),
@@ -1583,7 +1584,12 @@ function rcOut(rc){const r=rateOfLoss(rc||{});if(!r)return '<span class="submsg"
 function eaZ(ea,sex){return sex==='f'?(ea>=45?'Optimal':ea>=36?'Low':ea>=30?'Critical':'RED-S risk'):(ea>=40?'Performance zone':ea>=20?'Subclinical':'RED-S risk')}
 function phaseEA(p,cl){if(!cl)return '';const kc=o=>o&&(+o.kcal||((+o.p||0)*4+(+o.c||0)*4+(+o.f||0)*9));const tk=kc(p.train),rk=kc(p.rest)||tk;if(!tk)return '';
   const td=Math.max(1,Math.min(7,parseInt(p.training)||cl.sess||4)),et=(tk-cl.st-cl.sk*cl.sess/td)/cl.ffm,er=(rk-cl.st)/cl.ffm,r=v=>Math.round(v*10)/10;
-  return `<span class="rmea ${/Optimal|Performance/.test(eaZ(et,cl.sex))?'ok':'lo'}">EA training day ${r(et)} (${eaZ(et,cl.sex)}) · rest day ${r(er)} kcal/kg FFM</span>`}
+  const z=eaZ(et,cl.sex),ok=/Optimal|Performance/.test(z),hi=cl.bf>=(cl.sex==='f'?30:20),lean=cl.bf<(cl.sex==='f'?20:12),def=p.protocol==='psmf'||!!p.cut||/deficit|fat loss|psmf/i.test(p.energy||'');
+  const note=ok?'':hi&&def?' · planned deficit at their body fat: OK if time-limited':lean?' · lean client: real RED-S risk':'';
+  return `<span class="rmea ${ok||hi&&def?'ok':'lo'}">EA training day ${r(et)} (${z}) · rest day ${r(er)} kcal/kg FFM${note}</span>`}
+function psmfCalc(ps,cl){const pk=+((ps||{}).pk||2.2),c=+((ps||{}).c??30),f=+((ps||{}).f??20);if(!cl||!cl.ffm)return null;const p=Math.round(pk*cl.ffm/5)*5;return {p,c,f,kcal:Math.round(p*4+c*4+f*9)}}
+function psmfGuide(cl){if(!cl)return 'Duration depends on body fat: shorter the leaner.';const f=cl.sex==='f',bf=cl.bf;
+  return bf<(f?20:12)?`Lean (${bf}%): 1–2 week blocks with refeeds or diet breaks.`:bf<(f?30:20)?`Moderate (${bf}%): 2–6 week blocks with diet breaks.`:`Higher body fat (${bf}%): up to 6–12 weeks with diet breaks.`}
 function roadHTML(by){
   const r=(cprog&&cprog.roadmap)||{},ph=[0,1,2,3].map(i=>((r.phases||[])[i])||{}),cl=clientEA(by);
   const inp=(i,k,ph,lab,type,ph2)=>`<div class="field"><label>${lab}</label><input data-rp="${i}.${k}" ${type?`type="${type}"`:''} value="${escH(ph[k]||'')}" placeholder="${escH(ph2||'')}"></div>`;
@@ -1596,6 +1602,10 @@ function roadHTML(by){
      <div class="rmg">${inp(i,'name',{name:p.name||WT_PHASES[i]},'Phase name')}${inp(i,'weeks',p,'Weeks','number')}${inp(i,'training',p,'Training','','e.g. 4 days')}${inp(i,'cardio',p,'Cardio','','e.g. 2 x Zone 2, 35 min')}${inp(i,'steps',p,'Steps','','e.g. 10,000')}<div class="field"><label>Energy balance</label><input data-rp="${i}.energy" list="ebList" value="${escH(p.energy||'')}"></div>${inp(i,'meals',p,'Meals a day','number','4')}</div>
      ${cl&&cl.maint?`<div class="row" style="gap:8px;align-items:center"><span class="submsg">Estimated maintenance from onboarding: <b>${cl.maint} kcal</b> (Mifflin-St Jeor × activity)</span><button class="btn" type="button" data-rmmaint="${i}">Use maintenance for this phase</button></div>`:''}
      ${mac(i,'train',p,'Training day')}${mac(i,'rest',p,'Rest day')}<div id="rmea${i}">${phaseEA(p,cl)}</div>
+     <div class="row" style="gap:8px;align-items:center"><label class="submsg" for="rmpr${i}">Protocol</label><select id="rmpr${i}" data-rp="${i}.protocol" class="rmsel"><option value="">Standard</option><option value="psmf"${p.protocol==='psmf'?' selected':''}>PSMF (protein-sparing modified fast)</option></select></div>
+     ${p.protocol==='psmf'?`<div class="rc psmfc"><span class="submsg">PSMF calculator · ${escH(psmfGuide(cl))}</span><div class="rmmac rcin">${[['pk','Protein g/kg lean mass',(p.ps||{}).pk??'2.2'],['c','Carbs g (veg)',(p.ps||{}).c??'30'],['f','Fat g',(p.ps||{}).f??'20']].map(([k,l,v])=>`<label class="rcf"><span class="submsg">${l}</span><input data-rp="${i}.ps.${k}" type="number" step="any" min="0" value="${escH(v)}" aria-label="${l}"></label>`).join('')}</div>
+      <div id="psout${i}" class="submsg">${(()=>{const r=psmfCalc(p.ps,cl);return r?`= ${r.p} g protein, ${r.c} g carbs, ${r.f} g fat, about <b>${r.kcal} kcal</b> a day`:'Needs the client’s onboarding (lean mass) to calculate.'})()}</div>
+      <button class="btn" type="button" data-psapply="${i}">Apply PSMF to phase ${i+1}</button><span class="submsg">The client sees the protocol, an example day, electrolytes, supplements, training, exit plan and red flags on their Nutrition tab, and their planner switches to PSMF meals.</span></div>`:''}
      <details class="rc" ${p.rc||p.cut?'open':''}><summary class="submsg">Rate of loss calculator${p.cut?` · ${p.cut.bf}% → ${p.cut.goalBf}% at ${p.cut.rate}% a week`:''}</summary>
       <div class="rmmac rcin"><span class="submsg">Inputs</span>${[['current','Current kcal',(p.rc||{}).current??(cl&&cl.maint)??''],['bw','Weight kg',(p.rc||{}).bw??(cl&&cl.kg)??''],['bf','Body fat %',(p.rc||{}).bf??(cl&&cl.bf)??''],['goalBf','Goal BF %',(p.rc||{}).goalBf??''],['rate','Rate %/wk',(p.rc||{}).rate??'0.7'],['tr','Transition wks',(p.rc||{}).tr??'2'],['buf','Buffer wks',(p.rc||{}).buf??'1']].map(([k,l,v])=>`<label class="rcf"><span class="submsg">${l}</span><input data-rp="${i}.rc.${k}" type="number" step="any" min="0" value="${escH(v)}" aria-label="${l}"></label>`).join('')}</div>
       <div id="rcout${i}">${rcOut(p.rc||{current:cl&&cl.maint,bw:cl&&cl.kg,bf:cl&&cl.bf,rate:.7})}</div>
@@ -1637,6 +1647,10 @@ function bindProg(){const box=$('progBox');if(!box)return;
   $('pgSave').addEventListener('click',saveProgress);
   box.querySelectorAll('[data-rp*=".rc."]').forEach(inp=>inp.addEventListener('input',()=>{readProg();const ix=+inp.dataset.rp.split('.')[0],el=$('rcout'+ix);if(el)el.innerHTML=rcOut((cprog.roadmap.phases[ix]||{}).rc)}));
   const keepOpen=fn=>{const op=[...box.querySelectorAll('details.rmph')].map(d=>d.open),rc=[...box.querySelectorAll('details.rc')].map(d=>d.open);fn();const nb=$('progBox');[...nb.querySelectorAll('details.rmph')].forEach((d,k)=>{d.open=op[k]});[...nb.querySelectorAll('details.rc')].forEach((d,k)=>{d.open=rc[k]})};
+  box.querySelectorAll('[data-rp$=".protocol"]').forEach(sel=>sel.addEventListener('change',()=>{readProg();keepOpen(redrawProg)}));
+  box.querySelectorAll('[data-rp*=".ps."]').forEach(inp=>inp.addEventListener('input',()=>{readProg();const ix=+inp.dataset.rp.split('.')[0],el=$('psout'+ix),r=psmfCalc((cprog.roadmap.phases[ix]||{}).ps,clientEA(box._by||{}));if(el)el.innerHTML=r?`= ${r.p} g protein, ${r.c} g carbs, ${r.f} g fat, about <b>${r.kcal} kcal</b> a day`:''}));
+  box.querySelectorAll('[data-psapply]').forEach(b=>b.addEventListener('click',()=>{readProg();const ix=+b.dataset.psapply,ph=cprog.roadmap.phases[ix],r=psmfCalc(ph.ps,clientEA(box._by||{}));if(!r){subMsg('The client needs to finish onboarding first so we know their lean mass.',1);return}
+    const m={kcal:String(r.kcal),p:String(r.p),c:String(r.c),f:String(r.f)};ph.train={...m};ph.rest={...m};ph.energy='PSMF (aggressive fat loss)';ph.protocol='psmf';if(!ph.meals)ph.meals='4';keepOpen(redrawProg);subMsg(`Phase ${ix+1} set to PSMF: ${r.kcal} kcal, ${r.p} g protein. Set the weeks, then save to their plan.`)}));
   box.querySelectorAll('[data-rcapply]').forEach(b=>b.addEventListener('click',()=>{readProg();const ix=+b.dataset.rcapply,ph=cprog.roadmap.phases[ix],r=rateOfLoss(ph.rc||{});
     if(!r||!r.avg){subMsg('Fill in current calories, weight, body fat, goal and rate first.',1);return}
     const t=ph.train||{},pr=+t.p||Math.round(2.2*r.lbm),fa=+t.f||Math.round(r.avg*.25/9),ca=Math.max(0,Math.round((r.avg-pr*4-fa*9)/4));
