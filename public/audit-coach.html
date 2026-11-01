@@ -329,6 +329,13 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(var(--orb),.12),tran
 .prow{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px}
 .prow select{max-width:150px}
 #eduBox,#walkBox,#progBox{display:flex;flex-direction:column;gap:10px}
+.rm{display:flex;flex-direction:column;gap:8px}.rmph{background:var(--surface);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:10px}.rmph summary{cursor:pointer;font-size:14px}
+.rmph[open]>*+*{margin-top:10px}
+.rmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.rmmac{display:grid;grid-template-columns:110px repeat(4,minmax(0,90px)) auto;gap:6px;align-items:center}#rmCur{min-width:250px}.rmmac input,#rmCur{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 9px;color:var(--ink);font:inherit;font-size:13.5px;width:100%}
+.rmea{font-size:13px;font-weight:600}.rmea.ok{color:#5E9B6E}.rmea.lo{color:#D9A441}
+.rmph textarea{width:100%;resize:vertical;font:inherit;font-size:14px;background:var(--surface-2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+@media(max-width:700px){.rmmac{grid-template-columns:repeat(4,1fr)}.rmmac>span{grid-column:1/-1}}
 .pgbody{display:flex;flex-direction:column;gap:10px;align-items:stretch}.pgbody>.btn{align-self:flex-start}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.pgrid textarea{width:100%;min-height:84px;resize:vertical;font:inherit;font-size:14px;background:var(--surface-2);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .ptrow{display:grid;grid-template-columns:140px 170px minmax(0,1fr) 90px 90px 40px;gap:6px}.pwrow{display:grid;grid-template-columns:140px minmax(0,1fr) 40px;gap:6px}
@@ -1550,14 +1557,41 @@ const WT_PHASES=['Health','Function','Performance','Mindset'];
 /* Progress, targets and wins: shown on the client's My Plan (This week, My plan and Progress tabs) */
 const PT_TYPES=[['vo2','VO2 max','ml/kg/min'],['strength','Strength','kg'],['screen','Movement screen','/100'],['bodyfat','Body fat (DEXA, InBody…)','%'],['weight','Body weight','kg'],['rhr','Resting heart rate','bpm'],['hrv','HRV','ms'],['other','Other','']];
 const BIO_N={sleep:'Sleep',energy:'Energy',calm:'Stress',mood:'Mood',digest:'Digestion',appetite:'Appetite',recovery:'Recovery',training:'Training'};
-function cleanProg(){const c=cprog||{};return {targetScore:+c.targetScore||null,targets:(c.targets||[]).map(x=>String(x).trim()).filter(Boolean),habits:(c.habits||[]).map(x=>String(x).trim()).filter(Boolean),
+function cleanRoad(){const r=(cprog||{}).roadmap;if(!r||!(r.phases||[]).length)return null;const n=v=>{v=parseFloat(v);return isNaN(v)?null:Math.round(v)};const mm=o=>{o=o||{};const x={kcal:n(o.kcal),p:n(o.p),c:n(o.c),f:n(o.f)};return x.kcal||x.p?x:null};
+  const ph=r.phases.map((p,i)=>({name:(p.name||WT_PHASES[i]||'').trim(),weeks:n(p.weeks),focus:(p.focus||'').trim(),training:(p.training||'').trim(),cardio:(p.cardio||'').trim(),steps:(p.steps||'').trim(),energy:(p.energy||'').trim(),train:mm(p.train),rest:mm(p.rest),meals:n(p.meals),supps:(p.supps||'').trim(),notes:(p.notes||'').trim()}));
+  return ph.some(p=>p.weeks||p.focus||p.train||p.training)?{current:r.current===''||r.current==null?null:+r.current,phases:ph}:null}
+function cleanProg(){const c=cprog||{};return {roadmap:cleanRoad(),targetScore:+c.targetScore||null,targets:(c.targets||[]).map(x=>String(x).trim()).filter(Boolean),habits:(c.habits||[]).map(x=>String(x).trim()).filter(Boolean),
   tests:(c.tests||[]).filter(t=>t&&t.d&&t.v!==''&&t.v!=null&&!isNaN(+t.v)).map(t=>({d:t.d,type:t.type||'other',name:(t.name||'').trim(),v:+t.v,u:(t.u||'').trim()})),
   wins:(c.wins||[]).filter(w=>w&&(w.t||'').trim()).map(w=>({d:w.d||'',t:w.t.trim()}))}}
+/* Roadmap editor: replaces the Google Sheets timeline. Energy availability preview uses the client's onboarding */
+const EB=['Maintenance','Energy availability restore','Recomposition','Fat loss (deficit)','Muscle gain (surplus)','Performance fuelling','Peak / taper'];
+function clientEA(by){const c=(by||{}).checkins||{},L=(c.list||[]).slice().sort((a,b)=>a.d<b.d?-1:1),pr=c.profile||{};
+  const w=[...L].reverse().find(e=>e.w),f=[...L].reverse().find(e=>e.bf);const kg=(w&&w.w)||pr.w,bf=f&&f.bf;if(!kg||!bf||!pr.doneAt)return null;
+  const ffm=kg*(1-bf/100),MET={easy:5,moderate:7,hard:9.5},sk=+pr.sessKcal||((MET[pr.intensity]||7)-1)*kg*(+pr.mins||0)/60,st=+pr.steps?pr.steps*(kg/70)*.04:0;
+  return {kg,bf,ffm:Math.round(ffm*10)/10,sex:c.sex,sess:+pr.sessions||0,sk:Math.round(sk),st:Math.round(st)}}
+function eaZ(ea,sex){return sex==='f'?(ea>=45?'Optimal':ea>=36?'Low':ea>=30?'Critical':'RED-S risk'):(ea>=40?'Performance zone':ea>=20?'Subclinical':'RED-S risk')}
+function phaseEA(p,cl){if(!cl)return '';const kc=o=>o&&(+o.kcal||((+o.p||0)*4+(+o.c||0)*4+(+o.f||0)*9));const tk=kc(p.train),rk=kc(p.rest)||tk;if(!tk)return '';
+  const td=Math.max(1,Math.min(7,parseInt(p.training)||cl.sess||4)),et=(tk-cl.st-cl.sk*cl.sess/td)/cl.ffm,er=(rk-cl.st)/cl.ffm,r=v=>Math.round(v*10)/10;
+  return `<span class="rmea ${/Optimal|Performance/.test(eaZ(et,cl.sex))?'ok':'lo'}">EA training day ${r(et)} (${eaZ(et,cl.sex)}) · rest day ${r(er)} kcal/kg FFM</span>`}
+function roadHTML(by){
+  const r=(cprog&&cprog.roadmap)||{},ph=[0,1,2,3].map(i=>((r.phases||[])[i])||{}),cl=clientEA(by);
+  const inp=(i,k,ph,lab,type,ph2)=>`<div class="field"><label>${lab}</label><input data-rp="${i}.${k}" ${type?`type="${type}"`:''} value="${escH(ph[k]||'')}" placeholder="${escH(ph2||'')}"></div>`;
+  const mac=(i,k,ph,lab)=>{const o=ph[k]||{};return `<div class="rmmac"><span class="submsg">${lab}</span>${['kcal','p','c','f'].map(x=>`<input data-rp="${i}.${k}.${x}" type="number" min="0" value="${escH(o[x]??'')}" placeholder="${{kcal:'kcal',p:'P g',c:'C g',f:'F g'}[x]}" aria-label="${lab} ${x}">`).join('')}${(()=>{const t=(+o.p||0)*4+(+o.c||0)*4+(+o.f||0)*9;return t?`<span class="submsg">= ${Math.round(t)} kcal from macros</span>`:''})()}</div>`};
+  return `<div id="rmBox" class="rm"><div class="row" style="justify-content:space-between;align-items:center"><span class="eyebrow gold">Roadmap · four phases</span>
+    <div class="field" style="flex-direction:row;align-items:center;gap:8px"><label for="rmCur" style="white-space:nowrap">Current phase</label><select id="rmCur"><option value="">Auto, from start date and weeks</option>${[0,1,2,3].map(i=>`<option value="${i}"${String(r.current)===String(i)?' selected':''}>Phase ${i+1}</option>`).join('')}</select></div></div>
+   <p class="submsg">${cl?`From their onboarding: ${cl.kg} kg, ${cl.bf}% body fat, ${cl.ffm} kg lean mass, ${cl.sess} sessions a week at about ${cl.sk} kcal, steps about ${cl.st} kcal a day.`:'Energy availability previews appear once the client finishes onboarding in My Plan (measurements and training load).'}</p>
+   <datalist id="ebList">${EB.map(x=>`<option value="${x}">`).join('')}</datalist>
+   ${ph.map((p,i)=>`<details class="rmph" ${i===0?'open':''}><summary><b>Phase ${i+1} · ${escH(p.name||WT_PHASES[i])}</b> <span class="submsg">${p.weeks?p.weeks+' weeks':''}${(p.train||{}).kcal?' · '+p.train.kcal+' kcal training day':''}</span></summary>
+     <div class="rmg">${inp(i,'name',{name:p.name||WT_PHASES[i]},'Phase name')}${inp(i,'weeks',p,'Weeks','number')}${inp(i,'training',p,'Training','','e.g. 4 days')}${inp(i,'cardio',p,'Cardio','','e.g. 2 x Zone 2, 35 min')}${inp(i,'steps',p,'Steps','','e.g. 10,000')}<div class="field"><label>Energy balance</label><input data-rp="${i}.energy" list="ebList" value="${escH(p.energy||'')}"></div>${inp(i,'meals',p,'Meals a day','number','4')}</div>
+     ${mac(i,'train',p,'Training day')}${mac(i,'rest',p,'Rest day')}<div id="rmea${i}">${phaseEA(p,cl)}</div>
+     <div class="pgrid"><div class="field"><label>Focus for this phase</label><textarea data-rp="${i}.focus" rows="3">${escH(p.focus||'')}</textarea></div><div class="field"><label>Supplements <span class="submsg">one per line</span></label><textarea data-rp="${i}.supps" rows="3">${escH(p.supps||'')}</textarea></div><div class="field"><label>Notes</label><textarea data-rp="${i}.notes" rows="3">${escH(p.notes||'')}</textarea></div></div></details>`).join('')}</div>`}
 function progPanel(by){
   const c=cprog||{},ci=((by||{}).checkins||{}),L=(ci.list||[]).slice().sort((a,b)=>a.d<b.d?1:-1).slice(0,6),today=localISO(new Date());
   const tRow=(t,i)=>`<div class="ptrow" data-ti="${i}"><input type="date" data-tk="d" value="${escH(t.d||today)}" aria-label="Test date"><select data-tk="type" aria-label="Test type">${PT_TYPES.map(([k,n])=>`<option value="${k}"${k===(t.type||'vo2')?' selected':''}>${n}</option>`).join('')}</select><input data-tk="name" placeholder="${t.type==='strength'?'e.g. Trap-bar deadlift':'Name (optional)'}" value="${escH(t.name||'')}" aria-label="Test name"><input data-tk="v" type="number" step="any" placeholder="Value" value="${escH(t.v??'')}" aria-label="Value"><input data-tk="u" placeholder="${escH((PT_TYPES.find(x=>x[0]===(t.type||'vo2'))||[])[2]||'unit')}" value="${escH(t.u||'')}" aria-label="Unit"><button class="btn" type="button" data-tdel="${i}" aria-label="Remove test">×</button></div>`;
   const wRow=(w,i)=>`<div class="pwrow" data-wi="${i}"><input type="date" data-wk="d" value="${escH(w.d||today)}" aria-label="Win date"><input data-wk="t" placeholder="e.g. First unbroken week of training" value="${escH(w.t||'')}" aria-label="Win"><button class="btn" type="button" data-wdel="${i}" aria-label="Remove win">×</button></div>`;
-  return `<details class="hubm" id="progBox" open><summary><span><b>Progress, targets and wins</b> <span class="submsg">Shows on their My Plan</span></span><span class="submsg">${L.length?`Last check-in ${new Date(L[0].d+'T12:00:00').toLocaleDateString('en-AU')}${L[0].score!=null?' · '+L[0].score+'/100':''}`:'No check-ins yet'}</span></summary><div class="pgbody">
+  return `<details class="hubm" id="progBox" open><summary><span><b>Roadmap, nutrition and progress</b> <span class="submsg">Shows on their My Plan</span></span><span class="submsg">${L.length?`Last check-in ${new Date(L[0].d+'T12:00:00').toLocaleDateString('en-AU')}${L[0].score!=null?' · '+L[0].score+'/100':''}`:'No check-ins yet'}</span></summary><div class="pgbody">
+   ${roadHTML(by)}
+   <span class="eyebrow gold" style="margin-top:6px">Targets and habits</span>
    <div class="pgrid">
     <div class="field"><label for="pgTarget">Target performance score <span class="submsg">/10, shown against their audit baseline</span></label><input id="pgTarget" type="number" min="0" max="10" step="0.1" value="${escH(c.targetScore||'')}"></div>
     <div class="field"><label for="pgTargets">Phase targets <span class="submsg">one per line</span></label><textarea id="pgTargets" rows="3">${escH((c.targets||[]).join('\n'))}</textarea></div>
@@ -1571,6 +1605,7 @@ function progPanel(by){
    ${L.length?`<span class="eyebrow gold" style="margin-top:10px">Their check-ins</span><dl>${L.map(e=>`<div><dt>${new Date(e.d+'T12:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})} · ${e.score!=null?e.score+'/100':'no score'}${e.w?' · '+e.w+' kg':''}${e.bf?' · '+e.bf+'% fat':''}${e.rhr?' · RHR '+e.rhr:''}${e.hrv?' · HRV '+e.hrv:''}</dt><dd>${Object.keys(BIO_N).map(k=>`${BIO_N[k]} ${(e.r||{})[k]||'–'}`).join(' · ')}${e.note?`<br>“${escH(e.note)}”`:''}</dd></div>`).join('')}</dl>`:''}
   </div></details>`}
 function readProg(){const box=$('progBox');if(!box)return;cprog=cprog||{};
+  if($('rmBox')){const r=cprog.roadmap=cprog.roadmap||{phases:[]};r.current=$('rmCur').value;box.querySelectorAll('[data-rp]').forEach(i=>{const [ix,k,sub]=i.dataset.rp.split('.');const ph=r.phases[+ix]=r.phases[+ix]||{};if(sub){ph[k]=ph[k]||{};ph[k][sub]=i.value}else ph[k]=i.value})}
   cprog.targetScore=$('pgTarget').value;cprog.targets=$('pgTargets').value.split('\n');cprog.habits=$('pgHabits').value.split('\n');
   cprog.tests=[...box.querySelectorAll('.ptrow')].map(r=>{const o={};r.querySelectorAll('[data-tk]').forEach(i=>{o[i.dataset.tk]=i.value});return o});
   cprog.wins=[...box.querySelectorAll('.pwrow')].map(r=>{const o={};r.querySelectorAll('[data-wk]').forEach(i=>{o[i.dataset.wk]=i.value});return o})}
@@ -1581,7 +1616,8 @@ function bindProg(){const box=$('progBox');if(!box)return;
   box.querySelectorAll('[data-tdel]').forEach(b=>b.addEventListener('click',()=>{readProg();cprog.tests.splice(+b.dataset.tdel,1);redrawProg()}));
   box.querySelectorAll('[data-wdel]').forEach(b=>b.addEventListener('click',()=>{readProg();cprog.wins.splice(+b.dataset.wdel,1);redrawProg()}));
   box.querySelectorAll('[data-tk="type"]').forEach(sl=>sl.addEventListener('change',()=>{readProg();redrawProg()}));
-  $('pgSave').addEventListener('click',saveProgress)}
+  $('pgSave').addEventListener('click',saveProgress);
+  box.querySelectorAll('[data-rp*=".train."],[data-rp*=".rest."],[data-rp$=".training"]').forEach(i=>i.addEventListener('input',()=>{readProg();const ix=+i.dataset.rp.split('.')[0],el=$('rmea'+ix);if(el)el.innerHTML=phaseEA(cprog.roadmap.phases[ix]||{},clientEA(box._by||{}))}))}
 async function saveProgress(){
   readProg();const m=$('pgMsg'),btn=$('pgSave');if(!openId)return;btn.disabled=true;m.textContent='Saving…';
   try{await saveReview();
@@ -1605,6 +1641,7 @@ function pathPanel(by){
      return `<div class="prow"><span>${escH(t.split(':')[0])}</span><span class="submsg">Wk ${ww} · ${d&&d.done?'complete':d?(+d.pct||0)+'%':open?'open':'locked'}</span></div>`}).join('')}</div></details>
   <details class="hubm" id="walkBox" ${cleanWalks().length?'':'open'}><summary><span><b>Phase walkthrough videos</b> <span class="submsg">Shown at the top of their plan</span></span><span class="submsg">${cleanWalks().length} added</span></summary>
    <p class="submsg">Record your walkthrough (Loom, Vimeo, YouTube unlisted or a video file link), paste the link for the phase, then publish to client. The latest phase shows first; they can switch back to earlier ones.</p>
+   <div class="vrow"><span>Onboarding · first login</span><input data-wt="0" type="url" placeholder="https://www.loom.com/share/…" value="${escH(wv(0).url||'')}" aria-label="Onboarding walkthrough link"><span></span></div>
    ${WT_PHASES.map((n,i)=>`<div class="vrow"><span>Phase ${i+1} · ${n}</span><input data-wt="${i+1}" type="url" placeholder="https://www.loom.com/share/…" value="${escH(wv(i+1).url||'')}" aria-label="Walkthrough link for phase ${i+1}"><span></span></div>`).join('')}</details>
   ${progPanel(by)}`;
 }
