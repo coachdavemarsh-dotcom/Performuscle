@@ -1079,31 +1079,49 @@ const GOALS=[
   marks:['Weekly average bodyweight','Body fat trend','Strength kept in prep','Progress photos and posing videos'],
   fuel:'Cut at about 0.5–1% of bodyweight a week using the rate-of-loss calculator. Protein high, refeeds and diet breaks planned. Watch energy availability.',
   ph:['Off-season build: surplus, progressive overload, weak points','Pre-prep: lean out slowly, lock in habits and posing','Contest prep: the cut, cardio, peak week','Show day, reverse diet and review'],hub:['strength','hormones','nutrition']},
- {id:'pullups',type:'Strength',name:'10 strict pull-ups',sub:'Dead hang to chin over bar',target:10,unit:'reps',time:'8–24 weeks depending on where you start and your bodyweight.',
+ {id:'pullups',type:'Strength',reps:1,match:'pull|chin',name:'10 strict pull-ups',sub:'Dead hang to chin over bar',target:10,unit:'reps',time:'8–24 weeks depending on where you start and your bodyweight.',
   what:'Strict means a full dead hang at the bottom, chin over the bar at the top, no kipping. Relative strength, so body composition helps.',
   week:['Pull 2–3 times a week','Under 3 reps: slow negatives (3–5 s), band-assisted sets and flexed-arm hangs','3–7 reps: several sets of 2–4 reps, add a rep a week, plus rows and lat work','7+ reps: weighted pull-ups for low reps, plus one max-rep set a week'],
   marks:['Max strict reps every 2–3 weeks','Weighted pull-up for 3 reps','Bodyweight trend'],
   fuel:'If you’re carrying extra body fat, a slow cut speeds this up. Protein high to keep the muscle.',
   ph:['Foundations: hangs, scapular pull-ups, rows, negatives','Build reps: sets of 2–4, add volume','Strength: weighted pull-ups, test max reps','Own it: keep 10 and set the next target'],hub:['strength','mobility']},
- {id:'deadlift2x',type:'Strength',name:'Double bodyweight deadlift',sub:'1 rep at 2× your bodyweight',target:2,unit:'× bodyweight',time:'6–18 months for most trained lifters. Longer if you’re new to lifting.',
+ {id:'deadlift2x',type:'Strength',match:'deadlift',name:'Double bodyweight deadlift',sub:'1 rep at 2× your bodyweight',target:2,unit:'× bodyweight',time:'6–18 months for most trained lifters. Longer if you’re new to lifting.',
   what:'A strong, well-built posterior chain and a deadlift that stays technically clean as it gets heavy.',
   week:['Deadlift or a close variation 1–2 times a week','Main work at RPE 7–9 with double progression','Accessories: RDLs, hip thrusts, rows, grip and trunk','Test a heavy single or estimated 1RM every 8–12 weeks'],
   marks:['Deadlift estimated 1RM','Ratio to bodyweight','Bar speed and technique on heavy sets'],
   fuel:'Eat to at least maintenance while chasing it. Strength moves fastest in a small surplus.',
   ph:['Foundations: hinge pattern, bracing, posterior chain volume','Build: volume at 70–80%, double progression','Strength: heavier triples, doubles and singles','Test, then set the next target'],hub:['strength','recovery']},
- {id:'squat15',type:'Strength',name:'1.5× bodyweight squat',sub:'1 rep at 1.5× bodyweight, to depth',target:1.5,unit:'× bodyweight',time:'6–12 months for most trained lifters.',
+ {id:'squat15',type:'Strength',match:'squat',name:'1.5× bodyweight squat',sub:'1 rep at 1.5× bodyweight, to depth',target:1.5,unit:'× bodyweight',time:'6–12 months for most trained lifters.',
   what:'A back squat to full depth at one and a half times your bodyweight, with good positions under load.',
   week:['Squat 2–3 times a week, one heavier day and one lighter or paused day','Main work at RPE 7–9 with double progression','Ankle and hip mobility, single-leg work, trunk','Test every 8–12 weeks'],
   marks:['Squat estimated 1RM','Ratio to bodyweight','Depth and positions on video'],
   fuel:'Maintenance or a small surplus. Hard to progress the squat in a big deficit.',
-  ph:['Foundations: depth, positions, mobility, tempo squats','Build: volume and double progression','Strength: heavier sets, pauses, singles','Test, then set the next target'],hub:['strength','mobility']}];
+  ph:['Foundations: depth, positions, mobility, tempo squats','Build: volume and double progression','Strength: heavier sets, pauses, singles','Test, then set the next target'],hub:['strength','mobility']},
+ {id:'dips',type:'Strength',reps:1,match:'dip',name:'10 strict dips',sub:'Parallel bars, shoulders below elbows',target:10,unit:'reps',time:'8–20 weeks depending on where you start and your bodyweight.',
+  what:'Strict means a full lockout at the top, shoulders dropping just below the elbows at the bottom, body still, no kipping. Healthy shoulders matter more than the number.',
+  week:['Dip 2 times a week, after your main press or as the main press','Under 3 reps: slow negatives (3–5 s), top-position holds and band-assisted sets','3–7 reps: several sets of 2–4 reps, add a rep a week, plus close-grip pressing','7+ reps: weighted dips for low reps, plus one max-rep set a week'],
+  marks:['Max strict reps every 2–3 weeks','Weighted dip for 3 reps','Shoulder comfort at the bottom'],
+  fuel:'Relative strength, so a slow cut helps if you’re carrying extra body fat. Protein high.',
+  ph:['Foundations: shoulder prep, support holds, negatives, push-ups','Build reps: sets of 2–4, add volume','Strength: weighted dips, test max reps','Own it: keep 10 and set the next target'],hub:['strength','mobility']},
+ {id:'bench1x',type:'Strength',match:'bench',name:'Bodyweight bench press',sub:'1 rep at 1× your bodyweight, paused or touch-and-go',target:1,unit:'× bodyweight',time:'3–12 months for most trained lifters. Longer if you’re new to pressing.',
+  what:'A bench press at your own bodyweight with a stable setup: shoulder blades back and down, feet planted, bar touching the chest every rep.',
+  week:['Bench 2 times a week, one heavier day and one volume or paused day','Main work at RPE 7–9 with double progression','Accessories: rows to balance, triceps, upper back and rear delts','Test a heavy single or estimated 1RM every 8–12 weeks'],
+  marks:['Bench estimated 1RM','Ratio to bodyweight','Shoulder comfort and bar path on video'],
+  fuel:'Maintenance or a small surplus. Pressing strength stalls fast in a big deficit.',
+  ph:['Foundations: setup, shoulder blades, tempo and paused reps','Build: volume at 70–80%, double progression','Strength: heavier triples, doubles and singles','Test, then set the next target'],hub:['strength','recovery']},
+ {id:'ohp075',type:'Strength',match:'overhead|ohp|military|strict press',name:'0.75× bodyweight overhead press',sub:'1 strict standing rep at three-quarters of your bodyweight',target:.75,unit:'× bodyweight',time:'6–12 months for most trained lifters.',
+  what:'A strict standing barbell press, no leg drive, locking out with the bar over your mid-foot and ribs down. It needs shoulder and upper-back mobility as much as strength.',
+  week:['Press overhead 2 times a week','Main work at RPE 7–9 with double progression','Thoracic and shoulder mobility, upper back, trunk bracing','Test a heavy single or estimated 1RM every 8–12 weeks'],
+  marks:['Overhead press estimated 1RM','Ratio to bodyweight','Lockout position and rib position on video'],
+  fuel:'Maintenance or a small surplus. Hard to progress in a big deficit.',
+  ph:['Foundations: overhead mobility, bracing, landmine and dumbbell pressing','Build: volume and double progression','Strength: heavier sets, push-press overloads, singles','Test, then set the next target'],hub:['strength','mobility']}];
 let goalPick=false;
 function myGoal(){return ciObj().goal||null}
 function goalDef(){const g=myGoal();return g&&GOALS.find(x=>x.id===g.id)}
 function goalStrength(g){const G=GOALS.find(x=>x.id===g.id);if(!G||G.type!=='Strength')return null;const log=(g.log||[]).slice().sort((a,b)=>a.d<b.d?-1:1),last=log[log.length-1],kg=bodyNow().kg||+profile().w;
-  const t=CP().tests.filter(t=>t.type==='strength'&&new RegExp(G.id==='pullups'?'pull':G.id==='deadlift2x'?'deadlift':'squat','i').test(t.name||'')).sort((a,b)=>a.d<b.d?-1:1).pop();
+  const t=CP().tests.filter(t=>t.type==='strength'&&new RegExp(G.match||G.id,'i').test(t.name||'')).sort((a,b)=>a.d<b.d?-1:1).pop();
   let v=last?+last.v:t?+t.v:null,d=last?last.d:t?t.d:null;if(v==null)return {G,v:null};
-  const now=G.id==='pullups'?v:kg?n1(v/kg):null;return {G,v,d,now,pct:now!=null?Math.min(100,Math.round(now/G.target*100)):0}}
+  const now=G.reps?v:kg?n1(v/kg):null;return {G,v,d,now,pct:now!=null?Math.min(100,Math.round(now/G.target*100)):0}}
 function goalHTML(){
   const g=myGoal(),G=goalDef();
   if(!G||goalPick)return `<span class="eyebrow">Your long-term goal</span><h2>What are we working towards?</h2><p class="lede" style="font-size:16px">Pick the goal that gets you out of bed. Your roadmap, training and nutrition are built around it, and you'll see the guidelines and timeline for it here.</p>
@@ -1113,8 +1131,8 @@ function goalHTML(){
   return `<span class="eyebrow">Your long-term goal · ${esc(G.type==='Event'?'Event':'Strength standard')}</span><h2>${esc(G.name)}</h2>
    <div class="card goal"><div class="gtop"><p class="lede" style="font-size:16px">${esc(G.what)}</p>
     ${G.type==='Event'?`<div class="gdate"><label class="lab" for="goalDate">Event date</label><input class="in" type="date" id="goalDate" value="${esc(g.date||'')}">${wk!=null?`<b>${wk>0?wk+' weeks to go':wk===0?'This week':'Done'}</b>`:''}</div>`:''}</div>
-    ${st?`<div class="gprog"><div><span class="k">Where you are</span><b>${st.now!=null?st.now:'–'}<small> ${esc(G.unit)}</small></b><span class="small">Target ${G.target} ${esc(G.unit)}${st.v!=null&&G.id!=='pullups'?` · best ${st.v} kg`:''}</span></div><div class="pbar"><i style="width:${st.pct||0}%"></i></div>
-      <div class="row" style="gap:8px;align-items:flex-end"><div class="f"><label class="lab" for="goalLog">${G.id==='pullups'?'Max strict reps':'Best lift (kg, 1 rep or estimated 1RM)'}</label><input class="in" id="goalLog" type="number" inputmode="decimal" style="max-width:180px"></div><button class="btn" type="button" id="goalLogBtn">Log it</button></div></div>`:''}
+    ${st?`<div class="gprog"><div><span class="k">Where you are</span><b>${st.now!=null?st.now:'–'}<small> ${esc(G.unit)}</small></b><span class="small">Target ${G.target} ${esc(G.unit)}${st.v!=null&&!G.reps?` · best ${st.v} kg`:''}</span></div><div class="pbar"><i style="width:${st.pct||0}%"></i></div>
+      <div class="row" style="gap:8px;align-items:flex-end"><div class="f"><label class="lab" for="goalLog">${G.reps?'Max strict reps':'Best lift (kg, 1 rep or estimated 1RM)'}</label><input class="in" id="goalLog" type="number" inputmode="decimal" style="max-width:180px"></div><button class="btn" type="button" id="goalLogBtn">Log it</button></div></div>`:''}
     <div class="gt"><span class="k">Typical timeline</span><p>${esc(G.time)}${wk!=null&&wk>0&&r?` You have ${wk} weeks, and your roadmap covers ${r.phases.reduce((a,p)=>a+p.weeks,0)} weeks.`:''}</p></div>
     <div class="ggrid"><div><span class="k">A training week</span><ul class="list">${G.week.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div><span class="k">What we measure</span><ul class="list">${G.marks.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><span class="k" style="margin-top:10px">Fuel</span><p class="small" style="color:var(--off)">${esc(G.fuel)}</p></div></div>
     <span class="k">How your four phases build to it</span><div class="road">${G.ph.map((x,i)=>`<div class="stage ${r&&r.cur===i?'now':''}"><span class="n">PHASE ${i+1} · ${PHASES[i]}</span><span class="wk" style="color:inherit;font-size:13.5px">${esc(x)}</span></div>`).join('')}</div>
