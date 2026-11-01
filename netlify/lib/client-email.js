@@ -71,6 +71,14 @@ const TEMPLATES = {
       lede: 'Your audit and movement screen are both in, and Dave has been through them. Book your strategy call and we’ll map out your six months together.',
       button: ['Book your strategy call', CALL], done: 2 })
   }),
+  // Every 12 weeks: the quarterly review (q = quarter number, again = the reminder a week later)
+  review: (n, q, again) => ({
+    subject: again ? `Reminder: your ${q * 12}-week review` : `Your ${q * 12}-week review is ready`,
+    html: build({ preheader: 'Fifteen minutes to look back before we plan the next 12 weeks.', eyebrow: `12-week review · Quarter ${q}`, title: again ? `${FIRST(n)}, one more nudge.` : `${FIRST(n)}, ${q * 12} weeks in.`,
+      lede: 'Time to look back before we go forward. Re-measure, rate where you are on the six areas from your audit, and answer a few deeper questions on body, mind and heart. About 15 minutes. Dave uses it to build your review and your next 12 weeks.',
+      button: ['Start your review', 'https://coachdavemarsh.net/my-plan#progress'], list: ['What you\u2019ll do', ['Re-measure weight, waist and neck', 'Rate sleep, recovery, metabolic, hormones, movement and mindset', 'Your biggest win and what got in the way', 'The Soul Meets Strength questions', 'Your one thing for the next 12 weeks']],
+      foot: 'You\u2019re getting this because you\u2019re in the Soul Meets Strength Client Hub.' })
+  }),
   // Client Hub: a training's week has passed and it isn't complete (at most one a week)
   training: (n, titles) => ({
     subject: titles.length > 1 ? `${titles.length} trainings are waiting in your Hub` : `${titles[0].split(':')[0]} is waiting in your Hub`,

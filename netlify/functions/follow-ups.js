@@ -83,6 +83,37 @@ async function trainingReminders(service, resend, now, budget) {
   return sent;
 }
 
+// Every 12 weeks from the plan start: email the quarterly review, plus one reminder a week later if it isn't in
+async function reviewEmails(service, resend, now, budget) {
+  const plans = await sb('/rest/v1/client_plans?select=audit_id,email,plan&published=eq.true&limit=500', service);
+  const live = (plans || []).filter(p => p.audit_id && p.email && p.plan && p.plan.hubPath && p.plan.hubPath.start);
+  if (!live.length) return [];
+  const audits = await sb(`/rest/v1/performance_audits?select=id,full_name,status,coach_data&id=in.(${live.map(p => encodeURIComponent(p.audit_id)).join(',')})`, service);
+  const byId = {}; (audits || []).forEach(a => { byId[a.id] = a; });
+  const prog = await sb('/rest/v1/client_progress?select=email,reviews:data->reviews&module=eq.checkins&limit=5000', service);
+  const subBy = {}; (prog || []).forEach(r => { subBy[(r.email || '').toLowerCase()] = (r.reviews || []).map(x => x.q); });
+  const sent = [];
+  for (const p of live) {
+    if (sent.length >= budget) break;
+    const a = byId[p.audit_id], email = (p.email || '').trim();
+    if (!a || !email || a.status === 'archived') continue;
+    if (email.toLowerCase() === (process.env.COACH_EMAIL || REPLY).toLowerCase()) continue;
+    const st = new Date(p.plan.hubPath.start + 'T00:00:00Z').getTime(); if (isNaN(st)) continue;
+    const q = Math.floor((now - st) / (84 * DAY)); if (q < 1 || q > 8) continue;
+    if ((subBy[email.toLowerCase()] || []).includes(q)) continue;
+    const cd = a.coach_data || {}, rm = cd.reviewMails || {};
+    let again = false;
+    if (rm[q]) { if (rm[q + 'r'] || now - new Date(rm[q]).getTime() < 7 * DAY) continue; again = true; }
+    try {
+      await send(resend, email, TEMPLATES.review(a.full_name || (p.plan.client && p.plan.client.name), q, again));
+      const reviewMails = { ...rm, [again ? q + 'r' : q]: new Date().toISOString() };
+      await sb(`/rest/v1/performance_audits?id=eq.${encodeURIComponent(a.id)}`, service, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ coach_data: { ...cd, reviewMails } }) });
+      sent.push(`review${again ? '-reminder' : ''}:q${q}:${email}`);
+    } catch (e) { sent.push(`error:${email}:${e.message}`); }
+  }
+  return sent;
+}
+
 async function run() {
   const service = process.env.SUPABASE_SERVICE_ROLE_KEY, resend = process.env.RESEND_API_KEY;
   if (!service || !resend) return { skipped: 'not set up' };
@@ -107,6 +138,8 @@ async function run() {
     } catch (e) { sent.push(`error:${a.email}:${e.message}`); }
   }
   try { sent.push(...await trainingReminders(service, resend, now, MAX_PER_RUN - sent.length)); }
+  catch (e) { sent.push(`error:hub:${e.message}`); }
+  try { sent.push(...await reviewEmails(service, resend, now, MAX_PER_RUN - sent.length)); }
   catch (e) { sent.push(`error:hub:${e.message}`); }
   return { checked: (audits || []).length, sent };
 }

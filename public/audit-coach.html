@@ -455,6 +455,26 @@ body.exmode main > section:not(.subs),body.exmode .wrap > section:not(.subs){dis
 .ev-strong{background:#5E715426;color:var(--opt)}.ev-moderate{background:#C9A56B33;color:var(--gold2)}.ev-contested{background:#B23A2620;color:var(--bad)}.ev-convention{background:var(--sunk);color:var(--muted)}
 .rgwrap{overflow-x:auto}
 @media (max-width:900px){.bwrow{grid-template-columns:minmax(0,1fr) 130px;row-gap:8px}.bwrow .bwbar{grid-column:1/-1}.bwact{justify-content:flex-start}}
+
+/* 12-week review deck */
+.rvrow{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
+#deckOv{position:fixed;inset:0;z-index:1000;background:#0B0B0A;display:flex;flex-direction:column;color:#F4F1EA}
+.dk-bar-top{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;font-size:13px;color:#8E887C}.dk-bar-top button,.dk-nav button{background:#1E1D1B;color:#F4F1EA;border:1px solid #34322E;border-radius:999px;padding:7px 14px;margin-left:8px;cursor:pointer;font:inherit}
+.dk-stage{flex:1;display:grid;place-items:center;padding:0 20px;min-height:0}
+.dk-slide{display:none;width:min(100%,calc((100vh - 140px)*16/9));aspect-ratio:16/9;background:#141413;border-radius:14px;position:relative;overflow:hidden;container-type:inline-size}.dk-slide.on{display:block}
+.dk{position:absolute;inset:0;padding:6cqw 7cqw 7cqw;display:flex;flex-direction:column;gap:2cqw}.dk-cover{justify-content:center}
+.dk-eb{font-size:1.25cqw;letter-spacing:.3em;text-transform:uppercase;color:#C9A56B;font-weight:700}
+.dk h1{font-family:var(--display,Oswald,'Arial Narrow',sans-serif);font-size:6.5cqw;line-height:1;text-transform:uppercase;font-weight:600;color:#F4F1EA}.dk h2{font-family:var(--display,Oswald,'Arial Narrow',sans-serif);font-size:4cqw;line-height:1.05;text-transform:uppercase;font-weight:600;color:#F4F1EA}.dk h2 small{font-size:1.8cqw;color:#8E887C}
+.dk p{font-size:1.8cqw;color:#BDB7AA;line-height:1.45}.dk-cover p{font-size:2cqw}
+.dk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw}.dk-grid>div{background:#1E1D1B;border-radius:1cqw;padding:1.6cqw 1.8cqw;display:flex;flex-direction:column;gap:.6cqw}.dk-grid span:first-child{font-size:1.1cqw;letter-spacing:.2em;text-transform:uppercase;color:#8E887C}
+.dk-num{display:flex;align-items:baseline;gap:1cqw;font-family:var(--display,Oswald,'Arial Narrow',sans-serif)}.dk-num b{font-size:3.6cqw;font-weight:600;color:#F4F1EA}.dk-num em{font-style:normal;font-size:2.2cqw;color:#8E887C}.dk-num i{font-style:normal;color:#C9A56B;font-size:2cqw}
+.dk-bars{display:flex;flex-direction:column;gap:1cqw}.dk-bar{display:grid;grid-template-columns:12cqw 1fr 10cqw;gap:1.5cqw;align-items:center;font-size:1.6cqw;color:#BDB7AA}.dk-bar>div{position:relative;height:1.4cqw;background:#262522;border-radius:1cqw}.dk-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:1cqw}.dk-bar .b0{background:#5A5448}.dk-bar .b1{background:#C9A56B;height:50%;top:25%}.dk-bar em{font-style:normal;text-align:right}.dk-bar b{color:#F4F1EA}
+.dk-note,.dk-list{font-size:1.5cqw!important;color:#8E887C!important}.dk-list b{color:#E0C08A}.dk-q{font-size:2.4cqw!important;color:#E4DED2!important;line-height:1.35!important;max-width:80cqw}
+.dk-ul{font-size:2cqw;color:#E4DED2;padding-left:2.4cqw;display:flex;flex-direction:column;gap:.8cqw}
+.dk-three{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4cqw}.dk-three>div{background:#1E1D1B;border-radius:1cqw;padding:1.8cqw;border-top:.4cqw solid #C9A56B}.dk-three span{font-size:1.2cqw;letter-spacing:.2em;text-transform:uppercase;color:#C9A56B;font-weight:700}.dk-three p{font-size:1.7cqw;color:#E4DED2;margin-top:.8cqw}
+.dk-foot{position:absolute;left:7cqw;bottom:3cqw;font-size:1.1cqw;letter-spacing:.15em;color:#5A5448}
+.dk-nav{display:flex;justify-content:center;align-items:center;gap:12px;padding:12px;font-size:13px;color:#8E887C}
+@media print{body>*:not(#deckOv){display:none!important}#deckOv{position:static;background:#141413}.dk-bar-top,.dk-nav{display:none!important}.dk-stage{display:block;padding:0}.dk-slide{display:block!important;width:100%;border-radius:0;page-break-after:always;break-after:page}@page{size:landscape;margin:0}}
 </style>
 </head>
 <body>
@@ -1460,7 +1480,9 @@ function buildPlan(){
    hubPath:{start:hubPath.start||localISO(new Date())},walkthroughs:cleanWalks(),coachProgress:cleanProg()};
 }
 async function saveReview(){
-  const coach_data={state,ans,spokes,notes,mv,ns,ik,inner,hubPath,walkthroughs:cleanWalks(),progress:cleanProg(),invitedAt,existing,followups,booking,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
+  /* keep what the scheduled emails record on the server (reminder dates), so a save never makes them resend */
+  let keep={};try{const cur=await sb(`/rest/v1/${SB.table}?select=coach_data&id=eq.${encodeURIComponent(openId)}`);const cd=(cur&&cur[0]&&cur[0].coach_data)||{};['hubReminders','reviewMails'].forEach(k=>{if(cd[k])keep[k]=cd[k]})}catch(e){}
+  const coach_data={...keep,state,ans,spokes,notes,mv,ns,ik,inner,hubPath,walkthroughs:cleanWalks(),progress:cleanProg(),invitedAt,existing,followups,booking,summary:window._sum?{archetype:window._sum.a.name,phase:window._sum.a.mode,resistant:window._sum.r.level,suppressed:window._sum.s.level}:null,savedAt:new Date().toISOString()};
   await sb(`/rest/v1/${SB.table}?id=eq.${encodeURIComponent(openId)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({coach_data,status:$('subStatus').value})});
 }
 async function publishPlan(){
@@ -1672,6 +1694,66 @@ async function saveProgress(){
   catch(e){m.textContent=e.message}finally{btn.disabled=false}}
 
 function cleanWalks(){return (walkthroughs||[]).filter(w=>w&&/^https:\/\//.test((w.url||'').trim())).map(w=>({phase:+w.phase,url:w.url.trim(),note:(w.note||'').trim()}))}
+/* ---------- 12-week reviews: data pulled together, plus an auto-built review deck ---------- */
+const RVD=['Sleep','Recovery','Metabolic','Hormones','Movement','Mindset'];
+const RVQ_L={win:'Biggest win',block:'What got in the way',learn:'What they learned about themselves',body:'Body',mind:'Mind',heart:'Heart',presence:'Most present',next:'The one thing for the next 12 weeks'};
+const addD=(iso,n)=>{const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+const fD=iso=>iso?new Date(iso+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}):'';
+const r1=v=>v==null||isNaN(v)?null:Math.round(v*10)/10;
+function rvData(by,q){
+  const c=(by||{}).checkins||{},L=(c.list||[]).slice().sort((a,b)=>a.d<b.d?-1:1),rv=(c.reviews||[]).find(r=>r.q===q)||null;
+  const st=hubPath.start||(L[0]||{}).d||localISO(new Date()),from=addD(st,(q-1)*84),to=rv?rv.d:addD(st,q*84);
+  const inP=L.filter(e=>e.d>=from&&e.d<=to),first=L.find(e=>e.w)||{},lastW=[...L].reverse().find(e=>e.w&&e.d<=to)||{},firstBf=L.find(e=>e.bf)||{},lastBf=[...L].reverse().find(e=>e.bf&&e.d<=to)||{};
+  const sc=inP.filter(e=>e.score!=null),avg=a=>a.length?Math.round(a.reduce((x,e)=>x+e.score,0)/a.length):null;
+  const vo2=(c.vo2||[]).map(v=>({d:v.d,v:+v.v})).concat(((cprog||{}).tests||[]).filter(t=>t.type==='vo2'&&t.v!==''&&t.v!=null).map(t=>({d:t.d,v:+t.v}))).sort((a,b)=>a.d<b.d?-1:1);
+  const hl=(((by||{}).journal||{}).halts||[]).filter(h=>h.at&&h.at.slice(0,10)>=from&&h.at.slice(0,10)<=to),ct={};hl.forEach(h=>[...(h.l||'')].forEach(k=>{ct[k]=(ct[k]||0)+1}));
+  const HN={H:'Hungry',A:'Angry',L:'Lonely',T:'Tired',S:'Stressed'},jw=((by||{}).journal||{}).weeks||{};
+  let base=null;try{const bp=existing?null:buildPlan();base=bp&&bp.baseline}catch(e){}
+  const ffm=(e,b)=>e.w&&b.bf?r1(e.w*(1-b.bf/100)):null;
+  return {q,from,to,rv,c,name:(state.clientName||'').trim()||'Client',first:((state.clientName||'').trim().split(' ')[0])||'Client',
+   w0:first.w,w1:lastW.w,bf0:firstBf.bf,bf1:lastBf.bf,ffm0:ffm(firstBf,firstBf),ffm1:ffm(lastBf,lastBf),
+   bio0:avg(sc.slice(0,4)),bio1:avg(sc.slice(-4)),checkins:inP.filter(e=>!e.ob).length,vo20:vo2[0],vo21:vo2[vo2.length-1],
+   halts:Object.keys(ct).sort((a,b)=>ct[b]-ct[a]).slice(0,3).map(k=>`${HN[k]} (${ct[k]})`),journal:Object.keys(jw).filter(k=>(jw[k].t||'').trim()).length,
+   trainings:HUB.filter(([id])=>((by||{})[id]||{}).done).map(([,t])=>t.split(':')[0]),base,goal:c.goal||null,
+   wins:((cprog||{}).wins||[]).filter(w=>w.t&&(!w.d||(w.d>=from&&w.d<=to))).map(w=>w.t),road:(cprog||{}).roadmap||null}}
+function reviewPanel(by){
+  const c=(by||{}).checkins||{},rvs=(c.reviews||[]).slice().sort((a,b)=>b.q-a.q),st=hubPath.start,q=st?Math.floor((Date.now()-new Date(st+'T12:00:00'))/(84*864e5)):0;
+  return `<details class="hubm" id="rvBox" ${rvs.length?'open':''}><summary><span><b>12-week reviews</b> <span class="submsg">Emailed to the client every 12 weeks</span></span><span class="submsg">${rvs.length?`${rvs.length} submitted`:q>=1?`Quarter ${q} due`:st?`First review ${fD(addD(st,84))}`:'Starts when you publish'}</span></summary>
+   ${rvs.length?rvs.map(r=>{const d=rvData(by,r.q);return `<div class="rvrow"><div><b>Quarter ${r.q}</b> <span class="submsg">submitted ${fD(r.d)} · self-rated ${r.score!=null?r.score.toFixed(1):'–'}/10${d.base?` (baseline ${d.base.score.toFixed(1)})`:''} · commitment ${r.commit||'–'}/10</span></div>
+     <span class="submsg">${d.w0&&d.w1?`Weight ${d.w0} → ${d.w1} kg · `:''}${d.bf0&&d.bf1?`body fat ${d.bf0} → ${d.bf1}% · `:''}${d.bio1!=null?`biofeedback ${d.bio0} → ${d.bio1} · `:''}${d.checkins}/12 check-ins</span>
+     <div class="row" style="gap:8px"><button class="btn primary" type="button" data-rvdeck="${r.q}">Open review deck</button></div></div>`}).join(''):`<p class="submsg">Nothing submitted yet. The client gets an email at each 12-week mark with a link to their review in My Plan: measurements, a 1–10 rating on the six audit areas, wins, blocks and the Soul Meets Strength questions. It lands here with their data pulled in and a review deck ready to present.</p>`}</details>`}
+function deckSlides(d){
+  const rv=d.rv||{a:{},dom:{},m:{}},a=rv.a||{},arrow=(x,y,u)=>x!=null&&y!=null?`<span class="dk-num"><em>${x}${u}</em><i>→</i><b>${y}${u}</b></span>`:y!=null?`<span class="dk-num"><b>${y}${u}</b></span>`:'<span class="dk-num"><em>Not measured</em></span>';
+  const ph=(d.road&&d.road.phases)||[],next=ph.find((p,i)=>i===Math.min(3,d.q))||null;
+  const S=[];
+  S.push(`<div class="dk dk-cover"><span class="dk-eb">Soul Meets Strength · 12-week review</span><h1>${escH(d.first)}, quarter ${d.q}.</h1><p>${fD(d.from)} – ${fD(d.to)}</p></div>`);
+  S.push(`<div class="dk"><span class="dk-eb">The numbers</span><h2>What changed</h2><div class="dk-grid">
+    <div><span>Body weight</span>${arrow(d.w0,d.w1,' kg')}</div><div><span>Body fat</span>${arrow(d.bf0,d.bf1,'%')}</div><div><span>Lean mass</span>${arrow(d.ffm0,d.ffm1,' kg')}</div>
+    <div><span>VO2 max</span>${arrow(d.vo20&&d.vo21&&d.vo20!==d.vo21?d.vo20.v:null,d.vo21?d.vo21.v:null,'')}</div><div><span>Biofeedback score</span>${arrow(d.bio0,d.bio1,'')}</div><div><span>Check-ins</span><span class="dk-num"><b>${d.checkins}/12</b></span></div></div></div>`);
+  S.push(`<div class="dk"><span class="dk-eb">Performance</span><h2>${d.base?`${d.base.score.toFixed(1)} → ${rv.score!=null?rv.score.toFixed(1):'–'}`:`Now ${rv.score!=null?rv.score.toFixed(1):'–'}`}<small> /10</small></h2><div class="dk-bars">${RVD.map(n=>{const b=d.base&&(d.base.domains||[]).find(x=>x.k===n),bv=b&&b.v!=null?b.v:null,nv=rv.dom&&rv.dom[n];return `<div class="dk-bar"><span>${n}</span><div><i class="b0" style="width:${(bv||0)*10}%"></i><i class="b1" style="width:${(nv||0)*10}%"></i></div><em>${bv!=null?bv.toFixed(1):'–'} → <b>${nv||'–'}</b></em></div>`}).join('')}</div><p class="dk-note">Baseline from the Performance Audit · now self-rated in the review</p></div>`);
+  S.push(`<div class="dk"><span class="dk-eb">Consistency</span><h2>The work behind it</h2><div class="dk-grid">
+    <div><span>Weekly check-ins</span><span class="dk-num"><b>${d.checkins}/12</b></span></div><div><span>Hub trainings complete</span><span class="dk-num"><b>${d.trainings.length}</b></span></div><div><span>Journal entries</span><span class="dk-num"><b>${d.journal}</b></span></div></div>
+    ${d.trainings.length?`<p class="dk-list">${d.trainings.map(escH).join(' · ')}</p>`:''}${d.halts.length?`<p class="dk-list"><b>Most common HALTS triggers:</b> ${d.halts.join(' · ')}</p>`:''}</div>`);
+  S.push(`<div class="dk"><span class="dk-eb">Wins</span><h2>${escH(a.win||'Your wins')}</h2>${d.wins.length?`<ul class="dk-ul">${d.wins.map(w=>`<li>${escH(w)}</li>`).join('')}</ul>`:''}${d.goal?`<p class="dk-list"><b>Long-term goal:</b> ${escH((GOAL_PH[d.goal.id]||{}).name||d.goal.id)}${d.goal.date?` · ${fD(d.goal.date)}`:''}</p>`:''}</div>`);
+  S.push(`<div class="dk"><span class="dk-eb">Honest look</span><h2>What got in the way</h2><p class="dk-q">${escH(a.block||'–')}</p><span class="dk-eb" style="margin-top:28px">What you learned about yourself</span><p class="dk-q">${escH(a.learn||'–')}</p></div>`);
+  S.push(`<div class="dk"><span class="dk-eb">Inner work · Body, Mind, Heart</span><h2>Who you're becoming</h2><div class="dk-three">${[['Body',a.body],['Mind',a.mind],['Heart',a.heart]].map(([k,v])=>`<div><span>${k}</span><p>${escH(v||'–')}</p></div>`).join('')}</div>${a.presence?`<p class="dk-list"><b>Most present:</b> ${escH(a.presence)}</p>`:''}</div>`);
+  S.push(`<div class="dk"><span class="dk-eb">The next 12 weeks</span><h2>${next?`Phase ${ph.indexOf(next)+1}: ${escH(next.name||'')}`:'What’s next'}</h2>${next&&next.focus?`<p class="dk-q">${escH(next.focus)}</p>`:''}
+    <div class="dk-grid">${next&&next.train&&next.train.kcal?`<div><span>Training day</span><span class="dk-num"><b>${next.train.kcal} kcal</b></span></div>`:''}${next&&next.energy?`<div><span>Energy balance</span><span class="dk-num"><b style="font-size:28px">${escH(next.energy)}</b></span></div>`:''}<div><span>Commitment</span><span class="dk-num"><b>${rv.commit||'–'}/10</b></span></div></div>
+    <p class="dk-list"><b>Your one thing:</b> ${escH(a.next||'–')}</p></div>`);
+  S.push(`<div class="dk dk-cover"><span class="dk-eb">Soul Meets Strength</span><h1>Stand in your standard.</h1><p>Quarter ${d.q+1} starts now.</p></div>`);
+  return S}
+let dkI=0;
+function openDeck(by,q){
+  const d=rvData(by,q),S=deckSlides(d);dkI=0;
+  const ov=document.createElement('div');ov.id='deckOv';ov.innerHTML=`<div class="dk-bar-top"><span>${escH(d.name)} · Quarter ${q} review</span><span><button type="button" id="dkPrint">Print / PDF</button><button type="button" id="dkClose" aria-label="Close">✕</button></span></div><div class="dk-stage">${S.map((h,i)=>`<section class="dk-slide ${i===0?'on':''}">${h}<span class="dk-foot">COACH DAVE MARSH · 12-WEEK REVIEW · ${String(i+1).padStart(2,'0')}</span></section>`).join('')}</div><div class="dk-nav"><button type="button" id="dkPrev" aria-label="Previous">←</button><span id="dkPos">1 / ${S.length}</span><button type="button" id="dkNext" aria-label="Next">→</button></div>`;
+  document.body.appendChild(ov);document.body.style.overflow='hidden';
+  const show=i=>{dkI=Math.max(0,Math.min(S.length-1,i));ov.querySelectorAll('.dk-slide').forEach((s,k)=>s.classList.toggle('on',k===dkI));$('dkPos').textContent=`${dkI+1} / ${S.length}`};
+  const close=()=>{ov.remove();document.body.style.overflow='';document.removeEventListener('keydown',key)};
+  const key=e=>{if(e.key==='ArrowRight'||e.key===' ')show(dkI+1);else if(e.key==='ArrowLeft')show(dkI-1);else if(e.key==='Escape')close()};
+  document.addEventListener('keydown',key);$('dkNext').onclick=()=>show(dkI+1);$('dkPrev').onclick=()=>show(dkI-1);$('dkClose').onclick=close;$('dkPrint').onclick=()=>window.print();
+  ov.querySelector('.dk-stage').addEventListener('click',e=>{if(!e.target.closest('button'))show(dkI+1)})}
+function bindReviews(by){document.querySelectorAll('[data-rvdeck]').forEach(b=>b.addEventListener('click',()=>openDeck(by,+b.dataset.rvdeck)))}
+
 function pathPanel(by){
   const start=hubPath.start||'',st=start?new Date(start+'T00:00:00'):new Date();st.setHours(0,0,0,0);
   const today=new Date();today.setHours(0,0,0,0);
@@ -1688,7 +1770,7 @@ function pathPanel(by){
    <p class="submsg">Record your walkthrough (Loom, Vimeo, YouTube unlisted or a video file link), paste the link for the phase, then publish to client. The latest phase shows first; they can switch back to earlier ones.</p>
    <div class="vrow"><span>Onboarding · first login</span><input data-wt="0" type="url" placeholder="https://www.loom.com/share/…" value="${escH(wv(0).url||'')}" aria-label="Onboarding walkthrough link"><span></span></div>
    ${WT_PHASES.map((n,i)=>`<div class="vrow"><span>Phase ${i+1} · ${n}</span><input data-wt="${i+1}" type="url" placeholder="https://www.loom.com/share/…" value="${escH(wv(i+1).url||'')}" aria-label="Walkthrough link for phase ${i+1}"><span></span></div>`).join('')}</details>
-  ${progPanel(by)}`;
+  ${progPanel(by)}${reviewPanel(by)}`;
 }
 function bindPath(){
   const box=$('pathBox');if(!box)return;bindProg();
@@ -1713,7 +1795,7 @@ async function clientHub(row){
     const HL={H:'Hungry',A:'Angry',L:'Lonely',T:'Tired',S:'Stressed'},hl=((by.journal||{}).halts)||[];
     if(hl.length){const cut=Date.now()-30*864e5,rec=hl.filter(x=>new Date(x.at)>=cut),ct={};rec.forEach(x=>[...(x.l||'')].forEach(c=>{ct[c]=(ct[c]||0)+1}));
       box.insertAdjacentHTML('beforeend',`<details class="hubm" open><summary><span><b>HALTS checks</b> <span class="submsg">From My Plan</span></span><span class="submsg">${rec.length} in the last 30 days</span></summary><div class="chips" style="margin:10px 0 4px">${Object.keys(HL).map(k=>`<span class="chip ${ct[k]?'hit':''}">${HL[k]} ${ct[k]||0}</span>`).join('')}</div><dl>${hl.slice(-8).reverse().map(x=>`<div><dt>${new Date(x.at).toLocaleString('en-AU',{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</dt><dd>${[...(x.l||'')].map(c=>HL[c]).filter(Boolean).join(', ')||'None of the five'}</dd></div>`).join('')}</dl></details>`)}
-    box.insertAdjacentHTML('afterbegin',pathPanel(by));if($('progBox'))$('progBox')._by=by;bindPath();box.hidden=false;
+    box.insertAdjacentHTML('afterbegin',pathPanel(by));if($('progBox'))$('progBox')._by=by;bindPath();bindReviews(by);box.hidden=false;
   }catch(e){box.innerHTML=pathPanel({});bindPath();box.hidden=false}
 }
 async function loadVideos(){
