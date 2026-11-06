@@ -632,6 +632,25 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
         <div class="card-cta">Open Calculator <span class="arrow">→</span></div>
       </a>
 
+      <!-- ── Bloodwork Reader ── -->
+      <a href="/bloodwork-reader.html" class="tool-card live">
+        <div class="card-badge live-badge"><span class="dot"></span> Live</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2.5S5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5z"/>
+          </svg>
+        </div>
+        <div class="card-title">Bloodwork Reader</div>
+        <p class="card-desc">Private, personal-use only. Log your own bloodwork against your reference ranges, with red/amber flags and PDF import.</p>
+        <div class="card-features">
+          <div class="card-feature">Your own optimal-range reference library</div>
+          <div class="card-feature">PDF upload &amp; AI value extraction</div>
+          <div class="card-feature">Flagged markers with your own recommendations</div>
+          <div class="card-feature">History &amp; trends — stored in this browser only</div>
+        </div>
+        <div class="card-cta">Open Tool <span class="arrow">→</span></div>
+      </a>
+
       <!-- ── Performance Plate Generator ── -->
       <a href="/meal-planner/" class="tool-card live">
         <div class="card-badge live-badge"><span class="dot"></span> Live</div>
@@ -658,7 +677,7 @@ button,.btn,a[class*="btn"]{font-family:'DM Sans',system-ui,sans-serif}
 
 <script>
   const SESSION_KEY = 'pm_coach_auth'
-  const CORRECT_PW  = 'PERFORM'
+  const CORRECT_PW  = 'TEDDY'
 
   function isUnlocked() {
     return sessionStorage.getItem(SESSION_KEY) === '1'

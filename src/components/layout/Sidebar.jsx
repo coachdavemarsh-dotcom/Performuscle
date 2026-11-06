@@ -83,6 +83,11 @@ const icons = {
       <path d="M4 8H2M14 8h-2"/>
     </svg>
   ),
+  bloodwork: (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M8 1.5C8 1.5 3 7 3 10.5a5 5 0 0 0 10 0C13 7 8 1.5 8 1.5z"/>
+    </svg>
+  ),
   education: (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
       <path d="M8 2L1 6l7 4 7-4-7-4z"/>
@@ -262,6 +267,7 @@ const coachNav = [
   { to: '/coach/templates', label: 'Templates', icon: 'templates' },
   { to: '/coach/assessment', label: 'Assessment', icon: 'assessment' },
   { to: '/coach/testing', label: 'Testing', icon: 'testing' },
+  { to: '/coach/bloodwork', label: 'Bloodwork', icon: 'bloodwork' },
   { to: '/coach/calculators', label: 'Calculators', icon: 'calc' },
   { to: '/coach/content', label: 'Content Hub', icon: 'content' },
   { to: '/coach/technique-lab', label: 'Technique Lab', icon: 'technique' },

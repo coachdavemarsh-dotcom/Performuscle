@@ -781,3 +781,88 @@ export function computeCyclePhase(periodStart, cycleLength = 28, periodLength = 
     progressPct,
   }
 }
+
+// ============================================================
+// BLOODWORK — reference range classification
+// ============================================================
+
+/**
+ * Classifies a lab value against a coach-defined conventional ("lab normal")
+ * range and a narrower optimal ("functional") range. Any bound may be null
+ * to leave that side unbounded (e.g. a marker where only "too high" matters).
+ *
+ * @param {number} value
+ * @param {{ conventionalLow?: number|null, conventionalHigh?: number|null, optimalLow?: number|null, optimalHigh?: number|null }} range
+ * @returns {{ status: 'optimal'|'borderline_low'|'borderline_high'|'out_of_range_low'|'out_of_range_high'|'no_range', color: string }}
+ */
+export function classifyBloodMarker(value, range = {}) {
+  const { conventionalLow = null, conventionalHigh = null, optimalLow = null, optimalHigh = null } = range
+
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return { status: 'no_range', color: 'var(--muted)' }
+  }
+
+  const hasConventional = conventionalLow !== null || conventionalHigh !== null
+  const hasOptimal = optimalLow !== null || optimalHigh !== null
+  if (!hasConventional && !hasOptimal) {
+    return { status: 'no_range', color: 'var(--muted)' }
+  }
+
+  if (conventionalLow !== null && value < conventionalLow) {
+    return { status: 'out_of_range_low', color: 'var(--danger)' }
+  }
+  if (conventionalHigh !== null && value > conventionalHigh) {
+    return { status: 'out_of_range_high', color: 'var(--danger)' }
+  }
+
+  if (hasOptimal) {
+    if (optimalLow !== null && value < optimalLow) {
+      return { status: 'borderline_low', color: 'var(--warn)' }
+    }
+    if (optimalHigh !== null && value > optimalHigh) {
+      return { status: 'borderline_high', color: 'var(--warn)' }
+    }
+  }
+
+  return { status: 'optimal', color: 'var(--accent)' }
+}
+
+/**
+ * Buckets a panel's flagged markers into red (out of lab range) and amber
+ * (in range but outside optimal), each paired with the coach's own
+ * pre-written recommendation text for that direction. Markers that are
+ * optimal or have no range defined are omitted.
+ *
+ * @param {Object} panelResults - { [marker_key]: number, _lab_name?: string }
+ * @param {Array} markers - rows from bloodwork_markers
+ * @param {string|null} gender - client's profile.gender, used to pick the right sex-specific marker row
+ * @returns {{ red: Array, amber: Array }} each entry: { key, displayName, value, unit, status, recText }
+ */
+export function summarizeBloodPanel(panelResults, markers, gender) {
+  const findMarker = (key) =>
+    markers.find(m => m.marker_key === key && m.sex === gender)
+    || markers.find(m => m.marker_key === key && !m.sex)
+
+  const red = []
+  const amber = []
+
+  Object.entries(panelResults || {}).forEach(([key, value]) => {
+    if (key === '_lab_name') return
+    const marker = findMarker(key)
+    const { status } = classifyBloodMarker(value, {
+      conventionalLow: marker?.conventional_low ?? null, conventionalHigh: marker?.conventional_high ?? null,
+      optimalLow: marker?.optimal_low ?? null, optimalHigh: marker?.optimal_high ?? null,
+    })
+    if (status === 'optimal' || status === 'no_range') return
+
+    const isLow = status === 'borderline_low' || status === 'out_of_range_low'
+    const entry = {
+      key, displayName: marker?.display_name || key, value, unit: marker?.unit || '', status,
+      recText: (isLow ? marker?.rec_low : marker?.rec_high) || '',
+    }
+    if (status.startsWith('out_of_range')) red.push(entry)
+    else amber.push(entry)
+  })
+
+  return { red, amber }
+}
