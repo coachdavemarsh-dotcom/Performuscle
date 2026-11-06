@@ -7,6 +7,7 @@ import stripeRouter from './routes/stripe.js'
 import webhooksRouter from './routes/webhooks.js'
 import emailRouter from './routes/emails.js'
 import aiRouter from './routes/ai.js'
+import bloodworkRouter from './routes/bloodwork.js'
 import mealPlannerRouter from './routes/mealPlanner.js'
 import garminRouter from './routes/garmin.js'
 import terraRouter from './routes/terra.js'
@@ -32,6 +33,7 @@ app.use(helmet())
 const allowedOrigins = [
   // Dev defaults
   'http://localhost:5173',
+  'http://localhost:5174',
   'http://localhost:5175',
   'http://localhost:8080',
   // Production — set ALLOWED_ORIGINS in Railway with all your live domains
@@ -69,6 +71,9 @@ app.use('/api/stripe', rateLimit({
 // Stripe webhooks need raw body — register BEFORE express.json()
 app.use('/api/webhooks/stripe', express.raw({ type: 'application/json' }))
 
+// Bloodwork PDF uploads (base64) exceed the default JSON body limit — register BEFORE express.json()
+app.use('/api/bloodwork', express.json({ limit: '15mb' }))
+
 // JSON parsing for all other routes
 app.use(express.json())
 
@@ -84,6 +89,7 @@ app.use('/api/stripe', stripeRouter)
 app.use('/api/webhooks', webhooksRouter)
 app.use('/api/emails', emailRouter)
 app.use('/api', aiRouter)
+app.use('/api', bloodworkRouter)
 app.use('/api', mealPlannerRouter)
 app.use('/api/garmin', garminRouter)
 app.use('/api/terra', terraRouter)

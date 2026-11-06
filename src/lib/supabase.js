@@ -94,7 +94,7 @@ export async function getCoachClients(coachId) {
     .from('clients')
     .select(`
       *,
-      profile:profiles!client_id(id, full_name, plan, check_in_day)
+      profile:profiles!client_id(id, full_name, plan, check_in_day, gender)
     `)
     .eq('coach_id', coachId)
     .order('created_at', { ascending: false })
@@ -481,6 +481,57 @@ export async function getAllLatestTestResults(clientId) {
     acc[testType] = results[i].data
     return acc
   }, {})
+}
+
+// ============================================================
+// BLOODWORK HELPERS
+// ============================================================
+
+export async function getBloodMarkers(coachId) {
+  const { data, error } = await supabase
+    .from('bloodwork_markers')
+    .select('*')
+    .eq('coach_id', coachId)
+    .order('category', { ascending: true })
+    .order('sort_order', { ascending: true })
+  return { data, error }
+}
+
+export async function upsertBloodMarker(marker) {
+  const { data, error } = await supabase
+    .from('bloodwork_markers')
+    .upsert(marker)
+    .select()
+    .single()
+  return { data, error }
+}
+
+export async function deleteBloodMarker(id) {
+  const { error } = await supabase
+    .from('bloodwork_markers')
+    .delete()
+    .eq('id', id)
+  return { error }
+}
+
+export async function saveBloodPanel(panel) {
+  const { data, error } = await supabase
+    .from('test_results')
+    .insert({ ...panel, test_type: 'bloodwork_panel' })
+    .select()
+    .single()
+  return { data, error }
+}
+
+export async function getBloodPanels(clientId, limit = 20) {
+  const { data, error } = await supabase
+    .from('test_results')
+    .select('*')
+    .eq('client_id', clientId)
+    .eq('test_type', 'bloodwork_panel')
+    .order('tested_date', { ascending: false })
+    .limit(limit)
+  return { data, error }
 }
 
 // ============================================================

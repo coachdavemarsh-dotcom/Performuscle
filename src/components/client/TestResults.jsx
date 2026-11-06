@@ -4,7 +4,9 @@ import { supabase } from '../../lib/supabase.js'
 import {
   deriveHRZones, deriveLTHRZones, derivePaceZones, predictRaceTimes,
   deriveFTPZones, deriveSwimZones, formatTime, rollingAverage,
+  classifyBloodMarker, summarizeBloodPanel,
 } from '../../lib/calculators.js'
+import { getBloodMarkers } from '../../lib/supabase.js'
 import ZoneTable from '../shared/ZoneTable.jsx'
 
 // ─── test type config ─────────────────────────────────────────────────────────
@@ -1240,12 +1242,166 @@ function OverviewSection({ results }) {
   )
 }
 
+// ─── bloodwork ─────────────────────────────────────────────────────────────────
+
+const BLOOD_STATUS_LABELS = {
+  optimal: { text: 'Optimal', color: 'var(--accent)' },
+  borderline_low: { text: 'In range, below optimal', color: 'var(--warn)' },
+  borderline_high: { text: 'In range, above optimal', color: 'var(--warn)' },
+  out_of_range_low: { text: 'Below lab range', color: 'var(--danger)' },
+  out_of_range_high: { text: 'Above lab range', color: 'var(--danger)' },
+  no_range: { text: '—', color: 'var(--muted)' },
+}
+
+function rangeText(low, high) {
+  if (low === null || low === undefined) {
+    if (high === null || high === undefined) return '—'
+    return `< ${high}`
+  }
+  if (high === null || high === undefined) return `> ${low}`
+  return `${low}–${high}`
+}
+
+function BloodworkSection({ results, gender }) {
+  const [markers, setMarkers] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const panels = results
+    .filter(r => r.test_type === 'bloodwork_panel')
+    .sort((a, b) => new Date(b.tested_date) - new Date(a.tested_date))
+
+  useEffect(() => {
+    const coachId = results.find(r => r.coach_id)?.coach_id
+    if (!coachId) { setLoading(false); return }
+    getBloodMarkers(coachId).then(({ data }) => {
+      setMarkers(data || [])
+      setLoading(false)
+    })
+  }, [results])
+
+  function findMarker(key) {
+    return markers.find(m => m.marker_key === key && m.sex === gender)
+      || markers.find(m => m.marker_key === key && !m.sex)
+  }
+
+  if (loading) return <div className="empty-state" style={{ height: 100 }}><div className="empty-state-text">Loading…</div></div>
+
+  if (panels.length === 0) {
+    return (
+      <div className="empty-state" style={{ height: 120 }}>
+        <div className="empty-state-text">No bloodwork panels logged yet. Your coach will add these after your next blood test.</div>
+      </div>
+    )
+  }
+
+  const latest = panels[0]
+  const labName = latest.results?._lab_name
+  const entries = Object.entries(latest.results || {}).filter(([k]) => k !== '_lab_name')
+  const flagged = summarizeBloodPanel(latest.results, markers, gender)
+
+  const grouped = {}
+  entries.forEach(([key, value]) => {
+    const marker = findMarker(key)
+    const category = marker?.category || 'Other'
+    ;(grouped[category] = grouped[category] || []).push({ key, value, marker })
+  })
+
+  // markers that appear in 2+ panels, for trend charts
+  const trendable = entries
+    .map(([key]) => key)
+    .filter(key => panels.filter(p => p.results?.[key] != null).length >= 2)
+
+  return (
+    <div>
+      <div className="card section-gap">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
+          <div className="card-title" style={{ fontSize: 13, letterSpacing: 1.5 }}>
+            Latest Panel — {new Date(latest.tested_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </div>
+          {labName && <div style={{ fontSize: 11, color: 'var(--muted)' }}>{labName}</div>}
+        </div>
+        {latest.coach_note && (
+          <div style={{ marginTop: 10, padding: '10px 12px', background: 'var(--accent-dim)', border: '1px solid var(--border-accent)', borderRadius: 6, fontSize: 12, color: 'var(--sub)', lineHeight: 1.6 }}>
+            <strong style={{ color: 'var(--accent)' }}>Coach's Insight: </strong>{latest.coach_note}
+          </div>
+        )}
+      </div>
+
+      {(flagged.red.length > 0 || flagged.amber.length > 0) && (
+        <div className="card section-gap">
+          <div className="card-title" style={{ fontSize: 13, letterSpacing: 1.5, marginBottom: 12 }}>Flagged Markers</div>
+          {[...flagged.red, ...flagged.amber].map(f => (
+            <div key={f.key} style={{ padding: '8px 12px', borderLeft: `3px solid ${f.status.startsWith('out_of_range') ? 'var(--danger)' : 'var(--warn)'}`, background: 'var(--s4)', borderRadius: 4, marginBottom: 8 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, letterSpacing: 1, color: f.status.startsWith('out_of_range') ? 'var(--danger)' : 'var(--warn)' }}>
+                {f.displayName} — {f.value} {f.unit}
+              </div>
+              {f.recText && <div style={{ fontSize: 11, color: 'var(--sub)', marginTop: 4, lineHeight: 1.5 }}>{f.recText}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {Object.entries(grouped).map(([category, rows]) => (
+        <div key={category} className="card section-gap">
+          <div className="card-title" style={{ fontSize: 13, letterSpacing: 1.5, marginBottom: 12 }}>{category}</div>
+          {rows.map(({ key, value, marker }) => {
+            const { status, color } = classifyBloodMarker(value, {
+              conventionalLow: marker?.conventional_low ?? null, conventionalHigh: marker?.conventional_high ?? null,
+              optimalLow: marker?.optimal_low ?? null, optimalHigh: marker?.optimal_high ?? null,
+            })
+            const label = BLOOD_STATUS_LABELS[status]
+            return (
+              <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', borderBottom: '1px solid var(--border)', gap: 10 }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, letterSpacing: 1, color: 'var(--white)' }}>{marker?.display_name || key}</div>
+                  <div style={{ fontSize: 10, color: 'var(--muted)' }}>
+                    Lab: {rangeText(marker?.conventional_low, marker?.conventional_high)} · Optimal: {rangeText(marker?.optimal_low, marker?.optimal_high)} {marker?.unit}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, color }}>{value}</div>
+                  <div style={{ fontSize: 10, color: label.color }}>{label.text}</div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      ))}
+
+      {trendable.length > 0 && (
+        <div className="card section-gap">
+          <div className="card-title" style={{ fontSize: 13, letterSpacing: 1.5, marginBottom: 12 }}>Trends</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20 }}>
+            {trendable.map(key => {
+              const marker = findMarker(key)
+              const points = panels
+                .filter(p => p.results?.[key] != null)
+                .map(p => ({ date: p.tested_date, value: p.results[key] }))
+                .reverse()
+              return (
+                <div key={key}>
+                  <div style={{ fontSize: 11, color: 'var(--sub)', marginBottom: 6 }}>{marker?.display_name || key}</div>
+                  <TrendChart points={points} color="var(--accent)" unit={marker?.unit} />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      <div style={{ marginTop: 4, padding: '10px 16px', background: 'var(--s4)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 11, color: 'var(--muted)' }}>
+        Educational reference only — not a medical diagnosis. Speak to your physician about any result that concerns you.
+      </div>
+    </div>
+  )
+}
+
 // ─── main component ───────────────────────────────────────────────────────────
 
-const TABS = ['Overview', 'VO₂ Max', 'Endurance', 'Anaerobic', 'Strength', 'Structural Balance']
+const TABS = ['Overview', 'VO₂ Max', 'Endurance', 'Anaerobic', 'Strength', 'Structural Balance', 'Bloodwork']
 
 export default function TestResults() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('Overview')
@@ -1307,6 +1463,7 @@ export default function TestResults() {
       {tab === 'Anaerobic'           && <AnaerobicSection results={results} />}
       {tab === 'Strength'            && <StrengthSection results={results} />}
       {tab === 'Structural Balance'  && <StructuralBalanceSection results={results} />}
+      {tab === 'Bloodwork'           && <BloodworkSection results={results} gender={profile?.gender} />}
     </div>
   )
 }
