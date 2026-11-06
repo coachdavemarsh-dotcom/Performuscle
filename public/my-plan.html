@@ -414,7 +414,10 @@ const HUB_MODS=[{id:'regulate',track:'body'},{id:'sleep',track:'body'},{id:'reco
 const HUB_TRACKS=[['body','Regulate','Body','var(--body)'],['mind','Rehearse','Mind','var(--mind)'],['heart','Release','Heart','var(--heart)']];
 const HUB_LEVELS=[['Not started',0],['Aware',150],['Building',800],['Consistent',2500],['Owned',4500]];
 const HUB_SPOKE={somatics:['regulate','awareness','halts','presence'],identity:['identity','values'],limits:['limits','growth'],boundaries:['boundaries'],recovery:['sleep','recovery'],movement:['mobility','strength'],nutrition:['nutrition','metabolism','hormones']};
-let hub=null;
+let hub=null,hubVids=null;
+/* Soul Meets Strength trainings show as "coming soon" until their video is uploaded (same rule as the Hub) */
+const vidReady=id=>!LIVE||!!(hubVids&&hubVids[id]);
+const anyVidReady=()=>!LIVE||!!(hubVids&&Object.keys(hubVids).length);
 /* ---------- This week: the client's week on the six-month Hub path ---------- */
 const PATH_WEEKS={regulate:1,awareness:2,halts:2,sleep:3,recovery:4,nutrition:5,strength:6,mobility:7,values:8,identity:9,limits:10,boundaries:11,metabolism:12,hormones:13,growth:14,release:15,grief:16,purpose:17,polarity:18,devotion:19,service:20,presence:21};
 const ROAD_NAMES=['Foundations','Build the base','Rewrite the story','Go deeper','Lead from the heart','Integrate'];
@@ -446,7 +449,7 @@ function weekPlan(wk){
   const w=id=>PATH_WEEKS[id]||1;
   const ids=Object.keys(TW).filter(id=>w(id)===wk);
   if(ids.length){const a=TW[ids[0]];return {ids,title:ids.map(id=>TW[id].t).join(' + '),line:a.line,prompt:a.prompt,
-    items:[...ids.map(id=>({k:'w_'+id,b:`Watch ${TW[id].t} and do the worksheet`,s:'In your Hub. About 20 minutes.',id})),...ids.map(id=>({k:'p_'+id,b:`Daily practice: ${TW[id].p}`,s:TW[id].d})),
+    items:[...ids.map(id=>vidReady(id)?({k:'w_'+id,b:`Watch ${TW[id].t} and do the worksheet`,s:'In your Hub. About 20 minutes.',id}):({k:'w_'+id,b:`${TW[id].t}: Soul Meets Strength training coming soon`,s:'It opens in your Hub as soon as it’s released.',soon:true})),...ids.map(id=>({k:'p_'+id,b:`Daily practice: ${TW[id].p}`,s:TW[id].d})),
       {k:'j',b:'Answer this week’s journal prompt',s:'Write it like nobody’s reading.'},...(a.b?[{k:'r',b:`Go deeper (optional): ${a.b}`,s:'In the Further reading library in your Hub.'}]:[])]}}
   const g=INTEGRATE[wk]||{title:'Catch-up week',focus:'Go back over what mattered',do:'Finish any training that’s still open, and repeat the practice that helped you most.',line:'Repetition is where it becomes yours.',prompt:'What has shifted since we started, and what still feels hard?'};
   return {ids:[],title:g.title,line:g.line,prompt:g.prompt,items:[{k:'f',b:g.focus,s:g.do},{k:'j',b:'Answer this week’s journal prompt',s:'Write it like nobody’s reading.'}]};
@@ -455,9 +458,9 @@ function jWeek(wk){journal=journal||(hub&&hub.journal)||{weeks:{}};journal.weeks
 function thisWeekHTML(){
   const wk=pathWeek();if(!wk)return '';
   const P=weekPlan(wk),J=jWeek(wk),mi=Math.min(5,Math.ceil(wk/4)-1),h=hub||{};
-  const isDone=it=>it.id?!!((h[it.id]||{}).watched||(h[it.id]||{}).done||(+(h[it.id]||{}).pct||0)>=50):it.k==='j'?!!(J.t||'').trim():!!J.c[it.k];
+  const isDone=it=>it.soon?false:it.id?!!((h[it.id]||{}).watched||(h[it.id]||{}).done||(+(h[it.id]||{}).pct||0)>=50):it.k==='j'?!!(J.t||'').trim():!!J.c[it.k];
   return `<span class="eyebrow">This week · Week ${wk} of 24 · Month ${mi+1}, ${ROAD_NAMES[mi]}</span><h2>${esc(P.title)}</h2>
-   <div class="wk2"><div class="intents"><span class="k">Your intentions</span>${P.items.map(it=>{const d=isDone(it),auto=it.id||it.k==='j';
+   <div class="wk2"><div class="intents"><span class="k">Your intentions</span>${P.items.map(it=>{const d=isDone(it),auto=it.id||it.k==='j'||it.soon;
      return `<${auto?'div':'button type="button"'} class="it ${d?'on':''}" ${auto?'':`data-it="${it.k}" aria-pressed="${d}"`}><i aria-hidden="true">${d?'✓':''}</i><span><b>${esc(it.b)}</b><small>${esc(it.s)}</small>${it.id?`<a href="/hub">${(h[it.id]||{}).done?'Complete':(+(h[it.id]||{}).pct||0)?`${+(h[it.id]||{}).pct}% done · keep going →`:'Open in your Hub →'}</a>`:''}</span></${auto?'div':'button'}>`}).join('')}</div>
     <div class="jrnl"><span class="k">Journal</span><blockquote>${esc(P.line)}</blockquote><label for="jText">${esc(P.prompt)}</label><textarea id="jText" class="in" rows="6" placeholder="Start anywhere."></textarea><span class="small" id="jSaved">${LIVE?`Saves as you type. ${esc(plan.coach)} reads it before your next call.`:'Preview: saves in this browser only.'}</span></div></div>`;
 }
@@ -495,7 +498,8 @@ function SAMPLE_CI(){const d=n=>{const t=new Date(Date.now()-n*864e5);return t.t
   const c={height:182,sex:'m',list:[],profile:{w:88.4,age:38,activity:'moderate',maint:2899,sessions:4,mins:60,intensity:'moderate',steps:9000,doneAt:new Date(Date.now()-29*864e5).toISOString()}};L.forEach(e=>{e.bf=navyBF('m',182,e.waist,e.neck);e.score=bioScore(e,c.list);c.list.push(e)});return c}
 const SAMPLE_CP={roadmap:{phases:[{name:'Health',weeks:14,cut:{bw:88.4,bf:22.2,goalBf:16,rate:0.6,current:2950,fatLoss:5.48,total:7.69,goalBw:80.7,wk:0.53,weeks:15,tr:2,buf:1,daily:478,avg:2472},focus:'Rebuild the foundations: sleep, food and recovery first, so your body is ready to change.',training:'4 days',cardio:'2 x Zone 2, 35 min',steps:'10,000',energy:'Maintenance',train:{kcal:2540,p:180,c:300,f:65},rest:{kcal:2250,p:180,c:200,f:85},meals:4,supps:'Magnesium glycinate 300 mg before bed\nVitamin D3 daily\nFish oil 2 g',notes:'Bloods again at week 8.'},{name:'Function',weeks:8,training:'4 days',energy:'Recomposition'},{name:'Performance',weeks:10},{name:'Mindset',weeks:6}]},targetScore:7.5,targets:['Seven hours of sleep, five nights a week','Waist down 4 cm by the end of the phase','Three strength sessions a week, every week'],habits:['Wake at 6:15 every day, light outside within 30 minutes','Protein at every meal, 40 g at breakfast','Phone out of the bedroom'],tests:[{d:new Date(Date.now()-27*864e5).toISOString().slice(0,10),type:'vo2',v:41.5},{d:new Date(Date.now()-3*864e5).toISOString().slice(0,10),type:'vo2',v:43.2},{d:new Date(Date.now()-27*864e5).toISOString().slice(0,10),type:'strength',name:'Trap-bar deadlift',v:140,u:'kg'},{d:new Date(Date.now()-3*864e5).toISOString().slice(0,10),type:'strength',name:'Trap-bar deadlift',v:150,u:'kg'},{d:new Date(Date.now()-26*864e5).toISOString().slice(0,10),type:'screen',v:62}],wins:[{d:new Date(Date.now()-5*864e5).toISOString().slice(0,10),t:'Slept seven hours five nights in a row'}]};
 async function loadHub(){
-  if(!LIVE){hub=HUB_SAMPLE}else{try{const r=await authFetch('/rest/v1/client_progress?select=module,data');hub={};if(r.ok)(await r.json()).forEach(x=>{hub[x.module]=x.data||{}})}catch(e){hub={}}}
+  if(!LIVE){hub=HUB_SAMPLE}else{try{const r=await authFetch('/rest/v1/client_progress?select=module,data');hub={};if(r.ok)(await r.json()).forEach(x=>{hub[x.module]=x.data||{}})}catch(e){hub={}}
+    try{const v=await authFetch('/rest/v1/hub_content?select=module,video_url');hubVids={};if(v.ok)(await v.json()).forEach(x=>{if(x.module!=='library'&&x.video_url)hubVids[x.module]=1})}catch(e){hubVids={}}}
   if(hub&&hub.journal){const loc=journal;journal=hub.journal;journal.weeks=journal.weeks||{};
     if(loc&&loc!==journal){Object.entries(loc.weeks||{}).forEach(([k,v])=>{if((v.t||'').trim()||Object.keys(v.c||{}).length)journal.weeks[k]=v});if(loc.halts)journal.halts=(journal.halts||[]).concat(loc.halts)}}
   if(hub&&hub.checkins&&!(ci&&ci.list&&ci.list.length))ci=hub.checkins;
@@ -512,7 +516,7 @@ function hubHTML(){
   let li=0;HUB_LEVELS.forEach((l,i)=>{if(xp>=l[1])li=i});const nx=HUB_LEVELS[li+1];
   const lp=nx?Math.round(100*(xp-HUB_LEVELS[li][1])/(nx[1]-HUB_LEVELS[li][1])):100;
   const all=Math.round(HUB_MODS.reduce((a,m)=>a+pct(m.id),0)/HUB_MODS.length),r=54,c=2*Math.PI*r;
-  return `<span class="eyebrow">Your Client Hub</span><h2>Soul Meets Strength.</h2><p class="lede">Short trainings from ${esc((plan&&plan.coach)||'Dave')} with worksheets and homework. Every step earns XP${plan&&plan.kind==='existing'?'':', and the outer ring on your Launchpad fills as you go'}. Guest calls and webinars live in the Education library in your Hub.</p>
+  return `<span class="eyebrow">Your Client Hub</span><h2>Soul Meets Strength.</h2><p class="lede">Short trainings from ${esc((plan&&plan.coach)||'Dave')} with worksheets and homework. Every step earns XP${plan&&plan.kind==='existing'?'':', and the outer ring on your Launchpad fills as you go'}. Guest calls and webinars live in the Education library in your Hub.</p>${anyVidReady()?'':'<p class="lede" style="margin-top:-4px"><b>Soul Meets Strength trainings are coming soon.</b> Each one opens in your Hub as it’s released. The Education library is ready now.</p>'}
    <div class="hubc"><div class="hring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--surface-3)" stroke-width="9"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c*all/100} ${c}"/></svg><div><b>${all}%</b><span>Complete</span></div></div>
     <div class="hlv"><span class="eyebrow">Level ${li+1} of 5</span><span class="nm">${HUB_LEVELS[li][0]}</span><div class="hbar"><i style="width:${lp}%"></i></div><span class="small">${xp} XP · ${done} of ${HUB_MODS.length} trainings complete${nx?` · ${nx[1]-xp} XP to ${nx[0]}`:''}</span><a class="btn primary" href="/hub" style="align-self:flex-start;margin-top:6px;text-decoration:none">Open your Hub →</a></div>
     <div class="htr">${HUB_TRACKS.map(([id,k,sys,col])=>{const ms=HUB_MODS.filter(m=>m.track===id),p=Math.round(ms.reduce((a,m)=>a+pct(m.id),0)/ms.length);return `<div style="--c:${col}"><span><b>${k}</b><em>${sys} · ${p}%</em></span><div class="hbar"><i style="width:${p}%"></i></div></div>`}).join('')}</div></div>`;
