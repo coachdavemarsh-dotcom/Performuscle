@@ -334,16 +334,19 @@ function weekOf(id){return PATH_WEEKS[id]||1}
 /* One fixed course: each week opens that week's training and the next one, so clients are always up to two weeks ahead */
 function opensOn(id){const st=dayOf(path.start)||todayD();return new Date(st.getTime()+Math.max(0,weekOf(id)-2)*7*DAY)}
 function curWeek(){const st=dayOf(path.start)||todayD();return Math.max(1,Math.min(24,Math.floor((todayD()-st)/(7*DAY))+1))}
-function isOpen(id){if(path.allOpen)return true;const d=prog[id];if(d&&(d.watched||Object.keys(d.answers||{}).length||(d.days||[]).some(Boolean)||d.reflection))return true;return weekOf(id)<=curWeek()+1}
+/* Soul Meets Strength trainings stay locked as "Coming soon" until their video is uploaded */
+const hasVid=id=>!!(videos[id]&&videos[id].url);
+const anyVid=()=>MODULES.some(m=>hasVid(m.id));
+function isOpen(id){if(!hasVid(id))return false;if(path.allOpen)return true;const d=prog[id];if(d&&(d.watched||Object.keys(d.answers||{}).length||(d.days||[]).some(Boolean)||d.reflection))return true;return weekOf(id)<=curWeek()+1}
 const fmtD=d=>d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
-function lockMsg(id){return `Opens ${fmtD(opensOn(id))}`}
+function lockMsg(id){return hasVid(id)?`Opens ${fmtD(opensOn(id))}`:'Coming soon'}
 function byMonth(){const out=[[],[],[],[],[],[]];MODULES.forEach(m=>{const w=weekOf(m.id);out[Math.min(5,Math.ceil(w/4)-1)].push(m)});out.forEach(a=>a.sort((x,y)=>weekOf(x.id)-weekOf(y.id)));return out}
 function pathHTML(){
   const wk=curWeek(),mi=Math.min(5,Math.ceil(wk/4)-1),months=byMonth(),cur=ROADMAP[mi];
   const now=months[mi],behind=months.slice(0,mi).flat().filter(m=>!stats(m).done);
   const card=m=>{const s=stats(m),t=trackOf(m.track),o=isOpen(m.id);return o?`<button class="mod" style="--c:${t.c}" data-open="${m.id}"><span class="mt"><b>${esc(m.title)}</b><em>Week ${weekOf(m.id)}</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><div class="bar"><i style="width:${s.pct}%"></i></div><span class="chip ${s.done?'done':''}">${s.done?'Complete':s.pct?`In progress · ${s.pct}%`:'Start'}</span></button>`
      :`<div class="mod locked" style="--c:${t.c}"><span class="mt"><b>${esc(m.title)}</b><em>Week ${weekOf(m.id)}</em></span><span class="small" style="font-size:13px">${esc(m.sub)}</span><span class="chip">${esc(lockMsg(m.id))}</span></div>`};
-  return `<section><span class="eyebrow">Month ${mi+1} of 6 · Week ${wk} of 24</span><h2>Your trainings this month</h2><p class="lede" style="font-size:15.5px">${esc(cur.name)}. ${esc(cur.line)}</p>
+  return `<section><span class="eyebrow">Month ${mi+1} of 6 · Week ${wk} of 24</span><h2>Your trainings this month</h2><p class="lede" style="font-size:15.5px">${esc(cur.name)}. ${esc(cur.line)}</p>${anyVid()?'':`<div class="card" style="border-left:6px solid var(--accent);margin:14px 0"><span class="eyebrow">Soul Meets Strength</span><p style="margin-top:6px"><b>Trainings coming soon.</b> Each weekly training opens here as it’s released. Your roadmap, check-ins and the education library are ready now.</p></div>`}
    <div class="nowgrid">${now.map(card).join('')||'<p class="small">No new trainings this month. Use it to go back over the ones that mattered most.</p>'}</div>
    ${behind.length?`<p class="small"><b style="color:var(--ink)">Still open from earlier:</b> ${behind.map(m=>`<button class="linkish" data-open="${m.id}">${esc(m.title.split(':')[0])}</button>`).join(' · ')}</p>`:''}</section>
   <section><span class="eyebrow">Your six months</span><h2>The roadmap</h2><div class="road">${ROADMAP.map((r,i)=>`<div class="rm ${i===mi?'on':''} ${i<mi?'past':''}"><span class="tk">Month ${i+1}</span><h3>${esc(r.name)}</h3><ol>${months[i].map(m=>{const s=stats(m),o=isOpen(m.id);return `<li class="${s.done?'done':o?'open':'lock'}">${o?`<button class="linkish" data-open="${m.id}">${esc(m.title.split(':')[0])}</button>`:`<span>${esc(m.title.split(':')[0])}</span>`}<em>${s.done?'Done':o?(s.pct?s.pct+'%':'Open'):'Wk '+weekOf(m.id)}</em></li>`}).join('')}${i===5?'<li class="lock"><span>Bring it together</span><em>Wk 22–24</em></li>':''}</ol></div>`).join('')}</div></section>`;
@@ -415,7 +418,7 @@ function setSaved(t,err){const el=$('saved');if(el){el.textContent=t;el.style.co
 function embed(url){
   if(!/^https:\/\//.test(url||''))return null;let m;
   if((m=url.match(/(?:youtu\.be\/|v=|youtube\.com\/(?:embed|shorts)\/)([\w-]{6,})/)))return {f:`https://www.youtube-nocookie.com/embed/${m[1]}?rel=0`};
-  if((m=url.match(/vimeo\.com\/(?:video\/)?(\d+)/)))return {f:`https://player.vimeo.com/video/${m[1]}`};
+  if((m=url.match(/vimeo\.com\/(?:video\/)?(\d+)(?:\/([0-9a-f]{6,}))?/))){const h=m[2]||((url.match(/[?&]h=([0-9a-f]{6,})/)||[])[1]);return {f:`https://player.vimeo.com/video/${m[1]}${h?`?h=${h}`:''}`}}
   if((m=url.match(/loom\.com\/(?:share|embed)\/(\w+)/)))return {f:`https://www.loom.com/embed/${m[1]}`};
   if(/\.(mp4|webm|mov)(\?|$)/i.test(url))return {v:url};
   return null;
