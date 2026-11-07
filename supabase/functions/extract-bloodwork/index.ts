@@ -165,7 +165,10 @@ Rules:
 - Set marker_key only when the test clearly matches one of these markers (key | name | unit); otherwise null:
 ${markerList}
 - source_file_index is the File number the result appears on.
-- Skip duplicates that appear on more than one photo; keep the clearest one.`,
+- Skip duplicates that appear on more than one photo; keep the clearest one.
+- If the files are several reports from different dates, record every result and put each report's date in notes.
+
+Respond only by calling the record_bloodwork tool once, with every result. Do not reply in text.`,
   });
 
   const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -173,16 +176,16 @@ ${markerList}
     headers: { "x-api-key": apiKey, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({
       model: MODEL,
-      max_tokens: 8000,
+      max_tokens: 20000,
       tools: [RECORD_TOOL],
-      tool_choice: { type: "tool", name: "record_bloodwork" },
+      tool_choice: { type: "auto" }, // this model does not accept a forced tool choice
       messages: [{ role: "user", content }],
     }),
   });
   if (!res.ok) throw new Error(`Claude API ${res.status}: ${(await res.text()).slice(0, 500)}`);
   const out = await res.json();
   const toolUse = (out.content ?? []).find((c: { type: string }) => c.type === "tool_use");
-  if (!toolUse) throw new Error("No structured result returned");
+  if (!toolUse) throw new Error(out.stop_reason === "max_tokens" ? "The report was too long to read in one go. Try fewer files at once." : "Claude replied without recording results. Press Read again.");
   const data = toolUse.input as {
     collected_on?: string | null; lab_name?: string | null; sex?: string | null; notes?: string | null;
     results: Array<Record<string, unknown>>;
