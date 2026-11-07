@@ -128,25 +128,6 @@ async function extract(admin: SupabaseClient, panelId: string, coachId: string, 
   if (error || !panel) throw new Error("Panel not found");
   const files = (panel.source_files ?? []) as SourceFile[];
 
-  // Build the file blocks
-  const content: Record<string, unknown>[] = [];
-  for (let i = 0; i < files.length; i++) {
-    const f = files[i];
-    const { data: blob, error: dErr } = await admin.storage.from(BUCKET).download(f.path);
-    if (dErr || !blob) throw new Error(`Could not download ${f.name ?? f.path}`);
-    const bytes = new Uint8Array(await blob.arrayBuffer());
-    const type = (f.type || blob.type || "").toLowerCase();
-    content.push({ type: "text", text: `File ${i}: ${f.name ?? f.path}` });
-    if (type === "application/pdf") {
-      content.push({ type: "document", source: { type: "base64", media_type: "application/pdf", data: encodeBase64(bytes) } });
-    } else if (["image/jpeg", "image/png", "image/webp", "image/gif"].includes(type)) {
-      if (bytes.length > MAX_IMAGE_BYTES) throw new Error(`${f.name ?? f.path} is over 5 MB; ask the client for a smaller photo or a PDF`);
-      content.push({ type: "image", source: { type: "base64", media_type: type, data: encodeBase64(bytes) } });
-    } else {
-      throw new Error(`Unsupported file type for ${f.name ?? f.path}: ${type || "unknown"}`);
-    }
-  }
-
   // Coach's marker list for matching
   const { data: markers } = await admin.from("bloodwork_markers")
     .select("marker_key,display_name,unit,category").eq("coach_id", coachId);
@@ -154,41 +135,30 @@ async function extract(admin: SupabaseClient, panelId: string, coachId: string, 
   for (const m of markers ?? []) if (!seen.has(m.marker_key)) seen.set(m.marker_key, m);
   const markerList = [...seen.entries()].map(([k, m]) => `${k} | ${m.display_name} | ${m.unit ?? "-"}`).join("\n");
 
-  content.push({
-    type: "text",
-    text: `These files are one person's blood test report (they may be photos of paper pages).
-Record EVERY result printed, using the record_bloodwork tool.
-
-Rules:
-- Copy values, units and reference ranges exactly as printed. Do not convert units. Do not guess.
-- If a value is cut off, blurred or ambiguous, still record it with confidence "low" and explain in notes.
-- Set marker_key only when the test clearly matches one of these markers (key | name | unit); otherwise null:
-${markerList}
-- source_file_index is the File number the result appears on.
-- Skip duplicates that appear on more than one photo; keep the clearest one.
-- If the files are several reports from different dates, record every result and put each report's date in notes.
-
-Respond only by calling the record_bloodwork tool once, with every result. Do not reply in text.`,
+  // Read each file on its own: one bad file can't sink the rest, and smaller reads finish faster
+  const reads = await Promise.allSettled(files.map((f, i) => readFile(admin, f, i, markerList, apiKey)));
+  const ok: { idx: number; data: Extracted }[] = [];
+  const failed: string[] = [];
+  reads.forEach((r, i) => {
+    if (r.status === "fulfilled") ok.push({ idx: i, data: r.value });
+    else failed.push(`${files[i].name ?? files[i].path}: ${String(r.reason?.message ?? r.reason).slice(0, 160)}`);
   });
-
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "x-api-key": apiKey, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 20000,
-      tools: [RECORD_TOOL],
-      tool_choice: { type: "auto" }, // this model does not accept a forced tool choice
-      messages: [{ role: "user", content }],
-    }),
-  });
-  if (!res.ok) throw new Error(`Claude API ${res.status}: ${(await res.text()).slice(0, 500)}`);
-  const out = await res.json();
-  const toolUse = (out.content ?? []).find((c: { type: string }) => c.type === "tool_use");
-  if (!toolUse) throw new Error(out.stop_reason === "max_tokens" ? "The report was too long to read in one go. Try fewer files at once." : "Claude replied without recording results. Press Read again.");
-  const data = toolUse.input as {
-    collected_on?: string | null; lab_name?: string | null; sex?: string | null; notes?: string | null;
-    results: Array<Record<string, unknown>>;
+  if (!ok.length) throw new Error(`None of the files could be read. ${failed.join(" | ")}`);
+  const dates = new Set(ok.map((o) => o.data.collected_on).filter(Boolean));
+  const multiDate = dates.size > 1;
+  const data = {
+    collected_on: [...dates].sort().pop() ?? null,
+    lab_name: [...new Set(ok.map((o) => o.data.lab_name).filter(Boolean))].join(", ") || null,
+    sex: ok.map((o) => o.data.sex).find((x) => x === "male" || x === "female") ?? null,
+    notes: [
+      ...ok.map((o) => `${files[o.idx].name ?? "File " + o.idx}: ${o.data.collected_on ?? "no date"}${o.data.notes ? " · " + o.data.notes : ""}`),
+      ...failed.map((x) => `Could not read ${x}`),
+    ].join("\n") || null,
+    results: ok.flatMap((o) => (o.data.results ?? []).map((r) => ({
+      ...r,
+      source_file_index: o.idx,
+      raw_name: multiDate && o.data.collected_on ? `${r.raw_name} (${o.data.collected_on})` : r.raw_name,
+    }))),
   };
 
   // Replace any previous pending results for this panel (re-runs)
@@ -235,4 +205,80 @@ Respond only by calling the record_bloodwork tool once, with every result. Do no
     extraction_raw: data,
     error: null,
   }).eq("id", panelId);
+}
+
+type Extracted = {
+  collected_on?: string | null; lab_name?: string | null; sex?: string | null; notes?: string | null;
+  results: Array<Record<string, unknown>>;
+};
+
+// Work out the real file type from its first bytes (uploads are sometimes photos saved as .pdf)
+function sniff(bytes: Uint8Array, fallback: string): string {
+  const b = bytes;
+  if (b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46) return "application/pdf";
+  if (b[0] === 0xff && b[1] === 0xd8) return "image/jpeg";
+  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "image/png";
+  if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57) return "image/webp";
+  if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return "image/gif";
+  // A PDF can have junk before its header
+  const head = new TextDecoder().decode(b.slice(0, 1024));
+  if (head.includes("%PDF-")) return "application/pdf";
+  return fallback;
+}
+
+async function readFile(admin: SupabaseClient, f: SourceFile, i: number, markerList: string, apiKey: string): Promise<Extracted> {
+  const { data: blob, error: dErr } = await admin.storage.from(BUCKET).download(f.path);
+  if (dErr || !blob) throw new Error("could not download");
+  let bytes = new Uint8Array(await blob.arrayBuffer());
+  const type = sniff(bytes, (f.type || blob.type || "").toLowerCase());
+  const block: Record<string, unknown>[] = [];
+  if (type === "application/pdf") {
+    const start = new TextDecoder().decode(bytes.slice(0, 1024)).indexOf("%PDF-");
+    if (start > 0) bytes = bytes.slice(start);
+    block.push({ type: "document", source: { type: "base64", media_type: "application/pdf", data: encodeBase64(bytes) } });
+  } else if (["image/jpeg", "image/png", "image/webp", "image/gif"].includes(type)) {
+    if (bytes.length > MAX_IMAGE_BYTES) throw new Error("photo is over 5 MB; ask for a smaller photo or a PDF");
+    block.push({ type: "image", source: { type: "base64", media_type: type, data: encodeBase64(bytes) } });
+  } else {
+    throw new Error(`not a PDF or photo (${type || "unknown type"})`);
+  }
+  const content = [
+    { type: "text", text: `File ${i}: ${f.name ?? f.path}` },
+    ...block,
+    {
+      type: "text",
+      text: `This file is a blood test report (it may be a photo of a paper page).
+Record EVERY result printed, using the record_bloodwork tool.
+
+Rules:
+- Copy values, units and reference ranges exactly as printed. Do not convert units. Do not guess.
+- If a value is cut off, blurred or ambiguous, still record it with confidence "low" and explain in notes.
+- Set marker_key only when the test clearly matches one of these markers (key | name | unit); otherwise null:
+${markerList}
+- source_file_index is ${i}.
+- If the report shows results from more than one date, record the most recent and mention the others in notes.
+
+Respond only by calling the record_bloodwork tool once, with every result. Do not reply in text.`,
+    },
+  ];
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "x-api-key": apiKey, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 16000,
+      tools: [RECORD_TOOL],
+      tool_choice: { type: "auto" }, // this model does not accept a forced tool choice
+      messages: [{ role: "user", content }],
+    }),
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    if (/not valid|invalid.*pdf|pdf.*invalid/i.test(t)) throw new Error("the PDF is damaged or password-protected; ask the client to re-export it");
+    throw new Error(`Claude API ${res.status}: ${t.slice(0, 200)}`);
+  }
+  const out = await res.json();
+  const toolUse = (out.content ?? []).find((c: { type: string }) => c.type === "tool_use");
+  if (!toolUse) throw new Error(out.stop_reason === "max_tokens" ? "report too long to read in one go" : "Claude replied without recording results");
+  return toolUse.input as Extracted;
 }
