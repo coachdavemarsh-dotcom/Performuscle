@@ -1878,7 +1878,7 @@ async function bwFn(body){
   const r=await fetch(SB.url+'/functions/v1/extract-bloodwork',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Authorization:'Bearer '+tok.access},body:JSON.stringify(body)});
   let j={};try{j=await r.json()}catch(e){}
   if(!r.ok){
-    if(/ANTHROPIC_API_KEY/.test(j.error||''))throw new Error('The blood work reader needs your Anthropic API key. Add ANTHROPIC_API_KEY in Supabase → Edge Functions → Secrets, then try again.');
+    if(/ANTHROPIC_API_KEY/.test(j.error||''))throw new Error('Nothing was read: the blood work reader isn’t connected to Claude yet. Add your Anthropic API key as ANTHROPIC_API_KEY in Supabase → Edge Functions → Secrets, then press Read with Claude again.');
     if(r.status===401){tok=null;showSubs();throw new Error('Your sign-in expired. Sign in again.')}
     throw new Error(j.error||j.message||('The reader failed ('+r.status+')'));
   }
@@ -1971,7 +1971,9 @@ function bwBindSources(){
       const sex=state.sex==='f'?'female':'male';
       const j=await bwFn(s.screenId?{movement_screen_id:s.screenId,sex}:{email:bw.email,sex,files:s.files.map(f=>({path:f.path,name:f.name,type:f.type||''}))});
       const [p]=await sb(`/rest/v1/bloodwork_panels?select=*&id=eq.${j.panel_id}`);bw.panel=p;bw.panels.unshift(p);bw.results=[];bwRender();
-    }catch(err){subMsg(err.message,1);btn.disabled=false;btn.textContent='Read with Claude'}
+    }catch(err){subMsg(err.message,1);btn.disabled=false;btn.textContent='Read with Claude';
+      const row=btn.closest('.bwsrc');let e=row&&row.nextElementSibling&&row.nextElementSibling.classList.contains('bwerr')?row.nextElementSibling:null;
+      if(row&&!e){e=document.createElement('p');e.className='submsg err bwerr';e.setAttribute('role','alert');row.after(e)}if(e)e.textContent=err.message}
   }));
 }
 function bwPoll(){
