@@ -439,7 +439,9 @@ body.exmode main > section:not(.subs),body.exmode .wrap > section:not(.subs){dis
 .bwbar{position:relative;height:22px}
 .bwbar .track{position:absolute;left:0;right:0;top:9px;height:4px;border-radius:2px;background:var(--line)}
 .bwbar .lab{position:absolute;top:7px;height:8px;border-radius:4px;background:#77726A40}
-.bwbar .fn{position:absolute;top:7px;height:8px;border-radius:4px;background:#C9A56B}
+.bwbar .fn{position:absolute;top:7px;height:8px;border-radius:4px;background:#3E8E5A;opacity:.4}
+.bwrow[data-s="opt"] .bwbar .dot{background:#3E8E5A;border-color:#2F6E45}
+.bwrow[data-s="warn"] .bwbar .dot,.bwrow[data-s="bad"] .bwbar .dot{background:#C8402A;border-color:#9E2E1C}
 .bwbar .dot{position:absolute;top:11px;width:13px;height:13px;border-radius:50%;transform:translate(-50%,-50%);background:var(--surface);border:3px solid var(--ink)}
 .bwbar .tk{position:absolute;top:-2px;font-size:10px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
 .bwst{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
@@ -448,6 +450,19 @@ body.exmode main > section:not(.subs),body.exmode .wrap > section:not(.subs){dis
 .bwact .btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .bwchk{font-size:11px;color:var(--bad);font-weight:600}
 .bwnote{font-size:12.5px;color:var(--muted)}
+.bwsum{border-radius:16px;padding:20px 22px;background:var(--surface);box-shadow:0 0 0 1px var(--line);display:flex;flex-direction:column;gap:14px}
+.bwsum h3{margin:0;font-size:15px;letter-spacing:.14em;text-transform:uppercase}
+.bwsum .hl{font-size:19px;font-weight:600;line-height:1.35;margin:0}
+.bwsum p{margin:0;line-height:1.55}
+.bwsum textarea{width:100%;min-height:64px;font:inherit;font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:transparent;color:inherit;box-sizing:border-box}
+.bwsum .bwsg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.bwsum .bwsc{display:flex;flex-direction:column;gap:6px}.bwsum .bwsc b{font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.bwsum ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;line-height:1.45}
+.bwfind{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:12px;background:var(--bg);box-shadow:inset 3px 0 0 var(--muted)}
+.bwfind[data-st="flag"]{box-shadow:inset 3px 0 0 #C8402A}.bwfind[data-st="watch"]{box-shadow:inset 3px 0 0 #C9A56B}.bwfind[data-st="good"]{box-shadow:inset 3px 0 0 #3E8E5A}
+.bwfind .bwft{font-weight:700}.bwfind .bwfm{font-size:13px;color:var(--muted)}
+.bwsum .gp{padding:12px 14px;border-radius:12px;box-shadow:inset 3px 0 0 #C8402A;background:var(--bg)}
+.bwsum .bwsr{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .rgtable{width:100%;border-collapse:collapse;font-size:13px}
 .rgtable th{text-align:left;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
 .rgtable td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -588,7 +603,7 @@ body.exmode main > section:not(.subs),body.exmode .wrap > section:not(.subs){dis
 
   <section class="panel" id="bwPanel" aria-label="Functional blood work">
     <div class="ph"><div class="ttl"><span class="eyebrow gold">Step 4b · Blood work</span><h2>Functional blood work</h2></div><div class="actions"><button class="btn" type="button" id="bwRangeBtn">Functional ranges</button></div></div>
-    <p class="intro">Claude reads the client’s uploaded report. Check each value against the photo, confirm it, then send the numbers to the audit markers. Gold band = your functional range · grey band = the lab’s range. Clients only see confirmed values once you mark the report reviewed, against ranges you’ve approved.</p>
+    <p class="intro">Claude reads the client’s uploaded report. Check each value against the photo, confirm it, then send the numbers to the audit markers. Green band = your functional range (dot turns green inside it, red outside) · grey band = the lab’s range. Clients only see confirmed values once you mark the report reviewed, against ranges you’ve approved.</p>
     <div id="bwBody"><p class="submsg">Sign in and open a client to see their blood work.</p></div>
     <div id="bwRanges" hidden></div>
   </section>
@@ -1924,9 +1939,85 @@ function bwRender(){
   const sum=`<p class="bwnote">${bw.results.length} values read · ${bw.results.filter(r=>r.status==='confirmed').length} confirmed · ${pend.length} to review${chk?` · <b class="bwchk">${chk} need a closer look</b>`:''}. Check flagged rows against the photo before confirming.${p.extraction_notes?`<br>Reader’s note: ${escH(p.extraction_notes)}`:''}</p>`;
   const groups={};bw.results.forEach(r=>{const m=r.marker_key?bwMk(r.marker_key):null;const c=(m&&m.category)||r.category||'other';(groups[c]=groups[c]||[]).push(r)});
   const order=Object.keys(BW_CATS).filter(c=>groups[c]);
-  body.innerHTML=head+sum+order.map(c=>{const rs=groups[c],flags=rs.filter(r=>bwState(r).s!=='opt'&&bwState(r).s!=='na').length;
+  body.innerHTML=head+sum+bwSumHTML()+order.map(c=>{const rs=groups[c],flags=rs.filter(r=>bwState(r).s!=='opt'&&bwState(r).s!=='na').length;
     return `<div class="bwcat"><h3><span>${BW_CATS[c]}</span><span class="submsg">${flags?flags+' outside functional range':''}</span></h3>${rs.map(bwRowHTML).join('')}</div>`}).join('');
-  bwBindHead();bwBindRows();
+  bwBindHead();bwBindRows();bwBindSum();
+}
+/* ---------- Blood work summary: findings + nutrition, lifestyle and supplement plan, written by Claude ---------- */
+const bwEsc=x=>escH(x==null?'':String(x));
+function bwSumItems(){
+  return bw.results.filter(r=>r.status!=='rejected').map(r=>{const m=r.marker_key?bwMk(r.marker_key):null,st=bwState(r),d=(String(r.raw_name||'').match(/\((\d{4}-\d{2}-\d{2})\)\s*$/)||[])[1]||'';
+    const fn=m&&(m.optimal_low!=null||m.optimal_high!=null)?(m.optimal_low==null?'under '+m.optimal_high:m.optimal_high==null?m.optimal_low+'+':m.optimal_low+'–'+m.optimal_high)+' '+(m.unit||''):'';
+    return {marker:m?m.display_name:r.raw_name,raw:r.raw_name,value:r.value!=null?String(r.value):(r.value_text||''),unit:r.unit||'',lab:r.lab_range_text||'',functional:fn,state:st.t,date:d,flag:r.lab_flag||'',confirmed:r.status==='confirmed'}})}
+function bwSumHTML(){
+  const p=bw.panel,s=p.summary||null,ctx=bwEsc(bw.sumCtx||'');
+  const ask=`<div class="bwsc"><label for="bwSumCtx" class="submsg">Anything Claude should know? <span class="opt-lab">optional</span></label><textarea id="bwSumCtx" placeholder="e.g. On TRT through his GP. Goal: drop to 12% body fat for a shoot in March. Trains 5 days.">${ctx}</textarea></div>`;
+  if(!s)return `<div class="bwsum" id="bwSum"><h3>Summary of findings</h3><p class="submsg">Claude reads every value against your functional ranges and writes what stands out, what it means, and a nutrition, lifestyle and supplement plan. Confirm values first for the best result; unconfirmed ones are marked as such.</p>${ask}<div class="bwsr"><button class="btn primary" type="button" id="bwSumGo">Write summary with Claude</button><span class="submsg" id="bwSumMsg"></span></div></div>`;
+  if(s.status==='writing')return `<div class="bwsum" id="bwSum"><h3>Summary of findings</h3><p class="submsg">Claude is writing the summary. This usually takes about a minute; it appears here by itself.</p></div>`;
+  if(s.status==='failed')return `<div class="bwsum" id="bwSum"><h3>Summary of findings</h3><p class="submsg err">${bwEsc(s.error||'The summary failed.')}</p>${ask}<div class="bwsr"><button class="btn primary" type="button" id="bwSumGo">Try again</button><span class="submsg" id="bwSumMsg"></span></div></div>`;
+  const li=a=>(a||[]).length?`<ul>${a.map(x=>`<li>${bwEsc(x)}</li>`).join('')}</ul>`:'<p class="submsg">Nothing specific.</p>';
+  return `<div class="bwsum" id="bwSum"><div class="bwsr" style="justify-content:space-between"><h3>Summary of findings</h3><span class="submsg">Written ${new Date(s.at).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})} from ${s.values||'–'} values</span></div>
+    <p class="hl">${bwEsc(s.headline)}</p><p>${bwEsc(s.overview)}</p>
+    ${(s.priorities||[]).length?`<div class="bwsc"><b>Top priorities</b><ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px">${s.priorities.map(x=>`<li>${bwEsc(x)}</li>`).join('')}</ol></div>`:''}
+    <div class="bwsc"><b>Findings</b>${(s.findings||[]).map(f=>`<div class="bwfind" data-st="${bwEsc(f.status)}"><span class="bwft">${bwEsc(f.title)}</span><span class="bwfm">${bwEsc(f.markers)}</span><span>${bwEsc(f.meaning)}</span></div>`).join('')}</div>
+    <div class="bwsg"><div class="bwsc"><b>Nutrition</b>${li(s.nutrition)}</div><div class="bwsc"><b>Lifestyle</b>${li(s.lifestyle)}</div>
+      <div class="bwsc"><b>Supplements</b>${(s.supplements||[]).length?`<ul>${s.supplements.map(x=>`<li><b style="letter-spacing:0;text-transform:none;font-size:inherit">${bwEsc(x.name)}</b>${x.dose?' · '+bwEsc(x.dose):''}. ${bwEsc(x.why)}${x.caution?` <span class="submsg">${bwEsc(x.caution)}</span>`:''}</li>`).join('')}</ul>`:'<p class="submsg">None suggested.</p>'}</div></div>
+    <div class="bwsg"><div class="bwsc"><b>Retest</b>${li(s.retest)}</div>${(s.gp||[]).length?`<div class="bwsc gp"><b class="s-bad">Take to the GP</b>${li(s.gp)}</div>`:''}</div>
+    ${s.client_message?`<div class="bwsc"><b>Message for the client</b><textarea id="bwSumClient" rows="6">${bwEsc(s.client_message)}</textarea></div>`:''}
+    <p class="submsg">Written by Claude from the values above. Check it before acting on it or sharing it; it isn't medical advice.</p>
+    <div class="bwsr"><button class="btn" type="button" id="bwSumCopy">Copy client message</button><button class="btn" type="button" id="bwSumPrint">Print or save as PDF</button><button class="btn" type="button" id="bwSumAgain">Rewrite</button><span class="submsg" id="bwSumMsg"></span></div></div>`;
+}
+async function bwSumStart(){
+  const c=$('bwSumCtx');if(c)bw.sumCtx=c.value;
+  const items=bwSumItems();if(!items.length){toast('No values to summarise yet.');return}
+  const row=bw.row||{},a=row.answers||{},ns=a.ns||{};
+  const context={client:row.full_name||'',coach_notes:bw.sumCtx||'',goal_12_months:ns.year||'',goal_12_weeks:ns.q||''};
+  const m=$('bwSumMsg');if(m){m.className='submsg';m.textContent='Starting…'}
+  try{
+    const r=await fetch(SB.url+'/functions/v1/summarize-bloodwork',{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json',Authorization:'Bearer '+tok.access},body:JSON.stringify({panel_id:bw.panel.id,items,context})});
+    let j={};try{j=await r.json()}catch(e){}
+    if(r.status===401){tok=null;showSubs();throw new Error('Your sign-in expired. Sign in again.')}
+    if(!r.ok)throw new Error(j.error||('The summary failed to start ('+r.status+')'));
+    bw.panel.summary={status:'writing'};bwRender();bwSumPoll();
+  }catch(err){if(m){m.className='submsg err';m.textContent=err.message}}
+}
+function bwSumPoll(){
+  clearTimeout(bw.sumPoll);const id=bw.panel&&bw.panel.id;if(!id)return;
+  bw.sumPoll=setTimeout(async()=>{
+    try{const [p]=await sb(`/rest/v1/bloodwork_panels?select=summary&id=eq.${id}`);if(!bw.panel||bw.panel.id!==id)return;
+      bw.panel.summary=p.summary;if(p.summary&&p.summary.status==='writing'){bwSumPoll();return}
+      bwRender();if(p.summary&&p.summary.status==='ready')toast('Blood work summary ready.');
+    }catch(e){bwSumPoll()}
+  },4000);
+}
+function bwSumPrint(){
+  const s=bw.panel.summary,name=(bw.row&&bw.row.full_name)||'Client',el=$('bwSumClient');
+  const li=a=>(a||[]).map(x=>`<li>${bwEsc(x)}</li>`).join('');
+  const w=window.open('','_blank');if(!w){toast('Allow pop-ups to print the summary.');return}
+  w.document.write(`<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Blood work summary · ${bwEsc(name)}</title><style>
+    body{font-family:Georgia,'Times New Roman',serif;color:#141413;max-width:760px;margin:40px auto;padding:0 24px;line-height:1.55}
+    h1{font-family:Arial,sans-serif;font-size:26px;text-transform:uppercase;letter-spacing:.04em;margin:0 0 4px}h2{font-family:Arial,sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#8A6A3B;margin:26px 0 8px}
+    .k{font-family:Arial,sans-serif;font-size:12px;color:#77726A}.f{border-left:3px solid #C9A56B;padding:4px 0 4px 12px;margin:0 0 12px}.f[data-st=flag]{border-color:#C8402A}.f[data-st=good]{border-color:#3E8E5A}.f b{display:block}.f span{display:block;font-size:13px;color:#77726A}
+    .hl{font-size:19px;font-weight:bold}ul,ol{padding-left:20px}li{margin:3px 0}.gp{border-left:3px solid #C8402A;padding-left:12px}
+    @media print{body{margin:0}}</style></head><body>
+    <h1>Blood work summary</h1><div class="k">${bwEsc(name)}${bw.panel.collected_on?' · latest collection '+new Date(bw.panel.collected_on+'T00:00:00').toLocaleDateString('en-AU'):''} · Soul Meets Strength</div>
+    <h2>The headline</h2><p class="hl">${bwEsc(s.headline)}</p><p>${bwEsc(s.overview)}</p>
+    ${(s.priorities||[]).length?`<h2>Top priorities</h2><ol>${li(s.priorities)}</ol>`:''}
+    <h2>Findings</h2>${(s.findings||[]).map(f=>`<div class="f" data-st="${bwEsc(f.status)}"><b>${bwEsc(f.title)}</b><span>${bwEsc(f.markers)}</span>${bwEsc(f.meaning)}</div>`).join('')}
+    <h2>Nutrition</h2><ul>${li(s.nutrition)}</ul><h2>Lifestyle</h2><ul>${li(s.lifestyle)}</ul>
+    <h2>Supplements</h2><ul>${(s.supplements||[]).map(x=>`<li><b>${bwEsc(x.name)}</b>${x.dose?' · '+bwEsc(x.dose):''}. ${bwEsc(x.why)}${x.caution?' <i>'+bwEsc(x.caution)+'</i>':''}</li>`).join('')}</ul>
+    <h2>Retest</h2><ul>${li(s.retest)}</ul>${(s.gp||[]).length?`<h2>Take to your GP</h2><div class="gp"><ul>${li(s.gp)}</ul></div>`:''}
+    ${el&&el.value.trim()?`<h2>From your coach</h2><p>${bwEsc(el.value).replace(/\n/g,'<br>')}</p>`:''}
+    <p class="k" style="margin-top:30px">This summary is coaching guidance based on your blood results. It isn't a diagnosis or medical advice; talk to your GP about anything flagged for them.</p>
+    <script>setTimeout(()=>print(),300)<\/script></body></html>`);w.document.close();
+}
+function bwBindSum(){
+  const c=$('bwSumCtx');if(c)c.addEventListener('input',()=>{bw.sumCtx=c.value});
+  const go=$('bwSumGo');if(go)go.addEventListener('click',bwSumStart);
+  const again=$('bwSumAgain');if(again)again.addEventListener('click',()=>{if(!confirm('Write the summary again? This replaces the current one.'))return;bw.panel.summary=null;bwRender();const g=$('bwSumGo');if(g)g.focus()});
+  const pr=$('bwSumPrint');if(pr)pr.addEventListener('click',bwSumPrint);
+  const cp=$('bwSumCopy');if(cp)cp.addEventListener('click',async()=>{const t=($('bwSumClient')||{}).value||'';try{await navigator.clipboard.writeText(t);toast('Client message copied.')}catch(e){toast('Couldn’t copy. Select the text and copy it.')}});
+  if(bw.panel&&bw.panel.summary&&bw.panel.summary.status==='writing')bwSumPoll();
 }
 function bwState(r){
   if(r.status==='rejected')return {s:'na',t:'Rejected'};
