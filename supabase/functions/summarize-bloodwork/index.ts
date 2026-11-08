@@ -45,6 +45,20 @@ const SUMMARY_TOOL = {
           required: ["title", "status", "markers", "meaning"],
         },
       },
+      progress: {
+        type: "array",
+        description: "Only when there are values from more than one test date: one entry per later test date, comparing it with the earlier tests against the functional ranges, oldest first.",
+        items: {
+          type: "object",
+          properties: {
+            date: { type: "string", description: "The test date, e.g. '28 Aug 2026'" },
+            summary: { type: "string", description: "1-2 sentences on what changed since the previous test and why it matters" },
+            better: { ...strs, description: "Markers that moved closer to (or into) the functional range, with the change, e.g. 'Free T4 12.5 → 16.1 pmol/L'" },
+            worse: { ...strs, description: "Markers that moved further from the functional range, with the change" },
+          },
+          required: ["date", "summary", "better", "worse"],
+        },
+      },
       priorities: { ...strs, description: "The top 3 things to work on, in order" },
       nutrition: { ...strs, description: "Specific food and nutrition actions" },
       lifestyle: { ...strs, description: "Sleep, training, stress, sunlight, alcohol and similar actions" },
@@ -134,6 +148,7 @@ ${lines}
 Write the summary with the record_summary tool. Rules:
 - Lead with what matters most. Group related markers (thyroid, sex hormones, lipids, glucose and insulin, iron, liver, kidney, inflammation, blood count, vitamins and minerals). Mention markers that are in range only where it adds context.
 - Where a marker has several dates, describe the trend and lead with the most recent value.
+- When values come from more than one test date, fill progress: for each later date, compare each marker with its previous test in the same unit. Better means closer to (or inside) the functional range; worse means further away. Base findings on the most recent value of each marker.
 - "Unit differs" means the lab used a different unit from the coach's range: judge it only by the lab range and lab flag, and never convert units yourself.
 - Be specific and practical: name the foods, habits and doses. Keep supplement doses conservative and evidence-informed, and note interactions or who should avoid them.
 - You are supporting a coach, not a doctor. Do not diagnose, and do not recommend starting, stopping or changing any prescription medicine, hormone (including TRT) or its dose. Put anything that needs medical review (values flagged critical, likely medication effects, possible disease) under gp, explained plainly.

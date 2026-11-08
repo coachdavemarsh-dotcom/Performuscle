@@ -462,6 +462,22 @@ body.exmode main > section:not(.subs),body.exmode .wrap > section:not(.subs){dis
 .bwfind[data-st="flag"]{box-shadow:inset 3px 0 0 #C8402A}.bwfind[data-st="watch"]{box-shadow:inset 3px 0 0 #C9A56B}.bwfind[data-st="good"]{box-shadow:inset 3px 0 0 #3E8E5A}
 .bwfind .bwft{font-weight:700}.bwfind .bwfm{font-size:13px;color:var(--muted)}
 .bwsum .gp{padding:12px 14px;border-radius:12px;box-shadow:inset 3px 0 0 #C8402A;background:var(--bg)}
+.bwtabs{display:flex;gap:6px;border-bottom:1px solid var(--line)}
+.bwtabs button{font:inherit;font-size:13px;font-weight:600;letter-spacing:.06em;padding:10px 14px;border:0;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.bwtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.bwcmpbox{display:flex;flex-direction:column;gap:14px}
+.bwcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.bwcard{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:14px;background:var(--surface);box-shadow:0 0 0 1px var(--line)}
+.bwcard b{font-size:26px;line-height:1}.bwcard b small{font-size:12px;font-weight:500;color:var(--muted);margin-left:4px}
+.bwcmpwrap{overflow-x:auto;border-radius:14px;box-shadow:0 0 0 1px var(--line);background:var(--surface)}
+.bwcmp{border-collapse:collapse;width:100%;font-size:13.5px;min-width:560px}
+.bwcmp th,.bwcmp td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.bwcmp thead th{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap;position:sticky;top:0;background:var(--surface)}
+.bwcmp tr.cat th{font-size:11px;letter-spacing:.16em;text-transform:uppercase;background:var(--bg);color:var(--ink)}
+.bwcmp tbody th{font-weight:600}.bwcmp .fr{display:block;font-weight:400;font-size:11.5px;color:var(--muted)}
+.bwcmp td{display:table-cell}.bwcmp td.bwv b{display:block;font-size:14px}.bwcmp td.bwv span{display:block;font-size:11px;color:var(--muted)}
+.bwcmp td.bwv.s-opt b{color:#2F7A4A}.bwcmp td.bwv.s-warn b,.bwcmp td.bwv.s-bad b{color:#B5341F}
+.bwcmp td.bwna{color:var(--muted)}.bwcmp td.bwtr{font-weight:600;white-space:nowrap}
 .bwsum .bwsr{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .rgtable{width:100%;border-collapse:collapse;font-size:13px}
 .rgtable th{text-align:left;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
@@ -1900,7 +1916,7 @@ async function bwFn(body){
   return j;
 }
 async function bwOpen(row){
-  clearTimeout(bw.poll);bw={...bw,row,email:(row.email||'').trim(),panels:[],panel:null,results:[],sources:[],rangeSex:null};
+  clearTimeout(bw.poll);bw={...bw,row,email:(row.email||'').trim(),panels:[],panel:null,results:[],sources:[],rangeSex:null,all:null,view:'results',cmpAll:false,sumCtx:''};
   const body=$('bwBody');if(!bw.email){body.innerHTML='<p class="submsg">This client has no email, so there is no blood work to find.</p>';return}
   body.innerHTML='<p class="submsg">Loading blood work…</p>';
   const em=encodeURIComponent(bw.email.replace(/[%_]/g,'\\$&'));
@@ -1939,16 +1955,78 @@ function bwRender(){
   const sum=`<p class="bwnote">${bw.results.length} values read · ${bw.results.filter(r=>r.status==='confirmed').length} confirmed · ${pend.length} to review${chk?` · <b class="bwchk">${chk} need a closer look</b>`:''}. Check flagged rows against the photo before confirming.${p.extraction_notes?`<br>Reader’s note: ${escH(p.extraction_notes)}`:''}</p>`;
   const groups={};bw.results.forEach(r=>{const m=r.marker_key?bwMk(r.marker_key):null;const c=(m&&m.category)||r.category||'other';(groups[c]=groups[c]||[]).push(r)});
   const order=Object.keys(BW_CATS).filter(c=>groups[c]);
-  body.innerHTML=head+sum+bwSumHTML()+order.map(c=>{const rs=groups[c],flags=rs.filter(r=>bwState(r).s!=='opt'&&bwState(r).s!=='na').length;
-    return `<div class="bwcat"><h3><span>${BW_CATS[c]}</span><span class="submsg">${flags?flags+' outside functional range':''}</span></h3>${rs.map(bwRowHTML).join('')}</div>`}).join('');
-  bwBindHead();bwBindRows();bwBindSum();
+  const tabs=`<div class="bwtabs" role="tablist" aria-label="Blood work view"><button type="button" role="tab" data-bwview="results" aria-selected="${bw.view!=='compare'}">Results</button><button type="button" role="tab" data-bwview="compare" aria-selected="${bw.view==='compare'}">Compare dates</button></div>`;
+  body.innerHTML=head+sum+bwSumHTML()+tabs+(bw.view==='compare'?bwCompareHTML():order.map(c=>{const rs=groups[c],flags=rs.filter(r=>bwState(r).s!=='opt'&&bwState(r).s!=='na').length;
+    return `<div class="bwcat"><h3><span>${BW_CATS[c]}</span><span class="submsg">${flags?flags+' outside functional range':''}</span></h3>${rs.map(bwRowHTML).join('')}</div>`}).join(''));
+  bwBindHead();bwBindRows();bwBindSum();bwBindCompare();
+}
+/* ---------- Compare dates: every result this client has, by test date, against functional ranges ---------- */
+const BW_DATE_RX=/\s*\((\d{4}-\d{2}-\d{2})\)\s*$/;
+function bwDateOf(r,p){const m=String(r.raw_name||'').match(BW_DATE_RX);return m?m[1]:(p&&p.collected_on)||((p&&p.created_at)||'').slice(0,10)}
+function bwKeyOf(r){return r.marker_key||('raw:'+String(r.raw_name||'').replace(BW_DATE_RX,'').trim().toLowerCase())}
+async function bwLoadAll(){
+  const ps=bw.panels.filter(p=>p.status==='needs_review'||p.status==='reviewed');
+  if(!ps.length){bw.all=[];return}
+  const rows=await sb(`/rest/v1/bloodwork_results?select=*&panel_id=in.(${ps.map(p=>p.id).join(',')})&status=neq.rejected&order=sort_order.asc`)||[];
+  const byP=Object.fromEntries(ps.map(p=>[p.id,p]));
+  // one value per marker per date: confirmed first, then the newest read
+  const best={};rows.forEach(r=>{const p=byP[r.panel_id],d=bwDateOf(r,p),k=bwKeyOf(r)+'|'+d;const cur=best[k];
+    const score=x=>(x.status==='confirmed'?2:0)+(byP[x.panel_id].created_at>(cur?byP[cur.panel_id].created_at:'')?1:0);
+    if(!cur||score(r)>score(cur))best[k]=r});
+  bw.all=Object.values(best).map(r=>({...r,_date:bwDateOf(r,byP[r.panel_id]),_key:bwKeyOf(r)}));
+}
+/* How far a value sits outside its range, as a share of the range width (0 = inside) */
+function bwGap(r){
+  const v=bwNum(r.value);if(v==null)return null;const m=r.marker_key?bwMk(r.marker_key):null;
+  let lo=null,hi=null;if(m&&(m.optimal_low!=null||m.optimal_high!=null)&&!(r.unit&&m.unit&&bwUnit(r.unit)!==bwUnit(m.unit))){lo=bwNum(m.optimal_low);hi=bwNum(m.optimal_high)}
+  else{lo=r.lab_low;hi=r.lab_high}
+  if(lo==null&&hi==null)return null;const w=Math.abs((hi??lo*2)-(lo??0))||Math.abs(v)||1;
+  return lo!=null&&v<lo?(lo-v)/w:hi!=null&&v>hi?(v-hi)/w:0;
+}
+function bwCompare(){
+  const all=bw.all||[],dates=[...new Set(all.map(r=>r._date))].filter(Boolean).sort();
+  const keys={};all.forEach(r=>{(keys[r._key]=keys[r._key]||{key:r._key,byDate:{}}).byDate[r._date]=r});
+  const markers=Object.values(keys).map(k=>{const ds=dates.filter(d=>k.byDate[d]),first=k.byDate[ds[0]],m=first.marker_key?bwMk(first.marker_key):null;
+    let trend=null;if(ds.length>1){const b=k.byDate[ds[ds.length-1]],prev=ds.slice(0,-1).reverse().map(d=>k.byDate[d]),a=prev.find(x=>bwUnit(x.unit)===bwUnit(b.unit))||prev[0];
+      if(bwUnit(a.unit)!==bwUnit(b.unit))trend={t:'Units differ',s:'na'};
+      else{const ga=bwGap(a),gb=bwGap(b);
+        if(ga==null||gb==null)trend={t:'No range',s:'na'};
+        else if(gb<ga-0.02)trend={t:gb===0?'Now in range':'Better',s:'opt'};
+        else if(gb>ga+0.02)trend={t:'Worse',s:'bad'};
+        else trend={t:gb===0?'Holding in range':'No change',s:gb===0?'opt':'warn'}}}
+    return {key:k.key,name:m?m.display_name:String(first.raw_name||'').replace(BW_DATE_RX,''),cat:(m&&m.category)||first.category||'other',byDate:k.byDate,ds,trend}});
+  // per-date scorecard against the previous date
+  const card=dates.map((d,i)=>{const rs=all.filter(r=>r._date===d),sc=rs.filter(r=>{const s=bwState(r).s;return s==='opt'||s==='warn'||s==='bad'});
+    const inR=sc.filter(r=>bwState(r).s==='opt').length;let better=0,worse=0;
+    if(i>0)markers.forEach(mk=>{const b=mk.byDate[d];if(!b)return;const a=dates.slice(0,i).reverse().map(x=>mk.byDate[x]).find(x=>x&&bwUnit(x.unit)===bwUnit(b.unit));if(!a)return;const ga=bwGap(a),gb=bwGap(b);if(ga==null||gb==null)return;if(gb<ga-0.02)better++;else if(gb>ga+0.02)worse++});
+    return {d,n:rs.length,scored:sc.length,inR,better,worse,first:i===0}});
+  return {dates,markers,card};
+}
+function bwCompareHTML(){
+  if(!bw.all)return '<p class="submsg">Loading every report for this client…</p>';
+  const c=bwCompare();if(c.dates.length<2)return `<p class="submsg">Only one test date so far${c.dates[0]?' ('+new Date(c.dates[0]+'T00:00:00').toLocaleDateString('en-AU')+')':''}. Once the client uploads a newer report and you read it, every marker lines up here against the last one.</p>`;
+  const fmt=d=>new Date(d+'T00:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'2-digit'});
+  const only=bw.cmpAll!==true,list=c.markers.filter(m=>!only||m.ds.length>1);
+  const cards=`<div class="bwcards">${c.card.map(k=>`<div class="bwcard"><span class="eyebrow">${fmt(k.d)}</span><b>${k.inR}<small>/${k.scored} in functional range</small></b><span class="submsg">${k.first?'First test on file':`vs each marker’s last test: <span class="s-opt">${k.better} better</span> · <span class="s-bad">${k.worse} worse</span>`}</span></div>`).join('')}</div>`;
+  const groups={};list.forEach(m=>(groups[m.cat]=groups[m.cat]||[]).push(m));
+  const cell=r=>{if(!r)return '<td class="bwna">–</td>';const st=bwState(r);return `<td class="bwv s-${st.s}" title="${escH(st.t)}${r.lab_range_text?' · lab '+escH(r.lab_range_text):''}"><b>${escH(r.value!=null?String(r.value):(r.value_text||'–'))}</b><span>${escH(r.unit||'')}</span></td>`};
+  const table=`<div class="bwcmpwrap"><table class="bwcmp"><thead><tr><th scope="col">Marker</th>${c.dates.map(d=>`<th scope="col">${fmt(d)}</th>`).join('')}<th scope="col">Latest change</th></tr></thead>
+    ${Object.keys(BW_CATS).filter(k=>groups[k]).map(k=>`<tbody><tr class="cat"><th colspan="${c.dates.length+2}" scope="colgroup">${BW_CATS[k]}</th></tr>${groups[k].map(m=>{const mk=m.byDate[m.ds[m.ds.length-1]],mm=mk.marker_key?bwMk(mk.marker_key):null;
+      return `<tr><th scope="row">${escH(m.name)}${mm&&(mm.optimal_low!=null||mm.optimal_high!=null)?`<span class="fr">functional ${mm.optimal_low==null?'under '+mm.optimal_high:mm.optimal_high==null?mm.optimal_low+'+':mm.optimal_low+'–'+mm.optimal_high} ${escH(mm.unit||'')}</span>`:''}</th>${c.dates.map(d=>cell(m.byDate[d])).join('')}<td class="bwtr s-${m.trend?m.trend.s:'na'}">${m.trend?escH(m.trend.t):'One date'}</td></tr>`}).join('')}</tbody>`).join('')}</table></div>`;
+  return `<div class="bwcmpbox">${cards}<div class="bwsr" style="justify-content:space-between"><p class="submsg" style="margin:0">Green = inside your functional range, red = outside. “Latest change” compares the latest value with the one before it in the same unit: better means closer to the range. Values in different units aren’t compared.</p><label class="submsg"><input type="checkbox" id="bwCmpAll"${only?'':' checked'}> Show markers tested only once</label></div>${table}</div>`;
+}
+function bwBindCompare(){
+  $('bwBody').querySelectorAll('[data-bwview]').forEach(b=>b.addEventListener('click',async()=>{bw.view=b.dataset.bwview;bwRender();
+    if(bw.view==='compare'&&!bw.all){try{await bwLoadAll()}catch(e){bw.all=[];subMsg(e.message,1)}bwRender()}}));
+  const a=$('bwCmpAll');if(a)a.addEventListener('change',()=>{bw.cmpAll=a.checked;bwRender()});
 }
 /* ---------- Blood work summary: findings + nutrition, lifestyle and supplement plan, written by Claude ---------- */
 const bwEsc=x=>escH(x==null?'':String(x));
 function bwSumItems(){
-  return bw.results.filter(r=>r.status!=='rejected').map(r=>{const m=r.marker_key?bwMk(r.marker_key):null,st=bwState(r),d=(String(r.raw_name||'').match(/\((\d{4}-\d{2}-\d{2})\)\s*$/)||[])[1]||'';
+  const src=bw.all&&bw.all.length?bw.all:bw.results.filter(r=>r.status!=='rejected').map(r=>({...r,_date:bwDateOf(r,bw.panel)}));
+  return src.map(r=>{const m=r.marker_key?bwMk(r.marker_key):null,st=bwState(r),d=r._date||'';
     const fn=m&&(m.optimal_low!=null||m.optimal_high!=null)?(m.optimal_low==null?'under '+m.optimal_high:m.optimal_high==null?m.optimal_low+'+':m.optimal_low+'–'+m.optimal_high)+' '+(m.unit||''):'';
-    return {marker:m?m.display_name:r.raw_name,raw:r.raw_name,value:r.value!=null?String(r.value):(r.value_text||''),unit:r.unit||'',lab:r.lab_range_text||'',functional:fn,state:st.t,date:d,flag:r.lab_flag||'',confirmed:r.status==='confirmed'}})}
+    return {marker:m?m.display_name:String(r.raw_name||'').replace(BW_DATE_RX,''),raw:r.raw_name,value:r.value!=null?String(r.value):(r.value_text||''),unit:r.unit||'',lab:r.lab_range_text||'',functional:fn,state:st.t,date:d,flag:r.lab_flag||'',confirmed:r.status==='confirmed'}})}
 function bwSumHTML(){
   const p=bw.panel,s=p.summary||null,ctx=bwEsc(bw.sumCtx||'');
   const ask=`<div class="bwsc"><label for="bwSumCtx" class="submsg">Anything Claude should know? <span class="opt-lab">optional</span></label><textarea id="bwSumCtx" placeholder="e.g. On TRT through his GP. Goal: drop to 12% body fat for a shoot in March. Trains 5 days.">${ctx}</textarea></div>`;
@@ -1959,6 +2037,7 @@ function bwSumHTML(){
   return `<div class="bwsum" id="bwSum"><div class="bwsr" style="justify-content:space-between"><h3>Summary of findings</h3><span class="submsg">Written ${new Date(s.at).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})} from ${s.values||'–'} values</span></div>
     <p class="hl">${bwEsc(s.headline)}</p><p>${bwEsc(s.overview)}</p>
     ${(s.priorities||[]).length?`<div class="bwsc"><b>Top priorities</b><ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px">${s.priorities.map(x=>`<li>${bwEsc(x)}</li>`).join('')}</ol></div>`:''}
+    ${(s.progress||[]).length?`<div class="bwsc"><b>Progress between tests</b>${s.progress.map(g=>`<div class="bwfind" data-st="${(g.worse||[]).length>(g.better||[]).length?'flag':'good'}"><span class="bwft">${bwEsc(g.date)}</span><span>${bwEsc(g.summary)}</span>${(g.better||[]).length?`<span class="bwfm"><b class="s-opt" style="font-size:inherit;letter-spacing:0;text-transform:none">Better:</b> ${bwEsc(g.better.join(', '))}</span>`:''}${(g.worse||[]).length?`<span class="bwfm"><b class="s-bad" style="font-size:inherit;letter-spacing:0;text-transform:none">Worse:</b> ${bwEsc(g.worse.join(', '))}</span>`:''}</div>`).join('')}</div>`:''}
     <div class="bwsc"><b>Findings</b>${(s.findings||[]).map(f=>`<div class="bwfind" data-st="${bwEsc(f.status)}"><span class="bwft">${bwEsc(f.title)}</span><span class="bwfm">${bwEsc(f.markers)}</span><span>${bwEsc(f.meaning)}</span></div>`).join('')}</div>
     <div class="bwsg"><div class="bwsc"><b>Nutrition</b>${li(s.nutrition)}</div><div class="bwsc"><b>Lifestyle</b>${li(s.lifestyle)}</div>
       <div class="bwsc"><b>Supplements</b>${(s.supplements||[]).length?`<ul>${s.supplements.map(x=>`<li><b style="letter-spacing:0;text-transform:none;font-size:inherit">${bwEsc(x.name)}</b>${x.dose?' · '+bwEsc(x.dose):''}. ${bwEsc(x.why)}${x.caution?` <span class="submsg">${bwEsc(x.caution)}</span>`:''}</li>`).join('')}</ul>`:'<p class="submsg">None suggested.</p>'}</div></div>
@@ -1969,6 +2048,7 @@ function bwSumHTML(){
 }
 async function bwSumStart(){
   const c=$('bwSumCtx');if(c)bw.sumCtx=c.value;
+  if(!bw.all){try{await bwLoadAll()}catch(e){bw.all=null}}
   const items=bwSumItems();if(!items.length){toast('No values to summarise yet.');return}
   const row=bw.row||{},a=row.answers||{},ns=a.ns||{};
   const context={client:row.full_name||'',coach_notes:bw.sumCtx||'',goal_12_months:ns.year||'',goal_12_weeks:ns.q||''};
@@ -2003,6 +2083,7 @@ function bwSumPrint(){
     <h1>Blood work summary</h1><div class="k">${bwEsc(name)}${bw.panel.collected_on?' · latest collection '+new Date(bw.panel.collected_on+'T00:00:00').toLocaleDateString('en-AU'):''} · Soul Meets Strength</div>
     <h2>The headline</h2><p class="hl">${bwEsc(s.headline)}</p><p>${bwEsc(s.overview)}</p>
     ${(s.priorities||[]).length?`<h2>Top priorities</h2><ol>${li(s.priorities)}</ol>`:''}
+    ${(s.progress||[]).length?`<h2>Progress between tests</h2>${s.progress.map(g=>`<div class="f" data-st="${(g.worse||[]).length>(g.better||[]).length?'flag':'good'}"><b>${bwEsc(g.date)}</b>${bwEsc(g.summary)}${(g.better||[]).length?`<span>Better: ${bwEsc(g.better.join(', '))}</span>`:''}${(g.worse||[]).length?`<span>Worse: ${bwEsc(g.worse.join(', '))}</span>`:''}</div>`).join('')}`:''}
     <h2>Findings</h2>${(s.findings||[]).map(f=>`<div class="f" data-st="${bwEsc(f.status)}"><b>${bwEsc(f.title)}</b><span>${bwEsc(f.markers)}</span>${bwEsc(f.meaning)}</div>`).join('')}
     <h2>Nutrition</h2><ul>${li(s.nutrition)}</ul><h2>Lifestyle</h2><ul>${li(s.lifestyle)}</ul>
     <h2>Supplements</h2><ul>${(s.supplements||[]).map(x=>`<li><b>${bwEsc(x.name)}</b>${x.dose?' · '+bwEsc(x.dose):''}. ${bwEsc(x.why)}${x.caution?' <i>'+bwEsc(x.caution)+'</i>':''}</li>`).join('')}</ul>
